@@ -333,7 +333,7 @@ static float *harry_process(str_t *strs, long num)
 
     /* Symbolize strings if requested */
     for (i = 0; i < num; i++)
-        strs[i] = str_symbolize(strs[i]);
+        strs[i] = str_preproc(strs[i]);
 
     float *mat = malloc(sizeof(float) * tr_size(num));
     if (!mat) {

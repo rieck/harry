@@ -163,6 +163,21 @@ void str_delim_reset()
     delim[0] = DELIM_NOT_INIT;
 }
 
+
+/**
+ * Preprocess a given string
+ * @param x character string
+ * @return preprocessed string
+ */
+str_t str_preproc(str_t x)
+{
+    /* No delimiters given */
+    if (str_has_delim())
+        x = str_symbolize(x);
+    
+    return x;
+}
+
 /**
  * Converts a string into a sequence of symbols  (words) using delimiter
  * characters.  The original character string is lost.
@@ -173,11 +188,6 @@ str_t str_symbolize(str_t x)
 {
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
-
-    /* No delimiters given */
-    if (!str_has_delim()) {
-        return x;
-    }
 
     /* A string of n chars can have at most n/2 + 1 words */
     sym_t *sym = malloc((x.len/2 + 1) * sizeof(sym_t));

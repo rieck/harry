@@ -78,8 +78,8 @@ int test_compare()
         y = str_convert(y, tests[i].y);
 
         str_delim_set(tests[i].delim);
-        x = str_symbolize(x);
-        y = str_symbolize(y);
+        x = str_preproc(x);
+        y = str_preproc(y);
 
         float d = measure_compare(x, y);
         double diff = fabs(tests[i].v - d);
