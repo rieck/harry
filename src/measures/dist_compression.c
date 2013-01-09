@@ -39,6 +39,68 @@ void dist_compression_config()
                       &symmetric);
 }
 
+
+/**
+ * Compress one string and return the length of the compressed data
+ * @param x String x
+ * @return length of the compressed data
+ */
+static float compress_str1(str_t x)
+{
+    unsigned long tmp, width;
+    unsigned char *dst;
+
+    width = x.type == TYPE_SYM ? sizeof(sym_t) : sizeof(char);
+    tmp = compressBound(x.len * width);
+
+    dst = malloc(tmp);
+    if (!dst) {
+        error("Failed to allocate memory for compression");
+        return -1;
+    }
+
+    compress2(dst, &tmp, (void *) x.str.c, x.len * width, level);
+
+    free(dst);
+    return (float) tmp;
+}
+
+/**
+ * Compress two strings and return the length of the compressed data
+ * @param x String x
+ * @param y String y
+ * @return length of the compressed data.
+ */
+static float compress_str2(str_t x, str_t y)
+{
+    unsigned long tmp, width;
+    unsigned char *src, *dst;
+
+    assert(x.type == y.type);
+
+    width = x.type == TYPE_SYM ? sizeof(sym_t) : sizeof(char);
+    tmp = compressBound((x.len + y.len) * width);
+
+    dst = malloc(tmp);
+    src = malloc(tmp);
+    if (!src || !dst) {
+        error("Failed to allocate memory for compression");
+        return -1;
+    }
+
+    /* Concatenate sequences y and x */
+    memcpy(src, y.str.s, y.len * width);
+    memcpy(src + y.len * width, x.str.s, x.len * width);
+
+    compress2(dst, &tmp, src, (x.len + y.len) * width, level);
+
+    free(dst);
+    free(src);
+    return (float) tmp;
+}
+
+
+
 /**
  * Computes the compression distance of two strings. 
  * @param x first string 
@@ -49,27 +111,13 @@ float dist_compression_compare(str_t x, str_t y)
 {
     float xl, yl, xyl;
     uint64_t xk, yk;
-    unsigned long len, tmp;
-    unsigned char *dst, *src;
     int ret;
-
-    /* Allocate memory for compression */
-    len = compressBound((x.len + y.len) * sizeof(sym_t));
-    dst = malloc(len);
-    src = malloc(len);
-    if (!src || !dst) {
-        error("Failed to allocate memory for compression");
-        return -1;
-    }
 
     xk = str_hash1(x);
     #pragma omp critical (vcache)
     ret = vcache_load(xk, &xl);
     if (!ret) {
-        /* Compress sequence x */
-        tmp = len;
-        compress2(dst, &tmp, (void *) x.str.s, x.len * sizeof(sym_t), level);
-        xl = tmp;
+        xl = compress_str1(x);
         #pragma omp critical (vcache)
         vcache_store(xk, xl);
     }
@@ -78,37 +126,12 @@ float dist_compression_compare(str_t x, str_t y)
     #pragma omp critical (vcache)
     ret = vcache_load(yk, &yl);
     if (!ret) {
-        /* Compress sequence y */
-        tmp = len;
-        compress2(dst, &tmp, (void *) y.str.s, y.len * sizeof(sym_t), level);
-        yl = tmp;
+        yl = compress_str1(y);
         #pragma omp critical (vcache)
         vcache_store(yk, yl);
     }
 
-    /* Concatenate sequences x and y */
-    memcpy(src, x.str.s, x.len * sizeof(sym_t));
-    memcpy(src + x.len * sizeof(sym_t), y.str.s, y.len * sizeof(sym_t));
-
-    /* Compress both sequences */
-    tmp = len;
-    compress2(dst, &tmp, src, (x.len + y.len) * sizeof(sym_t), level);
-    xyl = tmp;
-
-    if (symmetric) {
-        /* Concatenate sequences y and x */
-        memcpy(src, y.str.s, y.len * sizeof(sym_t));
-        memcpy(src + y.len * sizeof(sym_t), x.str.s, x.len * sizeof(sym_t));
-
-        /* Compress both sequences */
-        tmp = len;
-        compress(dst, &tmp, src, (x.len + y.len) * sizeof(sym_t));
-        xyl = (xyl + tmp) / 2.0;
-    } 
-
-    /* Free memory */
-    free(dst);
-    free(src);
+    xyl = compress_str2(x, y);
     return (xyl - fmin(xl,yl)) / fmax(xl, yl);
 }
 

@@ -331,8 +331,11 @@ static float *harry_process(str_t *strs, long num)
 {
     int i, k = 0;
 
-    for (i = 0; i < num; i++)
-        strs[i] = str_symbolize(strs[i]);
+    /* Symbolize strings if requested */
+    if (str_has_delim()) {
+        for (i = 0; i < num; i++)
+            strs[i] = str_symbolize(strs[i]);
+    }
 
     float *mat = malloc(sizeof(float) * tr_size(num));
     if (!mat) {

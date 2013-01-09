@@ -53,5 +53,6 @@ str_t str_symbolize(str_t);
 str_t str_convert(str_t, char *);
 uint64_t str_hash1(str_t);
 uint64_t str_hash2(str_t, str_t);
+int str_has_delim();
 
 #endif /* STR_H */

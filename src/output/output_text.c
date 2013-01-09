@@ -31,25 +31,12 @@ extern config_t cfg;
 static void *z = NULL;
 static int zlib = 0;
 
-/**
- * Print formated strint to output
- * @param f Format string
- */
-static int output_printf(const char *f, ...)
-{
-    int r;
-    va_list ap;
-    
-    va_start(ap, f);
-    if (zlib)
-        r = gzprintf((gzFile *) z, f, ap);
-    else
-        r = fprintf((FILE *) z, f, ap);
-    va_end(ap);
-        
-    return r;
-}
-
+#define output_printf(z, ...) (\
+   zlib ? \
+       gzprintf((gzFile *) z, __VA_ARGS__) \
+   : \
+       fprintf((FILE *) z, __VA_ARGS__) \
+)
 
 /**
  * Opens a file for writing text format
@@ -96,13 +83,13 @@ int output_text_write(float *m, int x, int y, int t)
 
     for (k = i = 0; i < x; i++) {
         for (j = t ? i : 0; j < y; j++) {
-            r = output_printf("%g ", m[k++]);
+            r = output_printf(z, "%g ", m[k++]);
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
             }
         }
-        output_printf("\n");
+        output_printf(z, "\n");
     }
 
     return k;

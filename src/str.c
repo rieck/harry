@@ -43,6 +43,15 @@ void str_free(str_t x)
 }
 
 /** 
+ * Check whether delimiters have been set
+ * @return true if delimiters have been set
+ */
+int str_has_delim() 
+{
+    return (delim[0] != DELIM_NOT_INIT);
+}
+
+/** 
  * Print string structure
  * @param x string structure
  * @param p prefix for printf
@@ -114,11 +123,9 @@ void str_delim_reset()
 }
 
 /**
- * Converts a string into a string of symbols. Depending on the configuration
- * either the words or the characters of the string are mapped to symbols.
- * The current version frees the original character string. This might be
- * changed later.
- * @param x strin
+ * Converts a string into a sequence of symbols  (words) using delimiter
+ * characters.  The original character string is lost.
+ * @param x character string
  * @return symbolized string
  */
 str_t str_symbolize(str_t x)
@@ -126,42 +133,38 @@ str_t str_symbolize(str_t x)
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
 
-    sym_t *sym = malloc(x.len * sizeof(sym_t));
+    /* A string of n chars can have at most n/2 + 1 words */
+    sym_t *sym = malloc((x.len/2 + 1) * sizeof(sym_t));
     if (!sym) {
         error("Failed to allocate memory for symbols");
         return x;
     }
 
-    if (delim[0] == DELIM_NOT_INIT) {
-        for (i = 0; i < x.len; i++)
-            sym[i] = (uint8_t) x.str.c[i];
-    } else {
-        /* Find first delimiter symbol */
-        for (dlm = 0; !delim[(unsigned char) dlm] && dlm < 256; dlm++);
+    /* Find first delimiter symbol */
+    for (dlm = 0; !delim[(unsigned char) dlm] && dlm < 256; dlm++);
 
-        /* Remove redundant delimiters */
-        for (i = 0, j = 0; i < x.len; i++) {
-            if (delim[(unsigned char) x.str.c[i]]) {
-                if (j == 0 || delim[(unsigned char) x.str.c[j - 1]])
-                    continue;
-                x.str.c[j++] = (char) dlm;
-            } else {
-                x.str.c[j++] = x.str.c[i];
-            }
+    /* Remove redundant delimiters */
+    for (i = 0, j = 0; i < x.len; i++) {
+        if (delim[(unsigned char) x.str.c[i]]) {
+            if (j == 0 || delim[(unsigned char) x.str.c[j - 1]])
+                continue;
+            x.str.c[j++] = (char) dlm;
+        } else {
+            x.str.c[j++] = x.str.c[i];
         }
-
-        /* Extract words */
-        for (wstart = i = 0; i < j + 1; i++) {
-            /* Check for delimiters and remember start position */
-            if ((i == j || x.str.c[i] == dlm) && i - wstart > 0) {
-                uint64_t hash = hash_str(x.str.c + wstart, i - wstart);
-                sym[k++] = (sym_t) hash;
-                wstart = i + 1;
-            }
-        }
-        x.len = k;
-        sym = realloc(sym, x.len * sizeof(sym_t));
     }
+
+    /* Extract words */
+    for (wstart = i = 0; i < j + 1; i++) {
+        /* Check for delimiters and remember start position */
+        if ((i == j || x.str.c[i] == dlm) && i - wstart > 0) {
+            uint64_t hash = hash_str(x.str.c + wstart, i - wstart);
+            sym[k++] = (sym_t) hash;
+            wstart = i + 1;
+        }
+    }
+    x.len = k;
+    sym = realloc(sym, x.len * sizeof(sym_t));
 
     /* Change representation */
     free(x.str.c);
