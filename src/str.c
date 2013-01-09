@@ -52,32 +52,73 @@ int str_has_delim()
 }
 
 /** 
+ * Compare two symbols/characters
+ * @param x string x
+ * @param i position in string x
+ * @param y string y
+ * @param j position in string y
+ * @return 0 if equal, < 0 if x smaller, > 0 if y smaller
+ */
+int str_compare(str_t x, int i, str_t y, int j)
+{
+    assert(x.type == y.type);
+    assert(i < x.len && j < y.len);
+    
+    if (x.type == TYPE_SYM)
+        return (x.str.s[i] - y.str.s[j]);
+    else if (x.type == TYPE_CHAR)
+        return (x.str.c[i] - y.str.c[j]);
+    else
+        error("Unknown string type");
+    return 0;
+}
+
+
+/** 
+ * Return symbol/character at given positions
+ * @param x string x
+ * @param i position in string x
+ * @return character/symbol
+ */
+sym_t str_get(str_t x, int i)
+{
+    assert(i < x.len);
+    
+    if (x.type == TYPE_SYM)
+        return x.str.s[i];
+    else if (x.type == TYPE_CHAR)
+        return x.str.c[i];
+    else
+        error("Unknown string type");
+    return 0;
+}
+ 
+
+/** 
  * Print string structure
  * @param x string structure
- * @param p prefix for printf
  */
-void str_print(str_t x, char *p)
+void str_print(str_t x)
 {
     int i;
 
-    printf("%s \t (len:%d; idx:%ld; src:%s)\n", p, x.len, x.idx, x.src);
-
     if (x.type == TYPE_CHAR && x.str.c) {
-        printf("  str:");
         for (i = 0; i < x.len; i++)
             if (isprint(x.str.c[i]))
                 printf("%c", x.str.c[i]);
             else
                 printf("%%%.2x", x.str.c[i]);
-        printf("\n");
+        printf(" (char)\n");
     }
 
     if (x.type == TYPE_SYM && x.str.s) {
-        printf("  sym:");
         for (i = 0; i < x.len; i++)
             printf("%d ", x.str.s[i]);
-        printf("\n");
+        printf(" (sym)\n");
     }
+    
+    printf("  [type: %d, len: %d; idx:% ld; src: %s, label: %f]\n", 
+           x.type, x.len, x.idx, x.src, x.label);
 }
 
 /**
@@ -132,6 +173,11 @@ str_t str_symbolize(str_t x)
 {
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
+
+    /* No delimiters given */
+    if (!str_has_delim()) {
+        return x;
+    }
 
     /* A string of n chars can have at most n/2 + 1 words */
     sym_t *sym = malloc((x.len/2 + 1) * sizeof(sym_t));

@@ -108,10 +108,9 @@ float dist_damerau_compare(str_t x, str_t y)
     for (i = 1; i <= x.len; i++) {
         int db = 0;
         for (j = 1; j <= y.len; j++) {
-            int i1 = alph[y.str.s[j - 1]];
+            int i1 = alph[str_get(y, j - 1)];
             int j1 = db;
-            int dz = ((x.str.s[i - 1] == y.str.s[j - 1]) ? 0 : cost_sub);
-
+            int dz = str_compare(x, i - 1, y, j - 1) ? cost_sub : 0;
             if (dz == 0)
                 db = j;
 
@@ -121,7 +120,8 @@ float dist_damerau_compare(str_t x, str_t y)
                                   d[i1][j1] + (i - i1 - 1) + cost_tra +
                                   (j - j1 - 1));
         }
-        alph[x.str.s[i - 1]] = i;
+       
+        alph[str_get(x, i - 1)] = i;
     }
 
     float r = d[x.len + 1][y.len + 1];

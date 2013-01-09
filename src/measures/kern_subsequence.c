@@ -55,7 +55,7 @@ float kern_subsequence_compare(str_t x, str_t y)
     /* Initalize dps */
     for (i = 0; i < x.len; i++)
         for (j = 0; j < y.len; j++)
-            if (x.str.s[i] == y.str.s[j])
+            if (!str_compare(x, i, y, j))
                 dps[i][j] = lambda * lambda;
             else
                 dps[i][j] = 0;
@@ -73,7 +73,7 @@ float kern_subsequence_compare(str_t x, str_t y)
             for (j = 0; j < y.len - 1; j++) {
                 dp[i + 1][j + 1] = dps[i][j] + lambda * dp[i][j + 1] +
                     lambda * dp[i + 1][j] - lambda * lambda * dp[i][j];
-                if (x.str.s[i] == y.str.s[j]) {
+                if (!str_compare(x, i, y, j)) {
                     dps[i][j] = lambda * lambda * dp[i][j];
                     kern[l] = kern[l] + dps[i][j];
                 }

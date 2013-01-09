@@ -60,19 +60,21 @@ static float weight(float len, int degree)
 
 /**
  * Implementation of weighted-degree kernel in block mode.
- * @param x Symbols of string x
- * @param y Symbols of string y
+ * @param x String x
+ * @param y String y
+ * @param xs Shift for x 
+ * @param ys Shift for y
  * @param len Length of region to match
  * @return kernel value
  */
-static float kern_wdegree(sym_t * x, sym_t * y, int len)
+static float kern_wdegree(str_t x, str_t y, int xs, int ys, int len)
 {
     int i, start;
     float k = 0;
 
     for (i = 0, start = -1; i < len; i++) {
         /* Identify matching region */
-        if (x[i] == y[i]) {
+        if (!str_compare(x, i + xs, y, i + ys)) {
             if (start == -1)
                 start = i;
             continue;
@@ -109,10 +111,10 @@ float kern_wdegree_compare(str_t x, str_t y)
     for (s = -shift; s <= shift; s++) {
         if (s <= 0) {
             len = fmax(fmin(x.len, y.len + s), 0);
-            k += kern_wdegree(x.str.s, y.str.s - s, len);
+            k += kern_wdegree(x, y, 0, -s, len);
         } else {
             len = fmax(fmin(x.len - s, y.len), 0);
-            k += kern_wdegree(x.str.s + s, y.str.s, len);
+            k += kern_wdegree(x, y, +s, 0, len);
         }
     }
 

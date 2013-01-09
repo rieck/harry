@@ -16,9 +16,9 @@
 #define DELIM_NOT_INIT  42
 
 /* 
- * Basic symbol in a string 
+ * Symbols for words. We keep this signed.
  */
-typedef uint16_t sym_t;
+typedef int16_t sym_t;
 
 /* Support types for strings. See union str in struct */
 #define TYPE_CHAR		0x00
@@ -46,7 +46,7 @@ typedef struct
 } str_t;
 
 void str_free(str_t);
-void str_print(str_t, char *);
+void str_print(str_t);
 void str_delim_set(const char *);
 void str_delim_reset();
 str_t str_symbolize(str_t);
@@ -54,5 +54,7 @@ str_t str_convert(str_t, char *);
 uint64_t str_hash1(str_t);
 uint64_t str_hash2(str_t, str_t);
 int str_has_delim();
+int str_compare(str_t x, int i, str_t y, int j);
+sym_t str_get(str_t x, int i);
 
 #endif /* STR_H */

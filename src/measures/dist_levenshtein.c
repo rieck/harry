@@ -104,9 +104,10 @@ float dist_levenshtein_compare(str_t x, str_t y)
             if (a > b)
                 a = b;
 
-            /* Substituion */
-            b = rows[curr][j - 1] + (x.str.s[i - 1] ==
-                                     y.str.s[j - 1] ? 0 : cost_sub);
+            /* Substitution */
+            b = rows[curr][j - 1] + 
+                (str_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
+                
             if (a > b)
                 a = b;
 

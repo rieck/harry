@@ -66,8 +66,8 @@ int test_compare()
 
         if (diff > 1e-6) {
             printf("Error %f != %f\n", d, tests[i].v);
-            str_print(x, "x = ");
-            str_print(y, "y = ");
+            str_print(x);
+            str_print(y);
             err = TRUE;
         }
 

@@ -82,7 +82,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
     /* Calculate matching characters */
     for (i = 0; i < y.len; i++) {
         for (j = max(i - range, 0), l = min(i + range + 1, x.len); j < l; j++) {
-            if (y.str.s[i] == x.str.s[j] && !xflags[j]) {
+            if (!str_compare(y, i, x, j) && !xflags[j]) {
                 xflags[j] = 1;
                 yflags[i] = 1;
                 m++;
@@ -104,7 +104,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
                     break;
                 }
             }
-            if (y.str.s[i] != x.str.s[j])
+            if (str_compare(y, i, x, j))
                 t++;
         }
     }
@@ -116,7 +116,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
 
     /* Calculate common string prefix up to 4 chars */
     for (l = 0; l < min(min(x.len, y.len), 4); l++)
-        if (x.str.s[l] != y.str.s[l])
+        if (str_compare(x, l, y, l))
             break;
 
     /* Jaro-Winkler distance */

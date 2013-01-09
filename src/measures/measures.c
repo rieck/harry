@@ -84,6 +84,8 @@ void measure_config(const char *name)
     config_lookup_string(&cfg, "measures.delim", &cfg_str);
     if (strlen(cfg_str) > 0)
         str_delim_set(cfg_str);
+    else
+        str_delim_reset();
 
     /* Enable global cache */
     config_lookup_int(&cfg, "measures.global_cache", &global_cache);

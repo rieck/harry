@@ -52,11 +52,11 @@ float dist_lee_compare(str_t x, str_t y)
     /* Loop over strings */
     for (i = 0; i < x.len || i < y.len; i++) {
         if (i < x.len && i < y.len)
-            ad = fabs(x.str.s[i] - y.str.s[i]);
+            ad = fabs(str_compare(x, i, y, i));
         else if (i < x.len)
-            ad = x.str.s[i];
+            ad = fabs(str_get(x, i));
         else
-            ad = y.str.s[i];
+            ad = fabs(str_get(y, i));
 
         if (ad >= q) {
             warning("Distance of symbols larger than alphabet. Fixing.");
