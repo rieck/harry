@@ -28,7 +28,7 @@ extern int verbose;
 /* Default configuration */
 static config_default_t defaults[] = {
 
-    {"measures", "default", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
+    {"measures", "type", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     /* Hamming distance */
     {"measures.dist_hamming", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     /* Levenshtein distance */
