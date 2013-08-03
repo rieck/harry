@@ -38,7 +38,7 @@ typedef struct
 static func_t func;
 
 /** 
- * Configure the output of Sally
+ * Configure the output of Harry
  * @param format Name of output format
  */
 void output_config(const char *format)

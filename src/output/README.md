@@ -11,7 +11,7 @@ three steps:
   
 1. Create the source files `output_xxx.c` and `output_xxx.h` for the
    new output module xxx.  Add these files to `Makefile.am` to
-   include them in the compilation process of Sally.
+   include them in the compilation process of Harry.
   
 2. Implement three functions in `output_xxx.c` and add respective
    declarations of these functions to `output_xxx.h`.

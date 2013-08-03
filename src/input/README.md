@@ -9,7 +9,7 @@ The development of a new input module basically involves three steps:
   
 1. Create the source files `input_xxx.c` and `input_xxx.h` for the
    new input module xxx. Add these files to `Makefile.am` to include them in
-   the compilation process of Sally.
+   the compilation process of Harry.
   
 2. Implement three functions in `input_xxx.c` and add respective
    declarations of these functions to `input_xxx.h`.
@@ -35,7 +35,7 @@ The development of a new input module basically involves three steps:
    allocated by input_xxx_open() should be freed here.  Open files and
    similar objects should be closed.
        
-3. Integrate the new interface into Sally by extending the code in
+3. Integrate the new interface into Harry by extending the code in
    `input.c`.  First, add `input_xxx.h` to the list of included headers and,
    second, extend the function input_config() to initialize the new input
    format if requested.
@@ -43,7 +43,7 @@ The development of a new input module basically involves three steps:
 Support Harry
 --
      
-That's it. Please contribute to the development of Sally. Send your new
+That's it. Please contribute to the development of Harry. Send your new
 modules to konrad@mlsec.org, so that they can be included in the next
 release.
   

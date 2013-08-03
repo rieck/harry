@@ -16,6 +16,9 @@ config.sub
 configure
 depcomp
 doc/harry.man
+doc/latex-pre.inc
+doc/harry.pdf
+doc/harry.txt
 install-sh
 libtool
 ltmain.sh
