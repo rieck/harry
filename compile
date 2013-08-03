@@ -12,8 +12,10 @@ case $arg in
    scarecrow*|sec01*)
        echo "Configuration: Laptop (Goettingen)"
        CC="gcc" \
+       LDFLAGS="-L/usr/local/opt/libarchive/lib" \
+       CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -pedantic -pipe -O3" \
-       ./configure --prefix=/opt/rieck
+       ./configure --prefix=/opt/rieck --enable-libarchive
        ;;
    *)    
        echo "Unknown system or configuration"

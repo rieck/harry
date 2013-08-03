@@ -95,7 +95,8 @@ int input_arc_read(string_t *strs, int len)
             archive_read_data(a, strs[j].str, s->st_size);
             strs[j].src = strdup(archive_entry_pathname(entry));
             strs[j].len = s->st_size;
-            strs[j].idx = j++;
+            strs[j].idx = j;
+            j++;
         }
     }
 
