@@ -65,7 +65,7 @@ AC_SUBST([AM_CPPFLAGS])
 AC_CONFIG_FILES([ 
    Makefile \
    src/Makefile \
-   src/modules/Makefile \
+   src/measures/Makefile \
    tests/Makefile \
    doc/Makefile \
 ])
