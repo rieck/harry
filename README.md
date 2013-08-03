@@ -16,17 +16,21 @@ measures can be computed, such as bag-of-word kernels.
 Dependencies
 --
 
+    >= zlib-1.2.1
     >= libconfig-1.4
+    >= libarchive-2.70
 
 Corresponding packages
 
-+ Debian and Ubuntu Linux: `libconfig9-dev`  
-+ MacOS X with Homebrew:   `libconfig`  
-+ MacOS X with MacPorts:   `libconfig-hr`
++ Debian and Ubuntu Linux: `libz-dev libconfig9-dev libarchive-dev`
++ MacOS X with Homebrew:   `libconfig libarchive (homebrew-dupes)`
++ MacOS X with MacPorts:   `libconfig-hr libarchive`
 
 The source code of the libraries is available here:
 
++ zlib        <http://www.zlib.net/>
 + libconfig   <http://www.hyperrealm.com/libconfig/>
++ libarchive  <http://libarchive.github.com/>
 
 Compilation & Installation
 --

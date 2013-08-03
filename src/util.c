@@ -11,7 +11,7 @@
 
 /**
  * @defgroup util Utility functions
- * The module contains utility functions for Harry
+ * The module contains utility functions for Harry.
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
  */
@@ -22,6 +22,12 @@
 
 /* External variable */
 extern int verbose;
+/* Global variable */
+static double time_start = -1;
+/** Progress bar (with NULL) */
+static char pb_string[PROGBAR_LEN + 1];
+/** Start timestamp measured */
+static double pb_start = -1;
 
 /**
  * Print a formated info message with timestamp. 
@@ -32,6 +38,9 @@ void info_msg(int v, char *m, ...)
 {
     va_list ap;
     char s[256] = { " " };
+
+    if (time_start == -1)
+        time_start = time_stamp();
 
     if (v > verbose)
         return;
@@ -68,15 +77,222 @@ void err_msg(char *p, const char *f, char *m, ...)
     errno = 0;
 }
 
+
 /**
  * Return a timestamp of the real time
- * @return timestamp
+ * @return time stamp
  */
-double timestamp()
+double time_stamp()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + tv.tv_usec / 1e6;
+}
+
+/**
+ * Print a progress bar in a given range.
+ * @param a Minimum value 
+ * @param b Maximum value
+ * @param c Current value
+ */
+void prog_bar(long a, long b, long c)
+{
+    int i, first, last;
+    double perc, ptime = 0, min, max, in;
+    char *descr = "";
+
+    if (verbose == 0)
+        return;
+
+    min = (double) a;
+    max = (double) b;
+    in = (double) c;
+
+    perc = (in - min) / (max - min);
+    first = fabs(in - min) < 1e-10;
+    last = fabs(in - max) < 1e-10;
+
+    /* Start of progress */
+    if (pb_start < 0 || (first && !last)) {
+        pb_start = time_stamp();
+        for (i = 0; i < PROGBAR_LEN; i++)
+            pb_string[i] = PROGBAR_EMPTY;
+        descr = "start";
+        perc = 0.0;
+    }
+
+    /* End of progress */
+    if (last) {
+        for (i = 0; i < PROGBAR_LEN; i++)
+            pb_string[i] = PROGBAR_FULL;
+        ptime = time_stamp() - pb_start;
+        descr = "total";
+        perc = 1.0;
+        pb_start = -1;
+    }
+
+    /* Middle of progress */
+    if (!first && !last) {
+        int len = (int) round(perc * PROGBAR_LEN);
+        for (i = 0; i < len; i++)
+            if (i < len - 1)
+                pb_string[i] = PROGBAR_DONE;
+            else
+                pb_string[i] = PROGBAR_FRONT;
+        ptime = (max - in) * (time_stamp() - pb_start) / (in - min);
+        descr = "   in";
+    }
+
+    int mins = (int) floor(ptime / 60);
+    int secs = (int) floor(ptime - mins * 60);
+    pb_string[PROGBAR_LEN] = 0;
+
+    printf("\r  [%s] %5.1f%%  %s %.2dm %.2ds ", pb_string,
+           perc * 100, descr, mins, secs);
+
+    if (last)
+        printf("\n");
+
+    fflush(stdout);
+    fflush(stderr);
+}
+
+#define BLOCK_SIZE 4096
+
+/**
+ * Dirty re-write of the GNU getline() function. I have been
+ * searching the Web for a couple of minutes to find a suitable 
+ * implementation. Unfortunately, I could not find anything 
+ * appropriate. Some people confused fgets() with getline(), 
+ * others were arguing on licenses over and over.
+ */
+size_t gzgetline(char **s, size_t * n, gzFile f)
+{
+    assert(f);
+    int c = 0;
+    *n = 0;
+
+    if (gzeof(f))
+        return -1;
+
+    while (c != '\n') {
+        if (!*s || *n % BLOCK_SIZE == 0) {
+            *s = realloc(*s, *n + BLOCK_SIZE + 1);
+            if (!*s)
+                return -1;
+        }
+
+        c = gzgetc(f);
+        if (c == -1)
+            return -1;
+
+        (*s)[(*n)++] = c;
+    }
+
+    (*s)[*n] = 0;
+    return *n;
+}
+
+/** 
+ * Another dirty function to trim strings from leading and trailing 
+ * blanks. The original string is modified in place.
+ * @param x Input string
+ */
+void strtrim(char *x)
+{
+    assert(x);
+    int i = 0, j = 0, l = strlen(x);
+
+    if (l == 0)
+        return;
+
+    for (i = 0; i < l; i++)
+        if (!isspace(x[i]))
+            break;
+
+    for (j = l; j > 0; j--)
+        if (!isspace(x[j - 1]))
+            break;
+
+    if (j > i) {
+        memmove(x, x + i, j - i);
+        x[j - i] = 0;
+    } else {
+        x[0] = 0;
+    }
+}
+
+/**
+ * Returns the number of a hexadecimal digit 
+ * @param c Byte containing digit
+ * @private
+ * @return number
+ */
+static int get_hex(char c)
+{
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    if (c >= 'a' && c <= 'f')
+        return c - 'a' + 0xa;
+    if (c >= 'A' && c <= 'F')
+        return c - 'A' + 0xa;
+
+    warning("Invalid URI encoding (%c)", c);
+    return 0;
+}
+
+/**
+ * Decodes a string with URI encoding. The function operates 
+ * in-place. A trailing NULL character is appended to the string.
+ * @param str String to decode.
+ * @return length of decoded sequence
+ */
+int decode_str(char *str)
+{
+    int j, k, r;
+
+    /* Loop over string */
+    for (j = k = 0; j < strlen(str); j++, k++) {
+        if (str[j] != '%') {
+            str[k] = str[j];
+        } else {
+            /* Check for truncated string */
+            if (strlen(str) - j < 2)
+                break;
+
+            /* Parse hexadecimal number */
+            r = get_hex(str[j + 1]) * 16 + get_hex(str[j + 2]);
+            j += 2;
+            str[k] = (char) r;
+        }
+    }
+    str[k] = 0;
+
+    return k;
+}
+
+/**
+ * Strip newline characters in place
+ * @param str input string
+ * @param len length of string
+ */
+int strip_newline(char *str, int len)
+{
+    int k;
+    static char strip[256] = {0};
+    strip[(int) '\n'] = 1;
+    strip[(int) '\r'] = 1;
+
+    assert(str);
+
+    for (k = len - 1; k >= 0; k--) {
+        if (!strip[(int) str[k]]) {
+            break;
+        }
+    }
+    
+    str[k + 1] = 0x00;
+    return k + 1;
 }
 
 /** @} */

@@ -13,7 +13,15 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <zlib.h>
 #include "config.h"
+
+/* Progress bar stuff */
+#define PROGBAR_LEN     52
+#define PROGBAR_EMPTY   ':'
+#define PROGBAR_FULL    '#'
+#define PROGBAR_DONE    '#'
+#define PROGBAR_FRONT   '|'
 
 /* Fatal message */
 #ifndef fatal
@@ -31,6 +39,12 @@
 /* Utility functions */
 void err_msg(char *, const char *, char *, ...);
 void info_msg(int, char *, ...);
-double timestamp();
+double time_stamp();
+void prog_bar(long, long, long);
+size_t gzgetline(char **s, size_t * n, gzFile f);
+void strtrim(char *x);
+int decode_str(char *str);
+uint64_t hash_str(char *s, int l); 
+int strip_newline(char *s, int l);
 
 #endif /* UTIL_H */

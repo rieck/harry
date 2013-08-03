@@ -14,16 +14,12 @@
 #include "harry.h"
 #include "default.h"
 #include "util.h"
+#include "measures.h"
 
 /* Global variables */
 int verbose = 1;
 int print_conf = 0;
 config_t cfg;
-
-/* Some static variables */
-void **objs = NULL;
-int num_objs = 0;
-range_t range = {0,0,0,0};
 
 /* Option string */
 #define OPTSTRING       "m:c:vqVhCD"
@@ -204,8 +200,9 @@ static void harry_init()
         config_print(&cfg);
 
     /* Configure module */
-    config_lookup_string(&cfg, "measures.default", &str);
-    module_config(str);
+    config_lookup_string(&cfg, "measures.type", &str);
+    measure_config(str);
+    measure_init();
 }
 
 /**
@@ -213,15 +210,6 @@ static void harry_init()
  */
 static void harry_exit()
 {
-    int i;
-
-    for (i = 0; i < num_objs; i++) {
-        module_free(objs[i]);
-    }
-
-    if (objs)
-        free(objs);
-
     /* Destroy configuration */
     config_destroy(&cfg);
 }

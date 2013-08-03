@@ -36,6 +36,18 @@ else
     AC_MSG_ERROR([The library libm is required for compilation])
 fi
 
+# libz
+AC_CHECK_HEADERS([zlib.h], HEADER_ZLIB="yes")
+AC_CHECK_LIB([z], gzopen, LIBRARY_ZLIB="yes")
+if test "x$LIBRARY_ZLIB" != "x" && test "x$HEADER_ZLIB" != "x" ; then
+    LIBS="-lz $LIBS"
+else
+    AC_MSG_ERROR([The library libz is required for compilation.
+    Debian/Ubuntu package: libz-dev
+    Source code: http://www.zlib.net/
+    ])
+fi
+
 # libconfig
 PKG_CHECK_MODULES([PKGCONFIG], [libconfig >= 1.4], [], 
     AC_MSG_ERROR([The library libconfig is required for compilation.
@@ -58,14 +70,49 @@ if test "x$HAVE_OPENMP" = "xno" ; then
 fi
 CFLAGS="$CFLAGS $OPENMP_CFLAGS"
 
+# libarchive
+AC_ARG_ENABLE(libarchive,
+    [  --enable-libarchive     enable support for loading archives. ],
+    [
+        if test "x$enableval" = "xyes" ; then
+                ENABLE_LIBARCHIVE=yes
+                AC_DEFINE(ENABLE_LIBARCHIVE, 1, [Enable support for loading archives])
+        else
+                ENABLE_LIBARCHIVE=no
+        fi
+    ], [ ENABLE_LIBARCHIVE=no ]
+)
+
+
+AC_CHECK_HEADERS([archive.h], HEADER_LIBARCHIVE="yes")
+AC_CHECK_LIB([archive], archive_read_new, LIBRARY_LIBARCHIVE="yes")
+
+if test "x$ENABLE_LIBARCHIVE" = "xyes" ; then
+    if test "x$LIBRARY_LIBARCHIVE" != "x" && test "x$HEADER_LIBARCHIVE" != "x" ; then
+        LIBS="-larchive $LIBS"
+    else
+        AC_MSG_ERROR([libarchive requested but not available
+    Debian/Ubuntu package: libarchive-dev
+    Source code: http://code.google.com/p/libarchive
+        ])
+    fi
+fi
+
 # Check headers
 AC_CHECK_HEADERS([getopt.h string.h strings.h])
+AC_CHECK_HEADERS([uthash.h uthash/uthash.h], HEADER_UTHASH="yes")
+
+# Check functions
+AC_CHECK_FUNC(log2, AC_DEFINE(HAVE_FUNC_LOG2, 1,
+       [Define to 1 if you have the function log2]))
 
 AC_SUBST([AM_CPPFLAGS])
 AC_CONFIG_FILES([ 
    Makefile \
    src/Makefile \
    src/measures/Makefile \
+   src/input/Makefile \
+   src/output/Makefile \
    tests/Makefile \
    doc/Makefile \
 ])
