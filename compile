@@ -15,7 +15,7 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -pedantic -pipe -O3" \
-       ./configure --prefix=/opt/rieck --enable-libarchive
+       ./configure --prefix=/opt/rieck --enable-libarchive --enable-openmp
        ;;
    *)    
        echo "Unknown system or configuration"

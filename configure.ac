@@ -61,6 +61,18 @@ LIBS="$LIBS $PKGCONFIG_LIBS"
 AM_CPPFLAGS="$AM_CPPFLAGS `pkg-config --cflags-only-I libconfig`"
 AC_CHECK_HEADERS([libconfig.h], HEADER_LIBCONFIG="yes")
 
+AC_ARG_ENABLE(openmp,
+    [  --enable-openmp         enable support for OpenMP ],
+    [
+        if test "x$enableval" = "xyes" ; then
+                ENABLE_OPENMP=yes
+                AC_DEFINE(ENABLE_OPENMP, 1, [Enable support for OpenMP])
+        else
+                ENABLE_OPENMP=no
+        fi
+    ], [ ENABLE_OPENMP=no ]
+)
+
 # OpenMP 
 AX_OPENMP([HAVE_OPENMP=yes],[HAVE_OPENMP=no])
 if test "x$HAVE_OPENMP" = "xno" ; then
@@ -117,3 +129,9 @@ AC_CONFIG_FILES([
    doc/Makefile \
 ])
 AC_OUTPUT
+
+echo
+echo " .Oo Features:"
+echo "     Support for loading archives (--enable-libarchive):    $ENABLE_LIBARCHIVE"
+echo "     Support for multi-processing (--enable-openmp):        $ENABLE_OPENMP"
+echo

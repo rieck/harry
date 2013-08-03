@@ -54,4 +54,17 @@ Options for configure
 By default Harry is installed into /usr/local. If you prefer a different
 location, use this option to select an installation directory.
 
+    --enable-libarchive     Enable support for loading archives
+
+If this feature is enabled, Harry can also be applied to read the
+contents of archives, such as .tgz and .zip.  This allows for
+processing string data in compressed form and may drastically save
+storage space.
+
+    --enable-openmp         Enable support for OpenMP 
+
+This feature enables support for OpenMP in Harry. The loading of strings and
+the computation of similarity measures will be distributed across multiple
+cores if possible.
+
 Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
