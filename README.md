@@ -1,3 +1,4 @@
+![Harry](harry.png) 
 
 Harry - Similarity Measures for Strings
 ==
