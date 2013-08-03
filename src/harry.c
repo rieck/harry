@@ -1,5 +1,5 @@
 /*
- * Harry - Similarity Measures for Strings
+ * Harry - A Tool for Measuring String Similarity
  * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
@@ -86,7 +86,7 @@ static void print_usage(void)
  */
 static void print_version(void)
 {
-    printf("Harry %s - Similarity Measures for Strings\n"
+    printf("Harry %s - A Tool for Measuring String Similarity\n"
            "Copyright (c) 2013 Konrad Rieck (konrad@mlsec.org)\n",
            PACKAGE_VERSION);
 }

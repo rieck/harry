@@ -1,4 +1,4 @@
-# Harry - Similarity Measures for Strings
+# Harry - A Tool for Measuring String Similarity
 # Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
 
 EXTRA_DIST = harry.pod doxygen.cfg example.cfg harry.txt harry.pdf \

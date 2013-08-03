@@ -1,5 +1,5 @@
 /*
- * SIMONE - Similarity Measures for Structured Data
+ * Harry - A Tool for Measuring String Similarity
  * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it

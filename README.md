@@ -1,6 +1,6 @@
 ![Harry](harry.png) 
 
-Harry - Similarity Measures for Strings
+Harry - A Tool for Measuring String Similarity
 ==
 
 Description

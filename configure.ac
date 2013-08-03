@@ -1,11 +1,11 @@
-# Harry - Similarity Measures for Strings
+# Harry - A Tool for Measuring String Similarity
 # Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
 
 AC_INIT([harry], [0.1], [konrad@mlsec.org])
 AC_PREFIX_DEFAULT("/usr/local")
 
 echo
-echo "  Harry - Similarity Measures for Strings"
+echo "  Harry - A Tool for Measuring String Similarity"
 echo "  Copyright (c) 2013 Konrad Rieck (konrad@mlsec.org)"
 echo
 
