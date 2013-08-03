@@ -1,0 +1,160 @@
+=pod
+
+=head1 NAME
+
+B<harry> -- similarity measures for strings
+
+=head1 SYNOPSIS
+
+B<harry> 
+
+=head1 DESCRIPTION
+
+B<harry> is a small tool for comparing strings. The tool supports several
+common distance and kernel functions for strings as well as some excotic
+similarity measures.  The focus of B<harry> lies on implicit similarity
+measures, that is, comparison functions that do not give rise to an explicit
+vector space, such as the Levenshtein distance.  B<harry> thereby
+complements the tool B<sally> that embeds strings in vector spaces and
+allows computing explicit similarity measures, such as bag-of-word kernels.
+
+=head1 SIMILARIY MEASURES
+
+B<harry> supports the following similarity measures. If not specified
+otherwise, the modules process strings of bytes separated by newline
+characters.  The characters B<00> and B<FF> need to be escaped.
+
+=over 4
+
+=item B<dist_hamming> - Hamming distance.
+
+This module implements the Hamming distance (see Hamming, 1950).  The
+runtime complexity of a comparison is linear in the length of the  
+If the compared strings have unequal length, the length difference is added
+to the distance.  The following parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the distance. Supported values
+are I<"none"> for no normalization, I<"min"> for normalization on the
+minimum length, I<"max"> for normalization on the maximum length, I<"avg">
+for normalization on the average length of the compared 
+
+=back
+
+=item B<dist_levenshtein> - Levensthein distance.
+
+This module implements the Levenshtein distance (see Levenshtein, 1966). The
+runtime complexity of a comparison is quadratic in the length of the
+strings.  The following parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the distance. Supported values
+are I<"none"> for no normalization, I<"min"> for normalization on the
+minimum length, I<"max"> for normalization on the maximum length, I<"avg">
+for normalization on the average length of the compared 
+
+=item B<cost_ins = 1.0;>
+
+=item B<cost_del = 1.0;>
+
+=item B<cost_sub = 1.0;>
+
+The computation of the distance can be adapted using three parameters
+defining the cost for an insertation, deletion and substitution,
+respectively.  The default costs are 1.0 for each operation.
+
+=back
+
+=item B<kern_subseq> - Subsequence Kernel (SSK)
+
+This module implements the subsequence kernel (see Lohdi et al., 2002). The
+runtime complexity of a comparison is quadratic in the size of the The
+following parameters are supported:
+
+=over 4
+
+=item I<decay = 1.0;>
+
+This parameters defines the decay of the kernel computation. Large decays
+reduce the impact of longer subsequences. The default decay is 1.0.
+
+=item I<gap = 3.0;>
+
+This parameter specifies the maximum gap allowed within a subsequence. The
+default gap size is 3.0.
+
+=back
+
+=back
+
+=head1 CONFIGURATION
+
+The configuration of B<harry> is specified in a configuration file.
+
+All parameters of the configuration can be also be specified on the
+command-line. That is, if a parameter is specified in the
+configuration as B<xx = "yy">, it can be alternatively supplied as a
+command-line option by B<--xx "yy">.
+
+If no configuration file is provided, B<harry> resorts to a default
+configuration. This default configuration can be dumped using the
+command-line option B<-D>.
+
+=head1 OPTIONS
+
+The configuration of B<harry> can be refined and altered using several
+command-line options. In particular, all parameters of the
+configuration can be specified on the command-line. That is, if a
+parameter is specified as B<xx = "yy"> in the configuration file, it
+can be changed by using the command-line option B<--xx
+"zz">. Following is a list of common options:
+
+=head2 Module options
+
+  -m, --module <name>		 Set similarity measure module
+
+=head2 Generic options
+
+  -c,  --config_file <file>      Set configuration file.
+  -v,  --verbose                 Increase verbosity.
+  -q,  --quiet                   Be quiet during processing.
+  -C,  --print_config            Print the current configuration.
+  -D,  --print_defaults          Print the default configuration.
+  -V,  --version                 Print version and copyright.
+  -h,  --help                    Print this help screen.
+
+=head1 FILES
+
+=over 4
+
+=item F<PREFIX/share/doc/harry/example.cfg>
+
+An example configuration file for B<harry>. See the configuration
+section for further details.
+
+=back
+
+=head1 REFERENCES
+
+R. W. Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
+
+V. I. Levenshtein. Binary codes capable of correcting dele- tions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163(4):845-848, 1966.
+
+H. Lodhi, C. Saunders, J. Shawe-Taylor, N. Cristianini, and C. Watkins. Text classification using string kernels. Journal of Machine Learning Research, 2:419-444, 2002.
+
+=head1 COPYRIGHT
+
+Copyright (c) 2013 Konrad Rieck (konrad@mlsec.org)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at
+your option) any later version.  This program is distributed without
+any warranty. See the GNU General Public License for more details.
+=cut
