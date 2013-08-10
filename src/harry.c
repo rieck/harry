@@ -26,7 +26,6 @@ config_t cfg;
 /* Local variables */
 static char *input = NULL;
 static char *output = NULL;
-static str_t *strs = NULL;
 static long num = 0;
 
 /* Option string */
@@ -82,9 +81,9 @@ static void print_usage(void)
 {
     printf("Usage: harry [options] <input> <output>\n"
            "\nI/O options\n"
-           "  -i,  --input_format <format>   Set input format for strs.\n"
-           "       --decode_str <0|1>        Enable URI-decoding of strs.\n"
-           "       --reverse_str <0|1>       Reverse (flip) all strs.\n"
+           "  -i,  --input_format <format>   Set input format for strings.\n"
+           "       --decode_str <0|1>        Enable URI-decoding of strings.\n"
+           "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
            "       --stopword_file <file>    Provide a file with stop words.\n"
            "  -o,  --output_format <format>  Set output format for vectors.\n"
            "\nModule options:\n"
@@ -273,10 +272,6 @@ static void harry_init()
     if (num < 0)
         fatal("Could not open input source");
 
-    /* Allocate memory for strs */
-    strs = calloc(num, sizeof(str_t));
-    if (!strs)
-        fatal("Could not allocate memory for strs");
 
     /* Open output */
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
@@ -286,24 +281,41 @@ static void harry_init()
         fatal("Could not open output destination");
 }
 
-static void harry_load()
+static void harry_process()
 {
-    long read;
-    int i;
+    int i, j, k;
+    float *mat = NULL;
+    str_t *strs;
 
-    read = input_read(strs, num);
+    /* Allocate memory for strings */
+    strs = calloc(num, sizeof(str_t));
+    if (!strs)
+        fatal("Could not allocate memory for strs");
+
+    long read = input_read(strs, num);
     if (read <= 0)
         fatal("Failed to read strs from input '%s'", input);
         
-    for (i = 0; i < num; i++) {
+    for (i = 0; i < num; i++) 
         strs[i] = str_symbolize(strs[i]);
-        str_print(strs[i]);
+    
+    
+    mat = malloc(sizeof(float) * ((num * num)  + num) / 2);
+    if (!mat) {
+        fatal("Could not allocate matrix for similarity measure");
     }
+
+    for (i = k = 0; i < num; i++)  
+        for (j = i; j < num; j++) 
+            mat[k++] = measure_compare(strs[i], strs[j]);
+
+
+    output_write(mat, num, num, TRUE);
+    input_free(strs, num);
+    free(mat);
+    free(strs);
 }
 
-static void harry_save()
-{
-}
 
 /**
  * Exit Harry tool. 
@@ -315,10 +327,6 @@ static void harry_exit()
     info_msg(1, "Flushing. Closing input and output.");
     input_close();
     output_close();
-    
-    /* Free memory */
-    input_free(strs, num);
-    free(strs);
     
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
@@ -340,9 +348,8 @@ int main(int argc, char **argv)
     harry_parse_options(argc, argv);
 
     harry_init();
-    harry_load();
-
-    harry_save();
+    harry_process();
     harry_exit();
+    
     return EXIT_SUCCESS;
 }

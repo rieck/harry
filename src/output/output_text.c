@@ -62,6 +62,17 @@ int output_text_write(float *m, int x, int y, int t)
 {
     assert(x && x >= 0 && y >= 0);
     fprintf(f, "\n");
+    int i,j,k;
+    
+    if (t) {
+        for (k = i = 0; i < x; i++) {
+            for (j = i; j < y; j++) {
+                fprintf(f, "%g ", m[k++]);
+            }
+            fprintf(f, "\n");
+        }
+    }    
+    
     return 0;
 }
 
