@@ -274,9 +274,10 @@ static void harry_init()
         fatal("Could not open input source");
 
     /* Allocate memory for strings */
-    strings = calloc(num, sizeof(string_t));
+    strings = alloca(num * sizeof(string_t));
     if (!strings)
         fatal("Could not allocate memory for strings");
+    memset(strings, 0, num * sizeof(string_t));
 
     /* Open output */
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
@@ -319,15 +320,8 @@ static void harry_exit()
     config_destroy(&cfg);
 
     /* Clean memory */
-    if (strings) {
-        for (i = 0; i < num; i++) {
-            if (strings[i].str)
-                free(strings[i].str);
-            if (strings[i].sym)
-                free(strings[i].sym);
-        }
-        free(strings);
-    }
+    for (i = 0; i < num; i++) 
+        string_free(strings[i]);
 }
 
 /**
@@ -346,6 +340,5 @@ int main(int argc, char **argv)
 
     harry_save();
     harry_exit();
-
     return EXIT_SUCCESS;
 }

@@ -15,6 +15,7 @@
 
 #include <zlib.h>
 #include "config.h"
+#include "harry.h"
 
 /* Progress bar stuff */
 #define PROGBAR_LEN     52
@@ -46,5 +47,6 @@ void strtrim(char *x);
 int decode_str(char *str);
 uint64_t hash_str(char *s, int l);
 int strip_newline(char *s, int l);
+void string_free(string_t);
 
 #endif /* UTIL_H */

@@ -19,6 +19,7 @@
 #include "config.h"
 #include "common.h"
 #include "util.h"
+#include "harry.h"
 #include "murmur.h"
 #include "md5.h"
 
@@ -320,6 +321,18 @@ uint64_t hash_str(char *s, int l)
 #endif
 
     return ret;
+}
+
+/**
+ * Free memory of the string structure
+ * @param x string structure
+ */
+void string_free(string_t x)
+{
+    if (x.str)
+        free(x.str);
+    if (x.sym)
+        free(x.sym);
 }
 
 /** @} */
