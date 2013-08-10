@@ -1,6 +1,7 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2006 Stephen Toub 
+ *               2013  Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,6 +20,9 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_levenshtein</em>: Levenshtein distance for strings.
+ *
+ * Adapted from Stephen Toub's C# implementation. 
+ * http://blogs.msdn.com/b/toub/archive/2006/05/05/590814.aspx
  * @{
  */
 
@@ -41,12 +45,9 @@ void dist_levenshtein_config()
     const char *str;
 
     /* Costs */
-    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_ins",
-                        &cost_ins);
-    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_del",
-                        &cost_del);
-    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_sub",
-                        &cost_sub);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_ins", &cost_ins);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_del", &cost_del);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_sub", &cost_sub);
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_levenshtein.norm", &str);
@@ -65,7 +66,8 @@ void dist_levenshtein_config()
 }
 
 /**
- * Computes the Levenshtein distance of two strings. 
+ * Computes the Levenshtein distance of two strings. Adapted from 
+ * Stephen Toub's C# implementation.
  * @param x first string 
  * @param y second string
  * @return Levenshtein distance
@@ -114,7 +116,6 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
              * this implementation, as only two rows of the distance matrix
              * are available. Potential fix: provide three rows.
              */
-
             rows[next][j] = a;
         }
 
