@@ -17,9 +17,9 @@
 
 /* Module functions */
 void measure_config(const char *);
-double measure_compare(string_t *, string_t *);
+double measure_compare(string_t, string_t);
 void measure_delim_set(const char *s);
 void measure_delim_reset();
-void measure_symbolize(string_t *);
+void measure_symbolize(string_t);
 
 #endif /* MEASURES_H */

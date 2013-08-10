@@ -60,27 +60,26 @@ void dist_hamming_config()
  * @param y second string
  * @return Hamming distance
  */
-float dist_hamming_compare(string_t *x, string_t *y)
+float dist_hamming_compare(string_t x, string_t y)
 {
-    assert(x && y);
     float d = 0;
     int i;
 
     /* Loop over strings */
-    for (i = 0; i < x->len && i < y->len; i++)
-        if (x->sym[i] != y->sym[i])
+    for (i = 0; i < x.len && i < y.len; i++)
+        if (x.sym[i] != y.sym[i])
             d += 1;
 
     /* Add remaining characters as mismatches */
-    d += fabs(y->len - x->len);
+    d += fabs(y.len - x.len);
 
     switch (norm) {
     case NORM_MIN:
-        return d / fmin(x->len, y->len);
+        return d / fmin(x.len, y.len);
     case NORM_MAX:
-        return d / fmax(x->len, y->len);
+        return d / fmax(x.len, y.len);
     case NORM_AVG:
-        return d / (0.5 * (x->len + y->len));
+        return d / (0.5 * (x.len + y.len));
     case NORM_NONE:
     default:
         return d;

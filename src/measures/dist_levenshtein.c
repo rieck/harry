@@ -72,13 +72,12 @@ void dist_levenshtein_config()
  * @param y second string
  * @return Levenshtein distance
  */
-float dist_levenshtein_compare(string_t *x, string_t *y)
+float dist_levenshtein_compare(string_t x, string_t y)
 {
-    assert(x && y);
     float d = 0;
     int i, j, a, b;
 
-    if (x->len == 0 && y->len == 0)
+    if (x.len == 0 && y.len == 0)
         return 0;
 
     /* 
@@ -87,17 +86,17 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
      * has a length m+1, so just O(m) space.  Initialize the curr row.
      */
     int curr = 0, next = 1;
-    int rows[2][y->len + 1];
+    int rows[2][y.len + 1];
 
-    for (j = 0; j <= y->len; j++)
+    for (j = 0; j <= y.len; j++)
         rows[curr][j] = j;
 
-    /* For each virtual row (we ony->len have physical storage for two) */
-    for (i = 1; i <= x->len; i++) {
+    /* For each virtual row (we ony.len have physical storage for two) */
+    for (i = 1; i <= x.len; i++) {
 
         /* Fill in the values in the row */
         rows[next][0] = i;
-        for (j = 1; j <= y->len; j++) {
+        for (j = 1; j <= y.len; j++) {
 
             /* Insertion and deletion */
             a = rows[curr][j] + cost_ins;
@@ -106,8 +105,8 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
                 a = b;
 
             /* Substituion */
-            b = rows[curr][j - 1] + (x->sym[i - 1] ==
-                                     y->sym[j - 1] ? 0 : cost_sub);
+            b = rows[curr][j - 1] + (x.sym[i - 1] ==
+                                     y.sym[j - 1] ? 0 : cost_sub);
             if (a > b)
                 a = b;
 
@@ -131,11 +130,11 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
 
     switch (norm) {
     case NORM_MIN:
-        return rows[curr][y->len] / fmin(x->len, y->len);
+        return rows[curr][y.len] / fmin(x.len, y.len);
     case NORM_MAX:
-        return rows[curr][y->len] / fmax(x->len, y->len);
+        return rows[curr][y.len] / fmax(x.len, y.len);
     case NORM_AVG:
-        return rows[curr][y->len] / (0.5 * (x->len + y->len));
+        return rows[curr][y.len] / (0.5 * (x.len + y.len));
     case NORM_NONE:
     default:
         return d;
