@@ -71,26 +71,6 @@ respectively.  The default costs are 1.0 for each operation.
 
 =back
 
-=item B<kern_subseq> - Subsequence Kernel (SSK)
-
-This module implements the subsequence kernel (see Lohdi et al., 2002). The
-runtime complexity of a comparison is quadratic in the size of the The
-following parameters are supported:
-
-=over 4
-
-=item I<decay = 1.0;>
-
-This parameters defines the decay of the kernel computation. Large decays
-reduce the impact of longer subsequences. The default decay is 1.0.
-
-=item I<gap = 3.0;>
-
-This parameter specifies the maximum gap allowed within a subsequence. The
-default gap size is 3.0.
-
-=back
-
 =back
 
 =head1 CONFIGURATION
@@ -145,8 +125,6 @@ section for further details.
 R. W. Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
 
 V. I. Levenshtein. Binary codes capable of correcting dele- tions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163(4):845-848, 1966.
-
-H. Lodhi, C. Saunders, J. Shawe-Taylor, N. Cristianini, and C. Watkins. Text classification using string kernels. Journal of Machine Learning Research, 2:419-444, 2002.
 
 =head1 COPYRIGHT
 

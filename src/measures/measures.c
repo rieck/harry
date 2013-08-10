@@ -16,9 +16,13 @@
 
 #include "config.h"
 #include "common.h"
-#include "measures.h"
+#include "harry.h"
 #include "util.h"
 #include "input.h"
+#include "measures.h"
+
+/* Similarity measures */
+#include "dist_hamming.h"
 
 /**
  * Structure for measure interface
@@ -26,11 +30,9 @@
 typedef struct
 {
     /** Init function */
-    void (*measure_init) ();
+    void (*measure_config) ();
     /** Comparison function */
     float (*measure_compare) (string_t *, string_t *);
-    /** Free function */
-    void (*measure_free) (void *);
 } func_t;
 static func_t func;
 
@@ -44,32 +46,13 @@ static func_t func;
 static int measure_match(const char *str, const char *mod)
 {
     assert(str && mod);
-    char *c, *s;
     const char *name = mod;
 
     /* Match entire measure */
-    if(!strcasecmp(str, name))
+    if (!strcasecmp(str, name))
         return TRUE;
-        
-    /* Match last component of measure path */
-    c = strrchr(name, '.');
-    if (c && strlen(c) > 1) {
-        name = c + 1;
-        if (!strcasecmp(str, name))
-            return TRUE;
-    }
-    
-    /* Swap elements around first '_' */
-    c = strchr(name, '_');
-    if (c && strlen(c) > 1) {
-        s = strdup(name);
-        snprintf(s, strlen(name) + 1, "%s_%s", c + 1, name);
-        int match = !strcasecmp(str, s);
-        free(s);
-        if (match)
-            return TRUE;
-    }
-    
+
+    /* Add fuzzy matching */
     return FALSE;
 }
 
@@ -79,22 +62,15 @@ static int measure_match(const char *str, const char *mod)
  */
 void measure_config(const char *name)
 {
-    if (measure_match(name, "xxx")) {
-        func.measure_init = NULL;
-        func.measure_compare = NULL;
-        func.measure_free = NULL;
+    if (measure_match(name, "dist_hamming")) {
+        func.measure_config = dist_hamming_config;
+        func.measure_compare = dist_hamming_compare;
     } else {
-        error("Unknown measure '%s', using 'xxx' instead.", name);
-        measure_config("xxx");
+        error("Unknown measure '%s', using 'dist_hamming' instead.", name);
+        measure_config("dist_hamming");
     }
-}
 
-/**
- * Init comparison measure
- */
-void measure_init()
-{
-    func.measure_init();
+    func.measure_config();
 }
 
 /**
@@ -106,15 +82,6 @@ void measure_init()
 double measure_compare(string_t *x, string_t *y)
 {
     return func.measure_compare(x, y);
-}
-
-/**
- * Frees the memory of a similarity measure
- * @param x object
- */
-void measure_free(void *x)
-{
-    func.measure_free(x);
 }
 
 /** @} */

@@ -9,17 +9,14 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef DIST_EDIT_H
-#define DIST_EDIT_H
+#ifndef DIST_LEVENSHTEIN_H
+#define DIST_LEVENSHTEIN_H
 
-#ifdef HAVE_LIBCONFIG_H
-#include <libconfig.h>
-#endif
+/* Normalization */
+enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
 
 /* Module interface */
-void dist_edit_init(config_t *);
-double dist_edit_cmp(void *, void *);
-void *dist_edit_read(FILE *);
-void dist_edit_free(void *);
+void dist_levenshtein_config();
+double dist_levenshtein_compare(string_t *, string_t *);
 
-#endif /* DIST_EDIT_H */
+#endif /* DIST_LEVENSHTEIN_H */

@@ -5,7 +5,9 @@ AM_CPPFLAGS          	   = -I$(srcdir)/.. -I$(srcdir)/../input
 
 noinst_LTLIBRARIES         = libmeasures.la
 
-libmeasures_la_SOURCES     = measures.h measures.c 
+libmeasures_la_SOURCES     = measures.h measures.c \
+			     dist_hamming.c dist_hamming.h \
+			     dist_levenshtein.c dist_levenshtein.h
 
 beautify:
 			   gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \

@@ -8,76 +8,70 @@
  * option) any later version.  This program is distributed without any
  * warranty. See the GNU General Public License for more details. 
  */
-
 #include "config.h"
 #include "common.h"
-#include "strutil.h"
+#include "harry.h"
 #include "util.h"
+
+#include "dist_levenshtein.h"
 
 /**
  * @addtogroup strings
  * <hr>
- * <b>Module dist_edit</b>: Edit distance for strings.
- *
- * The module supports reading strings and computing their edit distance
- * (Levenshtein distance).  The strings need to be terminated by a newline
- * character and must not contain the NUL character.  Additionally, strings
- * must not start with 0xff in marker mode.  The distance is computed over
- * the characters of the strings.
- *  
- * @author Konrad Rieck (konrad@mlsec.org)
+ * <b>Module dist_levenshtein</b>: Levenshtein distance for strings.
+ * @author Konrad Rieck (konrad@mlsec.org) 
  * @{
  */
 
-/* Global configuration */
-enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
+/* Normalizations */
 static enum norm_type norm = NORM_NONE;
 static double cost_ins = 1.0;
 static double cost_del = 1.0;
 static double cost_sub = 1.0;
 
+/* External variables */
+extern config_t *cfg;
+
 /**
- * Initializes the module
- * @param c Configuration
+ * Initializes the similarity measure
  */
-void dist_edit_init(config_t *c)
+void dist_levenshtein_config()
 {
     const char *str;
 
     /* Costs */
-    config_lookup_float(c, "strings.dist_edit.cost_ins", &cost_ins);
-    config_lookup_float(c, "strings.dist_edit.cost_del", &cost_del);    
-    config_lookup_float(c, "strings.dist_edit.cost_sub", &cost_sub);
-    
+    config_lookup_float(cfg, "measures.dist_levenshtein.cost_ins", &cost_ins);
+    config_lookup_float(cfg, "measures.dist_levenshtein.cost_del", &cost_del);
+    config_lookup_float(cfg, "measures.dist_levenshtein.cost_sub", &cost_sub);
+
     /* Normalization */
-    config_lookup_string(c, "strings.dist_edit.norm", &str);    
+    config_lookup_string(cfg, "measures.dist_levenshtein.norm", &str);
     if (!strcasecmp(str, "none")) {
         norm = NORM_NONE;
     } else if (!strcasecmp(str, "min")) {
-	norm = NORM_MIN;
+        norm = NORM_MIN;
     } else if (!strcasecmp(str, "max")) {
-	norm = NORM_MAX;
+        norm = NORM_MAX;
     } else if (!strcasecmp(str, "avg")) {
-	norm = NORM_AVG;
+        norm = NORM_AVG;
     } else {
-	warning("Unknown norm '%s'. Using 'none' instead.", str);
+        warning("Unknown norm '%s'. Using 'none' instead.", str);
     }
 }
 
 /**
- * Computes the edit distance of two strings. Implementation adapted
- * from C# code by Stephen Toub.
+ * Computes the Levenshtein distance of two strings. 
  * @param x first string 
  * @param y second string
- * @return edit distance
+ * @return Levenshtein distance
  */
-double dist_edit_cmp(void *x, void *y)
+double dist_levenshtein_compare(string_t *x, string_t *y)
 {
     assert(x && y);
-    int i, j, a, b, lx = strlen(x), ly = strlen(y);
-    char *sx = (char *) x, *sy = (char *) y;
+    double d = 0;
+    int i, j, a, b;
 
-    if (lx == 0 && ly == 0)
+    if (x->len == 0 && y->len == 0)
         return 0;
     
     /* 
@@ -86,17 +80,17 @@ double dist_edit_cmp(void *x, void *y)
      * has a length m+1, so just O(m) space.  Initialize the curr row.
      */
     int curr = 0, next = 1;
-    int rows[2][ly + 1];
+    int rows[2][y->len + 1];
 
-    for (j = 0; j <= ly; j++)
+    for (j = 0; j <= y->len; j++)
         rows[curr][j] = j;
 
-    /* For each virtual row (we only have physical storage for two) */
-    for (i = 1; i <= lx; i++) {
+    /* For each virtual row (we ony->len have physical storage for two) */
+    for (i = 1; i <= x->len; i++) {
 
         /* Fill in the values in the row */
         rows[next][0] = i;
-        for (j = 1; j <= ly; j++) {
+        for (j = 1; j <= y->len; j++) {
         
             /* Insertion and deletion */
             a = rows[curr][j] + cost_ins;
@@ -105,7 +99,7 @@ double dist_edit_cmp(void *x, void *y)
                 a = b;
 
             /* Substituion */
-            b = rows[curr][j - 1] + (sx[i - 1] == sy[j - 1] ? 0 : cost_sub);
+            b = rows[curr][j - 1] + (x->sym[i - 1] == y->sym[j - 1] ? 0 : cost_sub);
             if (a > b)
                 a = b;
                 
@@ -128,38 +122,17 @@ double dist_edit_cmp(void *x, void *y)
         }
     }
 
-    switch(norm) {
+    switch (norm) {
     case NORM_MIN:
-	return (double) rows[curr][ly] / fmin(lx, ly);
+        return rows[curr][y->len] / fmin(x->len, y->len);
     case NORM_MAX:
-	return (double) rows[curr][ly] / fmax(lx, ly);
+        return rows[curr][y->len] / fmax(x->len, y->len);
     case NORM_AVG:
-	return (double) rows[curr][ly] / ( 0.5 * (lx + ly));
+        return rows[curr][y->len] / (0.5 * (x->len + y->len));
     case NORM_NONE:
     default:
-    	return (double) rows[curr][ly];
+        return d;
     }
-}
-
-/**
- * Reads a string from a file stream. Reading stops when a newline character
- * is found, at end-of-file or error.  The function allocates memory that
- * needs to be freed later using levensthein_free.
- * @param f file stream
- * @return string
- */
-void *dist_edit_read(FILE *f)
-{
-    return str_read(f);
-}
-
-/**
- * Frees the memory of a string. 
- * @param x string
- */
-void dist_edit_free(void *x)
-{
-    str_free(x);
 }
 
 /** @} */

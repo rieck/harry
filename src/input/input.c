@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "common.h"
+#include "harry.h"
 #include "util.h"
 #include "input.h"
 
@@ -130,6 +131,8 @@ void input_free(string_t *strs, int len)
             free(strs[j].src);
         if (strs[j].str)
             free(strs[j].str);
+        if (strs[j].sym)
+            free(strs[j].sym);
     }
 }
 

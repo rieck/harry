@@ -12,12 +12,8 @@
 #ifndef MEASURES_H
 #define MEASURES_H
 
-#include "input.h"
-
 /* Module functions */
 void measure_config(const char *);
-void measure_init();
 double measure_compare(string_t *, string_t *);
-void measure_free(void *);
 
 #endif /* MEASURES_H */

@@ -8,110 +8,82 @@
  * option) any later version.  This program is distributed without any
  * warranty. See the GNU General Public License for more details. 
  */
-
 #include "config.h"
 #include "common.h"
-#include "strutil.h"
+#include "harry.h"
 #include "util.h"
+
+#include "dist_hamming.h"
 
 /**
  * @addtogroup strings
  * <hr>
  * <b>Module dist_hamming</b>: Hamming distance for strings.
- *
- * The module contains supports reading strings and computing their Hamming
- * distance.  The strings need to be terminated by a newline character and
- * must not contain the NUL character.  Additionally, strings must not start
- * with 0xff in marker mode.  The distance is computed over the characters
- * of the strings.
- * 
  * @author Konrad Rieck (konrad@mlsec.org) 
  * @{
  */
 
-/* Global configuration */
-enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
+/* Normalizations */
 static enum norm_type norm = NORM_NONE;
 
+/* External variables */
+extern config_t *cfg;
+
 /**
- * Initializes the module
- * @param c Configuration
+ * Initializes the similarity measure
  */
-void dist_hamming_init(config_t *c)
+void dist_hamming_config()
 {
     const char *str;
 
     /* Normalization */
-    config_lookup_string(c, "strings.dist_hamming.norm", &str);    
+    config_lookup_string(cfg, "measures.dist_hamming.norm", &str);
     if (!strcasecmp(str, "none")) {
         norm = NORM_NONE;
     } else if (!strcasecmp(str, "min")) {
-	norm = NORM_MIN;
+        norm = NORM_MIN;
     } else if (!strcasecmp(str, "max")) {
-	norm = NORM_MAX;
+        norm = NORM_MAX;
     } else if (!strcasecmp(str, "avg")) {
-	norm = NORM_AVG;
+        norm = NORM_AVG;
     } else {
-	warning("Unknown norm '%s'. Using 'none' instead.", str);
+        warning("Unknown norm '%s'. Using 'none' instead.", str);
     }
 }
 
-
 /**
  * Computes the Hamming distance of two strings. If the strings have
- * different lengths, the remaining characters of the longer string are
+ * different lengths, the remaining symbols of the longer string are
  * considered mismatches.
  * @param x first string 
  * @param y second string
  * @return Hamming distance
  */
-double dist_hamming_cmp(void *x, void *y)
+double dist_hamming_compare(string_t *x, string_t *y)
 {
     assert(x && y);
     double d = 0;
-    int i, lx = strlen(x), ly = strlen(y);
+    int i;
 
     /* Loop over strings */
-    for (i = 0; i < lx && i < ly; i++)
-        if (((char *) x)[i] != ((char *) y)[i])
+    for (i = 0; i < x->len && i < y->len; i++)
+        if (x->sym[i] != y->sym[i])
             d += 1;
 
     /* Add remaining characters as mismatches */
-    if (lx != ly)
-        d += fabs(lx - ly);
+    d += fabs(y->len - x->len);
 
-    switch(norm) {
+    switch (norm) {
     case NORM_MIN:
-	return d / fmin(lx, ly);
+        return d / fmin(x->len, y->len);
     case NORM_MAX:
-	return d / fmax(lx, ly);
+        return d / fmax(x->len, y->len);
     case NORM_AVG:
-	return d / ( 0.5 * (lx + ly));
+        return d / (0.5 * (x->len + y->len));
     case NORM_NONE:
     default:
-    	return d;
+        return d;
     }
-}
-
-/**
- * Reads a string from a file stream. Reading stops when a newline character
- * is found, at end-of-file or error.  The function allocates memory that
- * needs to be freed later using dist_hamming_free.  
- * @param f file stream 
- * @return string
- */
-void *dist_hamming_read(FILE *f)
-{
-    return str_read(f);
-}
-
-/**
- * Frees the memory of a string. 
- * @param x string
- */
-void dist_hamming_free(void *x)
-{
-    str_free(x);
 }
 
 /** @} */

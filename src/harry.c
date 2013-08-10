@@ -202,7 +202,6 @@ static void harry_init()
     /* Configure module */
     config_lookup_string(&cfg, "measures.type", &str);
     measure_config(str);
-    measure_init();
 }
 
 /**

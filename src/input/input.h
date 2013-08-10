@@ -12,17 +12,6 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-/**
- * Structure for a string
- */
-typedef struct
-{
-    char *str;                  /* String data (not necessary c-style) */
-    int len;                    /* Length of string */
-    char *src;			/* Optional source of string */
-    size_t idx;                 /* Optional index of string */
-} string_t;
-
 /* Configuration */
 void input_config(const char *);
 void input_free(string_t *strs, int len);

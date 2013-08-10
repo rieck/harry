@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "common.h"
+#include "harry.h"
 #include "util.h"
 
 #ifdef ENABLE_LIBARCHIVE

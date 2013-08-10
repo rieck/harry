@@ -12,14 +12,11 @@
 #ifndef DIST_HAMMING_H
 #define DIST_HAMMING_H
 
-#ifdef HAVE_LIBCONFIG_H
-#include <libconfig.h>
-#endif
+/* Normalization */
+enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
 
 /* Module interface */
-void dist_hamming_init(config_t *c);
-double dist_hamming_cmp(void *, void *);
-void *dist_hamming_read(FILE *);
-void dist_hamming_free(void *);
+void dist_hamming_config();
+double dist_hamming_compare(string_t *, string_t *);
 
 #endif /* DIST_HAMMING_H */
