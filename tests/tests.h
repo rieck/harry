@@ -9,29 +9,25 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#include "config.h"
-#include "common.h"
-#include "default.h"
-#include "util.h"
-#include "tests.h"
+#ifndef TESTS_H
+#define TESTS_H
 
-/* Global variables */
-int verbose = 0;
-config_t cfg;
+/* Macros for faking a configuration */
+#define config_set_string(c,x,s) \
+      config_setting_set_string(config_lookup(c,x),s)
+#define config_set_int(c,x,s) \
+      config_setting_set_int(config_lookup(c,x),s)
+#define config_set_float(c,x,s) \
+      config_setting_set_float(config_lookup(c,x),s)
 
-/**
- * Main test function
+/*
+ * Structure for testing string kernels/distances
  */
-int main(int argc, char **argv)
+struct str_cmp
 {
-    int err = FALSE;
+    char *x;
+    char *y;
+    double v;
+};
 
-    config_init(&cfg);
-    config_check(&cfg);
-
-    err |= FALSE;
-
-    config_destroy(&cfg);
-
-    return err;
-}
+#endif /* TESTS_H */

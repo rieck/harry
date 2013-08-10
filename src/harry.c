@@ -9,8 +9,6 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#error alpha_dont_use_harry
-
 #include "config.h"
 #include "common.h"
 #include "harry.h"

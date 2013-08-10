@@ -34,3 +34,4 @@ stamp-h1
 check_*
 CHANGES
 test-driver
+tests/*.log
