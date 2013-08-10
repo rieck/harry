@@ -26,11 +26,11 @@ typedef uint16_t sym_t;
  */
 typedef struct
 {
-    char *str;                /* String data (not necessary c-style) */
-    sym_t *sym;		      /* Symbol representation */
-    int len;                  /* Length of string */
-    char *src;		      /* Optional source of string */
-    size_t idx;               /* Optional index of string */
+    char *str;                /**< String data (not necessary c-style) */
+    sym_t *sym;               /**< Symbol representation */
+    int len;                  /**< Length of string */
+    char *src;                /**< Optional source of string */
+    size_t idx;               /**< Optional index of string */
 } string_t;
 
 

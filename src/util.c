@@ -281,7 +281,7 @@ int decode_str(char *str)
 int strip_newline(char *str, int len)
 {
     int k;
-    static char strip[256] = {0};
+    static char strip[256] = { 0 };
     strip[(int) '\n'] = 1;
     strip[(int) '\r'] = 1;
 
@@ -292,7 +292,7 @@ int strip_newline(char *str, int len)
             break;
         }
     }
-    
+
     str[k + 1] = 0x00;
     return k + 1;
 }

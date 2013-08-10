@@ -12,9 +12,6 @@
 #ifndef DIST_LEVENSHTEIN_H
 #define DIST_LEVENSHTEIN_H
 
-/* Normalization */
-enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
-
 /* Module interface */
 void dist_levenshtein_config();
 float dist_levenshtein_compare(string_t *, string_t *);

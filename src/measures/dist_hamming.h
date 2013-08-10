@@ -12,9 +12,6 @@
 #ifndef DIST_HAMMING_H
 #define DIST_HAMMING_H
 
-/* Normalization */
-enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
-
 /* Module interface */
 void dist_hamming_config();
 float dist_hamming_compare(string_t *, string_t *);

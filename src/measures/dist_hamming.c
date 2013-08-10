@@ -23,10 +23,12 @@
  */
 
 /* Normalizations */
+enum norm_type
+{ NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
 static enum norm_type norm = NORM_NONE;
 
 /* External variables */
-extern config_t *cfg;
+extern config_t cfg;
 
 /**
  * Initializes the similarity measure
@@ -36,7 +38,7 @@ void dist_hamming_config()
     const char *str;
 
     /* Normalization */
-    config_lookup_string(cfg, "measures.dist_hamming.norm", &str);
+    config_lookup_string(&cfg, "measures.dist_hamming.norm", &str);
     if (!strcasecmp(str, "none")) {
         norm = NORM_NONE;
     } else if (!strcasecmp(str, "min")) {

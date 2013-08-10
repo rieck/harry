@@ -145,26 +145,26 @@ void stopwords_load(const char *file)
     FILE *f;
 
     info_msg(1, "Loading stop words from '%s'.", file);
-    if (!(f = fopen(file, "r"))) 
+    if (!(f = fopen(file, "r")))
         fatal("Could not read stop word file %s", file);
-    
+
     /* Read stop words */
-    while(fgets(buf, 1024, f)) {
+    while (fgets(buf, 1024, f)) {
         int len = strip_newline(buf, strlen(buf));
         if (len <= 0)
             continue;
 
         /* Decode URI-encoding */
         decode_str(buf);
-            
+
         /* Add stop word to hash table */
         stopword_t *word = malloc(sizeof(stopword_t));
         word->hash = hash_str(buf, len);
-        HASH_ADD(hh, stopwords, hash, sizeof(uint64_t), word); 
+        HASH_ADD(hh, stopwords, hash, sizeof(uint64_t), word);
     }
     fclose(f);
 }
- 
+
 /**
  * Destroy stop words table
  */
@@ -172,7 +172,7 @@ void stopwords_destroy()
 {
     stopword_t *s;
 
-    while(stopwords) {
+    while (stopwords) {
         s = stopwords;
         HASH_DEL(stopwords, s);
         free(s);
@@ -188,36 +188,36 @@ void stopwords_destroy()
 int stopwords_filter(char *str, int len)
 {
     int i, k, start = -1;
-    stopword_t* found;
-    
+    stopword_t *found;
+
     for (i = 0, k = 0; i < len; i++) {
-    
+
         int dlm = delim[(int) str[i]];
         int end = (i == len - 1);
-    
+
         /* Start of word */
-        if (start == -1 && !dlm) 
+        if (start == -1 && !dlm)
             start = i;
-        
+
         /* End of word */
         if (start != -1 && (dlm || end)) {
             int len = (i - start) + (end ? 1 : 0);
             uint64_t hash = hash_str(str + start, len);
-            
+
             /* Check for stop word and copy if not */
             HASH_FIND(hh, stopwords, &hash, sizeof(uint64_t), found);
             if (!found) {
                 memcpy(str + k, str + start, len);
                 k += len;
             }
-                
+
             start = -1;
         }
-    
-        /* Always copy delimiter. Keep consecutive delimiters. */    
-        if (dlm) 
+
+        /* Always copy delimiter. Keep consecutive delimiters. */
+        if (dlm)
             str[k++] = str[i];
-    } 
+    }
 
     return k;
 }
@@ -232,21 +232,21 @@ void input_preproc(string_t *strs, int len)
 
     config_lookup_int(&cfg, "input.decode_str", &decode);
     config_lookup_int(&cfg, "input.reverse_str", &reverse);
-    
+
     for (j = 0; j < len; j++) {
         if (decode) {
             strs[j].len = decode_str(strs[j].str);
-            strs[j].str = (char*) realloc(strs[j].str, strs[j].len);
+            strs[j].str = (char *) realloc(strs[j].str, strs[j].len);
         }
-        
+
         if (reverse) {
             for (i = 0, k = strs[j].len - 1; i < k; i++, k--) {
                 c = strs[j].str[i];
                 strs[j].str[i] = strs[j].str[k];
                 strs[j].str[k] = c;
-            }      
+            }
         }
-        
+
         if (stopwords) {
             strs[j].len = stopwords_filter(strs[j].str, strs[j].len);
         }

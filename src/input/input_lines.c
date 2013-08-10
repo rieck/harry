@@ -44,16 +44,17 @@ int input_lines_open(char *name)
         return -1;
     }
 
-    /* Count lines in file (I hope this is buffered)*/
+    /* Count lines in file (I hope this is buffered) */
     int c = -1, prev, num_lines = 0;
     do {
         prev = c;
         c = gzgetc(in);
         if (c == '\n')
             num_lines++;
-    } while(c != -1);
+    } while (c != -1);
 
-    if (prev >= 0 && prev != '\n') num_lines++;
+    if (prev >= 0 && prev != '\n')
+        num_lines++;
 
     /* Prepare reading */
     gzrewind(in);
@@ -76,17 +77,17 @@ int input_lines_read(string_t *strs, int len)
     char buf[32], *line = NULL;
 
     for (i = 0; i < len; i++) {
-#ifdef ENABLE_EVALTIME 
-        double t1 = time_stamp();   
-#endif    
-    
+#ifdef ENABLE_EVALTIME
+        double t1 = time_stamp();
+#endif
+
         line = NULL;
         read = gzgetline(&line, &size, in);
         if (read == -1) {
             free(line);
             break;
         }
-        
+
         /* Strip newline characters */
         strip_newline(line, read);
 
@@ -98,9 +99,9 @@ int input_lines_read(string_t *strs, int len)
         strs[j].idx = j;
         j++;
 
-#ifdef ENABLE_EVALTIME 
-        printf("strlen %d read %f\n", strs[j-1].len, time_stamp() - t1);
-#endif    
+#ifdef ENABLE_EVALTIME
+        printf("strlen %d read %f\n", strs[j - 1].len, time_stamp() - t1);
+#endif
     }
 
     return j;
@@ -115,4 +116,3 @@ void input_lines_close()
 }
 
 /** @} */
-

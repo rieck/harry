@@ -39,11 +39,11 @@ static struct option longopts[] = {
     {"input_format", 1, NULL, 'i'},
     {"decode_str", 1, NULL, 1000},
     {"reverse_str", 1, NULL, 1001},
-    {"stopword_file", 1, NULL, 1002}, /* <- last entry */
-    {"output_format", 1, NULL, 'o'},     
+    {"stopword_file", 1, NULL, 1002},   /* <- last entry */
+    {"output_format", 1, NULL, 'o'},
     {"type", 1, NULL, 't'},
     {"delim", 1, NULL, 'd'},
-    {"config_file", 1, NULL, 'c'},    
+    {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
@@ -81,7 +81,7 @@ static void print_config(char *msg)
 static void print_usage(void)
 {
     printf("Usage: harry [options] <input> <output>\n"
-	   "\nI/O options\n"
+           "\nI/O options\n"
            "  -i,  --input_format <format>   Set input format for strings.\n"
            "       --decode_str <0|1>        Enable URI-decoding of strings.\n"
            "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
@@ -126,9 +126,9 @@ static void harry_parse_options(int argc, char **argv)
         case 'c':
             /* Skip. See harry_load_config(). */
             break;
-	case 'i':
-	    config_set_string(&cfg, "input.input_format", optarg);
-	    break;
+        case 'i':
+            config_set_string(&cfg, "input.input_format", optarg);
+            break;
         case 1000:
             config_set_int(&cfg, "input.decode_str", atoi(optarg));
             break;
@@ -255,11 +255,15 @@ static void harry_init()
     if (verbose > 1)
         config_print(&cfg);
 
+    /* Configure module (init as first) */
+    config_lookup_string(&cfg, "measures.type", &cfg_str);
+    measure_config(cfg_str);
+    info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
+
     /* Load stop words */
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
         stopwords_load(cfg_str);
-
 
     /* Open input */
     config_lookup_string(&cfg, "input.input_format", &cfg_str);
@@ -269,10 +273,10 @@ static void harry_init()
     if (num < 0)
         fatal("Could not open input source");
 
-    /* Configure module */
-    config_lookup_string(&cfg, "measures.type", &cfg_str);
-    measure_config(cfg_str);
-    info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
+    /* Allocate memory for strings */
+    strings = calloc(num, sizeof(string_t));
+    if (!strings)
+        fatal("Could not allocate memory for strings");
 
     /* Open output */
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
@@ -280,11 +284,15 @@ static void harry_init()
     info_msg(1, "Opening '%0.40s' with output module '%s'.", output, cfg_str);
     if (!output_open(output))
         fatal("Could not open output destination");
-
 }
 
 static void harry_load()
 {
+    long read;
+
+    read = input_read(strings, num);
+    if (read <= 0)
+        fatal("Failed to read strings from input '%s'", input);
 }
 
 static void harry_save()
@@ -297,6 +305,7 @@ static void harry_save()
 static void harry_exit()
 {
     const char *cfg_str;
+    long i;
 
     info_msg(1, "Flushing. Closing input and output.");
     input_close();
@@ -308,6 +317,17 @@ static void harry_exit()
 
     /* Destroy configuration */
     config_destroy(&cfg);
+
+    /* Clean memory */
+    if (strings) {
+        for (i = 0; i < num; i++) {
+            if (strings[i].str)
+                free(strings[i].str);
+            if (strings[i].sym)
+                free(strings[i].sym);
+        }
+        free(strings);
+    }
 }
 
 /**
@@ -320,10 +340,12 @@ int main(int argc, char **argv)
 {
     harry_load_config(argc, argv);
     harry_parse_options(argc, argv);
-    harry_init();
-    
-    #error HARRY_IS_STILL_PRE_ALPHA_;)_
 
+    harry_init();
+    harry_load();
+
+    harry_save();
     harry_exit();
+
     return EXIT_SUCCESS;
 }

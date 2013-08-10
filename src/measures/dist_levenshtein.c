@@ -23,13 +23,15 @@
  */
 
 /* Normalizations */
+enum norm_type
+{ NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
 static enum norm_type norm = NORM_NONE;
 static double cost_ins = 1.0;
 static double cost_del = 1.0;
 static double cost_sub = 1.0;
 
 /* External variables */
-extern config_t *cfg;
+extern config_t cfg;
 
 /**
  * Initializes the similarity measure
@@ -39,12 +41,16 @@ void dist_levenshtein_config()
     const char *str;
 
     /* Costs */
-    config_lookup_float(cfg, "measures.dist_levenshtein.cost_ins", &cost_ins);
-    config_lookup_float(cfg, "measures.dist_levenshtein.cost_del", &cost_del);
-    config_lookup_float(cfg, "measures.dist_levenshtein.cost_sub", &cost_sub);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_ins",
+                        &cost_ins);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_del",
+                        &cost_del);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_sub",
+                        &cost_sub);
 
     /* Normalization */
-    config_lookup_string(cfg, "measures.dist_levenshtein.norm", &str);
+    config_lookup_string(&cfg, "measures.dist_levenshtein.norm", &str);
+
     if (!strcasecmp(str, "none")) {
         norm = NORM_NONE;
     } else if (!strcasecmp(str, "min")) {
@@ -72,7 +78,7 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
 
     if (x->len == 0 && y->len == 0)
         return 0;
-    
+
     /* 
      * Rather than maintain an entire matrix (which would require O(n*m)
      * space), just store the current row and the next row, each of which
@@ -90,7 +96,7 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
         /* Fill in the values in the row */
         rows[next][0] = i;
         for (j = 1; j <= y->len; j++) {
-        
+
             /* Insertion and deletion */
             a = rows[curr][j] + cost_ins;
             b = rows[next][j - 1] + cost_del;
@@ -98,10 +104,11 @@ float dist_levenshtein_compare(string_t *x, string_t *y)
                 a = b;
 
             /* Substituion */
-            b = rows[curr][j - 1] + (x->sym[i - 1] == y->sym[j - 1] ? 0 : cost_sub);
+            b = rows[curr][j - 1] + (x->sym[i - 1] ==
+                                     y->sym[j - 1] ? 0 : cost_sub);
             if (a > b)
                 a = b;
-                
+
             /* 
              * Transpositions (Damerau-Levenshtein) are not supported by
              * this implementation, as only two rows of the distance matrix

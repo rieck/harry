@@ -44,7 +44,7 @@ void prog_bar(long, long, long);
 size_t gzgetline(char **s, size_t * n, gzFile f);
 void strtrim(char *x);
 int decode_str(char *str);
-uint64_t hash_str(char *s, int l); 
+uint64_t hash_str(char *s, int l);
 int strip_newline(char *s, int l);
 
 #endif /* UTIL_H */
