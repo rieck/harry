@@ -67,4 +67,10 @@ This feature enables support for OpenMP in Harry. The loading of strings and
 the computation of similarity measures will be distributed across multiple
 cores if possible.
 
+    --enable-md5hash        Enable MD5 as alternative hash
+
+Sally uses a hash function for mapping words to symbols. By default the very
+efficient Murmur hash is used for this task.  In certain critical cases it
+may be useful to use a cryptographic hash as MD5.
+
 Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)

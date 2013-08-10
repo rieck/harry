@@ -321,6 +321,8 @@ int main(int argc, char **argv)
     harry_load_config(argc, argv);
     harry_parse_options(argc, argv);
     harry_init();
+    
+    #error HARRY_IS_STILL_PRE_ALPHA_;)_
 
     harry_exit();
     return EXIT_SUCCESS;
