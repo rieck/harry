@@ -105,8 +105,8 @@ int input_arc_read(str_t *strs, int len)
             }
 
             /* Add entry */
-            strs[j].str = malloc(archive_entry_size(entry) * sizeof(char));
-            archive_read_data(a, strs[j].str, archive_entry_size(entry));
+            strs[j].str.c = malloc(archive_entry_size(entry) * sizeof(char));
+            archive_read_data(a, strs[j].str.c, archive_entry_size(entry));
             strs[j].src = strdup(archive_entry_pathname(entry));
             strs[j].len = archive_entry_size(entry);
 	    strs[j].idx = j;

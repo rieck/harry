@@ -229,20 +229,20 @@ void input_preproc(str_t *strs, int len)
 
     for (j = 0; j < len; j++) {
         if (decode) {
-            strs[j].len = decode_str(strs[j].str);
-            strs[j].str = (char *) realloc(strs[j].str, strs[j].len);
+            strs[j].len = decode_str(strs[j].str.c);
+            strs[j].str.c = (char *) realloc(strs[j].str.c, strs[j].len);
         }
 
         if (reverse) {
             for (i = 0, k = strs[j].len - 1; i < k; i++, k--) {
-                c = strs[j].str[i];
-                strs[j].str[i] = strs[j].str[k];
-                strs[j].str[k] = c;
+                c = strs[j].str.c[i];
+                strs[j].str.c[i] = strs[j].str.c[k];
+                strs[j].str.c[k] = c;
             }
         }
 
         if (stopwords) {
-            strs[j].len = stopwords_filter(strs[j].str, strs[j].len);
+            strs[j].len = stopwords_filter(strs[j].str.c, strs[j].len);
         }
     }
 }

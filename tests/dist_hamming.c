@@ -44,7 +44,7 @@ struct str_test tests[] = {
     /* further test cases */
     {"abcd", "axcy", "", 2},
     {"abc", "axcy", "", 2},
-    {"abcd", "xcy", "", 3},
+    {"abcd", "xcy", "", 4},
     {".x.y.", ".x.y.", ".", 0},
     {"x...y..", "...x..y", ".", 0},
     {".x.y", "x.y.", ".", 0},
@@ -74,10 +74,10 @@ int test_compare()
             printf("Error %f != %f\n", d, tests[i].v);
             str_print(x);
             str_print(y);
-            err = TRUE;
 #else      
             printf("E");  
 #endif            
+            err = TRUE;
         }
         
         str_free(x);

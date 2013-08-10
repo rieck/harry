@@ -33,10 +33,10 @@ char delim[256] = { DELIM_NOT_INIT };
  */
 void str_free(str_t x)
 {
-    if (x.str)
-        free(x.str);
-    if (x.sym)
-        free(x.sym);
+    if (x.flags == STR_CHR && x.str.c) 
+        free(x.str.c);
+    if (x.flags == STR_SYM && x.str.s) 
+        free(x.str.s);
     if (x.src)
         free(x.src);
 }
@@ -50,20 +50,21 @@ void str_print(str_t x)
     int i;
 
     printf("str_t\nlen:%d; idx:%ld; src:%s\n", x.len, x.idx, x.src);
-    if (x.str) {
+
+    if (x.flags == STR_CHR && x.str.c) {
         printf("str:");
         for (i = 0; i < x.len; i++)
-            if (isprint(x.str[i]))
-                printf("%c", x.str[i]);
+            if (isprint(x.str.c[i]))
+                printf("%c", x.str.c[i]);
             else
-                printf("%%%.2x", x.str[i]);
+                printf("%%%.2x", x.str.c[i]);
         printf("\n");
     }
 
-    if (x.sym) {
+    if (x.flags == STR_SYM && x.str.s) {
         printf("sym:");
         for (i = 0; i < x.len; i++)
-            printf("%d ", x.sym[i]);
+            printf("%d ", x.str.s[i]);
         printf("\n");
     }
 }
@@ -123,51 +124,47 @@ str_t str_symbolize(str_t x)
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
 
-    x.sym = malloc(x.len * sizeof(sym_t));
-    if (!x.sym) {
+    sym_t *sym = malloc(x.len * sizeof(sym_t));
+    if (!sym) {
         error("Failed to allocate memory for symbols");
         return x;
     }
 
     if (delim[0] == DELIM_NOT_INIT) {
         for (i = 0; i < x.len; i++)
-            x.sym[i] = (sym_t) x.str[i];
+            sym[i] = (sym_t) x.str.c[i];
     } else {
         /* Find first delimiter symbol */
         for (dlm = 0; !delim[(unsigned char) dlm] && dlm < 256; dlm++);
 
         /* Remove redundant delimiters */
         for (i = 0, j = 0; i < x.len; i++) {
-            if (delim[(unsigned char) x.str[i]]) {
-                if (j == 0 || delim[(unsigned char) x.str[j - 1]])
+            if (delim[(unsigned char) x.str.c[i]]) {
+                if (j == 0 || delim[(unsigned char) x.str.c[j - 1]])
                     continue;
-                x.str[j++] = (char) dlm;
+                x.str.c[j++] = (char) dlm;
             } else {
-                x.str[j++] = x.str[i];
+                x.str.c[j++] = x.str.c[i];
             }
         }
 
         /* Extract words */
         for (wstart = i = 0; i < j + 1; i++) {
             /* Check for delimiters and remember start position */
-            if ((i == j || x.str[i] == dlm) && i - wstart > 0) {
-                uint64_t hash = hash_str(x.str + wstart, i - wstart);
-                x.sym[k++] = (sym_t) hash;
+            if ((i == j || x.str.c[i] == dlm) && i - wstart > 0) {
+                uint64_t hash = hash_str(x.str.c + wstart, i - wstart);
+                sym[k++] = (sym_t) hash;
                 wstart = i + 1;
             }
         }
         x.len = k;
-        
-        /* Condense memory */
-        sym_t *sym = malloc(x.len * sizeof(sym_t));
-        memcpy(sym, x.sym, x.len * sizeof(sym_t));
-        free(x.sym);
-        x.sym = sym;
+        sym = realloc(sym, x.len * sizeof(sym_t));
     }
 
-    /* Free original string to save space. */
-    free(x.str);
-    x.str = NULL;
+    /* Change representation */
+    free(x.str.c);
+    x.str.s = sym;
+    x.flags = STR_SYM;
     
     return x;
 }
@@ -180,9 +177,9 @@ str_t str_symbolize(str_t x)
  */
 str_t str_convert(str_t x, char *s)
 {
-    x.str = strdup(s);
+    x.str.c = strdup(s);
+    x.flags = STR_CHR;
     x.len = strlen(s);
-    x.sym = NULL;
     x.idx = 0;
     x.src = NULL;
     

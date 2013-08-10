@@ -75,10 +75,10 @@ int test_compare()
             printf("Error %f != %f\n", d, tests[i].v);
             str_print(x);
             str_print(y);
-            err = TRUE;
 #else      
             printf("E");  
 #endif            
+            err = TRUE;
         }
         
         str_free(x);

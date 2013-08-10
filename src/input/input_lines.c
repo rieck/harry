@@ -91,7 +91,7 @@ int input_lines_read(str_t *strs, int len)
 
         /* Strip newline characters */
         strip_newline(line, read);
-        strs[j].str = line;
+        strs[j].str.c = line;
         strs[j].len = strlen(line);
 
         snprintf(buf, 32, "line%d", line_num++);

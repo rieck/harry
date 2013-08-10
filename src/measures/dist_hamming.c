@@ -67,7 +67,7 @@ float dist_hamming_compare(str_t x, str_t y)
 
     /* Loop over strings */
     for (i = 0; i < x.len && i < y.len; i++)
-        if (x.sym[i] != y.sym[i])
+        if (x.str.s[i] != y.str.s[i])
             d += 1;
 
     /* Add remaining characters as mismatches */

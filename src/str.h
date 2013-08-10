@@ -20,16 +20,23 @@
  */
 typedef uint16_t sym_t;
 
+#define STR_CHR		0x00
+#define STR_SYM		0x01
+
 /**
  * Structure for a string
  */
 typedef struct
 {
-    char *str;                /**< String data (not necessary c-style) */
-    sym_t *sym;               /**< Symbol representation */
+    union {
+        char *c;              /**< String data (not necessary c-style) */
+        sym_t *s;             /**< Symbol representation */
+    } str;
     int len;                  /**< Length of string */
+    char flags;	      	      /**< Flags of structure */
     char *src;                /**< Optional source of string */
     size_t idx;               /**< Optional index of string */
+    
 } str_t;
 
 void str_free(str_t);

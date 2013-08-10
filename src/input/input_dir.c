@@ -91,7 +91,7 @@ int input_dir_read(str_t *strs, int len)
         if (dp->d_type != DT_REG && dp->d_type != DT_LNK)
             goto skip;
 
-        strs[j].str = load_file(path, dp->d_name, &l);
+        strs[j].str.c = load_file(path, dp->d_name, &l);
         strs[j].src = strdup(dp->d_name);
         strs[j].len = l;
         strs[j].idx = j;
