@@ -274,10 +274,9 @@ static void harry_init()
         fatal("Could not open input source");
 
     /* Allocate memory for strs */
-    strs = alloca(num * sizeof(str_t));
+    strs = calloc(num, sizeof(str_t));
     if (!strs)
         fatal("Could not allocate memory for strs");
-    memset(strs, 0, num * sizeof(str_t));
 
     /* Open output */
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
@@ -292,14 +291,14 @@ static void harry_load()
     long read;
     int i;
 
-#if 0
     read = input_read(strs, num);
     if (read <= 0)
         fatal("Failed to read strs from input '%s'", input);
         
-    for (i = 0; i < num; i++)
+    for (i = 0; i < num; i++) {
+        strs[i] = str_symbolize(strs[i]);
         str_print(strs[i]);
-#endif        
+    }
 }
 
 static void harry_save()
@@ -318,8 +317,9 @@ static void harry_exit()
     output_close();
     
     /* Free memory */
-    //input_free(strs, num);
-
+    input_free(strs, num);
+    free(strs);
+    
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
         stopwords_destroy();
