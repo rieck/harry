@@ -60,7 +60,7 @@ void dist_hamming_config()
  * @param y second string
  * @return Hamming distance
  */
-float dist_hamming_compare(string_t x, string_t y)
+float dist_hamming_compare(str_t x, str_t y)
 {
     float d = 0;
     int i;

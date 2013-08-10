@@ -12,8 +12,10 @@
 #ifndef DIST_LEVENSHTEIN_H
 #define DIST_LEVENSHTEIN_H
 
+#include "str.h"
+
 /* Module interface */
 void dist_levenshtein_config();
-float dist_levenshtein_compare(string_t, string_t);
+float dist_levenshtein_compare(str_t, str_t);
 
 #endif /* DIST_LEVENSHTEIN_H */

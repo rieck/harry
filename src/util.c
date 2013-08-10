@@ -323,16 +323,4 @@ uint64_t hash_str(char *s, int l)
     return ret;
 }
 
-/**
- * Free memory of the string structure
- * @param x string structure
- */
-void string_free(string_t x)
-{
-    if (x.str)
-        free(x.str);
-    if (x.sym)
-        free(x.sym);
-}
-
 /** @} */

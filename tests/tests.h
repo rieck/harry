@@ -23,11 +23,12 @@
 /*
  * Structure for testing string kernels/distances
  */
-struct str_cmp
+struct str_test
 {
     char *x;
     char *y;
-    double v;
+    char *delim;
+    float v;
 };
 
 #endif /* TESTS_H */

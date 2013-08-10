@@ -38,7 +38,7 @@
 typedef struct
 {
     int (*input_open) (char *);
-    int (*input_read) (string_t *, int);
+    int (*input_read) (str_t *, int);
     void (*input_close) (void);
 } func_t;
 static func_t func;
@@ -104,7 +104,7 @@ int input_open(char *name)
  * @param len Length of allocated arrays
  * @return Number of read strings
  */
-int input_read(string_t *strs, int len)
+int input_read(str_t *strs, int len)
 {
     return func.input_read(strs, len);
 }
@@ -120,19 +120,13 @@ void input_close(void)
 /**
  * Free a chunk of input strings
  */
-void input_free(string_t *strs, int len)
+void input_free(str_t *strs, int len)
 {
     assert(strs);
 
     int j;
-    for (j = 0; j < len; j++) {
-        if (strs[j].src)
-            free(strs[j].src);
-        if (strs[j].str)
-            free(strs[j].str);
-        if (strs[j].sym)
-            free(strs[j].sym);
-    }
+    for (j = 0; j < len; j++) 
+        str_free(strs[j]);
 }
 
 /**
@@ -225,7 +219,7 @@ int stopwords_filter(char *str, int len)
 /** 
  * In-place pre-processing of strings
  */
-void input_preproc(string_t *strs, int len)
+void input_preproc(str_t *strs, int len)
 {
     assert(strs);
     int decode, reverse, c, i, j, k;

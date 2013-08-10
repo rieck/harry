@@ -12,9 +12,11 @@
 #ifndef INPUT_FASTA_H
 #define INPUT_FASTA_H
 
+#include "str.h"
+
 /* fasta module */
 int input_fasta_open(char *);
-int input_fasta_read(string_t *, int);
+int input_fasta_read(str_t *, int);
 void input_fasta_close(void);
 
 #endif /* INPUT_FASTA_H */

@@ -72,9 +72,8 @@ void dist_levenshtein_config()
  * @param y second string
  * @return Levenshtein distance
  */
-float dist_levenshtein_compare(string_t x, string_t y)
+float dist_levenshtein_compare(str_t x, str_t y)
 {
-    float d = 0;
     int i, j, a, b;
 
     if (x.len == 0 && y.len == 0)
@@ -91,7 +90,7 @@ float dist_levenshtein_compare(string_t x, string_t y)
     for (j = 0; j <= y.len; j++)
         rows[curr][j] = j;
 
-    /* For each virtual row (we ony.len have physical storage for two) */
+    /* For each virtual row (we only have physical storage for two) */
     for (i = 1; i <= x.len; i++) {
 
         /* Fill in the values in the row */
@@ -137,7 +136,7 @@ float dist_levenshtein_compare(string_t x, string_t y)
         return rows[curr][y.len] / (0.5 * (x.len + y.len));
     case NORM_NONE:
     default:
-        return d;
+        return rows[curr][y.len];
     }
 }
 

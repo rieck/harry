@@ -28,7 +28,7 @@ struct str_test tests[] = {
     {"a", "a", "", 0},
     {"ab", "ba", "", 2},
     {"bab", "ba", "", 1},
-    {"abba", "babb", "", 2},
+    {"abba", "babb", "", 3},
     {"a.b", "a.c", "", 1},
     {".a.b.", "a..c.", "", 3},
     /* comparison using words */
@@ -66,7 +66,6 @@ int test_compare()
         
         float d = measure_compare(x,y);
         double diff = fabs(tests[i].v - d);
-
         
         if (diff < 1e-6) {
             printf(".");
@@ -98,7 +97,7 @@ int main(int argc, char **argv)
     config_init(&cfg);
     config_check(&cfg);
 
-    measure_config("dist_levenshtein");
+    measure_config("dist_hamming");
 
     err |= test_compare();
 

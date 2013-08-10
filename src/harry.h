@@ -16,24 +16,6 @@
 
 int harry_version(FILE *, char *, char *);
 
-/* 
- * Basic symbol in a string 
- */
-typedef uint16_t sym_t;
-
-/**
- * Structure for a string
- */
-typedef struct
-{
-    char *str;                /**< String data (not necessary c-style) */
-    sym_t *sym;               /**< Symbol representation */
-    int len;                  /**< Length of string */
-    char *src;                /**< Optional source of string */
-    size_t idx;               /**< Optional index of string */
-} string_t;
-
-
 #define config_set_string(c,x,s) \
       config_setting_set_string(config_lookup(c,x),s)
 #define config_set_int(c,x,s) \

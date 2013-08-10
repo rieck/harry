@@ -26,7 +26,7 @@ config_t cfg;
 /* Local variables */
 static char *input = NULL;
 static char *output = NULL;
-static string_t *strings = NULL;
+static str_t *strs = NULL;
 static long num = 0;
 
 /* Option string */
@@ -82,9 +82,9 @@ static void print_usage(void)
 {
     printf("Usage: harry [options] <input> <output>\n"
            "\nI/O options\n"
-           "  -i,  --input_format <format>   Set input format for strings.\n"
-           "       --decode_str <0|1>        Enable URI-decoding of strings.\n"
-           "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
+           "  -i,  --input_format <format>   Set input format for strs.\n"
+           "       --decode_str <0|1>        Enable URI-decoding of strs.\n"
+           "       --reverse_str <0|1>       Reverse (flip) all strs.\n"
            "       --stopword_file <file>    Provide a file with stop words.\n"
            "  -o,  --output_format <format>  Set output format for vectors.\n"
            "\nModule options:\n"
@@ -273,11 +273,11 @@ static void harry_init()
     if (num < 0)
         fatal("Could not open input source");
 
-    /* Allocate memory for strings */
-    strings = alloca(num * sizeof(string_t));
-    if (!strings)
-        fatal("Could not allocate memory for strings");
-    memset(strings, 0, num * sizeof(string_t));
+    /* Allocate memory for strs */
+    strs = alloca(num * sizeof(str_t));
+    if (!strs)
+        fatal("Could not allocate memory for strs");
+    memset(strs, 0, num * sizeof(str_t));
 
     /* Open output */
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
@@ -290,10 +290,16 @@ static void harry_init()
 static void harry_load()
 {
     long read;
+    int i;
 
-    read = input_read(strings, num);
+#if 0
+    read = input_read(strs, num);
     if (read <= 0)
-        fatal("Failed to read strings from input '%s'", input);
+        fatal("Failed to read strs from input '%s'", input);
+        
+    for (i = 0; i < num; i++)
+        str_print(strs[i]);
+#endif        
 }
 
 static void harry_save()
@@ -306,11 +312,13 @@ static void harry_save()
 static void harry_exit()
 {
     const char *cfg_str;
-    long i;
 
     info_msg(1, "Flushing. Closing input and output.");
     input_close();
     output_close();
+    
+    /* Free memory */
+    //input_free(strs, num);
 
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
@@ -318,10 +326,6 @@ static void harry_exit()
 
     /* Destroy configuration */
     config_destroy(&cfg);
-
-    /* Clean memory */
-    for (i = 0; i < num; i++) 
-        string_free(strings[i]);
 }
 
 /**

@@ -12,9 +12,9 @@ harry_DEPENDENCIES   = 	libharry.la
 
 noinst_LTLIBRARIES   = 	libharry.la
 libharry_la_SOURCES  = 	common.h util.c util.h default.c default.h uthash.h \
-                        md5.c md5.h murmur.c murmur.h
+                        md5.c md5.h murmur.c murmur.h str.c str.h
 libharry_la_LIBADD   =  input/libinput.la measures/libmeasures.la \
 		       	output/liboutput.la
 beautify:
 			gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \
-			        -nfc1 -nut -T FILE -T string_t *.c *.h
+			        -nfc1 -nut -T FILE -T str_t *.c *.h

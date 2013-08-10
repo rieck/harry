@@ -12,14 +12,10 @@
 #ifndef MEASURES_H
 #define MEASURES_H
 
-/** Placeholder for non-initialized delimiters */
-#define DELIM_NOT_INIT  42
+#include "str.h"
 
 /* Module functions */
 void measure_config(const char *);
-double measure_compare(string_t, string_t);
-void measure_delim_set(const char *s);
-void measure_delim_reset();
-void measure_symbolize(string_t);
+double measure_compare(str_t, str_t);
 
 #endif /* MEASURES_H */

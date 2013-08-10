@@ -12,9 +12,11 @@
 #ifndef INPUT_DIR_H
 #define INPUT_DIR_H
 
+#include "str.h"
+
 /* Directoy module */
 int input_dir_open(char *);
-int input_dir_read(string_t *, int);
+int input_dir_read(str_t *, int);
 void input_dir_close(void);
 
 #endif /* INPUT_DIR_H */

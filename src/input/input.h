@@ -12,14 +12,16 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include "str.h"
+
 /* Configuration */
 void input_config(const char *);
-void input_free(string_t *strs, int len);
-void input_preproc(string_t *strs, int len);
+void input_free(str_t *strs, int len);
+void input_preproc(str_t *strs, int len);
 
 /* Generic interface */
 int input_open(char *);
-int input_read(string_t *, int);
+int input_read(str_t *, int);
 void input_close(void);
 
 /* Additional functions */

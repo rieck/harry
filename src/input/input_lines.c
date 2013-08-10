@@ -69,7 +69,7 @@ int input_lines_open(char *name)
  * @param len Length of block
  * @return number of lines read into memory
  */
-int input_lines_read(string_t *strs, int len)
+int input_lines_read(str_t *strs, int len)
 {
     assert(strs && len > 0);
     int read, i = 0, j = 0;
@@ -88,9 +88,9 @@ int input_lines_read(string_t *strs, int len)
             break;
         }
 
+
         /* Strip newline characters */
         strip_newline(line, read);
-
         strs[j].str = line;
         strs[j].len = strlen(line);
 
