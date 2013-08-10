@@ -10,7 +10,10 @@
  */
 
 /**
- * @defgroup measure Module interface
+ * @defgroup measures Measure interface
+ *
+ * Interface and functions for computing similarity measures for strings
+ *
  * @{
  */
 

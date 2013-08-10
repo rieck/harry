@@ -12,8 +12,7 @@
 /** 
  * @defgroup input Input interface
  *
- * Generic implementation of functions for reading strings in various 
- * formats. 
+ * Interface and functions for reading strings.
  *
  * @{
  */

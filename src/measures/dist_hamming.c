@@ -16,10 +16,9 @@
 #include "dist_hamming.h"
 
 /**
- * @addtogroup strings
+ * @addtogroup measures
  * <hr>
- * <b>Module dist_hamming</b>: Hamming distance for strings.
- * @author Konrad Rieck (konrad@mlsec.org) 
+ * <em>dist_hamming</em>: Hamming distance for strings.
  * @{
  */
 

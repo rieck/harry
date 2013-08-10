@@ -12,8 +12,7 @@
 /** 
  * @defgroup output Output interface
  *
- * Generic implementation of functions for writing matrices of 
- * similarity/dissimilarity values.
+ * Interface and functions for writing matrices of similarity values
  *
  * @{
  */

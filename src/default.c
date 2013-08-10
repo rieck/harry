@@ -10,7 +10,7 @@
  */
 
 /** 
- * @defgroup sconfig Configuration functions
+ * @defgroup default Configuration
  * Functions for configuration of the Harry tool. Additionally default
  * values for each configuration parameter are specified in this module.
  * @author Konrad Rieck (konrad@mlsec.org)

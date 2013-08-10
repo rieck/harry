@@ -16,10 +16,9 @@
 #include "dist_levenshtein.h"
 
 /**
- * @addtogroup strings
+ * @addtogroup measures
  * <hr>
- * <b>Module dist_levenshtein</b>: Levenshtein distance for strings.
- * @author Konrad Rieck (konrad@mlsec.org) 
+ * <em>dist_levenshtein</em>: Levenshtein distance for strings.
  * @{
  */
 

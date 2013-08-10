@@ -3,10 +3,12 @@
 *.o
 .deps
 .libs
+CHANGES
 Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache/
+check_*
 config.guess
 config.h
 config.h.in
@@ -16,9 +18,11 @@ config.sub
 configure
 depcomp
 doc/harry.man
-doc/latex-pre.inc
 doc/harry.pdf
 doc/harry.txt
+doc/html
+doc/latex-pre.inc
+harry-*.tar.gz
 install-sh
 libtool
 ltmain.sh
@@ -28,10 +32,7 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 missing
-harry-*.tar.gz
 src/harry
 stamp-h1
-check_*
-CHANGES
 test-driver
 tests/*.log
