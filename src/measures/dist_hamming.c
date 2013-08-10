@@ -59,10 +59,10 @@ void dist_hamming_config()
  * @param y second string
  * @return Hamming distance
  */
-double dist_hamming_compare(string_t *x, string_t *y)
+float dist_hamming_compare(string_t *x, string_t *y)
 {
     assert(x && y);
-    double d = 0;
+    float d = 0;
     int i;
 
     /* Loop over strings */

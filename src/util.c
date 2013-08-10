@@ -19,6 +19,8 @@
 #include "config.h"
 #include "common.h"
 #include "util.h"
+#include "murmur.h"
+#include "md5.h"
 
 /* External variable */
 extern int verbose;
@@ -293,6 +295,31 @@ int strip_newline(char *str, int len)
     
     str[k + 1] = 0x00;
     return k + 1;
+}
+
+/**
+ * Hashes a string to a 64 bit hash. Utility function to limit
+ * the clatter of code.
+ * @param s Byte sequence
+ * @param l Length of sequence
+ * @return hash value
+ */
+uint64_t hash_str(char *s, int l)
+{
+    uint64_t ret = 0;
+
+#ifdef ENABLE_MD5HASH
+    unsigned char buf[MD5_DIGEST_LENGTH];
+#endif
+
+#ifdef ENABLE_MD5HASH
+    MD5((unsigned char *) s, l, buf);
+    memcpy(&ret, buf, sizeof(int64_t));
+#else
+    ret = MurmurHash64B(s, l, 0x12345678);
+#endif
+
+    return ret;
 }
 
 /** @} */

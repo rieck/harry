@@ -65,10 +65,10 @@ void dist_levenshtein_config()
  * @param y second string
  * @return Levenshtein distance
  */
-double dist_levenshtein_compare(string_t *x, string_t *y)
+float dist_levenshtein_compare(string_t *x, string_t *y)
 {
     assert(x && y);
-    double d = 0;
+    float d = 0;
     int i, j, a, b;
 
     if (x->len == 0 && y->len == 0)

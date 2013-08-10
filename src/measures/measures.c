@@ -36,6 +36,8 @@ typedef struct
 } func_t;
 static func_t func;
 
+/* Global delimiter table */
+char delim[256] = { DELIM_NOT_INIT };
 
 /**
  * Match a string against a measure name
@@ -83,5 +85,43 @@ double measure_compare(string_t *x, string_t *y)
 {
     return func.measure_compare(x, y);
 }
+
+/**
+ * Decodes a string containing delimiters to a lookup table
+ * @param s String containing delimiters
+ */
+void measure_delim_set(const char *s)
+{
+    char buf[5] = "0x00";
+    unsigned int i, j;
+
+    memset(delim, 0, 256);
+    for (i = 0; i < strlen(s); i++) {
+        if (s[i] != '%') {
+            delim[(unsigned int) s[i]] = 1;
+            continue;
+        }
+
+        /* Skip truncated sequence */
+        if (strlen(s) - i < 2)
+            break;
+
+        buf[2] = s[++i];
+        buf[3] = s[++i];
+        sscanf(buf, "%x", (unsigned int *) &j);
+        delim[j] = 1;
+    }
+}
+
+/**
+ * Resets delimiters table. There is a global table of delimiter 
+ * symbols which is only initialized once the first sequence is 
+ * processed. This functions is used to trigger a re-initialization.
+ */
+void measure_delim_reset()
+{
+    delim[0] = DELIM_NOT_INIT;
+}
+
 
 /** @} */

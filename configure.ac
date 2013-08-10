@@ -118,6 +118,19 @@ AC_CHECK_HEADERS([uthash.h uthash/uthash.h], HEADER_UTHASH="yes")
 AC_CHECK_FUNC(log2, AC_DEFINE(HAVE_FUNC_LOG2, 1,
        [Define to 1 if you have the function log2]))
 
+# MD5 hash flag
+AC_ARG_ENABLE(md5hash,
+    [  --enable-md5hash        enable MD5 as alternative hash ],
+    [
+        if test "x$enableval" = "xyes" ; then
+                ENABLE_MD5HASH=yes
+                AC_DEFINE(ENABLE_MD5HASH, 1, [Enable MD5 as alternative hash])
+        else
+                ENABLE_MD5HASH=no
+        fi
+    ], [ ENABLE_MD5HASH=no ]
+)
+
 AC_SUBST([AM_CPPFLAGS])
 AC_CONFIG_FILES([ 
    Makefile \
@@ -134,4 +147,5 @@ echo
 echo " .Oo Features:"
 echo "     Support for loading archives (--enable-libarchive):    $ENABLE_LIBARCHIVE"
 echo "     Support for multi-processing (--enable-openmp):        $ENABLE_OPENMP"
+echo "     MD5 as alternative hash (--enable-md5hash):            $ENABLE_MD5HASH"
 echo

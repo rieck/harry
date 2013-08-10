@@ -17,6 +17,6 @@ enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
 
 /* Module interface */
 void dist_levenshtein_config();
-double dist_levenshtein_compare(string_t *, string_t *);
+float dist_levenshtein_compare(string_t *, string_t *);
 
 #endif /* DIST_LEVENSHTEIN_H */

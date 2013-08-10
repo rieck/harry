@@ -17,6 +17,6 @@ enum norm_type { NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
 
 /* Module interface */
 void dist_hamming_config();
-double dist_hamming_compare(string_t *, string_t *);
+float dist_hamming_compare(string_t *, string_t *);
 
 #endif /* DIST_HAMMING_H */

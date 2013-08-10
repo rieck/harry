@@ -27,18 +27,18 @@ extern int verbose;
 
 /* Default configuration */
 static config_default_t defaults[] = {
-
+    {"input", "input_format", CONFIG_TYPE_STRING, {.str = "lines"}},
+    {"input", "decode_str", CONFIG_TYPE_INT, {.num = 0}},
+    {"input", "reverse_str", CONFIG_TYPE_INT, {.num = 0}},
+    {"input", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
     {"measures", "type", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
-    /* Hamming distance */
+    {"measures", "delim", CONFIG_TYPE_STRING, {.str = ""}},
     {"measures.dist_hamming", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
-    /* Levenshtein distance */
     {"measures.dist_levenshtein", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {"measures.dist_levenshtein", "cost_ins", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
     {"measures.dist_levenshtein", "cost_del", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
     {"measures.dist_levenshtein", "cost_sub", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
-    /* Subsequence kernel */
-    {"measures.kern_subseq", "decay", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
-    {"measures.kern_subseq", "gap", CONFIG_TYPE_FLOAT, {.num = 3}},    
+    {"output", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
     {NULL}
 };
 

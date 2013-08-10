@@ -2,31 +2,156 @@
 
 =head1 NAME
 
-B<harry> -- similarity measures for strings
+B<harry> -- a tool for measuring string similarity 
 
 =head1 SYNOPSIS
 
-B<harry> 
+B<harry> [B<options>] [B<-c> I<config>] I<input> I<output>
 
 =head1 DESCRIPTION
 
-B<harry> is a small tool for comparing strings. The tool supports several
-common distance and kernel functions for strings as well as some excotic
-similarity measures.  The focus of B<harry> lies on implicit similarity
-measures, that is, comparison functions that do not give rise to an explicit
-vector space, such as the Levenshtein distance.  B<harry> thereby
-complements the tool B<sally> that embeds strings in vector spaces and
-allows computing explicit similarity measures, such as bag-of-word kernels.
+B<harry> is a small tool for measuring the similarity of strings. The tool
+supports several common distance and kernel functions for strings as well as
+some excotic similarity measures.  The focus of B<harry> lies on implicit
+similarity measures, that is, comparison functions that do not give rise to
+an explicit vector space, such as the Levenshtein distance.  B<harry>
+thereby complements the tool B<harry> that embeds strings in vector spaces
+and allows computing explicit similarity measures, such as bag-of-word
+kernels.
 
-=head1 SIMILARIY MEASURES
+For comparison B<harry> first loads strings from I<input>, computes the
+specified similarity measure and then writes a matrix of similarity values
+to I<output>.  The configuration of this process, such as the input format,
+the embedding setting and the output format, are specified in the file
+I<config> and additionally using command-line options.
 
-B<harry> supports the following similarity measures. If not specified
-otherwise, the modules process strings of bytes separated by newline
-characters.  The characters B<00> and B<FF> need to be escaped.
+    .---------.                        .----------.
+    |   dir   |                        |   text   |
+    |   arc   |   \   .---------.   /  |  libsvm  |
+    |  lines  |   --  |  Harry  |  --  |  matlab  |
+    |   ...   |   /   '---------'   \  |   ...    |
+    '---------'                        '----------'
+       Input      Similarity Measures     Output
+
+
+=head1 CONFIGURATION
+
+The configuration of B<harry> is specified in a configuration file.  This
+file is structured into the three sections B<input>, B<measures> and
+B<output>, which define the parameters of the input format, the similarity
+measures and the output format, respectively.
+
+All parameters of the configuration can be also be specified on the
+command-line. That is, if a parameter is specified in the
+configuration as B<xx = "yy">, it can be alternatively supplied as a
+command-line option by B<--xx "yy">.
+
+If no configuration file is provided, B<harry> resorts to a default
+configuration. This default configuration can be dumped using the
+command-line option B<-D>.
+
+=head2 Input formats
+
+B<harry> supports different formats for reading data sets of strings,
+which may range from plain files to directories and other structured
+resources. Following is a list of supported input formats.
 
 =over 4
 
-=item B<dist_hamming> - Hamming distance.
+=item B<input = {>
+
+=over 4
+
+=item B<input_format = "lines";>
+
+This parameter specifies the input format.
+
+=over 14
+
+=item I<"dir"> 
+
+The input strings are available as binary files in a directory and the
+name of the directory is given as I<input> to B<harry>. The suffixes
+of the files are used as labels for the extracted vectors.
+
+=item I<"arc"> 
+
+The input strings are available as binary files in a compressed
+archive, such as a zip or tgz archive.  The name of the archive is
+given as I<input> to B<harry>.  The suffixes of the files are used as
+labels for the extracted vectors.
+
+=item I<"lines"> 
+
+The input strings are available as lines in a text file. The name of
+the file is given as I<input> to B<harry>.  No label information is
+supported by this input format.  The lines need to be separated by
+newline and may not contain the NUL character.
+
+=item I<"fasta">
+
+The input strings are available in FASTA format. The name of the file
+is given as I<input> to B<harry>. Labels are extracted from the
+description of each sequence using a regular expression. Comments are
+allowed if they are preceded by either ';' or '>'.
+
+=back 
+
+=item B<decode_str = 0;>
+
+If this parameter is set to 1, B<harry> automatically decodes strings that
+contain URI-encoded characters.  That is, substrings of the form %XX are
+replaced with the byte represented by the hexadecimal number XX.  This
+feature comes handy, if binary data is provided using the textual input
+format "lines".  For example, HTTP requests can be stored in a single line
+if line-breaks are represented by "%0a%0d".
+
+=item B<reverse_str = 0;>
+
+If this parameter is set to 1, the characters of all input strings will
+be reversed. Such reversing might help in situations where the 
+reading direction of the input strings is unspecified.
+
+=item B<stopword_file = "";>
+
+Stop words (irrelevant words) can be filtered from the strings by providing
+a file containing these words; one per line. Non-printable characters
+can be escaped using URI encoding (%XX). Stop words can only be filtered, if 
+a set of delimiters is defined using B<delim>.
+
+=back
+
+=item B<};>
+
+=back
+
+=head2 Similarity Measures
+
+B<harry> supports different similarity measures for comparing string,
+including common distance and kernel functions for strings.  Depending on
+the configuration, the strings are either compared using invididual
+characters or using words.
+
+=over 4
+
+=item B<measures = {>
+
+
+=over 4
+
+=item B<type = "dist_levenshtein";>
+
+The parameter B<type> specifies the similarity measure that is used for
+comparing the strings.
+
+=item B<delim = "";>
+
+The parameter B<delim> defines characters for delimiting words in strings.
+If this parameter is set the comparison of strings is performed on words,
+that is, each word is considered as a symbol. If the parameter B<delim> is
+an emptry strings, B<harry> considers each individual character as a symbol.
+
+=item B<dist_hamming = {> 
 
 This module implements the Hamming distance (see Hamming, 1950).  The
 runtime complexity of a comparison is linear in the length of the  
@@ -40,11 +165,13 @@ to the distance.  The following parameters are supported:
 This parameter specifies the normalization of the distance. Supported values
 are I<"none"> for no normalization, I<"min"> for normalization on the
 minimum length, I<"max"> for normalization on the maximum length, I<"avg">
-for normalization on the average length of the compared 
+for normalization on the average length of the compared .
 
 =back
 
-=item B<dist_levenshtein> - Levensthein distance.
+=item B<};>
+
+=item B<dist_levenshtein = {> 
 
 This module implements the Levenshtein distance (see Levenshtein, 1966). The
 runtime complexity of a comparison is quadratic in the length of the
@@ -71,33 +198,64 @@ respectively.  The default costs are 1.0 for each operation.
 
 =back
 
+=item B<};>
+
 =back
 
-=head1 CONFIGURATION
+=item B<};>
 
-The configuration of B<harry> is specified in a configuration file.
+=back
 
-All parameters of the configuration can be also be specified on the
-command-line. That is, if a parameter is specified in the
-configuration as B<xx = "yy">, it can be alternatively supplied as a
-command-line option by B<--xx "yy">.
+=head2 Output formats
 
-If no configuration file is provided, B<harry> resorts to a default
-configuration. This default configuration can be dumped using the
-command-line option B<-D>.
+Once strings have been compared, B<harry> stores the similarity values in
+one of several common formats, which allows for applying typical tools of
+statistics and machine learning to the data.
+
+=over 4
+
+=item B<output = {>
+
+=over 4
+
+=item B<output_format = "text";>
+
+Following is a list of output formats supported by B<harry>:
+
+=over 14
+
+=item I<"text"> 
+
+The similarity values are stored as plain text.
+
+=back
+
+=back
+
+=item B<};>
+
+=back
 
 =head1 OPTIONS
 
 The configuration of B<harry> can be refined and altered using several
-command-line options. In particular, all parameters of the
-configuration can be specified on the command-line. That is, if a
-parameter is specified as B<xx = "yy"> in the configuration file, it
-can be changed by using the command-line option B<--xx
-"zz">. Following is a list of common options:
+command-line options.  In particular, some parameters of the configuration
+can be specified on the command-line.  That is, if a parameter is specified
+as B<xx = "yy"> in the configuration file, it can be changed by using the
+command-line option B<--xx "zz">.  Following is a list of common options:
+
+=head2 I/O options
+
+  -i,  --input_format <format>   Set input format for strings.
+       --decode_str <0|1>        Enable URI-decoding of strings.
+       --reverse_str <0|1>       Reverse (flip) all strings.
+       --stopword_file <file>    Provide a file with stop words.
+  -o,  --output_format <format>  Set output format for vectors.
 
 =head2 Module options
 
-  -m, --module <name>		 Set similarity measure module
+  -t,  --type <name>		 Set similarity measure module
+  -d   --delim <delimiters>	 Set delimiters for words
 
 =head2 Generic options
 

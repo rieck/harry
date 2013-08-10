@@ -14,22 +14,36 @@
 #include "harry.h"
 #include "default.h"
 #include "util.h"
+#include "input.h"
 #include "measures.h"
+#include "output.h"
 
 /* Global variables */
 int verbose = 1;
 int print_conf = 0;
 config_t cfg;
 
+/* Local variables */
+static char *input = NULL;
+static char *output = NULL;
+static string_t *strings = NULL;
+static long num = 0;
+
 /* Option string */
-#define OPTSTRING       "m:c:vqVhCD"
+#define OPTSTRING       "t:c:i:o:d:vqVhCD"
 
 /**
  * Array of options of getopt_long()
  */
 static struct option longopts[] = {
-    {"module", 1, NULL, 'm'},
-    {"config_file", 1, NULL, 'c'},
+    {"input_format", 1, NULL, 'i'},
+    {"decode_str", 1, NULL, 1000},
+    {"reverse_str", 1, NULL, 1001},
+    {"stopword_file", 1, NULL, 1002}, /* <- last entry */
+    {"output_format", 1, NULL, 'o'},     
+    {"type", 1, NULL, 't'},
+    {"delim", 1, NULL, 'd'},
+    {"config_file", 1, NULL, 'c'},    
     {"verbose", 0, NULL, 'v'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
@@ -66,9 +80,16 @@ static void print_config(char *msg)
  */
 static void print_usage(void)
 {
-    printf("Usage: harry [options] [file ...]\n"
+    printf("Usage: harry [options] <input> <output>\n"
+	   "\nI/O options\n"
+           "  -i,  --input_format <format>   Set input format for strings.\n"
+           "       --decode_str <0|1>        Enable URI-decoding of strings.\n"
+           "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
+           "       --stopword_file <file>    Provide a file with stop words.\n"
+           "  -o,  --output_format <format>  Set output format for vectors.\n"
            "\nModule options:\n"
-           "  -m,  --measure <name>          Set similarity measure.\n"
+           "  -t,  --type <name>             Set similarity measure module\n"
+           "  -d   --delim <delimiters>      Set delimiters for words\n"
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
@@ -76,7 +97,7 @@ static void print_usage(void)
            "  -C,  --print_config            Print the current configuration.\n"
            "  -D,  --print_defaults          Print the default configuration.\n"
            "  -V,  --version                 Print version and copyright.\n"
-           "  -h,  --help                    Print this help screen.\n\n");
+           "  -h,  --help                    Print this help screen.\n" "\n");
 }
 
 /**
@@ -96,7 +117,7 @@ static void print_version(void)
  */
 static void harry_parse_options(int argc, char **argv)
 {
-    int ch;
+    int ch, user_conf = FALSE;
 
     optind = 0;
 
@@ -105,8 +126,26 @@ static void harry_parse_options(int argc, char **argv)
         case 'c':
             /* Skip. See harry_load_config(). */
             break;
-        case 'm':
-            config_set_string(&cfg, "measures.default", optarg);
+	case 'i':
+	    config_set_string(&cfg, "input.input_format", optarg);
+	    break;
+        case 1000:
+            config_set_int(&cfg, "input.decode_str", atoi(optarg));
+            break;
+        case 1001:
+            config_set_int(&cfg, "input.reverse_str", atoi(optarg));
+            break;
+        case 1002:
+            config_set_string(&cfg, "input.stopword_file", optarg);
+            break;
+        case 'o':
+            config_set_string(&cfg, "output.output_format", optarg);
+            break;
+        case 't':
+            config_set_string(&cfg, "measures.type", optarg);
+            break;
+        case 'd':
+            config_set_string(&cfg, "measures.delim", optarg);
             break;
         case 'q':
             verbose = 0;
@@ -142,6 +181,23 @@ static void harry_parse_options(int argc, char **argv)
     if (print_conf) {
         print_config("Current configuration");
         exit(EXIT_SUCCESS);
+    }
+
+    argc -= optind;
+    argv += optind;
+
+    /* Check for input and output arguments */
+    if (argc != 2) {
+        print_usage();
+        exit(EXIT_FAILURE);
+    } else {
+        input = argv[0];
+        output = argv[1];
+    }
+
+    /* Last but not least. Warn about default config */
+    if (!user_conf) {
+        warning("No config file given. Using defaults (see -D)");
     }
 }
 
@@ -194,14 +250,45 @@ static void harry_load_config(int argc, char **argv)
  */
 static void harry_init()
 {
-    const char *str;
+    const char *cfg_str;
 
     if (verbose > 1)
         config_print(&cfg);
 
+    /* Load stop words */
+    config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
+    if (strlen(cfg_str) > 0)
+        stopwords_load(cfg_str);
+
+
+    /* Open input */
+    config_lookup_string(&cfg, "input.input_format", &cfg_str);
+    input_config(cfg_str);
+    info_msg(1, "Opening '%0.40s' with input module '%s'.", input, cfg_str);
+    num = input_open(input);
+    if (num < 0)
+        fatal("Could not open input source");
+
     /* Configure module */
-    config_lookup_string(&cfg, "measures.type", &str);
-    measure_config(str);
+    config_lookup_string(&cfg, "measures.type", &cfg_str);
+    measure_config(cfg_str);
+    info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
+
+    /* Open output */
+    config_lookup_string(&cfg, "output.output_format", &cfg_str);
+    output_config(cfg_str);
+    info_msg(1, "Opening '%0.40s' with output module '%s'.", output, cfg_str);
+    if (!output_open(output))
+        fatal("Could not open output destination");
+
+}
+
+static void harry_load()
+{
+}
+
+static void harry_save()
+{
 }
 
 /**
@@ -209,6 +296,16 @@ static void harry_init()
  */
 static void harry_exit()
 {
+    const char *cfg_str;
+
+    info_msg(1, "Flushing. Closing input and output.");
+    input_close();
+    output_close();
+
+    config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
+    if (strlen(cfg_str) > 0)
+        stopwords_destroy();
+
     /* Destroy configuration */
     config_destroy(&cfg);
 }
@@ -224,8 +321,6 @@ int main(int argc, char **argv)
     harry_load_config(argc, argv);
     harry_parse_options(argc, argv);
     harry_init();
-
-    /* AND... ACTION! */
 
     harry_exit();
     return EXIT_SUCCESS;
