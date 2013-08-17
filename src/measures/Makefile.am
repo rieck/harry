@@ -7,7 +7,8 @@ noinst_LTLIBRARIES         = libmeasures.la
 
 libmeasures_la_SOURCES     = measures.h measures.c \
 			     dist_hamming.c dist_hamming.h \
-			     dist_levenshtein.c dist_levenshtein.h
+			     dist_levenshtein.c dist_levenshtein.h \
+			     dist_jarowinkler.c dist_jarowinkler.h
 
 beautify:
 			   gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \

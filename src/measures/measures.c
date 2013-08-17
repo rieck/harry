@@ -27,6 +27,7 @@
 /* Similarity measures */
 #include "dist_hamming.h"
 #include "dist_levenshtein.h"
+#include "dist_jarowinkler.h"
 
 /* External variables */
 extern config_t cfg;
@@ -81,6 +82,9 @@ void measure_config(const char *name)
     } else if (measure_match(name, "dist_levenshtein")) {
         func.measure_config = dist_levenshtein_config;
         func.measure_compare = dist_levenshtein_compare;
+    } else if (measure_match(name, "dist_jarowinkler")) {
+        func.measure_config = dist_jarowinkler_config;
+        func.measure_compare = dist_jarowinkler_compare;
     } else {
         error("Unknown measure '%s', using 'dist_hamming' instead.", name);
         measure_config("dist_hamming");

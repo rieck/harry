@@ -6,7 +6,9 @@ AM_CPPFLAGS     		= -I$(top_srcdir)/src \
 
 #EXTRA_DIST			= strings.txt
 #TESTS_ENVIRONMENT 		= export TEST_FILE='$(srcdir)/strings.txt';
-check_PROGRAMS			= check_levenshtein check_hamming
+check_PROGRAMS			= check_levenshtein \
+				  check_hamming \
+				  check_jarowinkler
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
 
@@ -16,6 +18,8 @@ check_levenshtein_LDADD		= $(top_builddir)/src/libharry.la
 check_hamming_SOURCES		= dist_hamming.c tests.h
 check_hamming_LDADD		= $(top_builddir)/src/libharry.la
 
+check_jarowinkler_SOURCES	= dist_jarowinkler.c tests.h
+check_jarowinkler_LDADD		= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

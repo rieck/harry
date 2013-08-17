@@ -136,7 +136,6 @@ characters or using words.
 
 =item B<measures = {>
 
-
 =over 4
 
 =item B<type = "dist_levenshtein";>
@@ -195,6 +194,26 @@ for normalization on the average length of the compared
 The computation of the distance can be adapted using three parameters
 defining the cost for an insertation, deletion and substitution,
 respectively.  The default costs are 1.0 for each operation.
+
+=back
+
+=item B<};>
+
+=item B<dist_jarowinkler = {> 
+
+This module implements the Jaro distance (Jaro, 1989) and the Jaro-Winkler
+distance (Winkler, 1990). The runtime complexity of a comparison is
+quadratic in the length of the strings.  The following parameters are
+supported:
+
+=over 4
+
+=item B<scaling = 0.1;>
+
+If this parameter is set to 0, the original Jaro distance is returned, 
+otherwise the Jaro-Winkler distance is calculated. This distance uses a
+B<scaling> which gives more favourable ratings to strings that match from
+the beginning up to 4 symbols. The default value is 0.1.
 
 =back
 
@@ -288,9 +307,13 @@ section for further details.
 
 =head1 REFERENCES
 
-R. W. Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
+Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
 
-V. I. Levenshtein. Binary codes capable of correcting dele- tions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163(4):845-848, 1966.
+Jaro. Advances in record linkage methodology as applied to the 1985 census of Tampa Florida. Journal of the American Statistical Association 84 (406): 414-420, 1989.
+
+Levenshtein. Binary codes capable of correcting deletions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163(4):845-848, 1966.
+
+Winkler.  String Comparator Metrics and Enhanced Decision Rules in the Fellegi-Sunter Model of Record Linkage. roceedings of the Section on Survey Research Methods. 354-359, 1990.
 
 =head1 COPYRIGHT
 
