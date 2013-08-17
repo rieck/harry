@@ -41,11 +41,6 @@ file is structured into the three sections B<input>, B<measures> and
 B<output>, which define the parameters of the input format, the similarity
 measures and the output format, respectively.
 
-All parameters of the configuration can be also be specified on the
-command-line. That is, if a parameter is specified in the
-configuration as B<xx = "yy">, it can be alternatively supplied as a
-command-line option by B<--xx "yy">.
-
 If no configuration file is provided, B<harry> resorts to a default
 configuration. This default configuration can be dumped using the
 command-line option B<-D>.
@@ -230,13 +225,15 @@ string are added to the distance. The following parameters are supported:
 
 =item B<alphabet = 256;>
 
-This parameter specifies the alphabet size, that is, the number of possible
-symbols in the strings.  If the strings consist of bytes, B<alphabet> needs
-to be set to 256, whereas if words are analyzed, B<alphabet> has to be
-65536.  Note that if the alphabet size is set to some value I<n>, the
-symbols of the strings must be between 0 and I<n>-1.  Hence, a normalization
-of the symbols is often necessary, for example, the ASCII charcters '0' and
-'1' need to be mapped to the bytes 0x00 and 0x01 if I<n> is 2.
+This parameter specifies the alphabet size, that is, the maximum number of
+unique symbols.  If the strings consist of bytes, B<alphabet> needs to be
+set to 256, whereas if words are analyzed using the parameter B<delim>, the
+alphabet size has to be 65536.  
+
+Note that if the alphabet size is set to some other value I<n>, the symbols
+of the strings must be between 0 and I<n>-1.  Hence, a normalization of the
+symbols is often necessary, for example, the ASCII characters '0' and '1'
+need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
 
 =back
 
