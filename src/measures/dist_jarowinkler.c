@@ -70,7 +70,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
     int range = max(0, max(x.len, y.len) / 2 - 1);
     float dw;
 
-    if (x.len == 0 || y.len == 0)
+    if (x.len == 0 && y.len == 0)
         return 0.0;
 
     for (i = 0; i < y.len; i++)
@@ -91,8 +91,8 @@ float dist_jarowinkler_compare(str_t x, str_t y)
         }
     }
 
-    if (!m)
-        return 0.0;
+    if (m == 0)
+        return 1.0;
 
     /* Calculate character transpositions */
     l = 0;
