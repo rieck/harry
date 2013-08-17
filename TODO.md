@@ -21,8 +21,6 @@ Missing measures
 
 - Subsequence kernel
 - Damerau distance
-- Jaro-Winkler distance
-- Lee distance
 - Compression distance
 
 Special hacks
