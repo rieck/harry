@@ -19,14 +19,10 @@
 #include "output.h"
 
 /* Global variables */
-int verbose = 1;
+int verbose = 0;
 int print_conf = 0;
 config_t cfg;
 
-/* Local variables */
-static char *input = NULL;
-static char *output = NULL;
-static long num = 0;
 
 /* Option string */
 #define OPTSTRING       "t:c:i:o:d:vqVhCD"
@@ -113,8 +109,10 @@ static void print_version(void)
  * Parse command line options
  * @param argc Number of arguments
  * @param argv Argument values
+ * @param in Return pointer to input filename
+ * @param out Return pointer to output filename
  */
-static void harry_parse_options(int argc, char **argv)
+static void harry_parse_options(int argc, char **argv, char **in, char **out)
 {
     int ch, user_conf = FALSE;
 
@@ -190,8 +188,8 @@ static void harry_parse_options(int argc, char **argv)
         print_usage();
         exit(EXIT_FAILURE);
     } else {
-        input = argv[0];
-        output = argv[1];
+        *in = argv[0];
+        *out = argv[1];
     }
 
     /* Last but not least. Warn about default config */
@@ -263,70 +261,117 @@ static void harry_init()
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
         stopwords_load(cfg_str);
+}
+
+/**
+ * Read a set of strings to memory from input
+ * @param input Input filename 
+ * @param num Pointer to number of strings
+ * @return array of string objects
+ */
+static str_t *harry_read(char *input, long *num) 
+{
+    const char *cfg_str;
 
     /* Open input */
     config_lookup_string(&cfg, "input.input_format", &cfg_str);
     input_config(cfg_str);
-    info_msg(1, "Opening '%0.40s' with input module '%s'.", input, cfg_str);
-    num = input_open(input);
-    if (num < 0)
+    *num = input_open(input);
+    if (*num < 0)
         fatal("Could not open input source");
-
-
-    /* Open output */
-    config_lookup_string(&cfg, "output.output_format", &cfg_str);
-    output_config(cfg_str);
-    info_msg(1, "Opening '%0.40s' with output module '%s'.", output, cfg_str);
-    if (!output_open(output))
-        fatal("Could not open output destination");
-}
-
-static void harry_process()
-{
-    int i, j;
-    float *mat = NULL;
-    str_t *strs;
+    info_msg(1, "Reading %ld strings from '%0.40s' [%s].", *num, input, 
+             cfg_str);
 
     /* Allocate memory for strings */
-    strs = calloc(num, sizeof(str_t));
+    str_t *strs = calloc(*num, sizeof(str_t));
     if (!strs)
         fatal("Could not allocate memory for strs");
 
-    long read = input_read(strs, num);
+    long read = input_read(strs, *num);
     if (read <= 0)
         fatal("Failed to read strs from input '%s'", input);
-        
+    input_close(); 
+    
+    return strs;
+}
+
+/**
+ * Compare a set of string objects
+ * @param strs Array of string objects
+ * @param num Number of strings
+ * @return similarity values (upper triangle)
+ */
+static float *harry_process(str_t *strs, long num)
+{
+    int i, k = 0;
+
     for (i = 0; i < num; i++) 
         strs[i] = str_symbolize(strs[i]);
     
-    mat = malloc(sizeof(float) * ((num * num)  + num) / 2);
+    float *mat = malloc(sizeof(float) * tr_size(num));
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
 
-    #pragma omp parallel for private(j)
-    for (i = 0; i < num; i++)
-        for (j = i; j < num; j++)
-            mat[tindex(i,j,num)] = measure_compare(strs[i], strs[j]);
+#ifdef ENABLE_OPENMP
+    #pragma omp parallel for collapse(2) 
+#endif    
+    for (i = 0; i < num; i++) {
+        for (int j = 0; j < num; j++) {
+            /* Hack for better parallelization using OpenMP */
+            if (j < i)	
+                continue;
+            mat[tr_index(i,j,num)] = measure_compare(strs[i], strs[j]);
+            
+            if (verbose) {
+                if (k % num == 0)
+                    prog_bar(0, tr_size(num), k);
+                k++;
+            }
+        }
+    }
+    
+    if (verbose)
+        prog_bar(0, tr_size(num), tr_size(num));    
+       
+    return mat;
+}
+
+/**
+ * Write similarity values to an output file
+ * @param output Output filename
+ * @param mat Similarity values (upper triangle)
+ * @param num Number of strings
+ */
+static void harry_write(char *output, float *mat, long num) 
+{
+    const char *cfg_str;
+
+    /* Open output */
+    config_lookup_string(&cfg, "output.output_format", &cfg_str);
+    output_config(cfg_str);
+    info_msg(1, "Writing %ld similarity values to '%0.40s' [%s].", 
+             tr_size(num), output, cfg_str);
+    if (!output_open(output))
+        fatal("Could not open output destination");
     
     output_write(mat, num, num, TRUE);
-    input_free(strs, num);
-    free(mat);
-    free(strs);
+    output_close();
 }
 
 
 /**
  * Exit Harry tool. 
  */
-static void harry_exit()
+static void harry_exit(str_t *strs, float *mat, long num)
 {
     const char *cfg_str;
 
-    info_msg(1, "Flushing. Closing input and output.");
-    input_close();
-    output_close();
-    
+    /* Free memory */
+    input_free(strs, num);
+    free(mat);
+    free(strs);
+
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
         stopwords_destroy();
@@ -343,12 +388,20 @@ static void harry_exit()
  */
 int main(int argc, char **argv)
 {
+    float *mat = NULL;
+    str_t *strs = NULL;
+    long num = 0;
+    char *input = NULL;
+    char *output = NULL;
+
     harry_load_config(argc, argv);
-    harry_parse_options(argc, argv);
+    harry_parse_options(argc, argv, &input, &output);
 
     harry_init();
-    harry_process();
-    harry_exit();
+    strs = harry_read(input, &num);
+    mat = harry_process(strs, num);
+    harry_write(output, mat, num);
+    harry_exit(strs, mat, num);
     
     return EXIT_SUCCESS;
 }

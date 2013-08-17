@@ -16,8 +16,10 @@
 
 int harry_version(FILE *, char *, char *);
 
-#define tindex(i,j,n)                         \
+#define tr_index(i,j,n) \
       ((j - i) + i * n - i * (i - 1) / 2)
+#define tr_size(n) \
+      (n * (n - 1) / 2 + n)
 #define config_set_string(c,x,s) \
       config_setting_set_string(config_lookup(c,x),s)
 #define config_set_int(c,x,s) \

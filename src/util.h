@@ -18,7 +18,7 @@
 #include "harry.h"
 
 /* Progress bar stuff */
-#define PROGBAR_LEN     52
+#define PROGBAR_LEN     50
 #define PROGBAR_EMPTY   ':'
 #define PROGBAR_FULL    '#'
 #define PROGBAR_DONE    '#'

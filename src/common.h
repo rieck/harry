@@ -53,6 +53,10 @@
 #include <libconfig.h>
 #endif
 
+#ifdef ENABLE_OPENMP
+#include <omp.h>
+#endif
+
 #ifndef TRUE
 #define TRUE 1
 #endif
