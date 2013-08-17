@@ -153,7 +153,7 @@ an emptry strings, B<harry> considers each individual character as a symbol.
 =item B<dist_hamming = {> 
 
 This module implements the Hamming distance (see Hamming, 1950).  The
-runtime complexity of a comparison is linear in the length of the  
+runtime complexity of a comparison is linear in the length of the strings.
 If the compared strings have unequal length, the length difference is added
 to the distance.  The following parameters are supported:
 
@@ -218,6 +218,30 @@ the beginning up to 4 symbols. The default value is 0.1.
 =back
 
 =item B<};>
+
+=item B<dist_lee = {> 
+
+This module implements the Lee distance (Lee, 1958) for strings. The runtime
+complexity of a comparison is linear in the length of the strings. If the
+compared strings have unequal length, the remaining symbols of the longer
+string are added to the distance. The following parameters are supported:
+
+=over 4
+
+=item B<alphabet = 256;>
+
+This parameter specifies the alphabet size, that is, the number of possible
+symbols in the strings.  If the strings consist of bytes, B<alphabet> needs
+to be set to 256, whereas if words are analyzed, B<alphabet> has to be
+65536.  Note that if the alphabet size is set to some value I<n>, the
+symbols of the strings must be between 0 and I<n>-1.  Hence, a normalization
+of the symbols is often necessary, for example, the ASCII charcters '0' and
+'1' need to be mapped to the bytes 0x00 and 0x01 if I<n> is 2.
+
+=back
+
+=item B<};>
+
 
 =back
 
@@ -310,6 +334,8 @@ section for further details.
 Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
 
 Jaro. Advances in record linkage methodology as applied to the 1985 census of Tampa Florida. Journal of the American Statistical Association 84 (406): 414-420, 1989.
+
+Lee. Some properties of nonbinary error-correcting codes. IRE Transactions on Information Theory 4 (2): 77-82, 1958.
 
 Levenshtein. Binary codes capable of correcting deletions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163(4):845-848, 1966.
 

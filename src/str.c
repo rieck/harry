@@ -132,7 +132,7 @@ str_t str_symbolize(str_t x)
 
     if (delim[0] == DELIM_NOT_INIT) {
         for (i = 0; i < x.len; i++)
-            sym[i] = (sym_t) x.str.c[i];
+            sym[i] = (uint8_t) x.str.c[i];
     } else {
         /* Find first delimiter symbol */
         for (dlm = 0; !delim[(unsigned char) dlm] && dlm < 256; dlm++);
