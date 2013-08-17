@@ -283,7 +283,7 @@ static void harry_init()
 
 static void harry_process()
 {
-    int i, j, k;
+    int i, j;
     float *mat = NULL;
     str_t *strs;
 
@@ -299,17 +299,16 @@ static void harry_process()
     for (i = 0; i < num; i++) 
         strs[i] = str_symbolize(strs[i]);
     
-    
     mat = malloc(sizeof(float) * ((num * num)  + num) / 2);
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
 
-    for (i = k = 0; i < num; i++)  
-        for (j = i; j < num; j++) 
-            mat[k++] = measure_compare(strs[i], strs[j]);
-
-
+    #pragma omp parallel for private(j)
+    for (i = 0; i < num; i++)
+        for (j = i; j < num; j++)
+            mat[tindex(i,j,num)] = measure_compare(strs[i], strs[j]);
+    
     output_write(mat, num, num, TRUE);
     input_free(strs, num);
     free(mat);
