@@ -23,11 +23,16 @@
 #include "output.h"
 #include "harry.h"
 
+#define output_printf(z, ...) \
+    { if (zlib) { gzprintf(z, __VA_ARGS__); } \
+      else { fprintf(z, __VA_ARGS__); } }
+
 /* External variables */
 extern config_t cfg;
 
 /* Local variables */
-static FILE *f = NULL;
+static void *z = NULL;
+static int zlib = 0;
 
 /**
  * Opens a file for writing text format
@@ -38,14 +43,23 @@ int output_text_open(char *fn)
 {
     assert(fn);
 
-    f = fopen(fn, "w");
-    if (!f) {
+    config_lookup_int(&cfg, "output.compress", &zlib);
+
+    if (zlib)
+        z = gzopen(fn, "w9");
+    else
+        z = fopen(fn, "w");
+
+    if (!z) {
         error("Could not open output file '%s'.", fn);
         return FALSE;
     }
 
     /* Write harry header */
-    harry_version(f, "# ", "Output module for text format");
+    if (zlib)
+        harry_zversion(z, "# ", "Output module for text format");
+    else
+        harry_version(z, "# ", "Output module for text format");
 
     return TRUE;
 }
@@ -61,18 +75,17 @@ int output_text_open(char *fn)
 int output_text_write(float *m, int x, int y, int t)
 {
     assert(x && x >= 0 && y >= 0);
-    fprintf(f, "\n");
-    int i,j,k;
-    
+    int i, j, k;
+
     if (t) {
         for (k = i = 0; i < x; i++) {
             for (j = i; j < y; j++) {
-                fprintf(f, "%g ", m[k++]);
+                output_printf(z, "%g ", m[k++]);
             }
-            fprintf(f, "\n");
+            output_printf(z, "\n");
         }
-    }    
-    
+    }
+
     return 0;
 }
 
@@ -81,8 +94,12 @@ int output_text_write(float *m, int x, int y, int t)
  */
 void output_text_close()
 {
-    if (f)
-        fclose(f);
+    if (z) {
+        if (zlib)
+            gzclose(z);
+        else
+            fclose(z);
+    }
 }
 
 /** @} */

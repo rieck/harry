@@ -230,6 +230,13 @@ The similarity values are stored as plain text.
 
 =back
 
+=item B<compress = 0;>
+
+If this parameter is set to 1, the output is stored using zlib compression,
+which can significantly reduce the required disk space.  Several programs
+support reading files compressed using zlib.  Alternatively, the tools
+gzcat(1) and gunzip(1) can be used to access the data.
+
 =back
 
 =item B<};>
@@ -247,10 +254,11 @@ command-line option B<--xx "zz">.  Following is a list of common options:
 =head2 I/O options
 
   -i,  --input_format <format>   Set input format for strings.
-       --decode_str <0|1>        Enable URI-decoding of strings.
+       --decode_str <0|1>        Set URI-decoding of strings.
        --reverse_str <0|1>       Reverse (flip) all strings.
        --stopword_file <file>    Provide a file with stop words.
   -o,  --output_format <format>  Set output format for vectors.
+  -z,  --compress <0|1>          Set zlib compression of output.
 
 =head2 Module options
 

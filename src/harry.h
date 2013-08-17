@@ -15,6 +15,7 @@
 #define BLOCK_SIZE	4096
 
 int harry_version(FILE *, char *, char *);
+int harry_zversion(gzFile *, char *, char *);
 
 #define tr_index(i,j,n) \
       ((j - i) + i * n - i * (i - 1) / 2)

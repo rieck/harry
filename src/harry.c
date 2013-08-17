@@ -25,7 +25,7 @@ config_t cfg;
 
 
 /* Option string */
-#define OPTSTRING       "t:c:i:o:d:vqVhCD"
+#define OPTSTRING       "t:c:i:o:d:z:vqVhCD"
 
 /**
  * Array of options of getopt_long()
@@ -36,6 +36,7 @@ static struct option longopts[] = {
     {"reverse_str", 1, NULL, 1001},
     {"stopword_file", 1, NULL, 1002},   /* <- last entry */
     {"output_format", 1, NULL, 'o'},
+    {"compress", 0, NULL, 'z'},
     {"type", 1, NULL, 't'},
     {"delim", 1, NULL, 'd'},
     {"config_file", 1, NULL, 'c'},
@@ -61,6 +62,18 @@ int harry_version(FILE *f, char *p, char *m)
 }
 
 /**
+ * Prints version and copyright information to a file stream
+ * @param z File pointer
+ * @param p Prefix character
+ * @param m Message
+ * @return number of written characters
+ */
+int harry_zversion(gzFile *z, char *p, char *m)
+{
+    return gzprintf(z, "%sHarry %s - %s\n", p, PACKAGE_VERSION, m);
+}
+
+/**
  * Print configuration
  * @param msg Text to add to output
  */
@@ -78,10 +91,11 @@ static void print_usage(void)
     printf("Usage: harry [options] <input> <output>\n"
            "\nI/O options\n"
            "  -i,  --input_format <format>   Set input format for strings.\n"
-           "       --decode_str <0|1>        Enable URI-decoding of strings.\n"
+           "       --decode_str <0|1>        Set URI-decoding of strings.\n"
            "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
            "       --stopword_file <file>    Provide a file with stop words.\n"
            "  -o,  --output_format <format>  Set output format for vectors.\n"
+           "  -z,  --compress <0|1>          Set zlib compression of output.\n"
            "\nModule options:\n"
            "  -t,  --type <name>             Set similarity measure module\n"
            "  -d   --delim <delimiters>      Set delimiters for words\n"
@@ -143,6 +157,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'd':
             config_set_string(&cfg, "measures.delim", optarg);
+            break;
+        case 'z':
+            config_set_int(&cfg, "output.compress", atoi(optarg));
             break;
         case 'q':
             verbose = 0;
