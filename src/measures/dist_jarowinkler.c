@@ -121,7 +121,6 @@ float dist_jarowinkler_compare(str_t x, str_t y)
 
     /* Jaro-Winkler distance */
     dw = dw + (l * scaling * (1 - dw));
-    printf("Jaro-Winkler distance %f\n", dw);
     return dw;
 }
 
