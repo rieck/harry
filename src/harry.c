@@ -269,7 +269,7 @@ static void harry_init()
  * @param num Pointer to number of strings
  * @return array of string objects
  */
-static str_t *harry_read(char *input, long *num) 
+static str_t *harry_read(char *input, long *num)
 {
     const char *cfg_str;
 
@@ -279,7 +279,7 @@ static str_t *harry_read(char *input, long *num)
     *num = input_open(input);
     if (*num < 0)
         fatal("Could not open input source");
-    info_msg(1, "Reading %ld strings from '%0.40s' [%s].", *num, input, 
+    info_msg(1, "Reading %ld strings from '%0.40s' [%s].", *num, input,
              cfg_str);
 
     /* Allocate memory for strings */
@@ -290,8 +290,8 @@ static str_t *harry_read(char *input, long *num)
     long read = input_read(strs, *num);
     if (read <= 0)
         fatal("Failed to read strs from input '%s'", input);
-    input_close(); 
-    
+    input_close();
+
     return strs;
 }
 
@@ -305,24 +305,23 @@ static float *harry_process(str_t *strs, long num)
 {
     int i, k = 0;
 
-    for (i = 0; i < num; i++) 
+    for (i = 0; i < num; i++)
         strs[i] = str_symbolize(strs[i]);
-    
+
     float *mat = malloc(sizeof(float) * tr_size(num));
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
-
 #ifdef ENABLE_OPENMP
-    #pragma omp parallel for collapse(2) 
-#endif    
+#pragma omp parallel for collapse(2)
+#endif
     for (i = 0; i < num; i++) {
         for (int j = 0; j < num; j++) {
             /* Hack for better parallelization using OpenMP */
-            if (j < i)	
+            if (j < i)
                 continue;
-            mat[tr_index(i,j,num)] = measure_compare(strs[i], strs[j]);
-            
+            mat[tr_index(i, j, num)] = measure_compare(strs[i], strs[j]);
+
             if (verbose) {
                 if (k % num == 0)
                     prog_bar(0, tr_size(num), k);
@@ -330,10 +329,10 @@ static float *harry_process(str_t *strs, long num)
             }
         }
     }
-    
+
     if (verbose)
-        prog_bar(0, tr_size(num), tr_size(num));    
-       
+        prog_bar(0, tr_size(num), tr_size(num));
+
     return mat;
 }
 
@@ -343,18 +342,18 @@ static float *harry_process(str_t *strs, long num)
  * @param mat Similarity values (upper triangle)
  * @param num Number of strings
  */
-static void harry_write(char *output, float *mat, long num) 
+static void harry_write(char *output, float *mat, long num)
 {
     const char *cfg_str;
 
     /* Open output */
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
     output_config(cfg_str);
-    info_msg(1, "Writing %ld similarity values to '%0.40s' [%s].", 
+    info_msg(1, "Writing %ld similarity values to '%0.40s' [%s].",
              tr_size(num), output, cfg_str);
     if (!output_open(output))
         fatal("Could not open output destination");
-    
+
     output_write(mat, num, num, TRUE);
     output_close();
 }
@@ -402,6 +401,6 @@ int main(int argc, char **argv)
     mat = harry_process(strs, num);
     harry_write(output, mat, num);
     harry_exit(strs, mat, num);
-    
+
     return EXIT_SUCCESS;
 }

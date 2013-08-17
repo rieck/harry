@@ -33,9 +33,9 @@ char delim[256] = { DELIM_NOT_INIT };
  */
 void str_free(str_t x)
 {
-    if (x.flags == STR_CHR && x.str.c) 
+    if (x.flags == STR_CHR && x.str.c)
         free(x.str.c);
-    if (x.flags == STR_SYM && x.str.s) 
+    if (x.flags == STR_SYM && x.str.s)
         free(x.str.s);
     if (x.src)
         free(x.src);
@@ -165,7 +165,7 @@ str_t str_symbolize(str_t x)
     free(x.str.c);
     x.str.s = sym;
     x.flags = STR_SYM;
-    
+
     return x;
 }
 
@@ -182,7 +182,7 @@ str_t str_convert(str_t x, char *s)
     x.len = strlen(s);
     x.idx = 0;
     x.src = NULL;
-    
+
     return x;
 }
 
