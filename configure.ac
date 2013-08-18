@@ -149,3 +149,7 @@ echo "     Support for loading archives (--enable-libarchive):    $ENABLE_LIBARC
 echo "     Support for multi-processing (--enable-openmp):        $ENABLE_OPENMP"
 echo "     MD5 as alternative hash (--enable-md5hash):            $ENABLE_MD5HASH"
 echo
+
+if test "x$ENABLE_OPENMP" = "xno" ; then
+   echo ".Oo You are compiling Harry without OpenMP support, which is less fun."
+fi
