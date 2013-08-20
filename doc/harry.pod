@@ -241,11 +241,11 @@ need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
 
 =item B<kern_wdegree = {>
 
-This module implements the weighted degree kernel (Sonnenburg et al., 2007). 
-The runtime complexity is linear in the length of the strings.  If the
-strings have unequal length, the remaining symbols of the longer string are
-ignored, in accordance with the kernel definition.  The following parameters
-are supported:
+This module implements the weighted-degree kernel with shifts (Sonnenburg et
+al., 2007).  The runtime complexity is linear in the length of the strings. 
+If the strings have unequal length, the remaining symbols of the longer
+string are ignored, in accordance with the kernel definition.  The following
+parameters are supported:
 
 =over 4
 
@@ -253,11 +253,11 @@ are supported:
 
 This parameter specifies the degree of the kernel, that is, the length of
 considered k-mers/k-grams.  As the kernel computation is implicit, the
-k-mers are not extracted but implicitly counted by passing over the strings.
+k-mers are not extracted but implicitly counted by blocks of matching symbols.
 
 =item B<shift = 0;>
 
-To compensate noise in the strings, the kernel can be computed with "shift". 
+To compensate noise in the strings, the kernel can be computed with "shifts". 
 The strings are compared multiple times with different positive and negative
 offsets up to B<shift> symbols.  The different kernel values are added.  The
 runtime complexity is increased by twice the value of B<shift>.
