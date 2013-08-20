@@ -40,6 +40,8 @@ static config_default_t defaults[] = {
     {"measures.dist_levenshtein", "cost_sub", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
     {"measures.dist_jarowinkler", "scaling", CONFIG_TYPE_FLOAT, {.flt = 0.1}},
     {"measures.dist_lee", "alphabet", CONFIG_TYPE_INT, {.num = 256}},
+    {"measures.kern_wdegree", "degree", CONFIG_TYPE_INT, {.num = 3}},
+    {"measures.kern_wdegree", "shift", CONFIG_TYPE_INT, {.num = 0}},
     {"output", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
     {"output", "compress", CONFIG_TYPE_INT, {.num = 0}},
     {NULL}

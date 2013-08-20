@@ -17,6 +17,12 @@ case $arg in
        CFLAGS="-g -pedantic -pipe -O3" \
        ./configure --prefix=/opt/rieck --enable-libarchive --enable-openmp
        ;;
+   schulle*)
+       echo "Configuration: Schulle (ESX Cluster)"
+       PKG_CONFIG_PATH="/usr/local/lib/pkgconfig" \
+       CC="gcc" \
+       CFLAGS="-g -pedantic -pipe -O2" \
+       ./configure --enable-libarchive       
    *)    
        echo "Unknown system or configuration"
        exit

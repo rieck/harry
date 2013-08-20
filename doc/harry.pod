@@ -239,6 +239,32 @@ need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
 
 =item B<};>
 
+=item B<kern_wdegree = {>
+
+This module implements the weighted degree kernel (Sonnenburg et al., 2007). 
+The runtime complexity is linear in the length of the strings.  If the
+strings have unequal length, the remaining symbols of the longer string are
+ignored, in accordance with the kernel definition.  The following parameters
+are supported:
+
+=over 4
+
+=item B<degree = 3;>
+
+This parameter specifies the degree of the kernel, that is, the length of
+considered k-mers/k-grams.  As the kernel computation is implicit, the
+k-mers are not extracted but implicitly counted by passing over the strings.
+
+=item B<shift = 0;>
+
+To compensate noise in the strings, the kernel can be computed with "shift". 
+The strings are compared multiple times with different positive and negative
+offsets up to B<shift> symbols.  The results are average.  The runtime
+complexity is increased by twice the value of B<shift>.
+
+=back
+
+=item B<};>
 
 =back
 
@@ -335,6 +361,8 @@ Jaro. Advances in record linkage methodology as applied to the 1985 census of Ta
 Lee. Some properties of nonbinary error-correcting codes. IRE Transactions on Information Theory 4 (2): 77-82, 1958.
 
 Levenshtein. Binary codes capable of correcting deletions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163(4):845-848, 1966.
+
+Sonnenburg, Raetsch, and Rieck. Large scale learning with string kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press, Sept. 2007.
 
 Winkler.  String Comparator Metrics and Enhanced Decision Rules in the Fellegi-Sunter Model of Record Linkage. roceedings of the Section on Survey Research Methods. 354-359, 1990.
 
