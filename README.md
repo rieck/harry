@@ -1,10 +1,8 @@
 ![Harry](harry.png) 
 
-Harry - A Tool for Measuring String Similarity
-==
+# Harry - A Tool for Measuring String Similarity
 
-Description
--- 
+## Description
 
 Harry is a small tool for comparing strings. The tool supports several
 common distance and kernel functions for strings as well as some excotic
@@ -14,22 +12,25 @@ vector space, such as the Levenshtein distance.  Harry complements the tool
 Sally that embeds strings in vector spaces, where explicit similarity
 measures can be computed, such as bag-of-word kernels.
 
-Similarity Measures
---
+## Similarity Measures
 
 Harry is currently under development. The following similarity measures are
 supported so far
+
+### Distances for Strings
 
 + Hamming distance
 + Levenshtein distance
 + Jaro distance
 + Jaro-Winkler distance
 + Lee distance
-+ Weighted-degree kernel
-+ Weighted-degree kernel with shift
 
-Dependencies
---
+### Kernels for Strings
+
++ Weighted-degree kernel
++ Weighted-degree kernel with shifts
+
+## Dependencies
 
     >= zlib-1.2.1
     >= libconfig-1.4
@@ -47,8 +48,7 @@ The source code of the libraries is available here:
 + libconfig   <http://www.hyperrealm.com/libconfig/>
 + libarchive  <http://libarchive.github.com/>
 
-Compilation & Installation
---
+## Compilation & Installation
 
 From GIT repository first run
 
