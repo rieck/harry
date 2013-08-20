@@ -45,9 +45,12 @@ void dist_levenshtein_config()
     const char *str;
 
     /* Costs */
-    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_ins", &cost_ins);
-    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_del", &cost_del);
-    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_sub", &cost_sub);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_ins",
+                        &cost_ins);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_del",
+                        &cost_del);
+    config_lookup_float(&cfg, "measures.dist_levenshtein.cost_sub",
+                        &cost_sub);
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_levenshtein.norm", &str);
