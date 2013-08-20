@@ -37,6 +37,9 @@ static double cost_tra = 1.0;
 /* External variables */
 extern config_t cfg;
 
+/*
+ * Four-way minimum
+ */
 static float min(float a, float b, float c, float d)
 {
     return fmin(fmin(a, b), fmin(c, d));
@@ -82,13 +85,14 @@ float dist_damerau_compare(str_t x, str_t y)
 {
     int i, j, inf = x.len + y.len;
     int d[x.len + 2][y.len + 2];
-    
-    
-    /* Hack. We will change this into a hash table */
-    int alph[65535];
 
     if (x.len == 0 && y.len == 0)
         return 0;
+
+    /* FIXME. This should be replaced with a hash table */
+    int max_alph = 1 << (8 * sizeof(sym_t));
+    int alph[max_alph];
+    memset(alph, 0, max_alph * sizeof(int));
 
     /* Initialize distance matrix */
     d[0][0] = inf;
@@ -100,8 +104,6 @@ float dist_damerau_compare(str_t x, str_t y)
         d[1][j + 1] = j;
         d[0][j + 1] = inf;
     }
-
-    memset(alph, 0, 65535 * sizeof(int));
 
     for (i = 1; i <= x.len; i++) {
         int db = 0;
