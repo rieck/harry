@@ -29,6 +29,7 @@
 #include "dist_levenshtein.h"
 #include "dist_jarowinkler.h"
 #include "dist_lee.h"
+#include "dist_damerau.h"
 #include "kern_wdegree.h"
 
 /* External variables */
@@ -90,6 +91,9 @@ void measure_config(const char *name)
     } else if (measure_match(name, "dist_lee")) {
         func.measure_config = dist_lee_config;
         func.measure_compare = dist_lee_compare;
+    } else if (measure_match(name, "dist_damerau")) {
+        func.measure_config = dist_damerau_config;
+        func.measure_compare = dist_damerau_compare;
     } else if (measure_match(name, "kern_wdegree")) {
         func.measure_config = kern_wdegree_config;
         func.measure_compare = kern_wdegree_compare;

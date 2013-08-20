@@ -10,7 +10,8 @@ libmeasures_la_SOURCES     = measures.h measures.c \
 			     dist_levenshtein.c dist_levenshtein.h \
 			     dist_jarowinkler.c dist_jarowinkler.h \
 			     dist_lee.c dist_lee.h \
-			     kern_wdegree.c kern_wdegree.h
+			     kern_wdegree.c kern_wdegree.h \
+			     dist_damerau.c dist_damerau.h
 
 beautify:
 			   gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \

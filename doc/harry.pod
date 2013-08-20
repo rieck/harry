@@ -194,6 +194,38 @@ respectively.  The default costs are 1.0 for each operation.
 
 =item B<};>
 
+=item B<dist_damerau = {> 
+
+This module implements the Damerau-Levenshtein distance (see Damerau, 1964).
+The runtime complexity of a comparison is quadratic in the length of the
+strings.  The following parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the distance. Supported values
+are I<"none"> for no normalization, I<"min"> for normalization on the
+minimum length, I<"max"> for normalization on the maximum length, I<"avg">
+for normalization on the average length of the compared 
+
+=item B<cost_ins = 1.0;>
+
+=item B<cost_del = 1.0;>
+
+=item B<cost_sub = 1.0;>
+
+=item B<cost_tra = 1.0;>
+
+The computation of the distance can be adapted using four parameters
+defining the cost for an insertation, deletion, substitution and
+tranposition, respectively.  The default costs are 1.0 for each operation.
+
+=back
+
+=item B<};>
+
+
 =item B<dist_jarowinkler = {> 
 
 This module implements the Jaro distance (Jaro, 1989) and the Jaro-Winkler
@@ -353,6 +385,8 @@ section for further details.
 =back
 
 =head1 REFERENCES
+
+Damerau. A technique for computer detection and correction of spelling errors, Communications of the ACM, 7(3):171-176, 1964
 
 Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
 

@@ -65,7 +65,7 @@ static float weight(float len, int degree)
  * @param len Length of region to match
  * @return kernel value
  */
-static float kern_wdegree(sym_t *x, sym_t *y, int len)
+static float kern_wdegree(sym_t * x, sym_t * y, int len)
 {
     int i, start;
     float k = 0;

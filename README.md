@@ -21,6 +21,7 @@ supported so far
 
 + Hamming distance
 + Levenshtein distance
++ Damerau-Levenshtein distance
 + Jaro distance
 + Jaro-Winkler distance
 + Lee distance

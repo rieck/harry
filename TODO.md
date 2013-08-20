@@ -16,7 +16,6 @@
 ## Missing measures
 
 + Subsequence kernel
-+ Damerau distance
 + Compression distance
 
 ## Special hacks
