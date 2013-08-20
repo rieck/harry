@@ -38,6 +38,46 @@ void kern_wdegree_config()
     config_lookup_int(&cfg, "measures.kern_wdegree.shift", &shift);
 }
 
+static float kern_wdegree(sym_t *x, sym_t *y, int len)
+{
+    int i, start;
+    float n = degree * (degree + 1.0);    
+    float k = 0;
+
+    for (i = 0, start = -1; i < len ; i++) {
+        /* Identify matching region */
+        if (x[i] == y[i]) {
+            if (start == -1) 
+                start = i;
+            continue;
+        }
+
+        /* No match found continue */
+        if (start == -1)
+            continue;
+        
+        /* FIXME! There is a closed form by Sonnenburg. Too lazy now */
+        len = i - start;    
+        for (int j = degree; j > 0; j--) { 
+            if (j > len)
+                continue;
+            k += 2 * (len - j + 1) * (degree - j + 1.0) / n;
+        }
+        start = -1;
+    }
+    
+    if (start != -1) {
+        len = i - start;           
+        for (int j = degree; j > 0; j--) { 
+            if (j > len)
+                continue;
+            k += 2 * (len - j + 1) * (degree - j + 1.0) / n;
+        }       
+    }
+    
+    return k;
+}
+
 /**
  * Compute the weighted degree kernel for strings. If the strings 
  * have unequal size, the remaining symbols of the longer string are
@@ -49,51 +89,16 @@ void kern_wdegree_config()
 float kern_wdegree_compare(str_t x, str_t y)
 {
     float k = 0;
-    int s, i, start = -1, len;
-    float n = degree * (degree + 1.0);
-    str_t a, b;
+    int s, len;
 
-    /* Order strings by length */    
-    if (x.len > y.len) {
-        a = x; b = y;
-    } else {
-        b = x; a = y;
-    }
-    
     /* Loop over strings */
     for (s = -shift; s <= shift; s++) {
-        for (i = 0, start = -1; i < a.len && i < b.len; i++) {
-            if (i + s < 0 || i + s >= a.len)
-                continue;
-        
-            /* Identify matching region */
-            if (a.str.s[i + s] == b.str.s[i]) {
-                if (start == -1) 
-                    start = i;
-                continue;
-            }
-
-            /* No match found continue */
-            if (start == -1)
-                continue;
-            
-            /* FIXME! There is a closed form by Sonnenburg. Too lazy now */
-            len = i - start;    
-            for (int j = degree; j > 0; j--) { 
-                if (j > len)
-                    continue;
-                k += 2 * (len - j + 1) * (degree - j + 1.0) / n;
-            }
-            start = -1;
-        }
-        
-        if (start != -1) {
-            len = i - start;           
-            for (int j = degree; j > 0; j--) { 
-                if (j > len)
-                    continue;
-                k += 2 * (len - j + 1) * (degree - j + 1.0) / n;
-            }       
+        if (s <= 0) {
+            len = fmax(fmin(x.len, y.len + s), 0);
+            k += kern_wdegree(x.str.s, y.str.s - s, len);
+        } else {
+            len = fmax(fmin(x.len - s, y.len), 0);        
+            k += kern_wdegree(x.str.s + s, y.str.s, len);
         }
     }
 
