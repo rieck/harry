@@ -9,7 +9,8 @@ AM_CPPFLAGS     		= -I$(top_srcdir)/src \
 check_PROGRAMS			= check_levenshtein \
 				  check_hamming \
 				  check_jarowinkler \
-				  check_lee
+				  check_lee \
+				  check_wdegree
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
 
@@ -24,6 +25,9 @@ check_jarowinkler_LDADD		= $(top_builddir)/src/libharry.la
 
 check_lee_SOURCES		= dist_lee.c tests.h
 check_lee_LDADD			= $(top_builddir)/src/libharry.la
+
+check_wdegree_SOURCES		= kern_wdegree.c tests.h
+check_wdegree_LDADD		= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

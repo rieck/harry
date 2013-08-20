@@ -68,16 +68,10 @@ int test_compare()
         double diff = fabs(tests[i].v - d);
 
         
-        if (diff < 1e-6) {
-            printf(".");
-        } else {
-#ifdef debug            
+        if (diff > 1e-6) {
             printf("Error %f != %f\n", d, tests[i].v);
-            str_print(x);
-            str_print(y);
-#else      
-            printf("E");  
-#endif            
+            str_print(x, "x = ");
+            str_print(y, "y = ");
             err = TRUE;
         }
         

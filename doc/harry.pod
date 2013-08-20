@@ -259,8 +259,8 @@ k-mers are not extracted but implicitly counted by passing over the strings.
 
 To compensate noise in the strings, the kernel can be computed with "shift". 
 The strings are compared multiple times with different positive and negative
-offsets up to B<shift> symbols.  The results are average.  The runtime
-complexity is increased by twice the value of B<shift>.
+offsets up to B<shift> symbols.  The different kernel values are added.  The
+runtime complexity is increased by twice the value of B<shift>.
 
 =back
 

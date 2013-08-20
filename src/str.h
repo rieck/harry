@@ -41,7 +41,7 @@ typedef struct
 } str_t;
 
 void str_free(str_t);
-void str_print(str_t);
+void str_print(str_t, char *);
 void str_delim_set(const char *);
 void str_delim_reset();
 str_t str_symbolize(str_t);

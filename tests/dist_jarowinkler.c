@@ -23,8 +23,8 @@ config_t cfg;
 struct str_test tests[] = {
     /* comparison using characters */
     {"", "", "", 0},
-    {"a", "", "", 0},
-    {"", "a", "", 0},
+    {"a", "", "", 1.0},
+    {"", "a", "", 1.0},
     {"MARTHA", "MARHTA", "", 0.961},
     {"DWAYNE", "DUANE", "", 0.84},
     {"DIXON", "DICKSONX", "", 0.813},
@@ -47,16 +47,10 @@ int test_compare()
         float d = measure_compare(x,y);
         double diff = fabs(tests[i].v - d);
         
-        if (diff < 1e-3) {
-            printf(".");
-        } else {
-#ifdef DEBUG
+        if (diff > 1e-3) {
             printf("Error %f != %f\n", d, tests[i].v);
-            str_print(x);
-            str_print(y);
-#else
-            printf("E");  
-#endif
+            str_print(x, "x = ");
+            str_print(y, "y = ");
             err = TRUE;
         }
         

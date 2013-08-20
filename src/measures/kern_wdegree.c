@@ -49,23 +49,28 @@ void kern_wdegree_config()
 float kern_wdegree_compare(str_t x, str_t y)
 {
     float k = 0;
-    int s, i, start = -1;
+    int s, i, start = -1, len;
     float n = degree * (degree + 1.0);
+    str_t a, b;
 
+    /* Order strings by length */    
+    if (x.len > y.len) {
+        a = x; b = y;
+    } else {
+        b = x; a = y;
+    }
+    
     /* Loop over strings */
     for (s = -shift; s <= shift; s++) {
-        for (i = 0; i < x.len && i < y.len; i++) {
-            if (i + s < 0 || i + s >= x.len || i + s >= y.len)
+        for (i = 0, start = -1; i < a.len && i < b.len; i++) {
+            if (i + s < 0 || i + s >= a.len)
                 continue;
         
             /* Identify matching region */
-            if (x.str.s[i + s] == y.str.s[i]) {
+            if (a.str.s[i + s] == b.str.s[i]) {
                 if (start == -1) 
                     start = i;
-                
-                /* Continue only if not end of one string */
-                if (i < x.len - 1 && i < y.len - 1)
-                    continue;
+                continue;
             }
 
             /* No match found continue */
@@ -73,7 +78,7 @@ float kern_wdegree_compare(str_t x, str_t y)
                 continue;
             
             /* FIXME! There is a closed form by Sonnenburg. Too lazy now */
-            int len = i - start;            
+            len = i - start;    
             for (int j = degree; j > 0; j--) { 
                 if (j > len)
                     continue;
@@ -81,12 +86,18 @@ float kern_wdegree_compare(str_t x, str_t y)
             }
             start = -1;
         }
+        
+        if (start != -1) {
+            len = i - start;           
+            for (int j = degree; j > 0; j--) { 
+                if (j > len)
+                    continue;
+                k += 2 * (len - j + 1) * (degree - j + 1.0) / n;
+            }       
+        }
     }
 
-    if (shift != 0)
-        return k /= 2 * shift;
-    else
-        return k;
+    return k;
 }
 
 /** @} */

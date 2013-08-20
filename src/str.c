@@ -44,15 +44,16 @@ void str_free(str_t x)
 /** 
  * Print string structure
  * @param x string structure
+ * @param p prefix for printf
  */
-void str_print(str_t x)
+void str_print(str_t x, char *p)
 {
     int i;
 
-    printf("str_t\nlen:%d; idx:%ld; src:%s\n", x.len, x.idx, x.src);
+    printf("%s \t (len:%d; idx:%ld; src:%s)\n", p, x.len, x.idx, x.src);
 
     if (x.flags == STR_CHR && x.str.c) {
-        printf("str:");
+        printf("  str:");
         for (i = 0; i < x.len; i++)
             if (isprint(x.str.c[i]))
                 printf("%c", x.str.c[i]);
@@ -62,7 +63,7 @@ void str_print(str_t x)
     }
 
     if (x.flags == STR_SYM && x.str.s) {
-        printf("sym:");
+        printf("  sym:");
         for (i = 0; i < x.len; i++)
             printf("%d ", x.str.s[i]);
         printf("\n");
