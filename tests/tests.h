@@ -20,15 +20,4 @@
 #define config_set_float(c,x,s) \
       config_setting_set_float(config_lookup(c,x),s)
 
-/*
- * Structure for testing string kernels/distances
- */
-struct str_test
-{
-    char *x;
-    char *y;
-    char *delim;
-    float v;
-};
-
 #endif /* TESTS_H */

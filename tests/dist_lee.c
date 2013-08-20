@@ -20,45 +20,60 @@
 int verbose = 0;
 config_t cfg;
 
+/*
+ * Structure for testing string kernels/distances
+ */
+struct str_test
+{
+    char *x;		/**< String x */
+    char *y;		/**< String y */
+    float v;		/**< Expected output */
+};
+
 struct str_test tests[] = {
     /* comparison using characters */
-    {"", "", "", 0},
-    {"a", "", "", 97},
-    {"", "a", "", 97},
-    {"a", "a", "", 0},
-    {"ab", "ba", "", 2},
-    {"bab", "ba", "", 98},
-    {"\xff", "", "", 1},
-    {"\x01", "", "", 1},    
+    {"", "", 0},
+    {"a", "", 97},
+    {"", "a", 97},
+    {"a", "a", 0},
+    {"ab", "ba", 2},
+    {"bab", "ba", 98},
+    {"\xff", "", 1},
+    {"\x01", "", 1},
     {NULL}
 };
 
+/** 
+ * Test runs
+ * @return error flag
+ */
 int test_compare()
 {
     int i, err = FALSE;
     str_t x, y;
+
+    for (i = 0; tests[i].x; i++) {
+        measure_config("dist_lee");
     
-    for (i = 0; tests[i].x ; i++) {
         x = str_convert(x, tests[i].x);
         y = str_convert(y, tests[i].y);
 
-        str_delim_set(tests[i].delim);
         x = str_symbolize(x);
         y = str_symbolize(y);
-        
-        float d = measure_compare(x,y);
+
+        float d = measure_compare(x, y);
         double diff = fabs(tests[i].v - d);
-        
+
         if (diff > 1e-6) {
             printf("Error %f != %f\n", d, tests[i].v);
             str_print(x, "x = ");
             str_print(y, "y = ");
         }
-        
+
         str_free(x);
         str_free(y);
     }
-    
+
     return err;
 }
 
@@ -72,7 +87,6 @@ int main(int argc, char **argv)
     config_init(&cfg);
     config_check(&cfg);
 
-    measure_config("dist_lee");
     err |= test_compare();
 
     config_destroy(&cfg);
