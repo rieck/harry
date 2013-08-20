@@ -14,6 +14,20 @@ vector space, such as the Levenshtein distance.  Harry complements the tool
 Sally that embeds strings in vector spaces, where explicit similarity
 measures can be computed, such as bag-of-word kernels.
 
+Similarity Measures
+--
+
+Harry is currently under development. The following similarity measures are
+supported so far
+
++ Hamming distance
++ Levenshtein distance
++ Jaro distance
++ Jaro-Winkler distance
++ Lee distance
++ Weighted-degree kernel
++ Weighted-degree kernel with shift
+
 Dependencies
 --
 
