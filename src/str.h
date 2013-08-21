@@ -46,5 +46,7 @@ void str_delim_set(const char *);
 void str_delim_reset();
 str_t str_symbolize(str_t);
 str_t str_convert(str_t, char *);
+uint64_t str_hash1(str_t);
+uint64_t str_hash2(str_t, str_t);
 
 #endif /* STR_H */

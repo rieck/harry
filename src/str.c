@@ -20,6 +20,7 @@
 #include "common.h"
 #include "util.h"
 #include "str.h"
+#include "murmur.h"
 
 /* External variable */
 extern int verbose;
@@ -186,5 +187,50 @@ str_t str_convert(str_t x, char *s)
 
     return x;
 }
+
+/**
+ * Compute a 64-bit hash for a string. The hash is used at different locations.
+ * Collisions are possible but not very likely (hopefully)  
+ * @param x String to hash
+ * @return hash value
+ */
+uint64_t str_hash1(str_t x)
+{
+    if (x.flags == STR_CHR && x.str.c)
+        return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
+    if (x.flags == STR_SYM && x.str.s)
+        return MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
+        
+    warning("Nothing to hash. String is missing");
+    return 0;
+}
+
+/**
+ * Compute a 64-bit hash for two strings. The computation is symmetric, that is,
+ * the same strings retrieve the same hash independent of their order. 
+ * Collisions are possible but not very likely (hopefully)  
+ * @param x String to hash
+ * @param y String to hash 
+ * @return hash value
+ */
+uint64_t str_hash2(str_t x, str_t y)
+{
+    uint64_t a,b;
+    
+    if (x.flags == STR_CHR && y.flags == STR_CHR && x.str.c && y.str.c) {
+        a = MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
+        b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);
+        return a ^ b;
+    }
+    if (x.flags == STR_SYM && y.flags == STR_SYM && x.str.s && y.str.s) {
+        a = MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
+        b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);        
+        return a ^ b;
+    }
+        
+    warning("Nothing to hash. Strings are missing or incompatible.");
+    return 0;
+}
+
 
 /** @} */
