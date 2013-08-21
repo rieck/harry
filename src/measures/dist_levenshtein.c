@@ -20,9 +20,6 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_levenshtein</em>: Levenshtein distance for strings.
- *
- * Adapted from Stephen Toub's C# implementation. 
- * http://blogs.msdn.com/b/toub/archive/2006/05/05/590814.aspx
  * @{
  */
 
@@ -69,8 +66,9 @@ void dist_levenshtein_config()
 }
 
 /**
- * Computes the Levenshtein distance of two strings. Adapted from 
- * Stephen Toub's C# implementation.
+ * Computes the Levenshtein distance of two strings. 
+ * Adapted from Stephen Toub's C# implementation. 
+ * http://blogs.msdn.com/b/toub/archive/2006/05/05/590814.aspx
  * @param x first string 
  * @param y second string
  * @return Levenshtein distance

@@ -17,6 +17,7 @@
 
 + Subsequence kernel
 + Compression distance
++ Smith-Waterman distance
 
 ## Special hacks
 
