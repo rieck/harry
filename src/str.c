@@ -11,7 +11,7 @@
 
 /**
  * @defgroup string String functions
- * The module contains string functions.
+ * Functions for processing strings and sequences
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
  */

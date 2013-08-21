@@ -11,8 +11,9 @@ harry_LDADD          = 	libharry.la
 harry_DEPENDENCIES   = 	libharry.la
 
 noinst_LTLIBRARIES   = 	libharry.la
-libharry_la_SOURCES  = 	common.h util.c util.h default.c default.h uthash.h \
-                        md5.c md5.h murmur.c murmur.h str.c str.h
+libharry_la_SOURCES  = 	common.h util.c util.h default.c default.h \ 
+                        md5.c md5.h murmur.c murmur.h str.c str.h \
+                        vcache.c vcache.h uthash.h
 libharry_la_LIBADD   =  input/libinput.la measures/libmeasures.la \
 		       	output/liboutput.la
 beautify:

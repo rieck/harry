@@ -11,7 +11,7 @@
 
 /**
  * @defgroup util Utility functions
- * The module contains utility functions for Harry.
+ * Collection of utility functions for Harry.
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
  */
