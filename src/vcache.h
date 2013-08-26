@@ -12,10 +12,23 @@
 #ifndef VCACHE_H
 #define VCACHE_H
 
-typedef struct {
-    uint64_t hash;	/**< Hash for sequences */
-    float value;	/**< Cached similarity value */
+typedef struct
+{
+    uint64_t key;       /**< Hash for sequences */
+    float value;        /**< Cached similarity value */
     UT_hash_handle hh;  /**< uthash handle */
 } entry_t;
+
+struct list
+{
+    uint64_t key;       /**< Hash for sequences */
+    struct list *next;  /**< Next element */
+};
+typedef struct list list_t;
+
+void vcache_init();
+int vcache_load(uint64_t key, float *value);
+int vcache_store(uint64_t key, float value);
+void vcache_destroy();
 
 #endif

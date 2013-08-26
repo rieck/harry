@@ -145,6 +145,13 @@ If this parameter is set the comparison of strings is performed on words,
 that is, each word is considered as a symbol. If the parameter B<delim> is
 an emptry strings, B<harry> considers each individual character as a symbol.
 
+
+=item B<cache = 256;>
+
+The parameter B<cache> specifies the maximum size of the internal cache in
+megabytes (MB).  The general-purpose cache is used to speed up computations
+of B<harry> for several similarity measures.
+
 =item B<dist_hamming = {> 
 
 This module implements the Hamming distance (see Hamming, 1950).  The

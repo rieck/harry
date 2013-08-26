@@ -33,6 +33,7 @@ static config_default_t defaults[] = {
     {"input", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
     {"measures", "type", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     {"measures", "delim", CONFIG_TYPE_STRING, {.str = ""}},
+    {"measures", "cache", CONFIG_TYPE_INT, {.num = 256}},    
     {"measures.dist_hamming", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {"measures.dist_levenshtein", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {"measures.dist_levenshtein", "cost_ins", CONFIG_TYPE_FLOAT, {.flt = 1.0}},

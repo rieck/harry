@@ -25,7 +25,7 @@ config_t cfg;
 
 
 /* Option string */
-#define OPTSTRING       "t:c:i:o:d:z:vqVhCD"
+#define OPTSTRING       "a:t:c:i:o:d:z:vqVhCD"
 
 /**
  * Array of options of getopt_long()
@@ -39,6 +39,7 @@ static struct option longopts[] = {
     {"compress", 0, NULL, 'z'},
     {"type", 1, NULL, 't'},
     {"delim", 1, NULL, 'd'},
+    {"cache", 1, NULL, 'a'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"print_config", 0, NULL, 'C'},
@@ -98,7 +99,8 @@ static void print_usage(void)
            "  -z,  --compress <0|1>          Set zlib compression of output.\n"
            "\nModule options:\n"
            "  -t,  --type <name>             Set similarity measure module\n"
-           "  -d   --delim <delimiters>      Set delimiters for words\n"
+           "  -d,  --delim <delimiters>      Set delimiters for words\n"
+           "  -a,  --cache <size>            Set size of cache in megabytes\n"
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
@@ -157,6 +159,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'd':
             config_set_string(&cfg, "measures.delim", optarg);
+            break;
+        case 'a':
+            config_set_string(&cfg, "measures.cache", optarg);
             break;
         case 'z':
             config_set_int(&cfg, "output.compress", atoi(optarg));

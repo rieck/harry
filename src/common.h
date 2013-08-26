@@ -57,6 +57,16 @@
 #include <omp.h>
 #endif
 
+#ifdef HAVE_UTHASH_UTHASH_H
+#include <uthash/uthash.h>
+#else
+#ifdef HAVE_UTHASH_H
+#include <uthash.h>
+#else
+#include "uthash.h"
+#endif
+#endif
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -64,6 +74,5 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
-
 
 #endif /* COMMON_H */
