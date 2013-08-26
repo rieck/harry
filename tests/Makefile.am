@@ -11,7 +11,8 @@ check_PROGRAMS			= check_levenshtein \
 				  check_jarowinkler \
 				  check_lee \
 				  check_wdegree \
-				  check_damerau
+				  check_damerau \
+				  check_vcache
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
 
@@ -32,6 +33,9 @@ check_wdegree_LDADD		= $(top_builddir)/src/libharry.la
 
 check_damerau_SOURCES		= dist_damerau.c tests.h
 check_damerau_LDADD		= $(top_builddir)/src/libharry.la
+
+check_vcache_SOURCES		= vcache.c tests.h
+check_vcache_LDADD		= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

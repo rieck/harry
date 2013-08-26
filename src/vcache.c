@@ -22,12 +22,20 @@ extern config_t cfg;
 static entry_t *hash = NULL;
 static list_t *head = NULL;
 static list_t *tail = NULL;
-static int space = 0;
-static int size = 0;
+static long space = 0;
+static long size = 0;
 
 /* Cache statistics */
 static double hits = 0;
 static double misses = 0;
+
+/* 
+ * Since we are using a hash table, the consumed memory is higher than the
+ * stored data.  For simplicity and in accordance with some simple benchmarks, 
+ * we use a factor of 2 to model the extra space needed by the hash table.
+ * TODO: Tune uthash.h to decrease this factor.
+ */
+#define entry_size (2 * (sizeof(list_t) + sizeof(entry_t)))
 
 /**
  * @defgroup vcache Value cache 
@@ -41,13 +49,19 @@ static double misses = 0;
  */
 void vcache_init()
 {
-    int size;
-    config_lookup_int(&cfg, "measures.cache", &size);
-    space = (size * 1024 * 1024) / (sizeof(entry_t) + sizeof(list_t));
+    int csize;
+    config_lookup_int(&cfg, "measures.cache", &csize);
 
-    info_msg(1, "Initializing cache with %d megabytes (%d entries)", size,
+    /* Initialize cache stats */
+    space = floor((csize * 1024 * 1024) / entry_size);
+    size = 0;
+    misses = 0;
+    hits = 0;
+
+    info_msg(1, "Initializing cache with %d megabytes (%d entries)", csize,
              space);
 
+    /* Initialize data structures */
     hash = NULL;
     head = NULL;
     tail = NULL;
@@ -56,27 +70,29 @@ void vcache_init()
 /**
  * Trim cache if necessary
  */
-void vcache_trim()
+void vcache_alloc(entry_t ** entry, list_t ** elem)
 {
-    entry_t *entry;
-    list_t *elem;
+    if (space > 0) {
+        *entry = calloc(1, sizeof(entry_t));
+        *elem = calloc(1, sizeof(list_t));
 
-    if (space > 0 || !head)
+        if (!*elem || !*entry)
+            error("Could not allocate memory for cache entry");
+
+        space--;
+        size++;
         return;
+    }
 
-    /* Remove element from hash */
-    HASH_FIND(hh, hash, &(head->key), sizeof(uint64_t), entry);
-    HASH_DEL(hash, entry);
-    free(entry);
+    assert(head);
+
+    /* Remove first element from hash */
+    HASH_FIND(hh, hash, &(head->key), sizeof(uint64_t), (*entry));
+    HASH_DEL(hash, *entry);
 
     /* Remove element from fifo list */
-    elem = head;
+    *elem = head;
     head = head->next;
-    free(elem);
-
-    /* Update free space */
-    space++;
-    size--;
 }
 
 /**
@@ -89,8 +105,8 @@ void vcache_trim()
  */
 int vcache_store(uint64_t key, float value)
 {
-    entry_t *entry;
-    list_t *elem;
+    entry_t *entry = NULL;
+    list_t *elem = NULL;
 
     /* Check for presence of key */
     HASH_FIND(hh, hash, &key, sizeof(uint64_t), entry);
@@ -100,23 +116,17 @@ int vcache_store(uint64_t key, float value)
         return TRUE;
     }
 
+    /* Allocate or re-use memory */
+    vcache_alloc(&entry, &elem);
+
     /* Update hash table */
-    entry = malloc(sizeof(entry_t));
-    if (!entry) {
-        error("Could not allocate memory for hash table");
-        return FALSE;
-    }
     entry->key = key;
     entry->value = value;
     HASH_ADD(hh, hash, key, sizeof(uint64_t), entry);
 
     /* Update fifo of keys */
-    elem = malloc(sizeof(list_t));
-    if (!elem) {
-        error("Could not allocate memory for fifo list");
-        return FALSE;
-    }
     elem->key = key;
+    elem->next = NULL;
 
     if (!head || !tail) {
         head = elem;
@@ -126,11 +136,6 @@ int vcache_store(uint64_t key, float value)
         tail = elem;
     }
 
-    /* Update free space */
-    space--;
-    size++;
-    vcache_trim();
-    
     return TRUE;
 }
 
@@ -161,9 +166,11 @@ int vcache_load(uint64_t key, float *value)
  */
 void vcache_info()
 {
-    info_msg(1, "Cache stats: %dMb used by %d entries, hit rate %f%%, %dMb free.",
-             size * (sizeof(entry_t) + sizeof(list_t)), size, hits / (hits+misses),
-             space * (sizeof(entry_t) + sizeof(list_t)));
+    float used = (size * entry_size) / (1024.0 * 1024.0);
+    float free = (space * entry_size) / (1024.0 * 1024.0);
+
+    info_msg(1, "Cache stats: %.1fMb used by %d entries, hits %3.0f%%, %.1fMb free.",
+             used, size, 100 * hits / (hits + misses), free);
 }
 
 /**

@@ -50,7 +50,7 @@ int test_compare()
     int i, err = FALSE;
     str_t x, y;
 
-    for (i = 0; tests[i].x; i++) {
+    for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_jarowinkler");    
     
         x = str_convert(x, tests[i].x);

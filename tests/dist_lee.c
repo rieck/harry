@@ -52,7 +52,7 @@ int test_compare()
     int i, err = FALSE;
     str_t x, y;
 
-    for (i = 0; tests[i].x; i++) {
+    for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_lee");
     
         x = str_convert(x, tests[i].x);
@@ -68,6 +68,7 @@ int test_compare()
             printf("Error %f != %f\n", d, tests[i].v);
             str_print(x, "x = ");
             str_print(y, "y = ");
+            err = TRUE;
         }
 
         str_free(x);

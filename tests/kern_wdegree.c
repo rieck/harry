@@ -65,7 +65,7 @@ int test_compare()
     int i, err = FALSE;
     str_t x, y;
 
-    for (i = 0; tests[i].x; i++) {
+    for (i = 0; tests[i].x && !err; i++) {
         config_set_int(&cfg, "measures.kern_wdegree.shift", tests[i].s);
         config_set_int(&cfg, "measures.kern_wdegree.degree", tests[i].d);
         measure_config("kern_wdegree");
