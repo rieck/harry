@@ -17,6 +17,7 @@
 #include "input.h"
 #include "measures.h"
 #include "output.h"
+#include "vcache.h"
 
 /* Global variables */
 int verbose = 0;
@@ -260,6 +261,7 @@ static void harry_load_config(int argc, char **argv)
     if (!config_check(&cfg)) {
         exit(EXIT_FAILURE);
     }
+    
 }
 
 /**
@@ -273,6 +275,9 @@ static void harry_init()
 
     if (verbose > 1)
         config_print(&cfg);
+
+    /* Init value cache */
+    vcache_init();
 
     /* Configure module (init as first) */
     config_lookup_string(&cfg, "measures.type", &cfg_str);
@@ -396,6 +401,9 @@ static void harry_exit(str_t *strs, float *mat, long num)
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
         stopwords_destroy();
+
+    /* Destroy value cache */
+    vcache_destroy();
 
     /* Destroy configuration */
     config_destroy(&cfg);

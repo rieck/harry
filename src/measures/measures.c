@@ -30,6 +30,7 @@
 #include "dist_jarowinkler.h"
 #include "dist_lee.h"
 #include "dist_damerau.h"
+#include "dist_compression.h"
 #include "kern_wdegree.h"
 #include "kern_subsequence.h"
 
@@ -95,6 +96,9 @@ void measure_config(const char *name)
     } else if (measure_match(name, "dist_damerau")) {
         func.measure_config = dist_damerau_config;
         func.measure_compare = dist_damerau_compare;
+    } else if (measure_match(name, "dist_compression")) {
+        func.measure_config = dist_compression_config;
+        func.measure_compare = dist_compression_compare;
     } else if (measure_match(name, "kern_wdegree")) {
         func.measure_config = kern_wdegree_config;
         func.measure_compare = kern_wdegree_compare;
