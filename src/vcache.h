@@ -29,6 +29,7 @@ typedef struct list list_t;
 void vcache_init();
 int vcache_load(uint64_t key, float *value);
 int vcache_store(uint64_t key, float value);
+void vcache_info();
 void vcache_destroy();
 
 #endif

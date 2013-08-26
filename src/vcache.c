@@ -23,6 +23,11 @@ static entry_t *hash = NULL;
 static list_t *head = NULL;
 static list_t *tail = NULL;
 static int space = 0;
+static int size = 0;
+
+/* Cache statistics */
+static double hits = 0;
+static double misses = 0;
 
 /**
  * @defgroup vcache Value cache 
@@ -71,6 +76,7 @@ void vcache_trim()
 
     /* Update free space */
     space++;
+    size--;
 }
 
 /**
@@ -122,7 +128,9 @@ int vcache_store(uint64_t key, float value)
 
     /* Update free space */
     space--;
+    size++;
     vcache_trim();
+    
     return TRUE;
 }
 
@@ -139,11 +147,23 @@ int vcache_load(uint64_t key, float *value)
     /* Check for presence of key */
     HASH_FIND(hh, hash, &key, sizeof(uint64_t), entry);
     if (!entry) {
+        misses++;
         return FALSE;
     } else {
+        hits++;
         *value = entry->value;
         return TRUE;
     }
+}
+
+/**
+ * Display some information about cache usage 
+ */
+void vcache_info()
+{
+    info_msg(1, "Cache stats: %dMb used by %d entries, hit rate %f%%, %dMb free.",
+             size * (sizeof(entry_t) + sizeof(list_t)), size, hits / (hits+misses),
+             space * (sizeof(entry_t) + sizeof(list_t)));
 }
 
 /**
