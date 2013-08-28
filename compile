@@ -15,7 +15,7 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -pedantic -pipe -O3" \
-       ./configure --prefix=/opt/rieck --enable-libarchive --enable-openmp
+       ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    schulle*)
        echo "Configuration: Schulle (ESX Cluster)"
@@ -23,6 +23,7 @@ case $arg in
        CC="gcc" \
        CFLAGS="-g -pedantic -pipe -O2" \
        ./configure --enable-libarchive       
+       ;;
    *)    
        echo "Unknown system or configuration"
        exit
