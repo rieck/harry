@@ -423,6 +423,8 @@ command-line option B<--xx "zz">.  Following is a list of common options:
 
   -t,  --type <name>		 Set similarity measure module
   -d   --delim <delimiters>	 Set delimiters for words
+  -a,  --cache_size <size>       Set size of cache in megabytes
+  -g,  --global_cache <0|1>      Set global cache for similarity values
 
 =head2 Generic options
 
