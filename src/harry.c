@@ -221,9 +221,11 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
     }
 
     /* Last but not least. Warn about default config */
+#if 0
     if (!user_conf) {
         warning("No config file given. Using defaults (see -D)");
     }
+#endif    
 }
 
 

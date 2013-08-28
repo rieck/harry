@@ -103,15 +103,13 @@ float dist_compression_compare(str_t x, str_t y)
         /* Compress both sequences */
         tmp = len;
         compress(dst, &tmp, src, (x.len + y.len) * sizeof(sym_t));
-        xyl += tmp;
-    } else {
-        xyl *= 2.0;
-    }
+        xyl = (xyl + tmp) / 2.0;
+    } 
 
     /* Free memory */
     free(dst);
     free(src);
-    return xyl / (xl + yl) - 1.0;
+    return (xyl - fmin(xl,yl)) / fmax(xl, yl);
 }
 
 /** @} */
