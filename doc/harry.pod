@@ -146,11 +146,18 @@ that is, each word is considered as a symbol. If the parameter B<delim> is
 an emptry strings, B<harry> considers each individual character as a symbol.
 
 
-=item B<cache = 256;>
+=item B<cache_size = 256;>
 
-The parameter B<cache> specifies the maximum size of the internal cache in
-megabytes (MB).  The general-purpose cache is used to speed up computations
+The parameter B<cache_size> specifies the maximum size of the internal cache in
+megabytes (Mb).  The general-purpose cache is used to speed up computations
 of B<harry> for several similarity measures.
+
+=item B<global_cache = 0;>
+
+By default B<harry> caches only some internal computations. If this
+parameter is set to 1, all similarity values are stored in the cache.  This
+feature should only be enabled if many of the compared strings are identical
+and thus caching similarity values can provide benefits.
 
 =item B<dist_hamming = {> 
 
@@ -277,6 +284,32 @@ need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
 =back
 
 =item B<};>
+
+=item B<dist_compression = {> 
+
+This module implements the compression distance for strings. The compression
+is implemented using B<zlib>.  The runtime complexity of a comparison is linear
+in the length of the strings, though with a large constant factor.  The
+following parameters are supported:
+
+=over 4
+
+=item B<symmetric = 1;>
+
+The compression distance is only symmetric in theory. If this parameter is
+set to 1, the distance is forced to be symmetric by comparing the strings
+twice in different order.
+
+=item B<level = 9;> 
+
+This parameter defines the compression level used by B<zlib> and must be 
+between 1 and 9, where 1 gives the best speed and 9 the best compression. 
+See B<zlib(3)>
+
+=back
+
+=item B<};>
+
 
 =item B<kern_wdegree = {>
 

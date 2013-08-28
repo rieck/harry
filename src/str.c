@@ -200,7 +200,7 @@ uint64_t str_hash1(str_t x)
         return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
     if (x.flags == STR_SYM && x.str.s)
         return MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
-        
+
     warning("Nothing to hash. String is missing");
     return 0;
 }
@@ -215,8 +215,8 @@ uint64_t str_hash1(str_t x)
  */
 uint64_t str_hash2(str_t x, str_t y)
 {
-    uint64_t a,b;
-    
+    uint64_t a, b;
+
     if (x.flags == STR_CHR && y.flags == STR_CHR && x.str.c && y.str.c) {
         a = MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);
@@ -224,10 +224,10 @@ uint64_t str_hash2(str_t x, str_t y)
     }
     if (x.flags == STR_SYM && y.flags == STR_SYM && x.str.s && y.str.s) {
         a = MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
-        b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);        
+        b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);
         return a ^ b;
     }
-        
+
     warning("Nothing to hash. Strings are missing or incompatible.");
     return 0;
 }

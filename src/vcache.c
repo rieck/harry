@@ -50,7 +50,7 @@ static double misses = 0;
 void vcache_init()
 {
     int csize;
-    config_lookup_int(&cfg, "measures.cache", &csize);
+    config_lookup_int(&cfg, "measures.cache_size", &csize);
 
     /* Initialize cache stats */
     space = floor((csize * 1024 * 1024) / entry_size);
@@ -58,8 +58,7 @@ void vcache_init()
     misses = 0;
     hits = 0;
 
-    info_msg(1, "Initializing cache with %d megabytes (%d entries)", csize,
-             space);
+    info_msg(1, "Initializing cache with %dMb (%d entries)", csize, space);
 
     /* Initialize data structures */
     hash = NULL;
@@ -135,7 +134,7 @@ int vcache_store(uint64_t key, float value)
         tail->next = elem;
         tail = elem;
     }
-
+    
     return TRUE;
 }
 
@@ -169,8 +168,27 @@ void vcache_info()
     float used = (size * entry_size) / (1024.0 * 1024.0);
     float free = (space * entry_size) / (1024.0 * 1024.0);
 
-    info_msg(1, "Cache stats: %.1fMb used by %d entries, hits %3.0f%%, %.1fMb free.",
+    info_msg(1,
+             "Cache stats: %.1fMb used by %d entries, hits %3.0f%%, %.1fMb free.",
              used, size, 100 * hits / (hits + misses), free);
+}
+
+/**
+ * Get used memory in megabytes
+ * @return used memory
+ */
+float vcache_get_used()
+{
+    return (size * entry_size) / (1024.0 * 1024.0);
+}
+
+/**
+ * Get hit rate
+ * @return hit rate
+ */
+float vcache_get_hitrate()
+{
+    return 100 * hits / (hits + misses);
 }
 
 /**

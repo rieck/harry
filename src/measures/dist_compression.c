@@ -25,44 +25,93 @@
 
 /* External variables */
 extern config_t cfg;
+static int level = 0;
+static int symmetric = 0;
 
 /**
  * Initializes the similarity measure
  */
 void dist_compression_config()
 {
+    /* Configuration */
+    config_lookup_int(&cfg, "measures.dist_compression.level", &level);
+    config_lookup_int(&cfg, "measures.dist_compression.symmetric",
+                      &symmetric);
 }
 
 /**
- * Computes the Compression distance of two strings. 
+ * Computes the compression distance of two strings. 
  * @param x first string 
  * @param y second string
  * @return Compression distance
  */
 float dist_compression_compare(str_t x, str_t y)
 {
-    float xl, yl;
+    float xl, yl, xyl;
     uint64_t xk, yk;
-    unsigned long max = compressBound(fmax(x.len, y.len) * sizeof(sym_t));
-    unsigned char *dest = alloca(max);
-    
+    unsigned long len, tmp;
+    unsigned char *dst, *src;
+    int ret;
+
+    /* Allocate memory for compression */
+    len = compressBound((x.len + y.len) * sizeof(sym_t));
+    dst = malloc(len);
+    src = malloc(len);
+    if (!src || !dst) {
+        error("Failed to allocate memory for compression");
+        return -1;
+    }
+
     xk = str_hash1(x);
-    if (!vcache_load(xk, &xl)) {
-        unsigned long len = max;
-        compress(dest, &len, (void *) x.str.s, x.len * sizeof(sym_t));
-        xl = len;
+    #pragma omp critical (vcache)
+    ret = vcache_load(xk, &xl);
+    if (!ret) {
+        /* Compress sequence x */
+        tmp = len;
+        compress2(dst, &tmp, (void *) x.str.s, x.len * sizeof(sym_t), level);
+        xl = tmp;
+        #pragma omp critical (vcache)
         vcache_store(xk, xl);
     }
-    
+
     yk = str_hash1(y);
-    if (!vcache_load(yk, &yl)) {
-        unsigned long len = max;
-        compress(dest, &len, (void *) y.str.s, y.len * sizeof(sym_t));
-        yl = len;
+    #pragma omp critical (vcache)
+    ret = vcache_load(yk, &yl);
+    if (!ret) {
+        /* Compress sequence y */
+        tmp = len;
+        compress2(dst, &tmp, (void *) y.str.s, y.len * sizeof(sym_t), level);
+        yl = tmp;
+        #pragma omp critical (vcache)
         vcache_store(yk, yl);
     }
 
-    return 0;
+    /* Concatenate sequences x and y */
+    memcpy(src, x.str.s, x.len * sizeof(sym_t));
+    memcpy(src + x.len * sizeof(sym_t), y.str.s, y.len * sizeof(sym_t));
+
+    /* Compress both sequences */
+    tmp = len;
+    compress2(dst, &tmp, src, (x.len + y.len) * sizeof(sym_t), level);
+    xyl = tmp;
+
+    if (symmetric) {
+        /* Concatenate sequences y and x */
+        memcpy(src, y.str.s, y.len * sizeof(sym_t));
+        memcpy(src + y.len * sizeof(sym_t), x.str.s, x.len * sizeof(sym_t));
+
+        /* Compress both sequences */
+        tmp = len;
+        compress(dst, &tmp, src, (x.len + y.len) * sizeof(sym_t));
+        xyl += tmp;
+    } else {
+        xyl *= 2.0;
+    }
+
+    /* Free memory */
+    free(dst);
+    free(src);
+    return xyl / (xl + yl) - 1.0;
 }
 
 /** @} */

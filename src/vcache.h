@@ -31,5 +31,7 @@ int vcache_load(uint64_t key, float *value);
 int vcache_store(uint64_t key, float value);
 void vcache_info();
 void vcache_destroy();
+float vcache_get_hitrate();
+float vcache_get_used();
 
 #endif

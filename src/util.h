@@ -17,13 +17,6 @@
 #include "config.h"
 #include "harry.h"
 
-/* Progress bar stuff */
-#define PROGBAR_LEN     50
-#define PROGBAR_EMPTY   ':'
-#define PROGBAR_FULL    '#'
-#define PROGBAR_DONE    '#'
-#define PROGBAR_FRONT   '|'
-
 /* Fatal message */
 #ifndef fatal
 #define fatal(...)     {err_msg("Error", __func__, __VA_ARGS__); exit(-1);}

@@ -26,7 +26,7 @@ config_t cfg;
 
 
 /* Option string */
-#define OPTSTRING       "a:t:c:i:o:d:z:vqVhCD"
+#define OPTSTRING       "g:a:t:c:i:o:d:z:vqVhCD"
 
 /**
  * Array of options of getopt_long()
@@ -40,7 +40,8 @@ static struct option longopts[] = {
     {"compress", 0, NULL, 'z'},
     {"type", 1, NULL, 't'},
     {"delim", 1, NULL, 'd'},
-    {"cache", 1, NULL, 'a'},
+    {"cache_size", 1, NULL, 'a'},
+    {"global_cache", 1, NULL, 'g'}, 
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"print_config", 0, NULL, 'C'},
@@ -70,7 +71,7 @@ int harry_version(FILE *f, char *p, char *m)
  * @param m Message
  * @return number of written characters
  */
-int harry_zversion(gzFile *z, char *p, char *m)
+int harry_zversion(gzFile * z, char *p, char *m)
 {
     return gzprintf(z, "%sHarry %s - %s\n", p, PACKAGE_VERSION, m);
 }
@@ -101,7 +102,8 @@ static void print_usage(void)
            "\nModule options:\n"
            "  -t,  --type <name>             Set similarity measure module\n"
            "  -d,  --delim <delimiters>      Set delimiters for words\n"
-           "  -a,  --cache <size>            Set size of cache in megabytes\n"
+           "  -a,  --cache_size <size>       Set size of cache in megabytes\n"
+           "  -g,  --global_cache <0|1>      Set global cache for similarity values\n"
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
@@ -162,7 +164,10 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_string(&cfg, "measures.delim", optarg);
             break;
         case 'a':
-            config_set_string(&cfg, "measures.cache", optarg);
+            config_set_int(&cfg, "measures.cache_size", atoi(optarg));
+            break;
+        case 'g':
+            config_set_int(&cfg, "measures.global_cache", atoi(optarg));
             break;
         case 'z':
             config_set_int(&cfg, "output.compress", atoi(optarg));
@@ -261,7 +266,7 @@ static void harry_load_config(int argc, char **argv)
     if (!config_check(&cfg)) {
         exit(EXIT_FAILURE);
     }
-    
+
 }
 
 /**
@@ -339,9 +344,7 @@ static float *harry_process(str_t *strs, long num)
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
-#ifdef ENABLE_OPENMP
-#pragma omp parallel for collapse(2)
-#endif
+    #pragma omp parallel for collapse(2)
     for (i = 0; i < num; i++) {
         for (int j = 0; j < num; j++) {
             /* Hack for better parallelization using OpenMP */

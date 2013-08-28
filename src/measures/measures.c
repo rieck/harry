@@ -23,6 +23,7 @@
 #include "util.h"
 #include "input.h"
 #include "measures.h"
+#include "vcache.h"
 
 /* Similarity measures */
 #include "dist_hamming.h"
@@ -36,6 +37,9 @@
 
 /* External variables */
 extern config_t cfg;
+
+/* Global variables */
+static int global_cache;
 
 /**
  * Structure for measure interface
@@ -81,6 +85,9 @@ void measure_config(const char *name)
     if (strlen(cfg_str) > 0)
         str_delim_set(cfg_str);
 
+    /* Enable global cache */
+    config_lookup_int(&cfg, "measures.global_cache", &global_cache);
+
     if (measure_match(name, "dist_hamming")) {
         func.measure_config = dist_hamming_config;
         func.measure_compare = dist_hamming_compare;
@@ -121,7 +128,23 @@ void measure_config(const char *name)
  */
 double measure_compare(str_t x, str_t y)
 {
-    return func.measure_compare(x, y);
+    int ret;
+
+    if (!global_cache)
+        return func.measure_compare(x,y);
+
+    uint64_t xyk = str_hash2(x, y);
+    float m = 0;
+
+    #pragma omp critical (vcache)
+    ret = vcache_load(xyk, &m);
+
+    if (!ret) {
+        m = func.measure_compare(x, y);
+        #pragma omp critical (vcache)
+        vcache_store(xyk, m);
+    }
+    return m;
 }
 
 /** @} */

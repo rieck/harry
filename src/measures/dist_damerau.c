@@ -56,7 +56,7 @@ void dist_damerau_config()
     config_lookup_float(&cfg, "measures.dist_damerau.cost_ins", &cost_ins);
     config_lookup_float(&cfg, "measures.dist_damerau.cost_del", &cost_del);
     config_lookup_float(&cfg, "measures.dist_damerau.cost_sub", &cost_sub);
-    config_lookup_float(&cfg, "measures.dist_damerau.cost_tra", &cost_tra);    
+    config_lookup_float(&cfg, "measures.dist_damerau.cost_tra", &cost_tra);
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_damerau.norm", &str);
@@ -118,7 +118,7 @@ float dist_damerau_compare(str_t x, str_t y)
             d[i + 1][j + 1] = min(d[i][j] + dz,
                                   d[i + 1][j] + cost_ins,
                                   d[i][j + 1] + cost_del,
-                                  d[i1][j1] + (i - i1 - 1) + cost_tra + 
+                                  d[i1][j1] + (i - i1 - 1) + cost_tra +
                                   (j - j1 - 1));
         }
         alph[x.str.s[i - 1]] = i;

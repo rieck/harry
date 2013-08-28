@@ -22,6 +22,15 @@
 #include "harry.h"
 #include "murmur.h"
 #include "md5.h"
+#include "vcache.h"
+
+
+/* Progress bar stuff */
+#define PROGBAR_LEN     35
+#define PROGBAR_EMPTY   ':'
+#define PROGBAR_FULL    '#'
+#define PROGBAR_DONE    '#'
+#define PROGBAR_FRONT   '|'
 
 /* External variable */
 extern int verbose;
@@ -150,13 +159,10 @@ void prog_bar(long a, long b, long c)
     int secs = (int) floor(ptime - mins * 60);
     pb_string[PROGBAR_LEN] = 0;
 
-#ifdef ENABLE_OPENMP
-    printf("\r[%.2d][%s] %3.0f%%  %s %.2dm %.2ds ", omp_get_num_threads(),
+    printf("\r[%.2d][%3.0f%% %5.1fMb][%s %3.0f%% %s %.2dm %.2ds]",
+           omp_get_num_threads(), vcache_get_hitrate(), vcache_get_used(),
            pb_string, perc * 100, descr, mins, secs);
-#else
-    printf("\r  [%s] %3.0f%%  %s %.2dm %.2ds ", pb_string,
-           perc * 100, descr, mins, secs);
-#endif
+
     if (last)
         printf("\n");
 

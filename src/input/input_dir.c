@@ -126,9 +126,7 @@ static char *load_file(char *path, char *name, int *size)
     char *x = NULL, file[512];
     struct stat st;
 
-#ifdef ENABLE_OPENMP
-#pragma omp critical (snprintf)
-#endif
+    #pragma omp critical (snprintf)
     {
         /* snprintf is not necessary thread-safe. good to know. */
         if (name)

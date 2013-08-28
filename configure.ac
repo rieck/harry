@@ -61,22 +61,10 @@ LIBS="$LIBS $PKGCONFIG_LIBS"
 AM_CPPFLAGS="$AM_CPPFLAGS `pkg-config --cflags-only-I libconfig`"
 AC_CHECK_HEADERS([libconfig.h], HEADER_LIBCONFIG="yes")
 
-AC_ARG_ENABLE(openmp,
-    [  --enable-openmp         enable support for OpenMP ],
-    [
-        if test "x$enableval" = "xyes" ; then
-                ENABLE_OPENMP=yes
-                AC_DEFINE(ENABLE_OPENMP, 1, [Enable support for OpenMP])
-        else
-                ENABLE_OPENMP=no
-        fi
-    ], [ ENABLE_OPENMP=no ]
-)
-
 # OpenMP 
 AX_OPENMP([HAVE_OPENMP=yes],[HAVE_OPENMP=no])
 if test "x$HAVE_OPENMP" = "xno" ; then
-    AC_MSG_ERROR([The OpenMP support required for compulation.
+    AC_MSG_ERROR([OpenMP required for computation.
     GCC implements OpenMP as of version >=4.2.
     ])
 fi
@@ -146,10 +134,6 @@ AC_OUTPUT
 echo
 echo " .Oo Features:"
 echo "     Support for loading archives (--enable-libarchive):    $ENABLE_LIBARCHIVE"
-echo "     Support for multi-processing (--enable-openmp):        $ENABLE_OPENMP"
 echo "     MD5 as alternative hash (--enable-md5hash):            $ENABLE_MD5HASH"
 echo
 
-if test "x$ENABLE_OPENMP" = "xno" ; then
-   echo ".Oo You are compiling Harry without OpenMP support, which is less fun."
-fi

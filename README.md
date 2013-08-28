@@ -76,15 +76,9 @@ contents of archives, such as .tgz and .zip.  This allows for
 processing string data in compressed form and may drastically save
 storage space.
 
-    --enable-openmp         Enable support for OpenMP 
-
-This feature enables support for OpenMP in Harry. The loading of strings and
-the computation of similarity measures will be distributed across multiple
-cores if possible.
-
     --enable-md5hash        Enable MD5 as alternative hash
 
-Sally uses a hash function for mapping words to symbols. By default the very
+Harry uses a hash function for mapping words to symbols. By default the very
 efficient Murmur hash is used for this task.  In certain critical cases it
 may be useful to use a cryptographic hash as MD5.
 

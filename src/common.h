@@ -36,6 +36,7 @@
 #include <float.h>
 #include <assert.h>
 #include <dirent.h>
+#include <omp.h>
 
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
@@ -51,10 +52,6 @@
 #endif
 #ifdef HAVE_LIBCONFIG_H
 #include <libconfig.h>
-#endif
-
-#ifdef ENABLE_OPENMP
-#include <omp.h>
 #endif
 
 #ifdef HAVE_UTHASH_UTHASH_H
