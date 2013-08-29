@@ -25,11 +25,13 @@ supported so far
 + Jaro distance
 + Jaro-Winkler distance
 + Lee distance
++ Compression distance
 
 ### Kernels for Strings
 
 + Weighted-degree kernel
 + Weighted-degree kernel with shifts
++ Subsequence kernel
 
 ## Dependencies
 
