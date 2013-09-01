@@ -22,13 +22,45 @@
 #include "harry.h"
 #include "util.h"
 #include "input.h"
+#include "murmur.h"
 
 /** Static variable */
 static gzFile in;
+static regex_t re;
 static char *old_line = NULL;
 
 /** External variables */
 extern config_t cfg;
+
+/** 
+ * Converts a description to a label. The label is computed by matching 
+ * a regular expression, either directly if the match is a number or 
+ * indirectly by hashing.
+ * @param desc Description 
+ * @return label value.
+ */
+static float get_label(char *desc)
+{
+    char *endptr, *name = desc;
+    regmatch_t pmatch[1];
+
+    /* No match found */
+    if (regexec(&re, desc, 1, pmatch, 0))
+        return 0;
+
+    name = desc + pmatch[0].rm_so;
+    desc[pmatch[0].rm_eo] = 0;
+
+    /* Test direct conversion */
+    float f = strtof(name, &endptr);
+
+    /* Compute hash value */
+    if (!endptr || strlen(endptr) > 0)
+        f = MurmurHash64B(name, strlen(name), 0xc0d3bab3) % 0xffff;
+
+    return f;
+}
+
 
 /**
  * Opens a file for reading text fasta. 
@@ -40,6 +72,14 @@ int input_fasta_open(char *name)
     assert(name);
     size_t read, size;
     char *line = NULL;
+    const char *pattern;
+
+    /* Compile regular expression for label */
+    config_lookup_string(&cfg, "input.fasta_regex", &pattern);
+    if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
+        error("Could not compile regex for label");
+        return -1;
+    }
 
     in = gzopen(name, "r");
     if (!in) {
@@ -127,6 +167,7 @@ int input_fasta_read(str_t *strs, int len)
             /* Start of sequence */
             if (alloc == -1 || alloc > 1) {
                 strs[i].src = strdup(line);
+                strs[i].label = get_label(line);
                 seq = calloc(sizeof(char), 1);
                 alloc = 1;
             }
@@ -154,6 +195,7 @@ int input_fasta_read(str_t *strs, int len)
  */
 void input_fasta_close()
 {
+    regfree(&re);
     gzclose(in);
 }
 

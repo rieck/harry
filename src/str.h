@@ -35,9 +35,10 @@ typedef struct
     } str;
     int len;                  /**< Length of string */
     char flags;               /**< Flags of structure */
+    
     char *src;                /**< Optional source of string */
     size_t idx;               /**< Optional index of string */
-
+    float label;              /**< Optional label of string */
 } str_t;
 
 void str_free(str_t);

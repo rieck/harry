@@ -37,6 +37,7 @@
 #include <assert.h>
 #include <dirent.h>
 #include <omp.h>
+#include <regex.h>
 
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>

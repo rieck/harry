@@ -99,7 +99,7 @@ if test "x$ENABLE_LIBARCHIVE" = "xyes" ; then
 fi
 
 # Check headers
-AC_CHECK_HEADERS([getopt.h string.h strings.h])
+AC_CHECK_HEADERS([getopt.h string.h strings.h regex.h])
 AC_CHECK_HEADERS([uthash.h uthash/uthash.h], HEADER_UTHASH="yes")
 
 # Check functions

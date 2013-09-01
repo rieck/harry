@@ -13,7 +13,9 @@
  * @addtogroup input 
  * <hr>
  * <em>arc</em>: The strings are stored as files in an archive. The archive
- * is processed recursively and all files are processed by Harry. 
+ * is processed recursively and all files are processed by Harry. The suffixes
+ * of the files are used as labels. If the suffixes are numbers, they are
+ * directly intepreted as labels, otherwise they are hashed.
  * @{
  */
 
@@ -21,6 +23,7 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
+#include "murmur.h"
 
 #ifdef ENABLE_LIBARCHIVE
 
@@ -30,6 +33,9 @@
 
 /* Local variables */
 static struct archive *a = NULL;
+
+/* Local functions */
+static float get_label(char *desc);
 
 /**
  * Opens an archive for reading files. 
@@ -109,6 +115,7 @@ int input_arc_read(str_t *strs, int len)
             archive_read_data(a, strs[j].str.c, archive_entry_size(entry));
             strs[j].src = strdup(archive_entry_pathname(entry));
             strs[j].len = archive_entry_size(entry);
+            strs[j].label = get_label(strs[j].src);
 	    strs[j].idx = j;
             j++;
         }
@@ -123,6 +130,36 @@ int input_arc_read(str_t *strs, int len)
 void input_arc_close()
 {
     archive_read_close(a);
+}
+
+/** 
+ * Converts a file name to a label. The label is computed from the 
+ * file's suffix; either directly if the suffix is a number or 
+ * indirectly by hashing.
+ * @param desc Description (file name) 
+ * @return label value.
+ */
+static float get_label(char *desc)
+{
+    char *endptr;
+    char *name = desc + strlen(desc) - 1;
+
+    /* Determine dot in file name */
+    while (name != desc && *name != '.')
+        name--;
+
+    /* Place pointer before '.' */
+    if (name != desc)
+        name++;
+
+    /* Test direct conversion */
+    float f = strtof(name, &endptr);
+
+    /* Compute hash value */
+    if (!endptr || strlen(endptr) > 0)
+        f = MurmurHash64B(name, strlen(name), 0xc0d3bab3) % 0xffff;
+
+    return f;
 }
 
 #endif

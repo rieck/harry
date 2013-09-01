@@ -12,8 +12,10 @@
 /** 
  * @addtogroup input 
  * <hr>
- * <em>dir</em>: The strings are stored as files in a directory. The directory
- * is not processed recursively. 
+ * <em>dir</em>: The strings are stored as files in a directory. The
+ * directory is not processed recursively.  The suffixes of the files are
+ * used as la If the suffixes are numbers, they are directly intepreted as
+ * labels, otherwise they are hashed.
  * @{
  */
 
@@ -22,9 +24,11 @@
 #include "harry.h"
 #include "util.h"
 #include "input.h"
+#include "murmur.h"
 
 /* Local functions */
 static char *load_file(char *path, char *name, int *size);
+static float get_label(char *desc);
 static void fix_dtype(char *path, struct dirent *dp);
 
 /* Local variables */
@@ -95,6 +99,7 @@ int input_dir_read(str_t *strs, int len)
         strs[j].src = strdup(dp->d_name);
         strs[j].len = l;
         strs[j].idx = j;
+        strs[j].label = get_label(strs[j].src);
         j++;
       skip:
         free(buf);
@@ -172,6 +177,36 @@ static void fix_dtype(char *path, struct dirent *dp)
         if (S_ISLNK(st.st_mode))
             dp->d_type = DT_LNK;
     }
+}
+
+/** 
+ * Converts a file name to a label. The label is computed from the 
+ * file's suffix; either directly if the suffix is a number or 
+ * indirectly by hashing.
+ * @param desc Description (file name) 
+ * @return label value.
+ */
+static float get_label(char *desc)
+{
+    char *endptr;
+    char *name = desc + strlen(desc) - 1;
+
+    /* Determine dot in file name */
+    while (name != desc && *name != '.')
+        name--;
+
+    /* Place pointer before '.' */
+    if (name != desc)
+        name++;
+
+    /* Test direct conversion */
+    float f = strtof(name, &endptr);
+
+    /* Compute hash value */
+    if (!endptr || strlen(endptr) > 0)
+        f = MurmurHash64B(name, strlen(name), 0xc0d3bab3) % 0xffff;
+
+    return f;
 }
 
 /** @} */

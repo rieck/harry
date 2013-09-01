@@ -133,8 +133,7 @@ static void print_version(void)
  */
 static void harry_parse_options(int argc, char **argv, char **in, char **out)
 {
-    int ch, user_conf = FALSE;
-
+    int ch;
     optind = 0;
 
     while ((ch = getopt_long(argc, argv, OPTSTRING, longopts, NULL)) != -1) {
@@ -219,13 +218,6 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
         *in = argv[0];
         *out = argv[1];
     }
-
-    /* Last but not least. Warn about default config */
-#if 0
-    if (!user_conf) {
-        warning("No config file given. Using defaults (see -D)");
-    }
-#endif    
 }
 
 

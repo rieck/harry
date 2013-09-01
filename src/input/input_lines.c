@@ -21,13 +21,50 @@
 #include "harry.h"
 #include "util.h"
 #include "input.h"
+#include "murmur.h"
 
 /** Static variable */
 static gzFile in;
+static regex_t re;
 static int line_num = 0;
 
 /** External variables */
 extern config_t cfg;
+
+/** 
+ * Converts the beginning of a text line to a label. The label is computed
+ * by matching a regular expression, either directly if the match is a
+ * number or indirectly by hashing.
+ * @param line Text line
+ * @return label value.
+ */
+static float get_label(char *line)
+{
+    char *endptr, *name = line, old;
+    regmatch_t pmatch[1];
+
+    /* No match found */
+    if (regexec(&re, line, 1, pmatch, 0))
+        return 0;
+
+    name = line + pmatch[0].rm_so;
+    old = line[pmatch[0].rm_eo];
+    line[pmatch[0].rm_eo] = 0;
+
+    /* Test direct conversion */
+    float f = strtof(name, &endptr);
+
+    /* Compute hash value */
+    if (!endptr || strlen(endptr) > 0)
+        f = MurmurHash64B(name, strlen(name), 0xc0d3bab3) % 0xffff;
+
+    line[pmatch[0].rm_eo] = old;
+
+    /* Shift string. This is very inefficient. I know */
+    memmove(line, line + pmatch[0].rm_eo, strlen(line) - pmatch[0].rm_eo + 1);
+    return f;
+}
+
 
 /**
  * Opens a file for reading text lines. 
@@ -37,10 +74,18 @@ extern config_t cfg;
 int input_lines_open(char *name)
 {
     assert(name);
-
+    const char *pattern;
+  
     in = gzopen(name, "r");
     if (!in) {
         error("Could not open '%s' for reading", name);
+        return -1;
+    }
+
+    /* Compile regular expression for label */
+    config_lookup_string(&cfg, "input.lines_regex", &pattern);
+    if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
+        error("Could not compile regex for label");
         return -1;
     }
 
@@ -91,10 +136,11 @@ int input_lines_read(str_t *strs, int len)
 
         /* Strip newline characters */
         strip_newline(line, read);
+
         strs[j].str.c = line;
         strs[j].len = strlen(line);
-
-        snprintf(buf, 32, "line%d", line_num++);
+	strs[j].label = get_label(line);
+	snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);
         strs[j].idx = j;
         j++;
@@ -112,6 +158,7 @@ int input_lines_read(str_t *strs, int len)
  */
 void input_lines_close()
 {
+    regfree(&re);
     gzclose(in);
 }
 
