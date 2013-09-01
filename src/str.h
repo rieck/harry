@@ -42,7 +42,7 @@ typedef struct
     size_t idx;               /**< Optional index of string */
     float label;              /**< Optional label of string */
     
-    uint8_t type:1;	      /**< Type of string */
+    unsigned int type:1;      /**< Type of string */
 } str_t;
 
 void str_free(str_t);
