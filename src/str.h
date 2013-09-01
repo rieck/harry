@@ -20,8 +20,9 @@
  */
 typedef uint16_t sym_t;
 
-#define STR_CHR		0x00
-#define STR_SYM		0x01
+/* Support types for strings. See union str in struct */
+#define TYPE_CHAR		0x00
+#define TYPE_SYM		0x01
 
 /**
  * Structure for a string
@@ -34,11 +35,14 @@ typedef struct
         sym_t *s;             /**< Symbol representation */
     } str;
     int len;                  /**< Length of string */
-    char flags;               /**< Flags of structure */
+    
+
     
     char *src;                /**< Optional source of string */
     size_t idx;               /**< Optional index of string */
     float label;              /**< Optional label of string */
+    
+    uint8_t type:1;	      /**< Type of string */
 } str_t;
 
 void str_free(str_t);

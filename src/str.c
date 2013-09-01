@@ -34,9 +34,9 @@ char delim[256] = { DELIM_NOT_INIT };
  */
 void str_free(str_t x)
 {
-    if (x.flags == STR_CHR && x.str.c)
+    if (x.type == TYPE_CHAR && x.str.c)
         free(x.str.c);
-    if (x.flags == STR_SYM && x.str.s)
+    if (x.type == TYPE_SYM && x.str.s)
         free(x.str.s);
     if (x.src)
         free(x.src);
@@ -53,7 +53,7 @@ void str_print(str_t x, char *p)
 
     printf("%s \t (len:%d; idx:%ld; src:%s)\n", p, x.len, x.idx, x.src);
 
-    if (x.flags == STR_CHR && x.str.c) {
+    if (x.type == TYPE_CHAR && x.str.c) {
         printf("  str:");
         for (i = 0; i < x.len; i++)
             if (isprint(x.str.c[i]))
@@ -63,7 +63,7 @@ void str_print(str_t x, char *p)
         printf("\n");
     }
 
-    if (x.flags == STR_SYM && x.str.s) {
+    if (x.type == TYPE_SYM && x.str.s) {
         printf("  sym:");
         for (i = 0; i < x.len; i++)
             printf("%d ", x.str.s[i]);
@@ -166,7 +166,7 @@ str_t str_symbolize(str_t x)
     /* Change representation */
     free(x.str.c);
     x.str.s = sym;
-    x.flags = STR_SYM;
+    x.type = TYPE_SYM;
 
     return x;
 }
@@ -180,7 +180,7 @@ str_t str_symbolize(str_t x)
 str_t str_convert(str_t x, char *s)
 {
     x.str.c = strdup(s);
-    x.flags = STR_CHR;
+    x.type = TYPE_CHAR;
     x.len = strlen(s);
     x.idx = 0;
     x.src = NULL;
@@ -196,9 +196,9 @@ str_t str_convert(str_t x, char *s)
  */
 uint64_t str_hash1(str_t x)
 {
-    if (x.flags == STR_CHR && x.str.c)
+    if (x.type == TYPE_CHAR && x.str.c)
         return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
-    if (x.flags == STR_SYM && x.str.s)
+    if (x.type == TYPE_SYM && x.str.s)
         return MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
 
     warning("Nothing to hash. String is missing");
@@ -217,12 +217,12 @@ uint64_t str_hash2(str_t x, str_t y)
 {
     uint64_t a, b;
 
-    if (x.flags == STR_CHR && y.flags == STR_CHR && x.str.c && y.str.c) {
+    if (x.type == TYPE_CHAR && y.type == TYPE_CHAR && x.str.c && y.str.c) {
         a = MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);
         return a ^ b;
     }
-    if (x.flags == STR_SYM && y.flags == STR_SYM && x.str.s && y.str.s) {
+    if (x.type == TYPE_SYM && y.type == TYPE_SYM && x.str.s && y.str.s) {
         a = MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);
         return a ^ b;
