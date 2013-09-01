@@ -9,7 +9,8 @@ EXTRA_DIST		= README.md
 noinst_LTLIBRARIES	= liboutput.la
 
 liboutput_la_SOURCES	= output.c output.h \
-                          output_text.c output_text.h 
+                          output_text.c output_text.h \
+                          output_libsvm.c output_libsvm.h
 
 beautify:
 			gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

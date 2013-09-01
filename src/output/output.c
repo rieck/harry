@@ -24,6 +24,7 @@
 
 /* Modules */
 #include "output_text.h"
+#include "output_libsvm.h"
 
 /**
  * Structure for output interface
@@ -47,6 +48,10 @@ void output_config(const char *format)
         func.output_open = output_text_open;
         func.output_write = output_text_write;
         func.output_close = output_text_close;
+    } if (!strcasecmp(format, "libsvm")) {
+        func.output_open = output_libsvm_open;
+        func.output_write = output_libsvm_write;
+        func.output_close = output_libsvm_close;
     } else {
         error("Unknown ouptut format '%s', using 'text' instead.", format);
         output_config("text");

@@ -387,6 +387,12 @@ Following is a list of output formats supported by B<harry>:
 
 The similarity values are stored as plain text.
 
+=item I<"libsvm">
+
+The similarity values are stored as precomputed kernel for libsvm. Note that
+the output needs to be postprocessed by replacing the string B<<label>> with
+the respective label of each string.
+
 =back
 
 =item B<compress = 0;>

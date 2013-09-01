@@ -12,8 +12,8 @@
 /** 
  * @addtogroup output
  * <hr>
- * <em>text</em>: The matrix of similarity/dissimilarity measures is stored
- * as a regular text file. No black magic.
+ * <em>libsvm</em>: The matrix of similarity/dissimilarity measures is stored
+ * as a regular libsvm file. No black magic.
  * @{
  */
 
@@ -52,11 +52,11 @@ static int output_printf(const char *f, ...)
 
 
 /**
- * Opens a file for writing text format
+ * Opens a file for writing libsvm format
  * @param fn File name
  * @return number of regular files
  */
-int output_text_open(char *fn)
+int output_libsvm_open(char *fn)
 {
     assert(fn);
 
@@ -74,9 +74,9 @@ int output_text_open(char *fn)
 
     /* Write harry header */
     if (zlib)
-        harry_zversion(z, "# ", "Output module for text format");
+        harry_zversion(z, "# ", "Output module for libsvm format");
     else
-        harry_version(z, "# ", "Output module for text format");
+        harry_version(z, "# ", "Output module for libsvm format");
 
     return TRUE;
 }
@@ -89,14 +89,18 @@ int output_text_open(char *fn)
  * @param t 0 if matrix given, 1 for upper-right triangle
  * @return Number of written values
  */
-int output_text_write(float *m, int x, int y, int t)
+int output_libsvm_write(float *m, int x, int y, int t)
 {
     assert(x && x >= 0 && y >= 0);
     int i, j, k, r;
 
     for (k = i = 0; i < x; i++) {
-        for (j = t ? i : 0; j < y; j++) {
-            r = output_printf("%g ", m[k++]);
+        output_printf("<label> 0:%d", i);
+        for (j = 0; j < y; j++) {
+            if (t)
+                r = output_printf(" %d:%g", j + 1, m[tr_index(i,j,x)]);
+            else
+                r = output_printf(" %d:%g", j + 1, m[k++]);
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
@@ -111,7 +115,7 @@ int output_text_write(float *m, int x, int y, int t)
 /**
  * Closes an open output file.
  */
-void output_text_close()
+void output_libsvm_close()
 {
     if (z) {
         if (zlib)
