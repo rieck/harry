@@ -135,7 +135,7 @@ int vcache_store(uint64_t key, float value)
         tail->next = elem;
         tail = elem;
     }
-    
+
     return TRUE;
 }
 

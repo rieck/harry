@@ -41,7 +41,7 @@ static struct option longopts[] = {
     {"type", 1, NULL, 't'},
     {"delim", 1, NULL, 'd'},
     {"cache_size", 1, NULL, 'a'},
-    {"global_cache", 1, NULL, 'g'}, 
+    {"global_cache", 1, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"print_config", 0, NULL, 'C'},
@@ -339,7 +339,7 @@ static float *harry_process(str_t *strs, long num)
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
-    #pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2)
     for (i = 0; i < num; i++) {
         for (int j = 0; j < num; j++) {
             /* Hack for better parallelization using OpenMP */

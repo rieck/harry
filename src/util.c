@@ -159,8 +159,8 @@ void prog_bar(long a, long b, long c)
     int secs = (int) floor(ptime - mins * 60);
     pb_string[PROGBAR_LEN] = 0;
 
-    printf("\r[%.2d][%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]", 
-           omp_get_num_threads(), pb_string, perc * 100, descr, 
+    printf("\r[%.2d][%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
+           omp_get_num_threads(), pb_string, perc * 100, descr,
            mins, secs, vcache_get_hitrate(), vcache_get_used());
 
     if (last)

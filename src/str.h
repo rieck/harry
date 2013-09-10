@@ -35,13 +35,13 @@ typedef struct
         sym_t *s;             /**< Symbol representation */
     } str;
     int len;                  /**< Length of string */
-    
 
-    
+
+
     char *src;                /**< Optional source of string */
     size_t idx;               /**< Optional index of string */
     float label;              /**< Optional label of string */
-    
+
     unsigned int type:1;      /**< Type of string */
 } str_t;
 
