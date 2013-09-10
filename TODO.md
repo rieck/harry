@@ -3,20 +3,16 @@
 
 ## Missing features
 
-+ General purpose cache (e.g. for compression distance)
 + Selection of ranges (rectangular matrices)
 + On-the-fly computation (e.g. for patched libsvm or shogun)
 
 ## Missing outputs
 
-+ libsvm kernel format
 + matlab full and triangle matrix format
 + others: numpy? shogun? weka?
 
 ## Missing measures
 
-+ Subsequence kernel
-+ Compression distance
 + Smith-Waterman distance
 
 ## Special hacks
