@@ -45,6 +45,8 @@ typedef struct
     unsigned int type:1;      /**< Type of string */
 } str_t;
 
+
+
 void str_free(str_t);
 void str_print(str_t);
 void str_delim_set(const char *);
@@ -57,5 +59,9 @@ uint64_t str_hash2(str_t, str_t);
 int str_has_delim();
 int str_compare(str_t x, int i, str_t y, int j);
 sym_t str_get(str_t x, int i);
+
+/* Additional functions */
+void stopwords_load(const char *f);
+void stopwords_destroy();
 
 #endif /* STR_H */

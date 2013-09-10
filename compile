@@ -14,22 +14,22 @@ case $arg in
        CC="gcc" \
        LDFLAGS="-L/usr/local/opt/libarchive/lib" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
-       CFLAGS="-g -pedantic -pipe -O3" \
+       CFLAGS="-g -ggdb -pedantic -pipe -O3" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    profile)
        echo "Configuration: Profiling"
        CC="gcc" \
-       LDFLAGS="-L/usr/local/opt/libarchive/lib" \
+       LDFLAGS="-L/usr/local/opt/libarchive/lib -g -pg" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
-       CFLAGS="-g -pg -pedantic -pipe -O3" \
+       CFLAGS="-g -pg" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    schulle*)
        echo "Configuration: Schulle (ESX Cluster)"
        PKG_CONFIG_PATH="/usr/local/lib/pkgconfig" \
        CC="gcc" \
-       CFLAGS="-g -pedantic -pipe -O2" \
+       CFLAGS="-g -ggdb -pedantic -pipe -O2" \
        ./configure --enable-libarchive       
        ;;
    *)    
