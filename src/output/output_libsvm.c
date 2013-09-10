@@ -12,8 +12,8 @@
 /** 
  * @addtogroup output
  * <hr>
- * <em>libsvm</em>: The matrix of similarity/dissimilarity measures is stored
- * as a regular libsvm file. No black magic.
+ * <em>libsvm</em>: The matrix of similarity/dissimilarity measures is
+ * stored as a pre-computed kernel for libsvm. 
  * @{
  */
 
@@ -31,6 +31,7 @@ extern config_t cfg;
 static void *z = NULL;
 static int zlib = 0;
 
+/* Dirty hack to support compression */
 #define output_printf(z, ...) (\
    zlib ? \
        gzprintf((gzFile *) z, __VA_ARGS__) \
