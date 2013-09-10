@@ -29,6 +29,8 @@ extern int verbose;
 static config_default_t defaults[] = {
     {"input", "input_format", CONFIG_TYPE_STRING, {.str = "lines"}},
     {"input", "decode_str", CONFIG_TYPE_INT, {.num = 0}},
+    {"input", "fasta_regex", CONFIG_TYPE_STRING, {.str = " (\\+|-)?[0-9]+"}},
+    {"input", "lines_regex", CONFIG_TYPE_STRING, {.str = "^(\\+|-)?[0-9]+"}},
     {"input", "reverse_str", CONFIG_TYPE_INT, {.num = 0}},
     {"input", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
     {"measures", "type", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},

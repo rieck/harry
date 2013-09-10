@@ -101,6 +101,20 @@ feature comes handy, if binary data is provided using the textual input
 format "lines".  For example, HTTP requests can be stored in a single line
 if line-breaks are represented by "%0a%0d".
 
+=item B<fasta_regex = " (\\+|-)?[0-9]+";>
+
+The FASTA format allows to equip each string with a short
+description. In several data sets this description contains a
+numerical label which can be useful in supervised learning tasks. The
+parameter is a regular expression which can be used to match numerical
+labels, such as +1 and -1.
+
+=item B<lines_regex = "^(\\+|-)?[0-9]+";>
+
+If the strings are available as text lines, the parameter can be used
+to extract a numerical label from the start of the strings. The
+parameter is a regular expression matching labels, such as +1 and -1.
+
 =item B<reverse_str = 0;>
 
 If this parameter is set to 1, the characters of all input strings will
