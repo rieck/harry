@@ -32,8 +32,9 @@ char delim[256] = { DELIM_NOT_INIT };
 /**
  * Structure for stop words
  */
-typedef struct {
-    uint64_t hash;              /* Hash of stop word */
+typedef struct
+{
+    sym_t sym;                  /* Hash of stop word */
     UT_hash_handle hh;          /* uthash handle */
 } stopword_t;
 static stopword_t *stopwords = NULL;
@@ -56,7 +57,7 @@ void str_free(str_t x)
  * Check whether delimiters have been set
  * @return true if delimiters have been set
  */
-int str_has_delim() 
+int str_has_delim()
 {
     return (delim[0] != DELIM_NOT_INIT);
 }
@@ -73,7 +74,7 @@ int str_compare(str_t x, int i, str_t y, int j)
 {
     assert(x.type == y.type);
     assert(i < x.len && j < y.len);
-    
+
     if (x.type == TYPE_SYM)
         return (x.str.s[i] - y.str.s[j]);
     else if (x.type == TYPE_CHAR)
@@ -93,7 +94,7 @@ int str_compare(str_t x, int i, str_t y, int j)
 sym_t str_get(str_t x, int i)
 {
     assert(i < x.len);
-    
+
     if (x.type == TYPE_SYM)
         return x.str.s[i];
     else if (x.type == TYPE_CHAR)
@@ -102,7 +103,7 @@ sym_t str_get(str_t x, int i)
         error("Unknown string type");
     return 0;
 }
- 
+
 
 /** 
  * Print string structure
@@ -126,8 +127,8 @@ void str_print(str_t x)
             printf("%d ", x.str.s[i]);
         printf(" (sym)\n");
     }
-    
-    printf("  [type: %d, len: %d; idx:% ld; src: %s, label: %f]\n", 
+
+    printf("  [type: %d, len: %d; idx:% ld; src: %s, label: %f]\n",
            x.type, x.len, x.idx, x.src, x.label);
 }
 
@@ -186,8 +187,9 @@ str_t str_symbolize(str_t x)
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
 
+
     /* A string of n chars can have at most n/2 + 1 words */
-    sym_t *sym = malloc((x.len/2 + 1) * sizeof(sym_t));
+    sym_t *sym = malloc((x.len / 2 + 1) * sizeof(sym_t));
     if (!sym) {
         error("Failed to allocate memory for symbols");
         return x;
@@ -211,6 +213,7 @@ str_t str_symbolize(str_t x)
     for (wstart = i = 0; i < j + 1; i++) {
         /* Check for delimiters and remember start position */
         if ((i == j || x.str.c[i] == dlm) && i - wstart > 0) {
+            /* Hash word */
             uint64_t hash = hash_str(x.str.c + wstart, i - wstart);
             sym[k++] = (sym_t) hash;
             wstart = i + 1;
@@ -313,8 +316,8 @@ void stopwords_load(const char *file)
 
         /* Add stop word to hash table */
         stopword_t *word = malloc(sizeof(stopword_t));
-        word->hash = hash_str(buf, len);
-        HASH_ADD(hh, stopwords, hash, sizeof(uint64_t), word);
+        word->sym = (sym_t) hash_str(buf, len);
+        HASH_ADD(hh, stopwords, sym, sizeof(sym_t), word);
     }
     fclose(f);
 }
@@ -334,46 +337,30 @@ void stopwords_destroy()
 }
 
 /** 
- * Filter stopwords in place. TODO: Perform filter on symbols after symbolize.
- * @param str input string
- * @param len length of string
- * @return len of new string
+ * Filter stop words from symbols
+ * @param x Symbolized string
  */
-int stopwords_filter(char *str, int len)
+str_t stopwords_filter(str_t x)
 {
-    int i, k, start = -1;
-    stopword_t *found;
+    assert(x.type = TYPE_SYM);
+    stopword_t *stopword;
+    int i, j;
 
-    for (i = 0, k = 0; i < len; i++) {
+    for (i = j = 0; i < x.len; i++) {
+        /* Check for stop word */
+        sym_t sym = x.str.s[i];
+        HASH_FIND(hh, stopwords, &sym, sizeof(sym_t), stopword);
 
-        int dlm = delim[(int) str[i]];
-        int end = (i == len - 1);
+        /* Remove stopword */
+        if (stopword)
+            continue;
 
-        /* Start of word */
-        if (start == -1 && !dlm)
-            start = i;
-
-        /* End of word */
-        if (start != -1 && (dlm || end)) {
-            int len = (i - start) + (end ? 1 : 0);
-            uint64_t hash = hash_str(str + start, len);
-
-            /* Check for stop word and copy if not */
-            HASH_FIND(hh, stopwords, &hash, sizeof(uint64_t), found);
-            if (!found) {
-                memcpy(str + k, str + start, len);
-                k += len;
-            }
-
-            start = -1;
-        }
-
-        /* Always copy delimiter. Keep consecutive delimiters. */
-        if (dlm)
-            str[k++] = str[i];
+        if (i != j)
+            x.str.s[j] = x.str.s[i];
+        j++;
     }
-
-    return k;
+    x.len = j;
+    return x;
 }
 
 /**
@@ -402,15 +389,13 @@ str_t str_preproc(str_t x)
         }
     }
 
-    if (stopwords) {
-        x.len = stopwords_filter(x.str.c, x.len);
-    }
-
     if (str_has_delim())
         x = str_symbolize(x);
-    
+
+    if (stopwords)
+        x = stopwords_filter(x);
+
     return x;
 }
-
 
 /** @} */
