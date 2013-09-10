@@ -355,12 +355,6 @@ constant factor.  The following parameters are supported:
 
 =over 4
 
-=item B<symmetric = 1;>
-
-The compression distance is only symmetric in theory. If this parameter is
-set to 1, the distance is forced to be symmetric by comparing the strings
-twice in different order.
-
 =item B<level = 9;> 
 
 This parameter defines the compression level used by B<zlib> and must be 

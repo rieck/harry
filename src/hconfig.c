@@ -49,7 +49,6 @@ static config_default_t defaults[] = {
     {"measures.dist_damerau", "cost_tra", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
     {"measures.dist_jarowinkler", "scaling", CONFIG_TYPE_FLOAT, {.flt = 0.1}},
     {"measures.dist_lee", "alphabet", CONFIG_TYPE_INT, {.num = 256}},
-    {"measures.dist_compression", "symmetric", CONFIG_TYPE_INT, {.num = 1}},
     {"measures.dist_compression", "level", CONFIG_TYPE_INT, {.num = 9}},
     {"measures.kern_wdegree", "degree", CONFIG_TYPE_INT, {.num = 3}},
     {"measures.kern_wdegree", "shift", CONFIG_TYPE_INT, {.num = 0}},

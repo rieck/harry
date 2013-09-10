@@ -26,7 +26,6 @@
 /* External variables */
 extern config_t cfg;
 static int level = 0;
-static int symmetric = 0;
 
 /**
  * Initializes the similarity measure
@@ -35,8 +34,6 @@ void dist_compression_config()
 {
     /* Configuration */
     config_lookup_int(&cfg, "measures.dist_compression.level", &level);
-    config_lookup_int(&cfg, "measures.dist_compression.symmetric",
-                      &symmetric);
 }
 
 
