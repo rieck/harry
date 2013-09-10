@@ -20,7 +20,7 @@
 #include "config.h"
 #include "common.h"
 #include "util.h"
-#include "default.h"
+#include "hconfig.h"
 
 /* External variables */
 extern int verbose;

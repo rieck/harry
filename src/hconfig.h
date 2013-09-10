@@ -9,8 +9,8 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef DEFAULT_H
-#define DEFAULT_H
+#ifndef HCONFIG_H
+#define HCONFIG_H
 
 #ifdef HAVE_LIBCONFIG_H
 #include <libconfig.h>
@@ -40,4 +40,4 @@ void config_print(config_t *);
 int config_check(config_t *);
 void config_fprint(FILE *, config_t *);
 
-#endif /* DEFAULT_H */
+#endif /* HCONFIG_H */

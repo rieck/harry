@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include "common.h"
-#include "default.h"
+#include "hconfig.h"
 #include "util.h"
 #include "vcache.h"
 #include "tests.h"

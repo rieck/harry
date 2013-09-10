@@ -12,7 +12,7 @@
 #include "config.h"
 #include "common.h"
 #include "harry.h"
-#include "default.h"
+#include "hconfig.h"
 #include "util.h"
 #include "input.h"
 #include "measures.h"
