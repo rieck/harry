@@ -17,8 +17,11 @@
 /**
  * @defgroup rwlock Read-write lock for OpenMP. 
  * Code adapted from http://www.linux.org.ru/forum/development/4510260
- * Two OpenMP locks are used which enables having totally independent 
- * rwlocks in different contexts.
+ * This implementation does not provide fair scheduling. The writer thread
+ * starves, if too many readers repeatingly acquire the lock.  Technically,
+ * this can be fixed with a non-binary semaphore or a condition variable;
+ * which, however, are both not available in OpenMP.  I am unsure how this
+ * can be fixed.
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
  */
