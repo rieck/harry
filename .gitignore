@@ -36,3 +36,4 @@ src/harry
 stamp-h1
 test-driver
 tests/*.log
+*.xcodeproj
