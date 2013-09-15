@@ -108,23 +108,16 @@ float dist_compression_compare(hstring_t x, hstring_t y)
 {
     float xl, yl, xyl;
     uint64_t xk, yk;
-    int ret;
 
     xk = hstring_hash1(x);
-    #pragma omp critical (vcache)
-    ret = vcache_load(xk, &xl);
-    if (!ret) {
+    if (!vcache_load(xk, &xl)) {
         xl = compress_str1(x);
-        #pragma omp critical (vcache)
         vcache_store(xk, xl);
     }
 
     yk = hstring_hash1(y);
-    #pragma omp critical (vcache)
-    ret = vcache_load(yk, &yl);
-    if (!ret) {
+    if (!vcache_load(yk, &yl)) {
         yl = compress_str1(y);
-        #pragma omp critical (vcache)
         vcache_store(yk, yl);
     }
 

@@ -130,20 +130,14 @@ void measure_config(const char *name)
  */
 double measure_compare(hstring_t x, hstring_t y)
 {
-    int ret;
-
     if (!global_cache)
         return func.measure_compare(x,y);
 
     uint64_t xyk = hstring_hash2(x, y);
     float m = 0;
 
-    #pragma omp critical (vcache)
-    ret = vcache_load(xyk, &m);
-
-    if (!ret) {
+    if (!vcache_load(xyk, &m)) {
         m = func.measure_compare(x, y);
-        #pragma omp critical (vcache)
         vcache_store(xyk, m);
     }
     return m;
