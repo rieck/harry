@@ -43,16 +43,6 @@ typedef struct
 } func_t;
 static func_t func;
 
-/**
- * Structure for stop words
- */
-typedef struct
-{
-    uint64_t hash;              /* Hash of stop word */
-    UT_hash_handle hh;          /* uthash handle */
-} stopword_t;
-static stopword_t *stopwords = NULL;
-
 /**< Delimiter table */
 extern char delim[256];
 /** External variables */
