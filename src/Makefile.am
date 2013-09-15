@@ -13,7 +13,7 @@ harry_DEPENDENCIES   = 	libharry.la
 noinst_LTLIBRARIES   = 	libharry.la
 libharry_la_SOURCES  = 	common.h util.c util.h hconfig.c hconfig.h \
                         md5.c md5.h murmur.c murmur.h hstring.c hstring.h \
-                        vcache.c vcache.h uthash.h
+                        vcache.c vcache.h uthash.h rwlock.c rwlock.h
 libharry_la_LIBADD   =  input/libinput.la measures/libmeasures.la \
 		       	output/liboutput.la
 beautify:
