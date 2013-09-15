@@ -12,10 +12,10 @@
 #ifndef DIST_LEE_H
 #define DIST_LEE_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void dist_lee_config();
-float dist_lee_compare(str_t, str_t);
+float dist_lee_compare(hstring_t, hstring_t);
 
 #endif /* DIST_LEE_H */

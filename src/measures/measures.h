@@ -12,10 +12,10 @@
 #ifndef MEASURES_H
 #define MEASURES_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module functions */
 void measure_config(const char *);
-double measure_compare(str_t, str_t);
+double measure_compare(hstring_t, hstring_t);
 
 #endif /* MEASURES_H */

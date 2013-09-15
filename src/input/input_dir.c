@@ -70,7 +70,7 @@ int input_dir_open(char *p)
  * @param len Length of block
  * @return number of read files 
  */
-int input_dir_read(str_t *strs, int len)
+int input_dir_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
     int i, j = 0, l;

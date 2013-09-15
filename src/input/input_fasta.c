@@ -113,7 +113,7 @@ int input_fasta_open(char *name)
  * @param len Length of block
  * @return number of read files
  */
-int input_fasta_read(str_t *strs, int len)
+int input_fasta_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
     int read, i = 0, alloc = -1;

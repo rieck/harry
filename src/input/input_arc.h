@@ -12,12 +12,12 @@
 #ifndef INPUT_ARC_H
 #define INPUT_ARC_H
 
-#include "str.h"
+#include "hstring.h"
 
 #ifdef ENABLE_LIBARCHIVE
 /* Archive module */
 int input_arc_open(char *);
-int input_arc_read(str_t *, int);
+int input_arc_read(hstring_t *, int);
 void input_arc_close(void);
 #endif
 

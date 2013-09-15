@@ -12,10 +12,10 @@
 #ifndef DIST_JAROWINKLER_H
 #define DIST_JAROWINKLER_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void dist_jarowinkler_config();
-float dist_jarowinkler_compare(str_t, str_t);
+float dist_jarowinkler_compare(hstring_t, hstring_t);
 
 #endif /* DIST_JAROWINKLER_H */

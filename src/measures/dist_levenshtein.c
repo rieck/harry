@@ -73,7 +73,7 @@ void dist_levenshtein_config()
  * @param y second string
  * @return Levenshtein distance
  */
-float dist_levenshtein_compare(str_t x, str_t y)
+float dist_levenshtein_compare(hstring_t x, hstring_t y)
 {
     int i, j, a, b;
 
@@ -106,7 +106,7 @@ float dist_levenshtein_compare(str_t x, str_t y)
 
             /* Substitution */
             b = rows[curr][j - 1] + 
-                (str_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
+                (hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
                 
             if (a > b)
                 a = b;

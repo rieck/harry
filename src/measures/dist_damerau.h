@@ -12,10 +12,10 @@
 #ifndef DIST_DAMERAU_H
 #define DIST_DAMERAU_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void dist_damerau_config();
-float dist_damerau_compare(str_t, str_t);
+float dist_damerau_compare(hstring_t, hstring_t);
 
 #endif /* DIST_DAMERAU_H */

@@ -67,14 +67,14 @@ static float weight(float len, int degree)
  * @param len Length of region to match
  * @return kernel value
  */
-static float kern_wdegree(str_t x, str_t y, int xs, int ys, int len)
+static float kern_wdegree(hstring_t x, hstring_t y, int xs, int ys, int len)
 {
     int i, start;
     float k = 0;
 
     for (i = 0, start = -1; i < len; i++) {
         /* Identify matching region */
-        if (!str_compare(x, i + xs, y, i + ys)) {
+        if (!hstring_compare(x, i + xs, y, i + ys)) {
             if (start == -1)
                 start = i;
             continue;
@@ -102,7 +102,7 @@ static float kern_wdegree(str_t x, str_t y, int xs, int ys, int len)
  * @param y second string
  * @return weighted-degree kernel
  */
-float kern_wdegree_compare(str_t x, str_t y)
+float kern_wdegree_compare(hstring_t x, hstring_t y)
 {
     float k = 0;
     int s, len;

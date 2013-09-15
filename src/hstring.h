@@ -9,8 +9,8 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef STR_H
-#define STR_H
+#ifndef HSTRING_H
+#define HSTRING_H
 
 /** Placeholder for non-initialized delimiters */
 #define DELIM_NOT_INIT  42
@@ -43,25 +43,24 @@ typedef struct
     float label;              /**< Optional label of string */
 
     unsigned int type:1;      /**< Type of string */
-} str_t;
+} hstring_t;
 
 
-
-void str_free(str_t);
-void str_print(str_t);
-void str_delim_set(const char *);
-void str_delim_reset();
-str_t str_symbolize(str_t);
-str_t str_preproc(str_t);
-str_t str_convert(str_t, char *);
-uint64_t str_hash1(str_t);
-uint64_t str_hash2(str_t, str_t);
-int str_has_delim();
-int str_compare(str_t x, int i, str_t y, int j);
-sym_t str_get(str_t x, int i);
+void hstring_print(hstring_t);
+void hstring_delim_set(const char *);
+void hstring_delim_reset();
+hstring_t hstring_symbolize(hstring_t);
+hstring_t hstring_preproc(hstring_t);
+hstring_t hstring_init(hstring_t, char *);
+void hstring_destroy(hstring_t);
+uint64_t hstring_hash1(hstring_t);
+uint64_t hstring_hash2(hstring_t, hstring_t);
+int hstring_has_delim();
+int hstring_compare(hstring_t x, int i, hstring_t y, int j);
+sym_t hstring_get(hstring_t x, int i);
 
 /* Additional functions */
 void stopwords_load(const char *f);
 void stopwords_destroy();
 
-#endif /* STR_H */
+#endif /* HSTRING_H */

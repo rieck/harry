@@ -295,7 +295,7 @@ static void harry_init()
  * @param num Pointer to number of strings
  * @return array of string objects
  */
-static str_t *harry_read(char *input, long *num)
+static hstring_t *harry_read(char *input, long *num)
 {
     const char *cfg_str;
 
@@ -309,7 +309,7 @@ static str_t *harry_read(char *input, long *num)
              cfg_str);
 
     /* Allocate memory for strings */
-    str_t *strs = calloc(*num, sizeof(str_t));
+    hstring_t *strs = calloc(*num, sizeof(hstring_t));
     if (!strs)
         fatal("Could not allocate memory for strs");
 
@@ -327,13 +327,13 @@ static str_t *harry_read(char *input, long *num)
  * @param num Number of strings
  * @return similarity values (upper triangle)
  */
-static float *harry_process(str_t *strs, long num)
+static float *harry_process(hstring_t *strs, long num)
 {
     int i, k = 0;
 
     /* Symbolize strings if requested */
     for (i = 0; i < num; i++)
-        strs[i] = str_preproc(strs[i]);
+        strs[i] = hstring_preproc(strs[i]);
 
     float *mat = malloc(sizeof(float) * tr_size(num));
     if (!mat) {
@@ -387,7 +387,7 @@ static void harry_write(char *output, float *mat, long num)
 /**
  * Exit Harry tool. 
  */
-static void harry_exit(str_t *strs, float *mat, long num)
+static void harry_exit(hstring_t *strs, float *mat, long num)
 {
     const char *cfg_str;
 
@@ -416,7 +416,7 @@ static void harry_exit(str_t *strs, float *mat, long num)
 int main(int argc, char **argv)
 {
     float *mat = NULL;
-    str_t *strs = NULL;
+    hstring_t *strs = NULL;
     long num = 0;
     char *input = NULL;
     char *output = NULL;

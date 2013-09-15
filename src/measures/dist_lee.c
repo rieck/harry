@@ -44,7 +44,7 @@ void dist_lee_config()
  * @param y second string
  * @return Lee distance
  */
-float dist_lee_compare(str_t x, str_t y)
+float dist_lee_compare(hstring_t x, hstring_t y)
 {
     float d = 0, ad;
     int i;
@@ -52,11 +52,11 @@ float dist_lee_compare(str_t x, str_t y)
     /* Loop over strings */
     for (i = 0; i < x.len || i < y.len; i++) {
         if (i < x.len && i < y.len)
-            ad = fabs(str_compare(x, i, y, i));
+            ad = fabs(hstring_compare(x, i, y, i));
         else if (i < x.len)
-            ad = fabs(str_get(x, i));
+            ad = fabs(hstring_get(x, i));
         else
-            ad = fabs(str_get(y, i));
+            ad = fabs(hstring_get(y, i));
 
         if (ad >= q) {
             warning("Distance of symbols larger than alphabet. Fixing.");

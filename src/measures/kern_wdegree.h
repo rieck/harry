@@ -12,10 +12,10 @@
 #ifndef KERN_WDEGREE_H
 #define KERN_WDEGREE_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void kern_wdegree_config();
-float kern_wdegree_compare(str_t, str_t);
+float kern_wdegree_compare(hstring_t, hstring_t);
 
 #endif /* KERN_WDEGREE_H */

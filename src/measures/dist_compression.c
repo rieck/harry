@@ -42,7 +42,7 @@ void dist_compression_config()
  * @param x String x
  * @return length of the compressed data
  */
-static float compress_str1(str_t x)
+static float compress_str1(hstring_t x)
 {
     unsigned long tmp, width;
     unsigned char *dst;
@@ -68,7 +68,7 @@ static float compress_str1(str_t x)
  * @param y String y
  * @return length of the compressed data.
  */
-static float compress_str2(str_t x, str_t y)
+static float compress_str2(hstring_t x, hstring_t y)
 {
     unsigned long tmp, width;
     unsigned char *src, *dst;
@@ -104,13 +104,13 @@ static float compress_str2(str_t x, str_t y)
  * @param y second string
  * @return Compression distance
  */
-float dist_compression_compare(str_t x, str_t y)
+float dist_compression_compare(hstring_t x, hstring_t y)
 {
     float xl, yl, xyl;
     uint64_t xk, yk;
     int ret;
 
-    xk = str_hash1(x);
+    xk = hstring_hash1(x);
     #pragma omp critical (vcache)
     ret = vcache_load(xk, &xl);
     if (!ret) {
@@ -119,7 +119,7 @@ float dist_compression_compare(str_t x, str_t y)
         vcache_store(xk, xl);
     }
 
-    yk = str_hash1(y);
+    yk = hstring_hash1(y);
     #pragma omp critical (vcache)
     ret = vcache_load(yk, &yl);
     if (!ret) {

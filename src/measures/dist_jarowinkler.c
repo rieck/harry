@@ -62,7 +62,7 @@ void dist_jarowinkler_config()
  * @param y second string
  * @return Jaro-Winkler distance
  */
-float dist_jarowinkler_compare(str_t x, str_t y)
+float dist_jarowinkler_compare(hstring_t x, hstring_t y)
 {
     int i, j, l;
     int m = 0, t = 0;
@@ -82,7 +82,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
     /* Calculate matching characters */
     for (i = 0; i < y.len; i++) {
         for (j = max(i - range, 0), l = min(i + range + 1, x.len); j < l; j++) {
-            if (!str_compare(y, i, x, j) && !xflags[j]) {
+            if (!hstring_compare(y, i, x, j) && !xflags[j]) {
                 xflags[j] = 1;
                 yflags[i] = 1;
                 m++;
@@ -104,7 +104,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
                     break;
                 }
             }
-            if (str_compare(y, i, x, j))
+            if (hstring_compare(y, i, x, j))
                 t++;
         }
     }
@@ -116,7 +116,7 @@ float dist_jarowinkler_compare(str_t x, str_t y)
 
     /* Calculate common string prefix up to 4 chars */
     for (l = 0; l < min(min(x.len, y.len), 4); l++)
-        if (str_compare(x, l, y, l))
+        if (hstring_compare(x, l, y, l))
             break;
 
     /* Jaro-Winkler distance */

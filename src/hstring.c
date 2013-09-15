@@ -19,7 +19,7 @@
 #include "config.h"
 #include "common.h"
 #include "util.h"
-#include "str.h"
+#include "hstring.h"
 #include "murmur.h"
 
 /* External variable */
@@ -43,7 +43,7 @@ static stopword_t *stopwords = NULL;
  * Free memory of the string structure
  * @param x string structure
  */
-void str_free(str_t x)
+void hstring_destroy(hstring_t x)
 {
     if (x.type == TYPE_CHAR && x.str.c)
         free(x.str.c);
@@ -57,7 +57,7 @@ void str_free(str_t x)
  * Check whether delimiters have been set
  * @return true if delimiters have been set
  */
-int str_has_delim()
+int hstring_has_delim()
 {
     return (delim[0] != DELIM_NOT_INIT);
 }
@@ -70,7 +70,7 @@ int str_has_delim()
  * @param j position in string y
  * @return 0 if equal, < 0 if x smaller, > 0 if y smaller
  */
-int str_compare(str_t x, int i, str_t y, int j)
+int hstring_compare(hstring_t x, int i, hstring_t y, int j)
 {
     assert(x.type == y.type);
     assert(i < x.len && j < y.len);
@@ -91,7 +91,7 @@ int str_compare(str_t x, int i, str_t y, int j)
  * @param i position in string x
  * @return character/symbol
  */
-sym_t str_get(str_t x, int i)
+sym_t hstring_get(hstring_t x, int i)
 {
     assert(i < x.len);
 
@@ -109,7 +109,7 @@ sym_t str_get(str_t x, int i)
  * Print string structure
  * @param x string structure
  */
-void str_print(str_t x)
+void hstring_print(hstring_t x)
 {
     int i;
 
@@ -136,13 +136,13 @@ void str_print(str_t x)
  * Decodes a string containing delimiters to a lookup table
  * @param s String containing delimiters
  */
-void str_delim_set(const char *s)
+void hstring_delim_set(const char *s)
 {
     char buf[5] = "0x00";
     unsigned int i, j;
 
     if (strlen(s) == 0) {
-        str_delim_reset();
+        hstring_delim_reset();
         return;
     }
 
@@ -169,7 +169,7 @@ void str_delim_set(const char *s)
  * symbols which is only initialized once the first sequence is 
  * processed. This functions is used to trigger a re-initialization.
  */
-void str_delim_reset()
+void hstring_delim_reset()
 {
     delim[0] = DELIM_NOT_INIT;
 }
@@ -182,7 +182,7 @@ void str_delim_reset()
  * @param x character string
  * @return symbolized string
  */
-str_t str_symbolize(str_t x)
+hstring_t hstring_symbolize(hstring_t x)
 {
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
@@ -236,7 +236,7 @@ str_t str_symbolize(str_t x)
  * @param x string structure
  * @param s c-style string
  */
-str_t str_convert(str_t x, char *s)
+hstring_t hstring_init(hstring_t x, char *s)
 {
     x.str.c = strdup(s);
     x.type = TYPE_CHAR;
@@ -253,7 +253,7 @@ str_t str_convert(str_t x, char *s)
  * @param x String to hash
  * @return hash value
  */
-uint64_t str_hash1(str_t x)
+uint64_t hstring_hash1(hstring_t x)
 {
     if (x.type == TYPE_CHAR && x.str.c)
         return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
@@ -272,7 +272,7 @@ uint64_t str_hash1(str_t x)
  * @param y String to hash 
  * @return hash value
  */
-uint64_t str_hash2(str_t x, str_t y)
+uint64_t hstring_hash2(hstring_t x, hstring_t y)
 {
     uint64_t a, b;
 
@@ -322,25 +322,11 @@ void stopwords_load(const char *file)
     fclose(f);
 }
 
-/**
- * Destroy stop words table
- */
-void stopwords_destroy()
-{
-    stopword_t *s;
-
-    while (stopwords) {
-        s = stopwords;
-        HASH_DEL(stopwords, s);
-        free(s);
-    }
-}
-
 /** 
  * Filter stop words from symbols
  * @param x Symbolized string
  */
-str_t stopwords_filter(str_t x)
+hstring_t stopwords_filter(hstring_t x)
 {
     assert(x.type = TYPE_SYM);
     stopword_t *stopword;
@@ -368,7 +354,7 @@ str_t stopwords_filter(str_t x)
  * @param x character string
  * @return preprocessed string
  */
-str_t str_preproc(str_t x)
+hstring_t hstring_preproc(hstring_t x)
 {
     assert(x.type == TYPE_CHAR);
     int decode, reverse, c, i, k;
@@ -389,13 +375,27 @@ str_t str_preproc(str_t x)
         }
     }
 
-    if (str_has_delim())
-        x = str_symbolize(x);
+    if (hstring_has_delim())
+        x = hstring_symbolize(x);
 
     if (stopwords)
         x = stopwords_filter(x);
 
     return x;
+}
+
+/**
+ * Destroy stop words table
+ */
+void stopwords_destroy()
+{
+    stopword_t *s;
+
+    while (stopwords) {
+        s = stopwords;
+        HASH_DEL(stopwords, s);
+        free(s);
+    }
 }
 
 /** @} */

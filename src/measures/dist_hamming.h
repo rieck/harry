@@ -12,10 +12,10 @@
 #ifndef DIST_HAMMING_H
 #define DIST_HAMMING_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void dist_hamming_config();
-float dist_hamming_compare(str_t, str_t);
+float dist_hamming_compare(hstring_t, hstring_t);
 
 #endif /* DIST_HAMMING_H */

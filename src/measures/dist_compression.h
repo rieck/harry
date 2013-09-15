@@ -12,10 +12,10 @@
 #ifndef DIST_COMPRESSION_H
 #define DIST_COMPRESSION_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void dist_compression_config();
-float dist_compression_compare(str_t, str_t);
+float dist_compression_compare(hstring_t, hstring_t);
 
 #endif /* DIST_COMPRESSION_H */

@@ -12,15 +12,15 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Configuration */
 void input_config(const char *);
-void input_free(str_t *strs, int len);
+void input_free(hstring_t *strs, int len);
 
 /* Generic interface */
 int input_open(char *);
-int input_read(str_t *, int);
+int input_read(hstring_t *, int);
 void input_close(void);
 
 #endif /* INPUT_H */

@@ -90,7 +90,7 @@ int input_arc_open(char *name)
  * @param len Length of block
  * @return number of read files
  */
-int input_arc_read(str_t *strs, int len)
+int input_arc_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
     struct archive_entry *entry;

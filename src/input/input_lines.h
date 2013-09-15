@@ -12,11 +12,11 @@
 #ifndef INPUT_LINES_H
 #define INPUT_LINES_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Lines module */
 int input_lines_open(char *);
-int input_lines_read(str_t *, int);
+int input_lines_read(hstring_t *, int);
 void input_lines_close(void);
 
 #endif /* INPUT_LINES_H */

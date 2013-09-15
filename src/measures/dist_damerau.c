@@ -81,7 +81,7 @@ void dist_damerau_config()
  * @param y second string
  * @return Levenshtein distance
  */
-float dist_damerau_compare(str_t x, str_t y)
+float dist_damerau_compare(hstring_t x, hstring_t y)
 {
     int i, j, inf = x.len + y.len;
     int d[x.len + 2][y.len + 2];
@@ -108,9 +108,9 @@ float dist_damerau_compare(str_t x, str_t y)
     for (i = 1; i <= x.len; i++) {
         int db = 0;
         for (j = 1; j <= y.len; j++) {
-            int i1 = alph[str_get(y, j - 1)];
+            int i1 = alph[hstring_get(y, j - 1)];
             int j1 = db;
-            int dz = str_compare(x, i - 1, y, j - 1) ? cost_sub : 0;
+            int dz = hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0;
             if (dz == 0)
                 db = j;
 
@@ -121,7 +121,7 @@ float dist_damerau_compare(str_t x, str_t y)
                                   (j - j1 - 1));
         }
        
-        alph[str_get(x, i - 1)] = i;
+        alph[hstring_get(x, i - 1)] = i;
     }
 
     float r = d[x.len + 1][y.len + 1];

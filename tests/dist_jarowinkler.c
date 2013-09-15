@@ -23,7 +23,7 @@ config_t cfg;
 /*
  * Structure for testing string kernels/distances
  */
-struct str_test
+struct hstring_test
 {
     char *x;		/**< String x */
     char *y;		/**< String y */
@@ -31,7 +31,7 @@ struct str_test
 };
 
 
-struct str_test tests[] = {
+struct hstring_test tests[] = {
     /* Comparison using characters */
     {"", "", 0},
     {"a", "", 1.0},
@@ -48,29 +48,29 @@ struct str_test tests[] = {
 int test_compare()
 {
     int i, err = FALSE;
-    str_t x, y;
+    hstring_t x, y;
 
     for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_jarowinkler");    
     
-        x = str_convert(x, tests[i].x);
-        y = str_convert(y, tests[i].y);
+        x = hstring_init(x, tests[i].x);
+        y = hstring_init(y, tests[i].y);
 
-        x = str_preproc(x);
-        y = str_preproc(y);
+        x = hstring_preproc(x);
+        y = hstring_preproc(y);
 
         float d = measure_compare(x, y);
         double diff = fabs(tests[i].v - d);
 
         if (diff > 1e-3) {
             printf("Error %f != %f\n", d, tests[i].v);
-            str_print(x);
-            str_print(y);
+            hstring_print(x);
+            hstring_print(y);
             err = TRUE;
         }
 
-        str_free(x);
-        str_free(y);
+        hstring_destroy(x);
+        hstring_destroy(y);
     }
 
     return err;

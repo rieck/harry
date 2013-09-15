@@ -49,7 +49,7 @@ typedef struct
     /** Init function */
     void (*measure_config) ();
     /** Comparison function */
-    float (*measure_compare) (str_t, str_t);
+    float (*measure_compare) (hstring_t, hstring_t);
 } func_t;
 static func_t func;
 
@@ -83,9 +83,9 @@ void measure_config(const char *name)
     /* Set delimiters */
     config_lookup_string(&cfg, "measures.delim", &cfg_str);
     if (strlen(cfg_str) > 0)
-        str_delim_set(cfg_str);
+        hstring_delim_set(cfg_str);
     else
-        str_delim_reset();
+        hstring_delim_reset();
 
     /* Enable global cache */
     config_lookup_int(&cfg, "measures.global_cache", &global_cache);
@@ -128,14 +128,14 @@ void measure_config(const char *name)
  * @param y second second
  * @return similarity/dissimilarity value
  */
-double measure_compare(str_t x, str_t y)
+double measure_compare(hstring_t x, hstring_t y)
 {
     int ret;
 
     if (!global_cache)
         return func.measure_compare(x,y);
 
-    uint64_t xyk = str_hash2(x, y);
+    uint64_t xyk = hstring_hash2(x, y);
     float m = 0;
 
     #pragma omp critical (vcache)

@@ -12,10 +12,10 @@
 #ifndef KERN_SUBSEQUENCE_H
 #define KERN_SUBSEQUENCE_H
 
-#include "str.h"
+#include "hstring.h"
 
 /* Module interface */
 void kern_subsequence_config();
-float kern_subsequence_compare(str_t, str_t);
+float kern_subsequence_compare(hstring_t, hstring_t);
 
 #endif /* KERN_SUBSEQUENCE_H */
