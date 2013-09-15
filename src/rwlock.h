@@ -14,7 +14,8 @@
 
 #include <omp.h>
 
-typedef struct {
+typedef struct
+{
     omp_lock_t write;   /**< Write lock */
     omp_lock_t read;    /**< Read lock */
     int readers;        /**< Number of readers */

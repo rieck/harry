@@ -33,6 +33,7 @@ void rwlock_init(rwlock_t *rw)
     omp_init_lock(&rw->write);
     rw->readers = 0;
 }
+
 /**
  * Destroy a read-write lock.
  * @param rw pointer to lock structure
@@ -50,10 +51,10 @@ void rwlock_destroy(rwlock_t *rw)
 void rwlock_set_rlock(rwlock_t *rw)
 {
     omp_set_lock(&rw->read);
-    
-    if(rw->readers == 0)
-		omp_set_lock(&rw->write);
-    
+
+    if (rw->readers == 0)
+        omp_set_lock(&rw->write);
+
     rw->readers++;
 
     omp_unset_lock(&rw->read);
@@ -69,12 +70,12 @@ void rwlock_unset_rlock(rwlock_t *rw)
 
     assert(rw->readers > 0);
     rw->readers--;
-    
+
     if (rw->readers == 0)
         omp_unset_lock(&rw->write);
-    
+
     omp_unset_lock(&rw->read);
-}   
+}
 
 /**
  * Set lock for writing. 
@@ -83,7 +84,7 @@ void rwlock_unset_rlock(rwlock_t *rw)
 void rwlock_set_wlock(rwlock_t *rw)
 {
     omp_set_lock(&rw->write);
-	assert(rw->readers == 0);
+    assert(rw->readers == 0);
 }
 
 /**
@@ -93,7 +94,7 @@ void rwlock_set_wlock(rwlock_t *rw)
 void rwlock_unset_wlock(rwlock_t *rw)
 {
     assert(rw->readers == 0);
-	omp_unset_lock(&rw->write);
+    omp_unset_lock(&rw->write);
 }
 
 /** @} */
