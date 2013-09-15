@@ -54,7 +54,6 @@ void rwlock_set_rlock(rwlock_t *rw)
 
     if (rw->readers == 0)
         omp_set_lock(&rw->write);
-
     rw->readers++;
 
     omp_unset_lock(&rw->read);
@@ -68,9 +67,7 @@ void rwlock_unset_rlock(rwlock_t *rw)
 {
     omp_set_lock(&rw->read);
 
-    assert(rw->readers > 0);
     rw->readers--;
-
     if (rw->readers == 0)
         omp_unset_lock(&rw->write);
 
