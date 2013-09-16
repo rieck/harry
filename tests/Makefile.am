@@ -6,13 +6,13 @@ AM_CPPFLAGS     		= -I$(top_srcdir)/src \
 
 #EXTRA_DIST			= strings.txt
 #TESTS_ENVIRONMENT 		= export TEST_FILE='$(srcdir)/strings.txt';
-check_PROGRAMS			= check_levenshtein \
+check_PROGRAMS			= check_vcache \
+				  check_levenshtein \
 				  check_hamming \
 				  check_jarowinkler \
 				  check_lee \
-				  check_wdegree \
 				  check_damerau \
-				  check_vcache \
+				  check_wdegree \				  
 				  check_subsequence
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)

@@ -15,6 +15,7 @@
 #include "util.h"
 #include "measures.h"
 #include "tests.h"
+#include "vcache.h"
 
 /* Global variables */
 int verbose = 0;
@@ -31,29 +32,35 @@ struct hstring_test
 {
     char *x;		/**< String x */
     char *y;		/**< String y */
-    float l;        /**< Weight for gaps */
-    int n;          /**< Length of subsequences */
+    float l;            /**< Weight for gaps */
+    int p;              /**< Length of subsequences */
+    char *n;            /**< Normalization of kernel */
     float v;		/**< Expected output */
 };
 
 
 struct hstring_test tests[] = {
     /* Corner cases */
-    {"", "", LAM, 2, 1},
-    {"lala", "", LAM, 2, 0},
-    {"", "lala", LAM, 2, 0},
+    {"", "", LAM, 2, "none", 1},
+    {"lala", "", LAM, 2, "none", 0},
+    {"", "lala", LAM, 2, "none", 0},
 
     /* Length 2 */
-    {"ab", "ab", LAM, 2, LAM4},
-    {"ab", "axb", LAM, 2, LAM4 * LAM},
-    {"ab", "abb", LAM, 2, LAM4 * LAM + LAM4},
-    {"car", "cat", LAM, 2, LAM4},
-    {"axxb","ayyb", LAM, 2, LAM4 * LAM4},
+    {"ab", "ab", LAM, 2, "none", LAM4},
+    {"ab", "axb", LAM, 2, "none", LAM4 * LAM},
+    {"ab", "abb", LAM, 2, "none", LAM4 * LAM + LAM4},
+    {"car", "cat", LAM, 2, "none", LAM4},
+    {"axxb","ayyb", LAM, 2, "none", LAM4 * LAM4},
     
     /* Length 1, 2, 3 */
-    {"cata", "gatta", LAM, 1, 6 * LAM2},
-    {"cata", "gatta", LAM, 2, LAM4 * LAM2 * LAM + 2 * LAM4 * LAM  + 2 * LAM4},
-    {"cata", "gatta", LAM, 3, 2 * LAM4 * LAM2 * LAM},
+    {"cata", "gatta", LAM, 1, "none", 6 * LAM2},
+    {"cata", "gatta", LAM, 2, "none", LAM4 * LAM2 * LAM + 2 * LAM4 * LAM  + 2 * LAM4},
+    {"cata", "gatta", LAM, 3, "none", 2 * LAM4 * LAM2 * LAM},
+
+    /* Normalization */
+    {"ab", "xy", LAM, 2, "l2", 0},
+    {"ab", "ab", LAM, 2, "l2", 1},
+    {"abc", "abc", LAM, 2, "l2", 1},
     
     {NULL}
 };
@@ -69,7 +76,8 @@ int test_compare()
 
     for (i = 0; tests[i].x && !err; i++) {
         config_set_float(&cfg, "measures.kern_subsequence.lambda", tests[i].l);
-        config_set_int(&cfg, "measures.kern_subsequence.length", tests[i].n);
+        config_set_int(&cfg, "measures.kern_subsequence.length", tests[i].p);
+        config_set_string(&cfg, "measures.kern_subsequence.norm", tests[i].n);
         measure_config("kern_subsequence");
     
         x = hstring_init(x, tests[i].x);
@@ -105,7 +113,11 @@ int main(int argc, char **argv)
     config_init(&cfg);
     config_check(&cfg);
 
+    vcache_init();
+
     err |= test_compare();
+    
+    vcache_destroy();
 
     config_destroy(&cfg);
     return err;

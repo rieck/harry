@@ -46,7 +46,7 @@ void kern_subsequence_config()
     config_lookup_float(&cfg, "measures.kern_subsequence.lambda", &lambda);
 
     /* Normalization */
-    config_lookup_string(&cfg, "measures.kern_wdegree.norm", &str);
+    config_lookup_string(&cfg, "measures.kern_subsequence.norm", &str);
     if (!strcasecmp(str, "none")) {
         norm = NORM_NONE;
     } else if (!strcasecmp(str, "l2")) {
