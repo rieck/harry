@@ -12,6 +12,7 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
+#include "vcache.h"
 
 #include "kern_wdegree.h"
 
@@ -25,17 +26,34 @@
 /* External variables */
 extern config_t cfg;
 
+/* Normalizations */
+enum norm_type
+{ NORM_NONE, NORM_L2 };
+static enum norm_type norm = NORM_NONE;
+
 /* Local variables */
-int degree = 3;         /**< Degree of kernel */
-int shift = 0;          /**< Shift of kernel */
+static int degree = 3;         /**< Degree of kernel */
+static int shift = 0;          /**< Shift of kernel */
 
 /**
  * Initializes the similarity measure
  */
 void kern_wdegree_config()
 {
+    const char *str;
+
     config_lookup_int(&cfg, "measures.kern_wdegree.degree", &degree);
     config_lookup_int(&cfg, "measures.kern_wdegree.shift", &shift);
+
+    /* Normalization */
+    config_lookup_string(&cfg, "measures.kern_wdegree.norm", &str);
+    if (!strcasecmp(str, "none")) {
+        norm = NORM_NONE;
+    } else if (!strcasecmp(str, "l2")) {
+        norm = NORM_L2;
+    } else {
+        warning("Unknown norm '%s'. Using 'none' instead.", str);
+    }
 }
 
 /**
@@ -94,15 +112,13 @@ static float kern_wdegree(hstring_t x, hstring_t y, int xs, int ys, int len)
     return k;
 }
 
-/**
- * Compute the weighted-degree kernel with shift. If the strings have
- * unequal size, the remaining symbols of the longer string are ignored (in
- * accordance with the kernel definition)
- * @param x first string 
+/** 
+ * Internal computation of weighted-degree kernel with shift
+ * @param x first string
  * @param y second string
  * @return weighted-degree kernel
  */
-float kern_wdegree_compare(hstring_t x, hstring_t y)
+static float kernel(hstring_t x, hstring_t y)
 {
     float k = 0;
     int s, len;
@@ -119,6 +135,51 @@ float kern_wdegree_compare(hstring_t x, hstring_t y)
     }
 
     return k;
+}
+
+
+/**
+ * Compute the weighted-degree kernel with shift. If the strings have
+ * unequal size, the remaining symbols of the longer string are ignored (in
+ * accordance with the kernel definition)
+ * @param x first string 
+ * @param y second string
+ * @return weighted-degree kernel
+ */
+float kern_wdegree_compare(hstring_t x, hstring_t y)
+{
+    uint64_t xk, yk;
+    float xv, yv;
+    int ret;
+
+    float k = kernel(x, y);
+
+    /* Normalization */
+    switch (norm) {
+    case NORM_L2:
+        xk = hstring_hash1(x);
+#pragma omp critical (vcache)
+        ret = vcache_load(xk, &xv);
+        if (!ret) {
+            xv = kernel(x, x);
+#pragma omp critical (vcache)
+            vcache_store(xk, xv);
+        }
+
+        yk = hstring_hash1(y);
+#pragma omp critical (vcache)
+        ret = vcache_load(yk, &yv);
+        if (!ret) {
+            yv = kernel(y, y);
+#pragma omp critical (vcache)
+            vcache_store(yk, yv);
+        }
+        return k / sqrt(xv * yv);
+
+    case NORM_NONE:
+    default:
+        return k;
+    }
 }
 
 /** @} */

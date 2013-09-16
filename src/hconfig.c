@@ -52,8 +52,10 @@ static config_default_t defaults[] = {
     {"measures.dist_compression", "level", CONFIG_TYPE_INT, {.num = 9}},
     {"measures.kern_wdegree", "degree", CONFIG_TYPE_INT, {.num = 3}},
     {"measures.kern_wdegree", "shift", CONFIG_TYPE_INT, {.num = 0}},
+    {"measures.kern_wdegree", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {"measures.kern_subsequence", "length", CONFIG_TYPE_INT, {.num = 3}},
     {"measures.kern_subsequence", "lambda", CONFIG_TYPE_FLOAT, {.flt = 0.1}},
+    {"measures.kern_subsequence", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {"output", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
     {"output", "compress", CONFIG_TYPE_INT, {.num = 0}},
     {NULL}

@@ -376,6 +376,12 @@ parameters are supported:
 
 =over 4
 
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2 
+normalization of kernels.
+
 =item B<degree = 3;>
 
 This parameter specifies the degree of the kernel, that is, the length of
@@ -401,13 +407,19 @@ parameters are supported:
 
 =over 4
 
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2 
+normalization of kernels.
+
 =item B<length = 3;>
 
 This parameter specifies the length of subsequence to consider.
 
 =item B<lambda = 0.1;>
 
-This parameter is a weighting term for gaps.
+This parameter is a weighting term for gaps within subsequences.
 
 =back
 
