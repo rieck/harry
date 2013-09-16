@@ -51,6 +51,14 @@ float kern_subsequence_compare(hstring_t x, hstring_t y)
     float dp[x.len + 1][y.len + 1];
     float kern[length];
     int i, j, l;
+    
+    /* Case a: both sequences empty */
+    if (x.len == 0 && y.len == 0)
+        return 1.0;
+    
+    /* Case b: one sequence empty */
+    if (x.len == 0 || y.len == 0)
+        return 0.0;
 
     /* Initalize dps */
     for (i = 0; i < x.len; i++)
@@ -65,8 +73,7 @@ float kern_subsequence_compare(hstring_t x, hstring_t y)
         dp[i][0] = 0;
     for (j = 0; j < y.len + 1; j++)
         dp[0][j] = 0;
-
-
+    
     for (l = 1; l < length; l++) {
         kern[l] = 0;
         for (i = 0; i < x.len - 1; i++) {
@@ -76,13 +83,12 @@ float kern_subsequence_compare(hstring_t x, hstring_t y)
                 if (!hstring_compare(x, i, y, j)) {
                     dps[i][j] = lambda * lambda * dp[i][j];
                     kern[l] = kern[l] + dps[i][j];
+                    printf("%f %d %d\n", dps[i][j], i, j);
                 }
             }
         }
-        return kern[length - 1];
     }
-
-    return 0;
+    return kern[length - 1];
 }
 
 /** @} */
