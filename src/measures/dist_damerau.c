@@ -120,7 +120,7 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
                                   d[i1][j1] + (i - i1 - 1) + cost_tra +
                                   (j - j1 - 1));
         }
-       
+
         alph[hstring_get(x, i - 1)] = i;
     }
 

@@ -51,7 +51,6 @@ void dist_levenshtein_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_levenshtein.norm", &str);
-
     if (!strcasecmp(str, "none")) {
         norm = NORM_NONE;
     } else if (!strcasecmp(str, "min")) {
@@ -105,9 +104,9 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
                 a = b;
 
             /* Substitution */
-            b = rows[curr][j - 1] + 
+            b = rows[curr][j - 1] +
                 (hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
-                
+
             if (a > b)
                 a = b;
 

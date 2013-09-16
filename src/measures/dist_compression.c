@@ -111,25 +111,25 @@ float dist_compression_compare(hstring_t x, hstring_t y)
     int ret;
 
     xk = hstring_hash1(x);
-    #pragma omp critical (vcache)
+#pragma omp critical (vcache)
     ret = vcache_load(xk, &xl);
     if (!ret) {
         xl = compress_str1(x);
-        #pragma omp critical (vcache)
+#pragma omp critical (vcache)
         vcache_store(xk, xl);
     }
 
     yk = hstring_hash1(y);
-    #pragma omp critical (vcache)
+#pragma omp critical (vcache)
     ret = vcache_load(yk, &yl);
     if (!ret) {
         yl = compress_str1(y);
-        #pragma omp critical (vcache)
+#pragma omp critical (vcache)
         vcache_store(yk, yl);
     }
 
     xyl = compress_str2(x, y);
-    return (xyl - fmin(xl,yl)) / fmax(xl, yl);
+    return (xyl - fmin(xl, yl)) / fmax(xl, yl);
 }
 
 /** @} */
