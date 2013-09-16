@@ -74,16 +74,15 @@ float kern_subsequence_compare(hstring_t x, hstring_t y)
     for (j = 0; j < y.len + 1; j++)
         dp[0][j] = 0;
     
-    for (l = 1; l < length; l++) {
+    for (l = 0; l < length; l++) {
         kern[l] = 0;
-        for (i = 0; i < x.len - 1; i++) {
-            for (j = 0; j < y.len - 1; j++) {
+        for (i = 0; i < x.len; i++) {
+            for (j = 0; j < y.len; j++) {
                 dp[i + 1][j + 1] = dps[i][j] + lambda * dp[i][j + 1] +
                     lambda * dp[i + 1][j] - lambda * lambda * dp[i][j];
                 if (!hstring_compare(x, i, y, j)) {
-                    dps[i][j] = lambda * lambda * dp[i][j];
                     kern[l] = kern[l] + dps[i][j];
-                    printf("%f %d %d\n", dps[i][j], i, j);
+                    dps[i][j] = lambda * lambda * dp[i][j];
                 }
             }
         }

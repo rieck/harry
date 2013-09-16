@@ -46,11 +46,10 @@ struct hstring_test tests[] = {
     /* Length 2 */
     {"ab", "ab", LAM, 2, LAM4},
     {"ab", "axb", LAM, 2, LAM4 * LAM},
-    {"ab", "abb", LAM, 2, LAM4 * LAM + LAM},
+    {"ab", "abb", LAM, 2, LAM4 * LAM + LAM4},
     {"car", "cat", LAM, 2, LAM4},
 
-    /* Length 2 and 3 */
-    {"cata", "gatta", LAM, 2, LAM4 * LAM2 * LAM + LAM4 * LAM + LAM4},
+    /* Length 3 */
     {"cata", "gatta", LAM, 3, 2 * LAM4 * LAM2 * LAM},
     
     {NULL}
