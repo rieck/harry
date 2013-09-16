@@ -20,7 +20,9 @@
 int verbose = 0;
 config_t cfg;
 
-#define LAM 0.5
+#define LAM (0.5)
+#define LAM2 (LAM * LAM)
+#define LAM4 (LAM2 * LAM2)
 
 /*
  * Structure for testing string kernels/distances
@@ -42,9 +44,14 @@ struct hstring_test tests[] = {
     {"", "lala", LAM, 2, 0},
 
     /* Length 2 */
-    {"ab", "ab", LAM, 2, pow(LAM,4)},
-    {"ab", "axb", LAM, 2, pow(LAM,5)},
-    {"ab", "abb", LAM, 2, pow(LAM,5) + pow(LAM,4)},
+    {"ab", "ab", LAM, 2, LAM4},
+    {"ab", "axb", LAM, 2, LAM4 * LAM},
+    {"ab", "abb", LAM, 2, LAM4 * LAM + LAM},
+    {"car", "cat", LAM, 2, LAM4},
+
+    /* Length 2 and 3 */
+    {"cata", "gatta", LAM, 2, LAM4 * LAM2 * LAM + LAM4 * LAM + LAM4},
+    {"cata", "gatta", LAM, 3, 2 * LAM4 * LAM2 * LAM},
     
     {NULL}
 };
