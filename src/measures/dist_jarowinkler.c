@@ -28,6 +28,14 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_jarowinkler</em>: Jaro-Winkler distance for strings.
+ *
+ * Jaro. Advances in record linkage methodology as applied to the 1985
+ * census of Tampa Florida. Journal of the American Statistical
+ * Association 84 (406): 414-420, 1989.
+ *
+ * Winkler.  String Comparator Metrics and Enhanced Decision Rules in the
+ * Fellegi-Sunter Model of Record Linkage. Proceedings of the Section on
+ * Survey Research Methods. 354-359, 1990.
  * @{
  */
 

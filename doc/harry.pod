@@ -348,10 +348,14 @@ need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
 
 =item B<dist_compression = {> 
 
-This module implements the compression distance for strings (XXX). The
-compression is implemented using B<zlib>.  The runtime complexity of a
-comparison is linear in the length of the strings, though with a large
-constant factor.  The following parameters are supported:
+This module implements the normalized compression distance for strings
+(Cilibrasi and Vitanyi, 2005).  The compression is implemented using B<zlib>.  Note that the
+comparison of strings highly depends on the characteristics of the
+compressor (Cebrian et al., 2005).  The strings should not be longer than 16
+kilobytes, such that two strings fit into the window of B<zlib>.  The
+runtime complexity of a comparison is linear in the length of the strings,
+though with a large constant factor.  The following parameters are
+supported:
 
 =over 4
 
@@ -518,6 +522,10 @@ section for further details.
 
 =head1 REFERENCES
 
+Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communicstions in Information and Systems, 5 (4), 367-384, 2005.
+
+Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on Information Theory, 51:4, 1523-1545, 2005. 
+
 Damerau. A technique for computer detection and correction of spelling errors, Communications of the ACM, 7(3):171-176, 1964
 
 Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
@@ -533,8 +541,6 @@ Lodhi, Saunders, Shawe-Taylor, Cristianini, and Watkins. Text classification usi
 Sonnenburg, Raetsch, and Rieck. Large scale learning with string kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press, 2007.
 
 Winkler.  String Comparator Metrics and Enhanced Decision Rules in the Fellegi-Sunter Model of Record Linkage. Proceedings of the Section on Survey Research Methods. 354-359, 1990.
-
-XXX. Compression distance 
 
 =head1 COPYRIGHT
 

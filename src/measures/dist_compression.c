@@ -20,6 +20,9 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_compression</em>: Compression distance for strings.
+ *
+ * Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on
+ * Information Theory, 51:4, 1523-1545, 2005.
  * @{
  */
 

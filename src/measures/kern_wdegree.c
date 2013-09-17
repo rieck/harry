@@ -20,6 +20,10 @@
  * @addtogroup measures
  * <hr>
  * <em>kern_wdegree</em>: Weighted-degree kernel
+ *
+ * Sonnenburg, Raetsch, and Rieck. Large scale learning with string
+ * kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press,
+ * 2007. 
  * @{
  */
 

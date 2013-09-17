@@ -19,6 +19,9 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_hamming</em>: Hamming distance for strings.
+ * 
+ * Hamming. Error-detecting and error-correcting codes. Bell System
+ * Technical Journal, 29(2):147-160, 1950.
  * @{
  */
 

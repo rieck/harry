@@ -19,6 +19,9 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_lee</em>: Lee distance for strings.
+ *
+ * Lee. Some properties of nonbinary error-correcting codes. IRE
+ * Transactions on Information Theory 4 (2): 77-82, 1958.
  * @{
  */
 

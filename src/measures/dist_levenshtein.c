@@ -20,6 +20,9 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_levenshtein</em>: Levenshtein distance for strings.
+ *
+ * Levenshtein. Binary codes capable of correcting deletions, insertions,
+ * and reversals. Doklady Akademii Nauk SSSR, 163 (4):845-848, 1966.
  * @{
  */
 

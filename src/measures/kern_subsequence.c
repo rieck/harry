@@ -20,6 +20,10 @@
  * @addtogroup measures
  * <hr>
  * <em>kern_subsequence</em>: Subsequence kernel
+ *
+ * Lodhi, Saunders, Shawe-Taylor, Cristianini, and Watkins. Text
+ * classification using string kernels. Journal of Machine Learning
+ * Research, 2:419-444, 2002.
  * @{
  */
 

@@ -21,7 +21,8 @@
  * <hr>
  * <em>dist_damerau</em>: Damerau-Levenshtein distance for strings.
  *
- * 
+ * Damerau. A technique for computer detection and correction of spelling
+ * errors, Communications of the ACM, 7(3):171-176, 1964  
  * @{
  */
 
