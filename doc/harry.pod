@@ -36,50 +36,12 @@ I<config> and additionally using command-line options.
 
 =head1 SIMILARITY MEASURES
 
-Harry is currently under development. The following distance and
-kernel functions for strings are supported so far
+The following distance functions for strings are supported: Hamming distance,
+Levenshtein distance, Damerau-Levenshtein distance, Jaro distance,
+Jaro-Winkler distance, Lee distance and normaliezd compression distance.
 
-=over 36
-
-=item Hamming distance
-
-see measure B<dist_hamming>
-
-=item Levenshtein distance
-
-see measure B<dist_levenshtein>
-
-=item Damerau-Levenshtein distance
-
-see measure B<dist_damerau>
-
-=item Jaro distance
-
-see measure B<dist_jarowinkler>
-
-=item Jaro-Winkler distance
-
-see measure B<dist_jarowinkler>
-
-=item Lee distance
-
-see measure B<dist_lee>
-
-=item Compression distance
-
-see measure B<dist_compression>
-
-=item Weighted-degree kernel
-
-see measure B<kern_wdegree>
-
-=item Weighted-degree kernel with shifts
-
-see measure B<kern_wdegree>
-
-=item Subsequence kernel
-
-see measure B<kern_subsequence>
+The following kernel functions for strings are supported: weighted-degree
+kernel, weighted-degree kernel with shifts and subsequence kernel.
 
 =back
 
