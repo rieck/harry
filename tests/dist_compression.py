@@ -19,6 +19,8 @@ tests = [
     ("fkjhskljfhalsdkfhalksjdfhsdf", "djfh"),    
     ("fkjhskljfhalsdkfhalksjdfhsdf", ""),
     ("", "fkjhskljfhalsdkfhalksjdfhsdf"),
+    ("6s6sd7as6d", "7sad8asd76"),
+    ("aaaaaaaaaa", "bbbbbbbbb"),
 ]
 
 for (x,y) in tests:

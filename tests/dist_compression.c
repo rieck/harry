@@ -40,6 +40,8 @@ struct hstring_test tests[] = {
     {"fkjhskljfhalsdkfhalksjdfhsdf", "djfh", 0.727273},
     {"fkjhskljfhalsdkfhalksjdfhsdf", "", 0.757576},
     {"", "fkjhskljfhalsdkfhalksjdfhsdf", 0.757576},
+    {"6s6sd7as6d", "7sad8asd76", 0.444444},
+    {"aaaaaaaaaa", "bbbbbbbbb", 0.272727},
     {NULL}
 };
 
