@@ -15,7 +15,10 @@
 #include "util.h"
 
 /**
- * @defgroup rwlock Read-write lock for OpenMP. 
+ * @defgroup rwlock Read-write lock
+ *
+ * Read-write lock implemented using OpenMP.
+ *
  * Code adapted from http://www.linux.org.ru/forum/development/4510260
  * This implementation does not provide fair scheduling. The writer thread
  * starves, if too many readers repeatingly acquire the lock.  Technically,
