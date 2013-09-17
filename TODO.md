@@ -3,6 +3,7 @@
 
 ## Missing features
 
++ Matric class (encapsulates storage details)
 + Selection of ranges (rectangular matrices)
 + On-the-fly computation (e.g. for patched libsvm or shogun)
 
@@ -13,10 +14,11 @@
 
 ## Missing measures
 
-+ Smith-Waterman distance
++ Bag distance
++ Spectrum kernel
++ Locality improved kernel
 
 ## Special hacks
 
 + Kernel-to-distance: simple map to Euclidean distance
 + Distance-to-Kernel: maps by B. Haasdonk 
-+ Kernel normalization 

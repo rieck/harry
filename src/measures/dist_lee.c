@@ -26,7 +26,8 @@
  */
 
 /* Alphabet size */
-static int q = 0;
+static int min_sym = 0;
+static int max_sym = 255;
 
 /* External variables */
 extern config_t cfg;
@@ -36,7 +37,8 @@ extern config_t cfg;
  */
 void dist_lee_config()
 {
-    config_lookup_int(&cfg, "measures.dist_lee.alphabet", &q);
+    config_lookup_int(&cfg, "measures.dist_lee.min_sym", &min_sym);
+    config_lookup_int(&cfg, "measures.dist_lee.max_sym", &max_sym);    
 }
 
 /**
@@ -50,16 +52,16 @@ void dist_lee_config()
 float dist_lee_compare(hstring_t x, hstring_t y)
 {
     float d = 0, ad;
-    int i;
+    int i, q = max_sym - min_sym;
 
     /* Loop over strings */
     for (i = 0; i < x.len || i < y.len; i++) {
         if (i < x.len && i < y.len)
-            ad = fabs(hstring_compare(x, i, y, i));
+            ad = fabs(hstring_compare(x, i, y, i) - min_sym);
         else if (i < x.len)
-            ad = fabs(hstring_get(x, i));
+            ad = fabs(hstring_get(x, i) - min_sym);
         else
-            ad = fabs(hstring_get(y, i));
+            ad = fabs(hstring_get(y, i) - min_sym);
 
         if (ad >= q) {
             warning("Distance of symbols larger than alphabet. Fixing.");

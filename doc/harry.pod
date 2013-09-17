@@ -330,17 +330,15 @@ string are added to the distance. The following parameters are supported:
 
 =over 4
 
-=item B<alphabet = 256;>
+=item B<min_sym = 0;>
+=item B<max_sym = 255;>
 
-This parameter specifies the alphabet size, that is, the maximum number of
-unique symbols.  If the strings consist of bytes, B<alphabet> needs to be
-set to 256, whereas if words are analyzed using the parameter B<delim>, the
-alphabet size has to be 65536.  
-
-Note that if the alphabet size is set to some other value I<n>, the symbols
-of the strings must be between 0 and I<n>-1.  Hence, a normalization of the
-symbols is often necessary, for example, the ASCII characters '0' and '1'
-need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
+These parameters specify the range of symbols, that is, the minimum and
+maximum value of a symbol in all strings.  If the strings consist of bytes,
+B<min_sym> is typically set to 0 and B<max_sym> to 256.  For printable
+characters the range can be further narrowed to 32 and 126.  If words are
+analyzed using the parameter B<delim>, B<min_sym> must be set to 0 and
+B<max_sym> to 65535.
 
 =back
 
