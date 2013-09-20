@@ -325,6 +325,24 @@ See B<zlib(3)>
 
 =back
 
+=item B<dist_bag = {> 
+
+This module implements the bag distance (see Bartolini et al., 2002). The
+distance approximates and lower bounds the Levenshtein distance. The
+runtime complexity of a comparison is linear in the length of the strings. 
+The following parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the distance. Supported values
+are I<"none"> for no normalization, I<"min"> for normalization on the
+minimum length, I<"max"> for normalization on the maximum length, I<"avg">
+for normalization on the average length of the compared .
+
+=back
+
 =item B<};>
 
 
@@ -479,6 +497,8 @@ section for further details.
 =back
 
 =head1 REFERENCES
+
+Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an Approximate Distance. String Processing and Information Retrieval, LNCS 2476, 271-283, 2002.
 
 Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communicstions in Information and Systems, 5 (4), 367-384, 2005.
 

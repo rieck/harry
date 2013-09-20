@@ -51,6 +51,7 @@ static config_default_t defaults[] = {
     {"measures.dist_lee", "min_sym", CONFIG_TYPE_INT, {.num = 0}},    
     {"measures.dist_lee", "max_sym", CONFIG_TYPE_INT, {.num = 255}},
     {"measures.dist_compression", "level", CONFIG_TYPE_INT, {.num = 9}},
+    {"measures.dist_bag", "norm", CONFIG_TYPE_STRING, {.str = "none"}},    
     {"measures.kern_wdegree", "degree", CONFIG_TYPE_INT, {.num = 3}},
     {"measures.kern_wdegree", "shift", CONFIG_TYPE_INT, {.num = 0}},
     {"measures.kern_wdegree", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
