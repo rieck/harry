@@ -135,7 +135,18 @@ float dist_bag_compare(hstring_t x, hstring_t y)
     
     bag_destroy(xh);
     bag_destroy(yh);
-    return d;
+
+    switch (norm) {
+    case NORM_MIN:
+        return d / fmin(x.len, y.len);
+    case NORM_MAX:
+        return d / fmax(x.len, y.len);
+    case NORM_AVG:
+        return d / (0.5 * (x.len + y.len));
+    case NORM_NONE:
+    default:
+        return d;
+    }    
 }
 
 /** @} */
