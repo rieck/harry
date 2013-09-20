@@ -89,10 +89,14 @@ static void bag_destroy(bag_t *xh)
  * @param y second string
  * @return matches
  */
-match_t match(hstring_t x, hstring_t y)
+static match_t match(hstring_t x, hstring_t y)
 {
     bag_t *xh, *yh, *xb, *yb;
-    match_t match;
+    match_t m;
+    
+    m.a = 0;
+    m.b = 0;
+    m.c = 0;
     
     xh = bag_create(x);
     yh = bag_create(y);
@@ -101,18 +105,17 @@ match_t match(hstring_t x, hstring_t y)
     for(xb = xh; xb != NULL; xb = xb->hh.next) {
         HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
         if (!yb) {
-            match.b += xb->cnt;
+            m.b += xb->cnt;
         } else {
-            match.a += fabs(xb->cnt - yb->cnt);
+            m.a += fmin(xb->cnt, yb->cnt);
             missing -= yb->cnt;
         }
     }
-    match.c += missing;
+    m.c += missing;
     
     bag_destroy(xh);
     bag_destroy(yh);
-    
-    return match;
+    return m;
 }
 
 /**

@@ -44,6 +44,12 @@ bag distance.
 The following kernel functions for strings are supported: weighted-degree
 kernel, weighted-degree kernel with shifts and subsequence kernel.
 
+The following similarity coefficients for strings are supports: Simpson
+coefficient, Jaccard coefficient, Braun-Blanquet coefficient, Czekanowski
+coefficient (Soerensen-Dice coefficient), Kulczynski coefficient (1st),
+Kulczynski coefficient (2nd), Sokal-Sneath coefficient (Anderberg
+coefficient), Otsuka coefficent (Ochiai coefficient).
+
 =head1 CONFIGURATION
 
 The configuration of B<harry> is specified in a configuration file.  This

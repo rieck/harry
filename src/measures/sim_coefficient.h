@@ -20,8 +20,6 @@ typedef struct {
     float c;	/**< Number of right mismatches */
 } match_t;
 
-match_t match(hstring_t, hstring_t);
-
 void sim_coefficient_config();
 float sim_jaccard_compare(hstring_t x, hstring_t y);
 float sim_simpson_compare(hstring_t x, hstring_t y);
