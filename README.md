@@ -34,6 +34,17 @@ supported so far
 + Weighted-degree kernel with shifts
 + Subsequence kernel
 
+### Similarity coefficients for Strings
+
++ Simpson coefficient
++ Jaccard coefficient
++ Braun-Blanquet coefficient
++ Czekanowski coefficient (Soerensen-Dice)
++ Sokal-Sneath coefficient (Anderberg)
++ Kulczynski coefficient (1st)
++ Kulczynski coefficient (2nd)
++ Otsuka coefficient (Ochiai)
+
 ## Dependencies
 
     >= OpenMP 2.5
