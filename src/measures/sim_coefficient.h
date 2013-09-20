@@ -22,13 +22,14 @@ typedef struct {
 
 match_t match(hstring_t, hstring_t);
 
-float sim_jaccard(hstring_t x, hstring_t y);
-float sim_simpson(hstring_t x, hstring_t y);
-float sim_braunblanquet(hstring_t x, hstring_t y);
-float sim_czekanowski(hstring_t x, hstring_t y);
-float sim_sokalsneath(hstring_t x, hstring_t y);
-float sim_kulczynski1(hstring_t x, hstring_t y);
-float sim_kulczynski2(hstring_t x, hstring_t y);
-float sim_otsuka(hstring_t x, hstring_t y);
+void sim_coefficient_config();
+float sim_jaccard_compare(hstring_t x, hstring_t y);
+float sim_simpson_compare(hstring_t x, hstring_t y);
+float sim_braunblanquet_compare(hstring_t x, hstring_t y);
+float sim_czekanowski_compare(hstring_t x, hstring_t y);
+float sim_sokalsneath_compare(hstring_t x, hstring_t y);
+float sim_kulczynski1_compare(hstring_t x, hstring_t y);
+float sim_kulczynski2_compare(hstring_t x, hstring_t y);
+float sim_otsuka_compare(hstring_t x, hstring_t y);
 
 #endif /* SIM_COEFFICIENTS_H */

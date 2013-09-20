@@ -35,6 +35,7 @@
 #include "dist_bag.h"
 #include "kern_wdegree.h"
 #include "kern_subsequence.h"
+#include "sim_coefficient.h"
 
 /* External variables */
 extern config_t cfg;
@@ -118,6 +119,30 @@ void measure_config(const char *name)
     } else if (measure_match(name, "kern_subsequence")) {
         func.measure_config = kern_subsequence_config;
         func.measure_compare = kern_subsequence_compare;
+    } else if (measure_match(name, "sim_simpson")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_simpson_compare;
+    } else if (measure_match(name, "sim_jaccard")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_jaccard_compare;
+    } else if (measure_match(name, "sim_braunblanquet")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_braunblanquet_compare;
+    } else if (measure_match(name, "sim_czekanowski")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_czekanowski_compare;
+    } else if (measure_match(name, "sim_sokalsneath")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_sokalsneath_compare;
+    } else if (measure_match(name, "sim_kulczynski1")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_kulczynski1_compare;
+    } else if (measure_match(name, "sim_kulczynski2")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_kulczynski2_compare;
+    } else if (measure_match(name, "sim_otsuka")) {
+        func.measure_config = sim_coefficient_config;
+        func.measure_compare = sim_otsuka_compare;
     } else {
         error("Unknown measure '%s', using 'dist_hamming' instead.", name);
         measure_config("dist_hamming");

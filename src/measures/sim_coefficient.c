@@ -14,12 +14,19 @@
 #include "util.h"
 #include "uthash.h"
 
-#include "sim_coefficients.h"
+#include "sim_coefficient.h"
 
 /**
  * @addtogroup measures
  * <hr>
- * <em>sim_jaccard</em>: Jaccard coefficient
+ * <em>sim_simpson</em>: Simpson coefficient <br/>
+ * <em>sim_jaccard</em>: Jaccard coefficient <br/> 
+ * <em>sim_braunblanquet</em>: Braun-Blanquet coefficient <br/> 
+ * <em>sim_czekanowski</em>: Czekanowski coefficient (Soerensen-Dice) <br/> 
+ * <em>sim_sokalsneath</em>: Sokal-Sneath coefficient (Anderberg) <br/> 
+ * <em>sim_kulczynski1</em>: Kulczynski coefficient (1st) <br/> 
+ * <em>sim_kulczynski2</em>: Kulczynski coefficient (2nd) <br/>
+ * <em>sim_otsuka</em>: Otsuka coefficient (Ochiai) <br/>
  * @{
  */
 
@@ -31,6 +38,10 @@ typedef struct {
 
 /* External variables */
 extern config_t cfg;
+
+void sim_coefficient_config()
+{
+}
 
 /**
  * Computes a histogram of symbols or characters
@@ -92,7 +103,7 @@ match_t match(hstring_t x, hstring_t y)
         if (!yb) {
             match.b += xb->cnt;
         } else {
-            match.a = fabs(xb->cnt - yb->cnt);
+            match.a += fabs(xb->cnt - yb->cnt);
             missing -= yb->cnt;
         }
     }
@@ -110,7 +121,7 @@ match_t match(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_jaccard(hstring_t x, hstring_t y)
+float sim_jaccard_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / (m.a + m.b + m.c);
@@ -122,7 +133,7 @@ float sim_jaccard(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_simpson(hstring_t x, hstring_t y)
+float sim_simpson_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / fmin(m.a + m.b, m.a + m.c);
@@ -134,7 +145,7 @@ float sim_simpson(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_braunblanquet(hstring_t x, hstring_t y)
+float sim_braunblanquet_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / fmax(m.a + m.b, m.a + m.c);
@@ -146,7 +157,7 @@ float sim_braunblanquet(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_czekanowski(hstring_t x, hstring_t y)
+float sim_czekanowski_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return 2 * m.a / (2 * m.a + m.b + m.c);
@@ -158,7 +169,7 @@ float sim_czekanowski(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_sokalsneath(hstring_t x, hstring_t y)
+float sim_sokalsneath_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / (m.a + 2 * (m.b + m.c));
@@ -170,7 +181,7 @@ float sim_sokalsneath(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_kulczynski1(hstring_t x, hstring_t y)
+float sim_kulczynski1_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / (m.b + m.c);
@@ -182,7 +193,7 @@ float sim_kulczynski1(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_kulczynski2(hstring_t x, hstring_t y)
+float sim_kulczynski2_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return 0.5 * (m.a / (m.a + m.b) + m.a / (m.a + m.c));
@@ -194,7 +205,7 @@ float sim_kulczynski2(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_otsuka(hstring_t x, hstring_t y)
+float sim_otsuka_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / sqrt((m.a + m.b) * (m.a + m.c));
