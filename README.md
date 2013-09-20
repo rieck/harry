@@ -36,6 +36,7 @@ supported so far
 
 ## Dependencies
 
+    >= OpenMP 2.5
     >= zlib-1.2.1
     >= libconfig-1.4
     >= libarchive-2.70
