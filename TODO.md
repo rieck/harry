@@ -14,9 +14,10 @@
 
 ## Missing measures
 
-+ Bag distance
 + Spectrum kernel
 + Locality improved kernel
++ OSA similarity something
++ Similarity coefficients
 
 ## Special hacks
 
