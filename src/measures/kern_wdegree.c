@@ -13,7 +13,7 @@
 #include "harry.h"
 #include "util.h"
 #include "vcache.h"
-
+#include "norm.h"
 #include "kern_wdegree.h"
 
 /**
@@ -31,9 +31,7 @@
 extern config_t cfg;
 
 /* Normalizations */
-enum norm_type
-{ NORM_NONE, NORM_L2 };
-static enum norm_type norm = NORM_NONE;
+static norm_t norm = NORM_NONE;
 
 /* Local variables */
 static int degree = 3;         /**< Degree of kernel */
@@ -51,13 +49,7 @@ void kern_wdegree_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.kern_wdegree.norm", &str);
-    if (!strcasecmp(str, "none")) {
-        norm = NORM_NONE;
-    } else if (!strcasecmp(str, "l2")) {
-        norm = NORM_L2;
-    } else {
-        warning("Unknown norm '%s'. Using 'none' instead.", str);
-    }
+    norm = norm_get(str);
 }
 
 /**
@@ -152,38 +144,8 @@ static float kernel(hstring_t x, hstring_t y)
  */
 float kern_wdegree_compare(hstring_t x, hstring_t y)
 {
-    uint64_t xk, yk;
-    float xv, yv;
-    int ret;
-
     float k = kernel(x, y);
-
-    /* Normalization */
-    switch (norm) {
-    case NORM_L2:
-        xk = hstring_hash1(x);
-#pragma omp critical (vcache)
-        ret = vcache_load(xk, &xv);
-        if (!ret) {
-            xv = kernel(x, x);
-#pragma omp critical (vcache)
-            vcache_store(xk, xv);
-        }
-
-        yk = hstring_hash1(y);
-#pragma omp critical (vcache)
-        ret = vcache_load(yk, &yv);
-        if (!ret) {
-            yv = kernel(y, y);
-#pragma omp critical (vcache)
-            vcache_store(yk, yv);
-        }
-        return k / sqrt(xv * yv);
-
-    case NORM_NONE:
-    default:
-        return k;
-    }
+    return norm_kernel(norm, k, x, y, kernel);
 }
 
 /** @} */
