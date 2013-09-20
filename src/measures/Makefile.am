@@ -14,7 +14,7 @@ libmeasures_la_SOURCES     = measures.h measures.c \
 			     dist_damerau.c dist_damerau.h \
 			     kern_subsequence.c kern_subsequence.h \
 			     dist_compression.c	dist_compression.h \
-			     dist_bag.c dist_bag.h
+			     dist_bag.c dist_bag.h norm.c norm.h
 
 beautify:
 			   gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \

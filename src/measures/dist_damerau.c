@@ -13,7 +13,7 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
-
+#include "norm.h"
 #include "dist_damerau.h"
 
 /**
@@ -27,9 +27,7 @@
  */
 
 /* Normalizations */
-enum norm_type
-{ NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
-static enum norm_type norm = NORM_NONE;
+static norm_t norm = NORM_NONE;
 static double cost_ins = 1.0;
 static double cost_del = 1.0;
 static double cost_sub = 1.0;
@@ -61,18 +59,7 @@ void dist_damerau_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_damerau.norm", &str);
-
-    if (!strcasecmp(str, "none")) {
-        norm = NORM_NONE;
-    } else if (!strcasecmp(str, "min")) {
-        norm = NORM_MIN;
-    } else if (!strcasecmp(str, "max")) {
-        norm = NORM_MAX;
-    } else if (!strcasecmp(str, "avg")) {
-        norm = NORM_AVG;
-    } else {
-        warning("Unknown norm '%s'. Using 'none' instead.", str);
-    }
+    norm = norm_get(str);
 }
 
 /**
@@ -126,17 +113,7 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
     }
 
     float r = d[x.len + 1][y.len + 1];
-    switch (norm) {
-    case NORM_MIN:
-        return r / fmin(x.len, y.len);
-    case NORM_MAX:
-        return r / fmax(x.len, y.len);
-    case NORM_AVG:
-        return r / (0.5 * (x.len + y.len));
-    case NORM_NONE:
-    default:
-        return r;
-    }
+    return norm_length(norm, r, x, y);
 }
 
 /** @} */

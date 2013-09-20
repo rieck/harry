@@ -13,7 +13,7 @@
 #include "harry.h"
 #include "util.h"
 #include "uthash.h"
-
+#include "norm.h"
 #include "dist_bag.h"
 
 /**
@@ -28,17 +28,15 @@
  * @{
  */
 
-/* Normalizations */
-enum norm_type
-{ NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
-static enum norm_type norm = NORM_NONE;
-
 /* Hash table */
 typedef struct {
     sym_t sym; 		/**< Symbol or character */
     float cnt; 		/**< Count of symbol */
     UT_hash_handle hh;  /**< uthash handle */
 } bag_t;
+
+/* Static variables */
+norm_t norm = NORM_NONE;
 
 /* External variables */
 extern config_t cfg;
@@ -52,18 +50,7 @@ void dist_bag_config()
     
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_bag.norm", &str);
-
-    if (!strcasecmp(str, "none")) {
-        norm = NORM_NONE;
-    } else if (!strcasecmp(str, "min")) {
-        norm = NORM_MIN;
-    } else if (!strcasecmp(str, "max")) {
-        norm = NORM_MAX;
-    } else if (!strcasecmp(str, "avg")) {
-        norm = NORM_AVG;
-    } else {
-        warning("Unknown norm '%s'. Using 'none' instead.", str);
-    }
+    norm = norm_get(str);
 }
 
 /**
@@ -136,17 +123,7 @@ float dist_bag_compare(hstring_t x, hstring_t y)
     bag_destroy(xh);
     bag_destroy(yh);
 
-    switch (norm) {
-    case NORM_MIN:
-        return d / fmin(x.len, y.len);
-    case NORM_MAX:
-        return d / fmax(x.len, y.len);
-    case NORM_AVG:
-        return d / (0.5 * (x.len + y.len));
-    case NORM_NONE:
-    default:
-        return d;
-    }    
+    return norm_length(norm, d, x, y); 
 }
 
 /** @} */
