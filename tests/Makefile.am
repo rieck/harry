@@ -14,7 +14,8 @@ check_PROGRAMS			= check_vcache \
 				  check_damerau \
 				  check_compression \
 				  check_wdegree \
-				  check_subsequence
+				  check_subsequence \
+				  check_bag
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
 
@@ -44,6 +45,9 @@ check_vcache_LDADD		= $(top_builddir)/src/libharry.la
 
 check_compression_SOURCES	= dist_compression.c tests.h
 check_compression_LDADD		= $(top_builddir)/src/libharry.la
+
+check_bag_SOURCES		= dist_bag.c tests.h
+check_bag_LDADD			= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \
