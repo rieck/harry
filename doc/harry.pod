@@ -38,7 +38,8 @@ I<config> and additionally using command-line options.
 
 The following distance functions for strings are supported: Hamming distance,
 Levenshtein distance, Damerau-Levenshtein distance, Jaro distance,
-Jaro-Winkler distance, Lee distance and normaliezd compression distance.
+Jaro-Winkler distance, Lee distance, normalized compression distance and
+bag distance.
 
 The following kernel functions for strings are supported: weighted-degree
 kernel, weighted-degree kernel with shifts and subsequence kernel.

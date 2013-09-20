@@ -26,6 +26,7 @@ supported so far
 + Jaro-Winkler distance
 + Lee distance
 + Compression distance
++ Bag distance
 
 ### Kernels for Strings
 
