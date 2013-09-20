@@ -43,8 +43,6 @@ Jaro-Winkler distance, Lee distance and normaliezd compression distance.
 The following kernel functions for strings are supported: weighted-degree
 kernel, weighted-degree kernel with shifts and subsequence kernel.
 
-=back
-
 =head1 CONFIGURATION
 
 The configuration of B<harry> is specified in a configuration file.  This
