@@ -46,10 +46,10 @@ extern config_t cfg;
 void sim_coefficient_config()
 {
     const char *str;
-    
+
     /* Matching */
     config_lookup_string(&cfg, "measures.sim_coefficient.matching", &str);
-    
+
     if (!strcasecmp(str, "cnt")) {
         binary = FALSE;
     } else if (!strcasecmp(str, "bin")) {

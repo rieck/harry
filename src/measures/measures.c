@@ -98,7 +98,7 @@ void measure_config(const char *name)
     } else if (measure_match(name, "dist_levenshtein")) {
         func.measure_config = dist_levenshtein_config;
         func.measure_compare = dist_levenshtein_compare;
-    } else if (measure_match(name, "dist_jarowinkler")) {
+    } else if (measure_match(name, "dist_jaro")) {
         func.measure_config = dist_jaro_config;
         func.measure_compare = dist_jaro_compare;
     } else if (measure_match(name, "dist_jarowinkler")) {

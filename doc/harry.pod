@@ -143,7 +143,7 @@ characters or using words.
 
 =over 4
 
-=item B<type = "dist_levenshtein>
+=item B<type = "dist_levenshtein">
 
 The parameter B<type> specifies the similarity measure that is used for
 comparing the strings. Supported similarity measures are:
