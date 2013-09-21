@@ -198,15 +198,13 @@ Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 
 =item I<"sim_sokal">
 
-=item I<"sim_kulczynski1">
-
-=item I<"sim_kulczynski2">
+=item I<"sim_kulczynski">
 
 =item I<"sim_otsuka">
 
 Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
 known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
-(also known as Anderberg) Kulczynski 1, Kulczynski 2, Otsuka 
+(also known as Anderberg), second Kulczynski, Otsuka 
 (also known as Ochiai). See configuration section
 B<sim_coefficient>.
 
@@ -462,9 +460,9 @@ This parameter is a weighting term for gaps within subsequences.
 
 =item B<sim_coefficient = {>
 
-This module implements several similarity coefficients for strings (Rieck
-and Laskov, 2008).  The runtime complexity of a comparison is linear in the
-length of the strings.  The following parameters are supported:
+This module implements several similarity coefficients for strings (see
+Cheetham and Hazel, 1969).  The runtime complexity of a comparison is linear
+in the length of the strings.  The following parameters are supported:
 
 =over 4
 
@@ -543,7 +541,7 @@ overwritten on the command-line.  Following is the list of options:
 
 =head2 Module options
 
-  -t,  --type <name>		 Set similarity measure module
+  -m,  --measure <name>		 Set similarity measure 
   -d   --delim <delimiters>	 Set delimiters for words
   -a,  --cache_size <size>       Set size of cache in megabytes
   -g,  --global_cache <0|1>      Set global cache for similarity values
@@ -553,6 +551,7 @@ overwritten on the command-line.  Following is the list of options:
   -c,  --config_file <file>      Set configuration file.
   -v,  --verbose                 Increase verbosity.
   -q,  --quiet                   Be quiet during processing.
+  -M,  --print_measures          Print list of similarity measures
   -C,  --print_config            Print the current configuration.
   -D,  --print_defaults          Print the default configuration.
   -V,  --version                 Print version and copyright.
@@ -575,6 +574,8 @@ Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an Approxim
 
 Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communicstions in Information and Systems, 5 (4), 367-384, 2005.
 
+Cheetham and Hazel. Binary (Presence-Absence) Similarity Coefficients. Journal of Paleontology, 43:5, 1130-1136, 1969
+
 Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on Information Theory, 51:4, 1523-1545, 2005. 
 
 Damerau. A technique for computer detection and correction of spelling errors, Communications of the ACM, 7(3):171-176, 1964
@@ -588,8 +589,6 @@ Lee. Some properties of nonbinary error-correcting codes. IRE Transactions on In
 Levenshtein. Binary codes capable of correcting deletions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163 (4):845-848, 1966.
 
 Lodhi, Saunders, Shawe-Taylor, Cristianini, and Watkins. Text classification using string kernels. Journal of Machine Learning Research, 2:419-444, 2002.
-
-Rieck and Laskov. Linear-time Computation of Similarity Measures for Sequential Data. Journal of Machine Learning Research, 9 (Jan):23-48, 2008.
 
 Sonnenburg, Raetsch, and Rieck. Large scale learning with string kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press, 2007.
 

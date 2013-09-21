@@ -3,7 +3,7 @@
 
 ## Missing features
 
-+ Matric class (encapsulates storage details)
++ Matrix class (encapsulates storage details)
 + Selection of ranges (rectangular matrices)
 + On-the-fly computation (e.g. for patched libsvm or shogun)
 
@@ -14,10 +14,8 @@
 
 ## Missing measures
 
-+ Spectrum kernel
 + Locality improved kernel
-+ OSA similarity something
-+ Similarity coefficients
++ OSA similarity something?
 
 ## Special hacks
 

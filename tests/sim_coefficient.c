@@ -32,18 +32,18 @@ struct hstring_test
 };
 
 struct hstring_test tests[] = {
-    /* Kulczynski coefficient 1 */
+    /* Jaccard coefficient 1 */
     {"", "", "bin", 1.0},
     {"a", "", "bin", 0.0},
     {"", "a", "bin", 0.0},
     {"ab", "ab", "bin", 1.0},
     {"ba", "ab", "bin", 1.0},
-    {"bbcc", "bbbd", "bin", 1.0 / 2.0},
-    {"bbcc", "bbbd", "cnt", 2.0 / 4.0},
-    {"bbcc", "bbbdc", "bin", 2.0 / 1.0},
-    {"bbbdc", "bbcc", "bin", 2.0 / 1.0},    
-    {"bbbdc", "bbcc", "cnt", 3.0 / 3.0},
-    {"bbcc", "bbbyc", "cnt", 3.0 / 3.0},
+    {"bbcc", "bbbd", "bin", 1.0 / (1.0 + 2.0)},
+    {"bbcc", "bbbd", "cnt", 2.0 / (2.0 + 4.0)},
+    {"bbcc", "bbbdc", "bin", 2.0 / (2.0 + 1.0)},
+    {"bbbdc", "bbcc", "bin", 2.0 / (2.0 + 1.0)},    
+    {"bbbdc", "bbcc", "cnt", 3.0 / (3.0 + 3.0)},
+    {"bbcc", "bbbyc", "cnt", 3.0 / (3.0 + 3.0)},
     {NULL}
 };
 
@@ -58,7 +58,7 @@ int test_compare()
 
     for (i = 0; tests[i].x && !err; i++) {
         config_set_string(&cfg, "measures.sim_coefficient.matching", tests[i].m);
-        measure_config("sim_kulczynski1");
+        measure_config("sim_jaccard");
 
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);

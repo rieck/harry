@@ -38,11 +38,8 @@ float sim_dice_compare(hstring_t x, hstring_t y);
 #define sim_sokal_config sim_coefficient_config
 float sim_sokal_compare(hstring_t x, hstring_t y);
 
-#define sim_kulczynski1_config sim_coefficient_config
-float sim_kulczynski1_compare(hstring_t x, hstring_t y);
-
-#define sim_kulczynski2_config sim_coefficient_config
-float sim_kulczynski2_compare(hstring_t x, hstring_t y);
+#define sim_kulczynski_config sim_coefficient_config
+float sim_kulczynski_compare(hstring_t x, hstring_t y);
 
 #define sim_otsuka_config sim_coefficient_config
 float sim_otsuka_compare(hstring_t x, hstring_t y);

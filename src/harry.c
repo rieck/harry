@@ -26,7 +26,7 @@ config_t cfg;
 
 
 /* Option string */
-#define OPTSTRING       "g:a:t:c:i:o:d:z:vqVhMCD"
+#define OPTSTRING       "g:a:m:c:i:o:d:z:vqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -38,7 +38,7 @@ static struct option longopts[] = {
     {"stopword_file", 1, NULL, 1002},   /* <- last entry */
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
-    {"type", 1, NULL, 't'},
+    {"measure", 1, NULL, 'm'},
     {"delim", 1, NULL, 'd'},
     {"cache_size", 1, NULL, 'a'},
     {"global_cache", 1, NULL, 'g'},
@@ -101,7 +101,7 @@ static void print_usage(void)
            "  -o,  --output_format <format>  Set output format for vectors.\n"
            "  -z,  --compress <0|1>          Set zlib compression of output.\n"
            "\nModule options:\n"
-           "  -t,  --type <name>             Set similarity measure\n"
+           "  -m,  --measure <name>          Set similarity measure\n"
            "  -d,  --delim <delimiters>      Set delimiters for words\n"
            "  -a,  --cache_size <size>       Set size of cache in megabytes\n"
            "  -g,  --global_cache <0|1>      Set global cache for similarity values\n"
@@ -158,8 +158,8 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
             break;
-        case 't':
-            config_set_string(&cfg, "measures.type", optarg);
+        case 'm':
+            config_set_string(&cfg, "measures.measure", optarg);
             break;
         case 'd':
             config_set_string(&cfg, "measures.delim", optarg);
@@ -285,7 +285,7 @@ static void harry_init()
     vcache_init();
 
     /* Configure module (init as first) */
-    config_lookup_string(&cfg, "measures.type", &cfg_str);
+    config_lookup_string(&cfg, "measures.measure", &cfg_str);
     cfg_str = measure_config(cfg_str);
     info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
 

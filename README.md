@@ -30,8 +30,7 @@ supported so far
     sim_braun            Braun-Blanquet coefficient
     sim_dice             Soerencen-Dice coefficient
     sim_jaccard          Jaccard coefficient
-    sim_kulczynski1      Kulczynski coefficient 1
-    sim_kulczynski2      Kulczynski coefficient 2
+    sim_kulczynski       second Kulczynski coefficient
     sim_otsuka           Otsuka coefficient
     sim_simpson          Simpson coefficient
     sim_sokal            Sokal-Sneath coefficient

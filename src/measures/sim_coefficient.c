@@ -24,8 +24,7 @@
  * <em>sim_braun</em>: Braun-Blanquet coefficient <br/> 
  * <em>sim_dice</em>: Dice coefficient (Czekanowsi, Soerensen-Dice) <br/>
  * <em>sim_sokal</em>: Sokal-Sneath coefficient (Anderberg) <br/> 
- * <em>sim_kulczynski1</em>: Kulczynski coefficient (1st) <br/> 
- * <em>sim_kulczynski2</em>: Kulczynski coefficient (2nd) <br/>
+ * <em>sim_kulczynski</em>: second Kulczynski coefficient <br/> 
  * <em>sim_otsuka</em>: Otsuka coefficient (Ochiai) <br/>
  * @{
  */
@@ -230,27 +229,12 @@ float sim_sokal_compare(hstring_t x, hstring_t y)
 }
 
 /**
- * Computes the Kulczynski (1st) efficient 
- * @param x String x
- * @param y String y
- * @return coefficient
- */
-float sim_kulczynski1_compare(hstring_t x, hstring_t y)
-{
-    match_t m = match(x, y);
-    if (m.b == 0 && m.c == 0)
-        return 1;
-
-    return m.a / (m.b + m.c);
-}
-
-/**
  * Computes the Kulczynski (2nd) efficient 
  * @param x String x
  * @param y String y
  * @return coefficient
  */
-float sim_kulczynski2_compare(hstring_t x, hstring_t y)
+float sim_kulczynski_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     if (m.b == 0 && m.c == 0)
