@@ -1,20 +1,20 @@
 # <measure>:<module>
-dist_bag:dist_bag
-dist_compression:dist_compression
-dist_damerau:dist_damerau
-dist_hamming:dist_hamming
-dist_jaro:dist_jarowinkler
-dist_jarowinkler:dist_jarowinkler
-dist_lee:dist_lee
-dist_levenshtein:dist_levenshtein
-kern_subsequence:kern_subsequence
-kern_wdegree:kern_wdegree
-sim_braun:sim_coefficient
-sim_dice:sim_coefficient
-sim_jaccard:sim_coefficient
-sim_kulczynski2:sim_coefficient
-sim_kulczynski1:sim_coefficient
-sim_otsuka:sim_coefficient
-sim_simpson:sim_coefficient
-sim_sokal:sim_coefficient
-sim_tanimoto:sim_coefficient
+dist_bag:dist_bag:Bag distance
+dist_compression:dist_compression:Normalized compression distance (NCD)
+dist_damerau:dist_damerau:Damerau-Levenshtein distance
+dist_hamming:dist_hamming:Hamming distance
+dist_jaro:dist_jarowinkler:Jaro distance (similarity)
+dist_jarowinkler:dist_jarowinkler:Jaro-Winkler distance (similarity)
+dist_lee:dist_lee:Lee distance
+dist_levenshtein:dist_levenshtein:Levenshtein distance
+kern_subsequence:kern_subsequence:Subsequence kernel (SSK)
+kern_wdegree:kern_wdegree:Weighted-degree kernel (WDK)
+sim_braun:sim_coefficient:Braun-Blanquet coefficient 
+sim_dice:sim_coefficient:Soerencen-Dice coefficient
+sim_jaccard:sim_coefficient:Jaccard coefficient
+sim_kulczynski2:sim_coefficient:Kulczynski coefficient 1
+sim_kulczynski1:sim_coefficient:Kulczynski coefficient 2 
+sim_otsuka:sim_coefficient:Otsuka coefficient
+sim_simpson:sim_coefficient:Simpson coefficient
+sim_sokal:sim_coefficient:Sokal-Sneath coefficient
+sim_tanimoto:sim_coefficient:Tanimoto coeficient

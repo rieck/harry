@@ -209,7 +209,7 @@ Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
 known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
 (also known as Anderberg) Kulczynski 1, Kulczynski 2, Otsuka 
-(also known as Ochiai), Tanimoto. See configuration section
+(also known as Ochiai). See configuration section
 B<sim_coefficient>.
 
 =back
@@ -318,7 +318,10 @@ tranposition, respectively.  The default costs are I<1.0> for each operation.
 =item B<dist_jarowinkler = {> 
 
 This module implements the Jaro distance (Jaro, 1989) and the Jaro-Winkler
-distance (Winkler, 1990). The runtime complexity of a comparison is
+distance (Winkler, 1990). In contrast to the original formulation, 
+a true distance function is implemented, where similar
+strings yield a low value and dissimilar strings a high value.
+The runtime complexity of a comparison is
 quadratic in the length of the strings.  The following parameters are
 supported:
 

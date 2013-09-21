@@ -118,8 +118,8 @@ float dist_jaro_compare(hstring_t x, hstring_t y)
     }
     t /= 2;
 
-    return (((float) m / x.len) + ((float) m / y.len) +
-            ((float) (m - t) / m)) / 3.0;
+    return 1 - ((((float) m / x.len) + ((float) m / y.len) +
+           ((float) (m - t) / m)) / 3.0);
 }
 
 /**
@@ -139,7 +139,7 @@ float dist_jarowinkler_compare(hstring_t x, hstring_t y)
             break;
 
     /* Jaro-Winkler distance */
-    return d + (l * scaling * (1 - d));
+    return 1 - (1 - d + l * scaling * d);
 }
 
 /** @} */
