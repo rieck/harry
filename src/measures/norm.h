@@ -14,19 +14,27 @@
 
 #include "hstring.h"
 
-/* Normalizations */
+/* Length normalizations */
 typedef enum
 {
-    NORM_NONE,
-    NORM_MIN,
-    NORM_MAX,
-    NORM_AVG,
-    NORM_L2
-} norm_t;
+    LNORM_NONE,
+    LNORM_MIN,
+    LNORM_MAX,
+    LNORM_AVG,
+} lnorm_t;
 
-norm_t norm_get(const char *str);
-float norm_length(norm_t n, float d, hstring_t x, hstring_t y);
-float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,
-                  float (*kernel) (hstring_t, hstring_t));
+lnorm_t lnorm_get(const char *str);
+float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y);
+
+/* Kernel normalizations */
+typedef enum
+{
+    KNORM_NONE,
+    KNORM_L2
+} knorm_t;
+
+knorm_t knorm_get(const char *str);
+float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
+            float (*kernel) (hstring_t, hstring_t));
 
 #endif /* NORM_H */

@@ -31,7 +31,7 @@
 extern config_t cfg;
 
 /* Normalizations */
-static norm_t norm = NORM_NONE;
+static knorm_t norm = KNORM_NONE;
 
 /* Local variables */
 static int degree = 3;         /**< Degree of kernel */
@@ -49,7 +49,7 @@ void kern_wdegree_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.kern_wdegree.norm", &str);
-    norm = norm_get(str);
+    norm = knorm_get(str);
 }
 
 /**
@@ -145,7 +145,7 @@ static float kernel(hstring_t x, hstring_t y)
 float kern_wdegree_compare(hstring_t x, hstring_t y)
 {
     float k = kernel(x, y);
-    return norm_kernel(norm, k, x, y, kernel);
+    return knorm(norm, k, x, y, kernel);
 }
 
 /** @} */

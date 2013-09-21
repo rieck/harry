@@ -21,60 +21,67 @@
  */
 
 /**
- * Parse normalization name. All normalization types are represented
- * by a single enumeration. This is suboptimal but yields a simple 
- * implementation.  
+ * Parse string for length normalization
  * @param str String for normalization
  * @return normalization type
  */
-norm_t norm_get(const char *str)
+lnorm_t lnorm_get(const char *str)
 {
     if (!strcasecmp(str, "none")) {
-        return NORM_NONE;
-
-        /* Length normalizations */
+        return LNORM_NONE;
     } else if (!strcasecmp(str, "min")) {
-        return NORM_MIN;
+        return LNORM_MIN;
     } else if (!strcasecmp(str, "max")) {
-        return NORM_MAX;
+        return LNORM_MAX;
     } else if (!strcasecmp(str, "avg")) {
-        return NORM_AVG;
-
-        /* Kernel normalizations */
-    } else if (!strcasecmp(str, "l2")) {
-        return NORM_L2;
+        return LNORM_AVG;
     }
 
-    warning("Unknown norm '%s'. Using 'none' instead.", str);
-    return NORM_NONE;
+    warning("Unknown length norm '%s'. Using 'none' instead.", str);
+    return LNORM_NONE;
 }
 
 /**
  * Normalize a similarity value by string length
  * @param n Normalization type
  * @param d Similarity value
- * @param x String 
+ * @param x String
  * @param y String
  * @return Normalized similarity value
  */
-float norm_length(norm_t n, float d, hstring_t x, hstring_t y)
+float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y)
 {
     switch (n) {
-    case NORM_MIN:
-        return d / fmin(x.len, y.len);
-    case NORM_MAX:
-        return d / fmax(x.len, y.len);
-    case NORM_AVG:
-        return d / (0.5 * (x.len + y.len));
-    case NORM_NONE:
-        return d;
-    default:
-        warning("Unknown norm selected. Skipping normalization.");
-        return d;
+        case LNORM_MIN:
+            return d / fmin(x.len, y.len);
+        case LNORM_MAX:
+            return d / fmax(x.len, y.len);
+        case LNORM_AVG:
+            return d / (0.5 * (x.len + y.len));
+        case LNORM_NONE:
+        default:
+            return d;
     }
 }
 
-/** 
+/**
+ * Parse string for kernel normalization
+ * @param str String for normalization
+ * @return normalization type
+ */
+knorm_t knorm_get(const char *str)
+{
+    if (!strcasecmp(str, "none")) {
+        return KNORM_NONE;
+    } else if (!strcasecmp(str, "l2")) {
+        return KNORM_L2;
+    }
+
+    warning("Unknown kernel norm '%s'. Using 'none' instead.", str);
+    return KNORM_NONE;
+}
+
+/**
  * Normalize a similarity value using a kernel function
  * @param n Normalization type
  * @param k Similarity value
@@ -83,8 +90,8 @@ float norm_length(norm_t n, float d, hstring_t x, hstring_t y)
  * @param kernel Kernel function
  * @return Normalized similarity value
  */
-float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,
-                  float (*kernel) (hstring_t, hstring_t))
+float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
+            float (*kernel) (hstring_t, hstring_t))
 {
     uint64_t xk, yk;
     float xv, yv;
@@ -92,7 +99,7 @@ float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,
 
     /* Normalization */
     switch (n) {
-    case NORM_L2:
+    case KNORM_L2:
         xk = hstring_hash1(x);
 #pragma omp critical (vcache)
         ret = vcache_load(xk, &xv);
@@ -111,10 +118,8 @@ float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,
             vcache_store(yk, yv);
         }
         return k / sqrt(xv * yv);
-    case NORM_NONE:
-        return k;
+    case KNORM_NONE:
     default:
-        warning("Unknown norm selected. Skipping normalization.");
         return k;
     }
 }
