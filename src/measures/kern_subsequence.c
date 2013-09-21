@@ -31,7 +31,7 @@
 extern config_t cfg;
 
 /* Normalizations */
-static knorm_t norm = KNORM_NONE;
+static knorm_t n = KN_NONE;
 
 /* Local variables */
 static int length = 3;         /**< Maximum length */
@@ -49,7 +49,7 @@ void kern_subsequence_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.kern_subsequence.norm", &str);
-    norm = knorm_get(str);
+    n = knorm_get(str);
 }
 
 /**
@@ -113,7 +113,7 @@ static float kernel(hstring_t x, hstring_t y)
 float kern_subsequence_compare(hstring_t x, hstring_t y)
 {
     float k = kernel(x, y);
-    return knorm(norm, k, x, y, kernel);
+    return knorm(n, k, x, y, kernel);
 }
 
 /** @} */

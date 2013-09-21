@@ -27,7 +27,7 @@
  */
 
 /* Normalizations */
-static lnorm_t norm = LNORM_NONE;
+static lnorm_t n = LN_NONE;
 static double cost_ins = 1.0;
 static double cost_del = 1.0;
 static double cost_sub = 1.0;
@@ -59,7 +59,7 @@ void dist_damerau_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_damerau.norm", &str);
-    norm = lnorm_get(str);
+    n = lnorm_get(str);
 }
 
 /**
@@ -113,7 +113,7 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
     }
 
     float r = d[x.len + 1][y.len + 1];
-    return lnorm(norm, r, x, y);
+    return lnorm(n, r, x, y);
 }
 
 /** @} */

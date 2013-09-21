@@ -26,7 +26,7 @@
  */
 
 /* Normalizations */
-static lnorm_t norm = LNORM_NONE;
+static lnorm_t n = LN_NONE;
 
 /* External variables */
 extern config_t cfg;
@@ -40,7 +40,7 @@ void dist_hamming_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_hamming.norm", &str);
-    norm = lnorm_get(str);
+    n = lnorm_get(str);
 }
 
 /**
@@ -64,7 +64,7 @@ float dist_hamming_compare(hstring_t x, hstring_t y)
     /* Add remaining characters as mismatches */
     d += fabs(y.len - x.len);
 
-    return lnorm(norm, d, x, y);
+    return lnorm(n, d, x, y);
 }
 
 /** @} */

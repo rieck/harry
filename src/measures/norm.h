@@ -17,10 +17,10 @@
 /* Length normalizations */
 typedef enum
 {
-    LNORM_NONE,
-    LNORM_MIN,
-    LNORM_MAX,
-    LNORM_AVG,
+    LN_NONE,
+    LN_MIN,
+    LN_MAX,
+    LN_AVG,
 } lnorm_t;
 
 lnorm_t lnorm_get(const char *str);
@@ -29,8 +29,8 @@ float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y);
 /* Kernel normalizations */
 typedef enum
 {
-    KNORM_NONE,
-    KNORM_L2
+    KN_NONE,
+    KN_L2
 } knorm_t;
 
 knorm_t knorm_get(const char *str);

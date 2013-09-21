@@ -27,7 +27,7 @@
  */
 
 /* Normalizations */
-static lnorm_t norm = LNORM_NONE;
+static lnorm_t n = LN_NONE;
 static double cost_ins = 1.0;
 static double cost_del = 1.0;
 static double cost_sub = 1.0;
@@ -52,7 +52,7 @@ void dist_levenshtein_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_levenshtein.norm", &str);
-    norm = lnorm_get(str);
+    n = lnorm_get(str);
 }
 
 /**
@@ -119,7 +119,7 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
         }
     }
 
-    return lnorm(norm, rows[curr][y.len], x, y);
+    return lnorm(n, rows[curr][y.len], x, y);
 }
 
 /** @} */

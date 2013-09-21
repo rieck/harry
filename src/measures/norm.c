@@ -28,17 +28,17 @@
 lnorm_t lnorm_get(const char *str)
 {
     if (!strcasecmp(str, "none")) {
-        return LNORM_NONE;
+        return LN_NONE;
     } else if (!strcasecmp(str, "min")) {
-        return LNORM_MIN;
+        return LN_MIN;
     } else if (!strcasecmp(str, "max")) {
-        return LNORM_MAX;
+        return LN_MAX;
     } else if (!strcasecmp(str, "avg")) {
-        return LNORM_AVG;
+        return LN_AVG;
     }
 
     warning("Unknown length norm '%s'. Using 'none' instead.", str);
-    return LNORM_NONE;
+    return LN_NONE;
 }
 
 /**
@@ -52,13 +52,13 @@ lnorm_t lnorm_get(const char *str)
 float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y)
 {
     switch (n) {
-        case LNORM_MIN:
+        case LN_MIN:
             return d / fmin(x.len, y.len);
-        case LNORM_MAX:
+        case LN_MAX:
             return d / fmax(x.len, y.len);
-        case LNORM_AVG:
+        case LN_AVG:
             return d / (0.5 * (x.len + y.len));
-        case LNORM_NONE:
+        case LN_NONE:
         default:
             return d;
     }
@@ -72,13 +72,13 @@ float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y)
 knorm_t knorm_get(const char *str)
 {
     if (!strcasecmp(str, "none")) {
-        return KNORM_NONE;
+        return KN_NONE;
     } else if (!strcasecmp(str, "l2")) {
-        return KNORM_L2;
+        return KN_L2;
     }
 
     warning("Unknown kernel norm '%s'. Using 'none' instead.", str);
-    return KNORM_NONE;
+    return KN_NONE;
 }
 
 /**
@@ -99,7 +99,7 @@ float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
 
     /* Normalization */
     switch (n) {
-    case KNORM_L2:
+    case KN_L2:
         xk = hstring_hash1(x);
 #pragma omp critical (vcache)
         ret = vcache_load(xk, &xv);
@@ -118,7 +118,7 @@ float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
             vcache_store(yk, yv);
         }
         return k / sqrt(xv * yv);
-    case KNORM_NONE:
+    case KN_NONE:
     default:
         return k;
     }

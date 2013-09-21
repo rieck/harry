@@ -37,7 +37,7 @@ typedef struct
 } bag_t;
 
 /* Static variables */
-lnorm_t norm = LNORM_NONE;
+static lnorm_t n = LN_NONE;
 
 /* External variables */
 extern config_t cfg;
@@ -51,7 +51,7 @@ void dist_bag_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_bag.norm", &str);
-    norm = lnorm_get(str);
+    n = lnorm_get(str);
 }
 
 /**
@@ -124,7 +124,7 @@ float dist_bag_compare(hstring_t x, hstring_t y)
     bag_destroy(xh);
     bag_destroy(yh);
 
-    return lnorm(norm, d, x, y);
+    return lnorm(n, d, x, y);
 }
 
 /** @} */
