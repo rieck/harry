@@ -17,25 +17,25 @@ measures can be computed, such as bag-of-word kernels.
 Harry is currently under development. The following similarity measures are
 supported so far
 
-  dist_bag             Bag distance
-  dist_compression     Normalized compression distance (NCD)
-  dist_damerau         Damerau-Levenshtein distance
-  dist_hamming         Hamming distance
-  dist_jaro            Jaro distance
-  dist_jarowinkler     Jaro-Winkler distance
-  dist_lee             Lee distance
-  dist_levenshtein     Levenshtein distance
-  kern_subsequence     Subsequence kernel (SSK)
-  kern_wdegree         Weighted-degree kernel (WDK)
-  sim_braun            Braun-Blanquet coefficient
-  sim_dice             Soerencen-Dice coefficient
-  sim_jaccard          Jaccard coefficient
-  sim_kulczynski1      Kulczynski coefficient 1
-  sim_kulczynski2      Kulczynski coefficient 2
-  sim_otsuka           Otsuka coefficient
-  sim_simpson          Simpson coefficient
-  sim_sokal            Sokal-Sneath coefficient
-  sim_tanimoto         Tanimoto coeficient
+    dist_bag             Bag distance
+    dist_compression     Normalized compression distance (NCD)
+    dist_damerau         Damerau-Levenshtein distance
+    dist_hamming         Hamming distance
+    dist_jaro            Jaro distance
+    dist_jarowinkler     Jaro-Winkler distance
+    dist_lee             Lee distance
+    dist_levenshtein     Levenshtein distance
+    kern_subsequence     Subsequence kernel (SSK)
+    kern_wdegree         Weighted-degree kernel (WDK)
+    sim_braun            Braun-Blanquet coefficient
+    sim_dice             Soerencen-Dice coefficient
+    sim_jaccard          Jaccard coefficient
+    sim_kulczynski1      Kulczynski coefficient 1
+    sim_kulczynski2      Kulczynski coefficient 2
+    sim_otsuka           Otsuka coefficient
+    sim_simpson          Simpson coefficient
+    sim_sokal            Sokal-Sneath coefficient
+    sim_tanimoto         Tanimoto coeficient
 
 ## Dependencies
 

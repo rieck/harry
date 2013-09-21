@@ -30,7 +30,7 @@ interfaces += '    {NULL}\n};'
 # Prepare list
 list = '    printf(\n'
 for m in sorted(measures):
-    list += '           "  %-20s %s\\n"\n' % (m, description[m])
+    list += '           "    %-20s %s\\n"\n' % (m, description[m])
 list += '    );\n'
 
 # Replace 
