@@ -35,7 +35,6 @@ supported so far
     sim_otsuka           Otsuka coefficient
     sim_simpson          Simpson coefficient
     sim_sokal            Sokal-Sneath coefficient
-    sim_tanimoto         Tanimoto coeficient
 
 ## Dependencies
 

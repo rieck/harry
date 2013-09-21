@@ -15,7 +15,9 @@ check_PROGRAMS			= check_vcache \
 				  check_compression \
 				  check_wdegree \
 				  check_subsequence \
-				  check_bag
+				  check_bag \
+				  check_coefficient
+				  
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
 
@@ -45,6 +47,9 @@ check_vcache_LDADD		= $(top_builddir)/src/libharry.la
 
 check_compression_SOURCES	= dist_compression.c tests.h
 check_compression_LDADD		= $(top_builddir)/src/libharry.la
+
+check_coefficient_SOURCES	= sim_coefficient.c tests.h
+check_coefficient_LDADD		= $(top_builddir)/src/libharry.la
 
 check_bag_SOURCES		= dist_bag.c tests.h
 check_bag_LDADD			= $(top_builddir)/src/libharry.la

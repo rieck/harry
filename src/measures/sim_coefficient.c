@@ -27,7 +27,6 @@
  * <em>sim_kulczynski1</em>: Kulczynski coefficient (1st) <br/> 
  * <em>sim_kulczynski2</em>: Kulczynski coefficient (2nd) <br/>
  * <em>sim_otsuka</em>: Otsuka coefficient (Ochiai) <br/>
- * <em>sim_tanimoto</em>: Tanimoto coefficient <br/>
  * @{
  */
 
@@ -130,6 +129,8 @@ static match_t match(hstring_t x, hstring_t y)
             } else {
                 m.a += fmin(xb->cnt, yb->cnt);
                 missing -= fmin(xb->cnt, yb->cnt);
+                if (yb->cnt < xb->cnt)
+                    m.b += xb->cnt - yb->cnt;
             }
         }
         m.c += missing;
@@ -162,6 +163,9 @@ static match_t match(hstring_t x, hstring_t y)
 float sim_jaccard_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return m.a / (m.a + m.b + m.c);
 }
 
@@ -174,6 +178,9 @@ float sim_jaccard_compare(hstring_t x, hstring_t y)
 float sim_simpson_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return m.a / fmin(m.a + m.b, m.a + m.c);
 }
 
@@ -186,6 +193,9 @@ float sim_simpson_compare(hstring_t x, hstring_t y)
 float sim_braun_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return m.a / fmax(m.a + m.b, m.a + m.c);
 }
 
@@ -198,6 +208,9 @@ float sim_braun_compare(hstring_t x, hstring_t y)
 float sim_dice_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return 2 * m.a / (2 * m.a + m.b + m.c);
 }
 
@@ -210,6 +223,9 @@ float sim_dice_compare(hstring_t x, hstring_t y)
 float sim_sokal_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return m.a / (m.a + 2 * (m.b + m.c));
 }
 
@@ -222,6 +238,9 @@ float sim_sokal_compare(hstring_t x, hstring_t y)
 float sim_kulczynski1_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return m.a / (m.b + m.c);
 }
 
@@ -234,6 +253,9 @@ float sim_kulczynski1_compare(hstring_t x, hstring_t y)
 float sim_kulczynski2_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
+    if (m.b == 0 && m.c == 0)
+        return 1;
+
     return 0.5 * (m.a / (m.a + m.b) + m.a / (m.a + m.c));
 }
 
@@ -246,19 +268,10 @@ float sim_kulczynski2_compare(hstring_t x, hstring_t y)
 float sim_otsuka_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
-    return m.a / sqrt((m.a + m.b) * (m.a + m.c));
-}
+    if (m.b == 0 && m.c == 0)
+        return 1;
 
-/**
- * Computes the Tanimoto efficient
- * @param x String x
- * @param y String y
- * @return coefficient
- */
-float sim_tanimoto_compare(hstring_t x, hstring_t y)
-{
-    match_t m = match(x, y);
-    return m.a / (m.b + m.c - m.a);
+    return m.a / sqrt((m.a + m.b) * (m.a + m.c));
 }
 
 

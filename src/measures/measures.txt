@@ -17,4 +17,3 @@ sim_kulczynski2:sim_coefficient:Kulczynski coefficient 2
 sim_otsuka:sim_coefficient:Otsuka coefficient
 sim_simpson:sim_coefficient:Simpson coefficient
 sim_sokal:sim_coefficient:Sokal-Sneath coefficient
-sim_tanimoto:sim_coefficient:Tanimoto coeficient
