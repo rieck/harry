@@ -25,10 +25,10 @@ config_t cfg;
  */
 struct hstring_test
 {
-    char *x;		/**< String x */
-    char *y;		/**< String y */
-    char *delim;	/**< Delimiter string */
-    float v;		/**< Expected output */
+    char *x;            /**< String x */
+    char *y;            /**< String y */
+    char *delim;        /**< Delimiter string */
+    float v;            /**< Expected output */
 };
 
 struct hstring_test tests[] = {
@@ -73,7 +73,7 @@ int test_compare()
 
     for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_bag");
-    
+
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 

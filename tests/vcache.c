@@ -35,15 +35,15 @@ int test_storage()
     for (i = 0; i < 50000 && !err; i++) {
         key = lrand48();
         v1 = drand48();
-        
+
         vcache_store(key, v1);
         vcache_load(key, &v2);
-        
+
         if (v1 != v2) {
             printf("Error: %f != %f\n", v1, v2);
             err = TRUE;
         }
-        
+
         if (i % 10000 == 0)
             vcache_info();
     }
@@ -74,15 +74,15 @@ int test_stress()
     for (i = 0; i < 50000 && !err; i++) {
         key = lrand48();
         v1 = drand48();
-        
+
         vcache_store(key, v1);
         vcache_load(key, &v2);
-        
+
         if (v1 != v2) {
             printf("Error: %f != %f\n", v1, v2);
             err = TRUE;
         }
-        
+
         if (i % 10000 == 0)
             vcache_info();
     }
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
     config_init(&cfg);
     config_check(&cfg);
-    
+
     err |= test_storage();
     err |= test_stress();
 

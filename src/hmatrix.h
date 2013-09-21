@@ -17,14 +17,14 @@
  */
 typedef struct
 {
-    float *labels	/**< Labels */
-    char *srcs;		/**< Sources */
-    int num;		/**< Number of strings */
+    float *labels       /**< Labels */
+    char *srcs;         /**< Sources */
+    int num;            /**< Number of strings */
 
-    float *values;	/**< Similarity values */
-    int xb, xe;		/**< Begin and end indices */
-    int yb, ye;		/**< Begin and end indices */ 
-    int sym:1;		/**< Symmetric flag */
+    float *values;      /**< Similarity values */
+    int xb, xe;         /**< Begin and end indices */
+    int yb, ye;         /**< Begin and end indices */
+    int sym:1;          /**< Symmetric flag */
 } hmatrix_t;
 
 void hmatrix_print(hmatrix_t);

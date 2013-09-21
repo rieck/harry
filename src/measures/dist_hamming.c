@@ -63,7 +63,7 @@ float dist_hamming_compare(hstring_t x, hstring_t y)
 
     /* Add remaining characters as mismatches */
     d += fabs(y.len - x.len);
-    
+
     return norm_length(norm, d, x, y);
 }
 

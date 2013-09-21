@@ -30,9 +30,10 @@
  * @{
  */
 
-typedef struct {
-    sym_t sym; 		/**< Symbol or character */
-    float cnt; 		/**< Count of symbol */
+typedef struct
+{
+    sym_t sym;          /**< Symbol or character */
+    float cnt;          /**< Count of symbol */
     UT_hash_handle hh;  /**< uthash handle */
 } bag_t;
 
@@ -55,25 +56,25 @@ static bag_t *bag_create(hstring_t x)
     for (int i = 0; i < x.len; i++) {
         sym_t s = hstring_get(x, i);
         HASH_FIND(hh, xh, &s, sizeof(sym_t), bag);
-        
+
         if (!bag) {
             bag = malloc(sizeof(bag_t));
             bag->sym = s;
             bag->cnt = 0;
             HASH_ADD(hh, xh, sym, sizeof(sym_t), bag);
         }
-        
+
         bag->cnt++;
     }
-    
+
     return xh;
-} 
+}
 
 /** 
  * Free the memory of histogram
  * @param xh Histogram
  */
-static void bag_destroy(bag_t *xh)
+static void bag_destroy(bag_t * xh)
 {
     /* Clear hash table */
     while (xh) {
@@ -93,16 +94,16 @@ static match_t match(hstring_t x, hstring_t y)
 {
     bag_t *xh, *yh, *xb, *yb;
     match_t m;
-    
+
     m.a = 0;
     m.b = 0;
     m.c = 0;
-    
+
     xh = bag_create(x);
     yh = bag_create(y);
-    
+
     int missing = y.len;
-    for(xb = xh; xb != NULL; xb = xb->hh.next) {
+    for (xb = xh; xb != NULL; xb = xb->hh.next) {
         HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
         if (!yb) {
             m.b += xb->cnt;
@@ -112,7 +113,7 @@ static match_t match(hstring_t x, hstring_t y)
         }
     }
     m.c += missing;
-    
+
     bag_destroy(xh);
     bag_destroy(yh);
     return m;

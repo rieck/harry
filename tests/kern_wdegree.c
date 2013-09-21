@@ -28,10 +28,10 @@ struct hstring_test
 {
     char *x;            /**< String x */
     char *y;            /**< String y */
-    int d;		/**< Degree of kernel */
-    int s;		/**< Shift of kernel */
+    int d;              /**< Degree of kernel */
+    int s;              /**< Shift of kernel */
     char *n;            /**< Norm of kernel */
-    float v;		/**< Expected output */
+    float v;            /**< Expected output */
 };
 
 
@@ -56,7 +56,7 @@ struct hstring_test tests[] = {
     {"aa", "a", 3, 1, "none", 2 / 2.0},
     {"a", "aa", 3, 1, "none", 2 / 2.0},
     {"aa", "aa", 3, 1, "none", 2 / 2.0 + 2 / 2.0 + 1 / 3.0},
-    
+
     /* Normalization */
     {"a", "b", 3, 0, "l2", 0},
     {"a", "a", 3, 0, "l2", 1.0},
@@ -83,7 +83,7 @@ int test_compare()
         config_set_string(&cfg, "measures.kern_wdegree.norm", tests[i].n);
 
         measure_config("kern_wdegree");
-    
+
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 
@@ -116,13 +116,13 @@ int main(int argc, char **argv)
 
     config_init(&cfg);
     config_check(&cfg);
-    
+
     vcache_init();
 
     err |= test_compare();
 
     vcache_destroy();
-    
+
     config_destroy(&cfg);
     return err;
 }

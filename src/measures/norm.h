@@ -27,6 +27,6 @@ typedef enum
 norm_t norm_get(const char *str);
 float norm_length(norm_t n, float d, hstring_t x, hstring_t y);
 float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,
-       float (*kernel) (hstring_t, hstring_t));
+                  float (*kernel) (hstring_t, hstring_t));
 
 #endif /* NORM_H */

@@ -26,9 +26,9 @@ config_t cfg;
  */
 struct hstring_test
 {
-    char *x;		/**< String x */
-    char *y;		/**< String y */
-    float v;		/**< Expected output */
+    char *x;            /**< String x */
+    char *y;            /**< String y */
+    float v;            /**< Expected output */
 };
 
 struct hstring_test tests[] = {
@@ -56,7 +56,7 @@ int test_compare()
 
     for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_compression");
-    
+
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 
     config_init(&cfg);
     config_check(&cfg);
-    
+
     vcache_init();
 
     err |= test_compare();

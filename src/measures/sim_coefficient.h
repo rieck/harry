@@ -14,10 +14,11 @@
 
 #include "hstring.h"
 
-typedef struct {
-    float a;	/**< Number of matching symbols */
-    float b;	/**< Number of left mismatches */
-    float c;	/**< Number of right mismatches */
+typedef struct
+{
+    float a;    /**< Number of matching symbols */
+    float b;    /**< Number of left mismatches */
+    float c;    /**< Number of right mismatches */
 } match_t;
 
 void sim_coefficient_config();

@@ -31,16 +31,16 @@ norm_t norm_get(const char *str)
 {
     if (!strcasecmp(str, "none")) {
         return NORM_NONE;
-        
-    /* Length normalizations */
+
+        /* Length normalizations */
     } else if (!strcasecmp(str, "min")) {
         return NORM_MIN;
     } else if (!strcasecmp(str, "max")) {
         return NORM_MAX;
     } else if (!strcasecmp(str, "avg")) {
         return NORM_AVG;
-    
-    /* Kernel normalizations */
+
+        /* Kernel normalizations */
     } else if (!strcasecmp(str, "l2")) {
         return NORM_L2;
     }
@@ -83,8 +83,8 @@ float norm_length(norm_t n, float d, hstring_t x, hstring_t y)
  * @param kernel Kernel function
  * @return Normalized similarity value
  */
-float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,  
-       float (*kernel) (hstring_t, hstring_t))
+float norm_kernel(norm_t n, float k, hstring_t x, hstring_t y,
+                  float (*kernel) (hstring_t, hstring_t))
 {
     uint64_t xk, yk;
     float xv, yv;

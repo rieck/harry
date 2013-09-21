@@ -30,12 +30,12 @@ config_t cfg;
  */
 struct hstring_test
 {
-    char *x;		/**< String x */
-    char *y;		/**< String y */
+    char *x;            /**< String x */
+    char *y;            /**< String y */
     float l;            /**< Weight for gaps */
     int p;              /**< Length of subsequences */
     char *n;            /**< Normalization of kernel */
-    float v;		/**< Expected output */
+    float v;            /**< Expected output */
 };
 
 
@@ -50,18 +50,19 @@ struct hstring_test tests[] = {
     {"ab", "axb", LAM, 2, "none", LAM4 * LAM},
     {"ab", "abb", LAM, 2, "none", LAM4 * LAM + LAM4},
     {"car", "cat", LAM, 2, "none", LAM4},
-    {"axxb","ayyb", LAM, 2, "none", LAM4 * LAM4},
-    
+    {"axxb", "ayyb", LAM, 2, "none", LAM4 * LAM4},
+
     /* Length 1, 2, 3 */
     {"cata", "gatta", LAM, 1, "none", 6 * LAM2},
-    {"cata", "gatta", LAM, 2, "none", LAM4 * LAM2 * LAM + 2 * LAM4 * LAM  + 2 * LAM4},
+    {"cata", "gatta", LAM, 2, "none",
+     LAM4 * LAM2 * LAM + 2 * LAM4 * LAM + 2 * LAM4},
     {"cata", "gatta", LAM, 3, "none", 2 * LAM4 * LAM2 * LAM},
 
     /* Normalization */
     {"ab", "xy", LAM, 2, "l2", 0},
     {"ab", "ab", LAM, 2, "l2", 1},
     {"abc", "abc", LAM, 2, "l2", 1},
-    
+
     {NULL}
 };
 
@@ -75,11 +76,12 @@ int test_compare()
     hstring_t x, y;
 
     for (i = 0; tests[i].x && !err; i++) {
-        config_set_float(&cfg, "measures.kern_subsequence.lambda", tests[i].l);
+        config_set_float(&cfg, "measures.kern_subsequence.lambda",
+                         tests[i].l);
         config_set_int(&cfg, "measures.kern_subsequence.length", tests[i].p);
         config_set_string(&cfg, "measures.kern_subsequence.norm", tests[i].n);
         measure_config("kern_subsequence");
-    
+
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
     vcache_init();
 
     err |= test_compare();
-    
+
     vcache_destroy();
 
     config_destroy(&cfg);

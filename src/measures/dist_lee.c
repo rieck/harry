@@ -38,7 +38,7 @@ extern config_t cfg;
 void dist_lee_config()
 {
     config_lookup_int(&cfg, "measures.dist_lee.min_sym", &min_sym);
-    config_lookup_int(&cfg, "measures.dist_lee.max_sym", &max_sym);    
+    config_lookup_int(&cfg, "measures.dist_lee.max_sym", &max_sym);
 }
 
 /**

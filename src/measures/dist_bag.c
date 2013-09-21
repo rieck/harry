@@ -29,9 +29,10 @@
  */
 
 /* Hash table */
-typedef struct {
-    sym_t sym; 		/**< Symbol or character */
-    float cnt; 		/**< Count of symbol */
+typedef struct
+{
+    sym_t sym;          /**< Symbol or character */
+    float cnt;          /**< Count of symbol */
     UT_hash_handle hh;  /**< uthash handle */
 } bag_t;
 
@@ -47,7 +48,7 @@ extern config_t cfg;
 void dist_bag_config()
 {
     const char *str;
-    
+
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_bag.norm", &str);
     norm = norm_get(str);
@@ -65,25 +66,25 @@ static bag_t *bag_create(hstring_t x)
     for (int i = 0; i < x.len; i++) {
         sym_t s = hstring_get(x, i);
         HASH_FIND(hh, xh, &s, sizeof(sym_t), bag);
-        
+
         if (!bag) {
             bag = malloc(sizeof(bag_t));
             bag->sym = s;
             bag->cnt = 0;
             HASH_ADD(hh, xh, sym, sizeof(sym_t), bag);
         }
-        
+
         bag->cnt++;
     }
-    
+
     return xh;
-} 
+}
 
 /** 
  * Free the memory of histogram
  * @param xh Histogram
  */
-static void bag_destroy(bag_t *xh)
+static void bag_destroy(bag_t * xh)
 {
     /* Clear hash table */
     while (xh) {
@@ -104,12 +105,12 @@ float dist_bag_compare(hstring_t x, hstring_t y)
 {
     float d = 0;
     bag_t *xh, *yh, *xb, *yb;
-    
+
     xh = bag_create(x);
     yh = bag_create(y);
-    
+
     int missing = y.len;
-    for(xb = xh; xb != NULL; xb = xb->hh.next) {
+    for (xb = xh; xb != NULL; xb = xb->hh.next) {
         HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
         if (!yb) {
             d += xb->cnt;
@@ -119,11 +120,11 @@ float dist_bag_compare(hstring_t x, hstring_t y)
         }
     }
     d += missing;
-    
+
     bag_destroy(xh);
     bag_destroy(yh);
 
-    return norm_length(norm, d, x, y); 
+    return norm_length(norm, d, x, y);
 }
 
 /** @} */
