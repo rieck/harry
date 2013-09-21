@@ -139,7 +139,7 @@ float dist_jarowinkler_compare(hstring_t x, hstring_t y)
             break;
 
     /* Jaro-Winkler distance */
-    return 1 - (1 - d + l * scaling * d);
+    return d - l * scaling * d;
 }
 
 /** @} */
