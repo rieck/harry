@@ -1,0 +1,20 @@
+# <measure>:<module>
+dist_bag:dist_bag
+dist_compression:dist_compression
+dist_damerau:dist_damerau
+dist_hamming:dist_hamming
+dist_jaro:dist_jarowinkler
+dist_jarowinkler:dist_jarowinkler
+dist_lee:dist_lee
+dist_levenshtein:dist_levenshtein
+kern_subsequence:kern_subsequence
+kern_wdegree:kern_wdegree
+sim_braun:sim_coefficient
+sim_dice:sim_coefficient
+sim_jaccard:sim_coefficient
+sim_kulczynski2:sim_coefficient
+sim_kulczynski1:sim_coefficient
+sim_otsuka:sim_coefficient
+sim_simpson:sim_coefficient
+sim_sokal:sim_coefficient
+sim_tanimoto:sim_coefficient

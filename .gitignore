@@ -1,6 +1,7 @@
 *.la
 *.lo
 *.o
+*.xcodeproj
 .deps
 .libs
 CHANGES
@@ -33,7 +34,7 @@ m4/ltversion.m4
 m4/lt~obsolete.m4
 missing
 src/harry
+src/measures/measures.c
 stamp-h1
 test-driver
 tests/*.log
-*.xcodeproj

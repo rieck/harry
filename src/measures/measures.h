@@ -15,7 +15,7 @@
 #include "hstring.h"
 
 /* Module functions */
-void measure_config(const char *);
+char *measure_config(const char *);
 double measure_compare(hstring_t, hstring_t);
 
 #endif /* MEASURES_H */

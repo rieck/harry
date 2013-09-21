@@ -204,10 +204,12 @@ Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 
 =item I<"sim_otsuka">
 
+=item I<"sim_tanimoto">
+
 Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
 known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
 (also known as Anderberg) Kulczynski 1, Kulczynski 2, Otsuka 
-(also known as Ochiai). See configuration section
+(also known as Ochiai), Tanimoto. See configuration section
 B<sim_coefficient>.
 
 =back

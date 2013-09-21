@@ -280,7 +280,7 @@ static void harry_init()
 
     /* Configure module (init as first) */
     config_lookup_string(&cfg, "measures.type", &cfg_str);
-    measure_config(cfg_str);
+    cfg_str = measure_config(cfg_str);
     info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
 
     /* Load stop words */

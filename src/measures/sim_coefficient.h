@@ -47,4 +47,7 @@ float sim_kulczynski2_compare(hstring_t x, hstring_t y);
 #define sim_otsuka_config sim_coefficient_config
 float sim_otsuka_compare(hstring_t x, hstring_t y);
 
+#define sim_tanimoto_config sim_coefficient_config
+float sim_tanimoto_compare(hstring_t x, hstring_t y);
+
 #endif /* SIM_COEFFICIENTS_H */

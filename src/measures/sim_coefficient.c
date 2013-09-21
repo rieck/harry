@@ -27,6 +27,7 @@
  * <em>sim_kulczynski1</em>: Kulczynski coefficient (1st) <br/> 
  * <em>sim_kulczynski2</em>: Kulczynski coefficient (2nd) <br/>
  * <em>sim_otsuka</em>: Otsuka coefficient (Ochiai) <br/>
+ * <em>sim_tanimoto</em>: Tanimoto coefficient <br/>
  * @{
  */
 
@@ -247,5 +248,18 @@ float sim_otsuka_compare(hstring_t x, hstring_t y)
     match_t m = match(x, y);
     return m.a / sqrt((m.a + m.b) * (m.a + m.c));
 }
+
+/**
+ * Computes the Tanimoto efficient
+ * @param x String x
+ * @param y String y
+ * @return coefficient
+ */
+float sim_tanimoto_compare(hstring_t x, hstring_t y)
+{
+    match_t m = match(x, y);
+    return m.a / (m.b + m.c - m.a);
+}
+
 
 /** @} */
