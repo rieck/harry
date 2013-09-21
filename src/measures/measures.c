@@ -99,6 +99,9 @@ void measure_config(const char *name)
         func.measure_config = dist_levenshtein_config;
         func.measure_compare = dist_levenshtein_compare;
     } else if (measure_match(name, "dist_jarowinkler")) {
+        func.measure_config = dist_jaro_config;
+        func.measure_compare = dist_jaro_compare;
+    } else if (measure_match(name, "dist_jarowinkler")) {
         func.measure_config = dist_jarowinkler_config;
         func.measure_compare = dist_jarowinkler_compare;
     } else if (measure_match(name, "dist_lee")) {
@@ -120,28 +123,28 @@ void measure_config(const char *name)
         func.measure_config = kern_subsequence_config;
         func.measure_compare = kern_subsequence_compare;
     } else if (measure_match(name, "sim_simpson")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_simpson_config;
         func.measure_compare = sim_simpson_compare;
     } else if (measure_match(name, "sim_jaccard")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_jaccard_config;
         func.measure_compare = sim_jaccard_compare;
     } else if (measure_match(name, "sim_braunblanquet")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_braunblanquet_config;
         func.measure_compare = sim_braunblanquet_compare;
     } else if (measure_match(name, "sim_czekanowski")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_czekanowski_config;
         func.measure_compare = sim_czekanowski_compare;
     } else if (measure_match(name, "sim_sokalsneath")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_sokalsneath_config;
         func.measure_compare = sim_sokalsneath_compare;
     } else if (measure_match(name, "sim_kulczynski1")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_kulczynski1_config;
         func.measure_compare = sim_kulczynski1_compare;
     } else if (measure_match(name, "sim_kulczynski2")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_kulczynski2_config;
         func.measure_compare = sim_kulczynski2_compare;
     } else if (measure_match(name, "sim_otsuka")) {
-        func.measure_config = sim_coefficient_config;
+        func.measure_config = sim_otsuka_config;
         func.measure_compare = sim_otsuka_compare;
     } else {
         error("Unknown measure '%s', using 'dist_hamming' instead.", name);

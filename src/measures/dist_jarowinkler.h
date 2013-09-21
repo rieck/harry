@@ -14,8 +14,13 @@
 
 #include "hstring.h"
 
-/* Module interface */
+/* Interface 1 */
 void dist_jarowinkler_config();
 float dist_jarowinkler_compare(hstring_t, hstring_t);
+
+/* Interface 2 */
+#define dist_jaro_config dist_jarowinkler_config
+float dist_jaro_compare(hstring_t, hstring_t);
+
 
 #endif /* DIST_JAROWINKLER_H */

@@ -21,13 +21,29 @@ typedef struct {
 } match_t;
 
 void sim_coefficient_config();
+
+#define sim_jaccard_config sim_coefficient_config
 float sim_jaccard_compare(hstring_t x, hstring_t y);
+
+#define sim_simpson_config sim_coefficient_config
 float sim_simpson_compare(hstring_t x, hstring_t y);
+
+#define sim_braunblanquet_config sim_coefficient_config
 float sim_braunblanquet_compare(hstring_t x, hstring_t y);
+
+#define sim_czekanowski_config sim_coefficient_config
 float sim_czekanowski_compare(hstring_t x, hstring_t y);
+
+#define sim_sokalsneath_config sim_coefficient_config
 float sim_sokalsneath_compare(hstring_t x, hstring_t y);
+
+#define sim_kulczynski1_config sim_coefficient_config
 float sim_kulczynski1_compare(hstring_t x, hstring_t y);
+
+#define sim_kulczynski2_config sim_coefficient_config
 float sim_kulczynski2_compare(hstring_t x, hstring_t y);
+
+#define sim_otsuka_config sim_coefficient_config
 float sim_otsuka_compare(hstring_t x, hstring_t y);
 
 #endif /* SIM_COEFFICIENTS_H */
