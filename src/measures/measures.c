@@ -128,15 +128,15 @@ void measure_config(const char *name)
     } else if (measure_match(name, "sim_jaccard")) {
         func.measure_config = sim_jaccard_config;
         func.measure_compare = sim_jaccard_compare;
-    } else if (measure_match(name, "sim_braunblanquet")) {
-        func.measure_config = sim_braunblanquet_config;
-        func.measure_compare = sim_braunblanquet_compare;
-    } else if (measure_match(name, "sim_czekanowski")) {
-        func.measure_config = sim_czekanowski_config;
-        func.measure_compare = sim_czekanowski_compare;
-    } else if (measure_match(name, "sim_sokalsneath")) {
-        func.measure_config = sim_sokalsneath_config;
-        func.measure_compare = sim_sokalsneath_compare;
+    } else if (measure_match(name, "sim_braun")) {
+        func.measure_config = sim_braun_config;
+        func.measure_compare = sim_braun_compare;
+    } else if (measure_match(name, "sim_dice")) {
+        func.measure_config = sim_dice_config;
+        func.measure_compare = sim_dice_compare;
+    } else if (measure_match(name, "sim_sokal")) {
+        func.measure_config = sim_sokal_config;
+        func.measure_compare = sim_sokal_compare;
     } else if (measure_match(name, "sim_kulczynski1")) {
         func.measure_config = sim_kulczynski1_config;
         func.measure_compare = sim_kulczynski1_compare;

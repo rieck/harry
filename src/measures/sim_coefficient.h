@@ -29,14 +29,14 @@ float sim_jaccard_compare(hstring_t x, hstring_t y);
 #define sim_simpson_config sim_coefficient_config
 float sim_simpson_compare(hstring_t x, hstring_t y);
 
-#define sim_braunblanquet_config sim_coefficient_config
-float sim_braunblanquet_compare(hstring_t x, hstring_t y);
+#define sim_braun_config sim_coefficient_config
+float sim_braun_compare(hstring_t x, hstring_t y);
 
-#define sim_czekanowski_config sim_coefficient_config
-float sim_czekanowski_compare(hstring_t x, hstring_t y);
+#define sim_dice_config sim_coefficient_config
+float sim_dice_compare(hstring_t x, hstring_t y);
 
-#define sim_sokalsneath_config sim_coefficient_config
-float sim_sokalsneath_compare(hstring_t x, hstring_t y);
+#define sim_sokal_config sim_coefficient_config
+float sim_sokal_compare(hstring_t x, hstring_t y);
 
 #define sim_kulczynski1_config sim_coefficient_config
 float sim_kulczynski1_compare(hstring_t x, hstring_t y);

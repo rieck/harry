@@ -21,9 +21,9 @@
  * <hr>
  * <em>sim_simpson</em>: Simpson coefficient <br/>
  * <em>sim_jaccard</em>: Jaccard coefficient <br/> 
- * <em>sim_braunblanquet</em>: Braun-Blanquet coefficient <br/> 
- * <em>sim_czekanowski</em>: Czekanowski coefficient (Soerensen-Dice) <br/> 
- * <em>sim_sokalsneath</em>: Sokal-Sneath coefficient (Anderberg) <br/> 
+ * <em>sim_braun</em>: Braun-Blanquet coefficient <br/> 
+ * <em>sim_dice</em>: Dice coefficient (Czekanowsi, Soerensen-Dice) <br/>
+ * <em>sim_sokal</em>: Sokal-Sneath coefficient (Anderberg) <br/> 
  * <em>sim_kulczynski1</em>: Kulczynski coefficient (1st) <br/> 
  * <em>sim_kulczynski2</em>: Kulczynski coefficient (2nd) <br/>
  * <em>sim_otsuka</em>: Otsuka coefficient (Ochiai) <br/>
@@ -182,19 +182,19 @@ float sim_simpson_compare(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_braunblanquet_compare(hstring_t x, hstring_t y)
+float sim_braun_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / fmax(m.a + m.b, m.a + m.c);
 }
 
 /**
- * Computes the Czekanowski efficient 
+ * Computes the Dice efficient 
  * @param x String x
  * @param y String y
  * @return coefficient
  */
-float sim_czekanowski_compare(hstring_t x, hstring_t y)
+float sim_dice_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return 2 * m.a / (2 * m.a + m.b + m.c);
@@ -206,7 +206,7 @@ float sim_czekanowski_compare(hstring_t x, hstring_t y)
  * @param y String y
  * @return coefficient
  */
-float sim_sokalsneath_compare(hstring_t x, hstring_t y)
+float sim_sokal_compare(hstring_t x, hstring_t y)
 {
     match_t m = match(x, y);
     return m.a / (m.a + 2 * (m.b + m.c));

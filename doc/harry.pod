@@ -192,11 +192,11 @@ Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 
 =item I<"sim_jaccard">
 
-=item I<"sim_braunblanquet">
+=item I<"sim_braun">
 
-=item I<"sim_czekanowski">
+=item I<"sim_dice">
 
-=item I<"sim_sokalsneath">
+=item I<"sim_sokal">
 
 =item I<"sim_kulczynski1">
 
@@ -204,9 +204,10 @@ Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 
 =item I<"sim_otsuka">
 
-Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Czekanowski (also
-known as Soerensen-Dice), Sokal-Sneath (also known as Anderberg) Kulczynski
-1, Kulczynski 2, Otsuka (also known as Ochiai). See configuration section
+Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
+known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
+(also known as Anderberg) Kulczynski 1, Kulczynski 2, Otsuka 
+(also known as Ochiai). See configuration section
 B<sim_coefficient>.
 
 =back
