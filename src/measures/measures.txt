@@ -12,8 +12,8 @@ kern_wdegree:kern_wdegree:Weighted-degree kernel (WDK)
 sim_braun:sim_coefficient:Braun-Blanquet coefficient 
 sim_dice:sim_coefficient:Soerencen-Dice coefficient
 sim_jaccard:sim_coefficient:Jaccard coefficient
-sim_kulczynski2:sim_coefficient:Kulczynski coefficient 1
-sim_kulczynski1:sim_coefficient:Kulczynski coefficient 2 
+sim_kulczynski1:sim_coefficient:Kulczynski coefficient 1
+sim_kulczynski2:sim_coefficient:Kulczynski coefficient 2 
 sim_otsuka:sim_coefficient:Otsuka coefficient
 sim_simpson:sim_coefficient:Simpson coefficient
 sim_sokal:sim_coefficient:Sokal-Sneath coefficient
