@@ -37,11 +37,27 @@ typedef struct
     UT_hash_handle hh;  /**< uthash handle */
 } bag_t;
 
+/* Local variables */
+static int binary = FALSE;
+
 /* External variables */
 extern config_t cfg;
 
 void sim_coefficient_config()
 {
+    const char *str;
+    
+    /* Matching */
+    config_lookup_string(&cfg, "measures.sim_coefficient.matching", &str);
+    
+    if (!strcasecmp(str, "cnt")) {
+        binary = FALSE;
+    } else if (!strcasecmp(str, "bin")) {
+        binary = TRUE;
+    } else {
+        warning("Unknown matching '%s'. Using 'cnt' instead.", str);
+        binary = FALSE;
+    }
 }
 
 /**
@@ -94,6 +110,7 @@ static match_t match(hstring_t x, hstring_t y)
 {
     bag_t *xh, *yh, *xb, *yb;
     match_t m;
+    int missing;
 
     m.a = 0;
     m.b = 0;
@@ -102,17 +119,33 @@ static match_t match(hstring_t x, hstring_t y)
     xh = bag_create(x);
     yh = bag_create(y);
 
-    int missing = y.len;
-    for (xb = xh; xb != NULL; xb = xb->hh.next) {
-        HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
-        if (!yb) {
-            m.b += xb->cnt;
-        } else {
-            m.a += fmin(xb->cnt, yb->cnt);
-            missing -= yb->cnt;
+    if (!binary) {
+        /* Count matching */
+        missing = y.len;
+        for (xb = xh; xb != NULL; xb = xb->hh.next) {
+            HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
+            if (!yb) {
+                m.b += xb->cnt;
+            } else {
+                m.a += fmin(xb->cnt, yb->cnt);
+                missing -= fmin(xb->cnt, yb->cnt);
+            }
         }
+        m.c += missing;
+    } else {
+        /* Binary matching */
+        missing = HASH_COUNT(yh);
+        for (xb = xh; xb != NULL; xb = xb->hh.next) {
+            HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
+            if (!yb) {
+                m.b += 1;
+            } else {
+                m.a += 1;
+                missing -= 1;
+            }
+        }
+        m.c += missing;
     }
-    m.c += missing;
 
     bag_destroy(xh);
     bag_destroy(yh);

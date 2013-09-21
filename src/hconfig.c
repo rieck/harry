@@ -58,6 +58,7 @@ static config_default_t defaults[] = {
     {"measures.kern_subsequence", "length", CONFIG_TYPE_INT, {.num = 3}},
     {"measures.kern_subsequence", "lambda", CONFIG_TYPE_FLOAT, {.flt = 0.1}},
     {"measures.kern_subsequence", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
+    {"measures.sim_coefficient", "matching", CONFIG_TYPE_STRING, {.str = "bin"}},
     {"output", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
     {"output", "compress", CONFIG_TYPE_INT, {.num = 0}},
     {NULL}
