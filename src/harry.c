@@ -26,7 +26,7 @@ config_t cfg;
 
 
 /* Option string */
-#define OPTSTRING       "g:a:t:c:i:o:d:z:vqVhCD"
+#define OPTSTRING       "g:a:t:c:i:o:d:z:vqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -44,6 +44,7 @@ static struct option longopts[] = {
     {"global_cache", 1, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
+    {"print_measures", 0, NULL, 'M'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
     {"quiet", 0, NULL, 'q'},
@@ -100,7 +101,7 @@ static void print_usage(void)
            "  -o,  --output_format <format>  Set output format for vectors.\n"
            "  -z,  --compress <0|1>          Set zlib compression of output.\n"
            "\nModule options:\n"
-           "  -t,  --type <name>             Set similarity measure module\n"
+           "  -t,  --type <name>             Set similarity measure\n"
            "  -d,  --delim <delimiters>      Set delimiters for words\n"
            "  -a,  --cache_size <size>       Set size of cache in megabytes\n"
            "  -g,  --global_cache <0|1>      Set global cache for similarity values\n"
@@ -108,6 +109,7 @@ static void print_usage(void)
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
            "  -q,  --quiet                   Be quiet during processing.\n"
+           "  -M,  --print_measures          Print list of similarity measures\n"
            "  -C,  --print_config            Print the current configuration.\n"
            "  -D,  --print_defaults          Print the default configuration.\n"
            "  -V,  --version                 Print version and copyright.\n"
@@ -176,6 +178,10 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'v':
             verbose++;
+            break;
+        case 'M':
+            measure_print();
+            exit(EXIT_SUCCESS);
             break;
         case 'D':
             print_config("Default configuration");

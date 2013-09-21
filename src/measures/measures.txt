@@ -3,8 +3,8 @@ dist_bag:dist_bag:Bag distance
 dist_compression:dist_compression:Normalized compression distance (NCD)
 dist_damerau:dist_damerau:Damerau-Levenshtein distance
 dist_hamming:dist_hamming:Hamming distance
-dist_jaro:dist_jarowinkler:Jaro distance (similarity)
-dist_jarowinkler:dist_jarowinkler:Jaro-Winkler distance (similarity)
+dist_jaro:dist_jarowinkler:Jaro distance 
+dist_jarowinkler:dist_jarowinkler:Jaro-Winkler distance 
 dist_lee:dist_lee:Lee distance
 dist_levenshtein:dist_levenshtein:Levenshtein distance
 kern_subsequence:kern_subsequence:Subsequence kernel (SSK)
