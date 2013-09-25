@@ -95,26 +95,19 @@ float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
 {
     uint64_t xk, yk;
     float xv, yv;
-    int ret;
 
     /* Normalization */
     switch (n) {
     case KN_L2:
         xk = hstring_hash1(x);
-#pragma omp critical (vcache)
-        ret = vcache_load(xk, &xv);
-        if (!ret) {
+        if (!vcache_load(xk, &xv)) {
             xv = kernel(x, x);
-#pragma omp critical (vcache)
             vcache_store(xk, xv);
         }
 
         yk = hstring_hash1(y);
-#pragma omp critical (vcache)
-        ret = vcache_load(yk, &yv);
-        if (!ret) {
+        if (!vcache_load(yk, &yv)) {
             yv = kernel(y, y);
-#pragma omp critical (vcache)
             vcache_store(yk, yv);
         }
         return k / sqrt(xv * yv);

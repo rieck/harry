@@ -13,6 +13,7 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
+#include "rwlock.h"
 #include "vcache.h"
 
 /* External variables */
@@ -28,6 +29,9 @@ static long size = 0;
 /* Cache statistics */
 static double hits = 0;
 static double misses = 0;
+
+/* Read-write cache for lock */
+static rwlock_t rwlock;
 
 /* 
  * Since we are using a hash table, the consumed memory is higher than the
@@ -64,6 +68,9 @@ void vcache_init()
     hash = NULL;
     head = NULL;
     tail = NULL;
+    
+    /* Initialize lock */
+    rwlock_init(&rwlock);
 }
 
 /**
@@ -97,8 +104,7 @@ void vcache_alloc(entry_t ** entry, list_t ** elem)
 /**
  * Store a similarity value. The value is associated with 64 bit key that
  * can be computed from a string, a sequence of symbols or even a pair
- * of strings. Collisions may occur, but are not likely. The caller has 
- * to take care of locking for now.
+ * of strings. Collisions may occur, but are not likely. 
  * @param key Key for similarity value
  * @param value Value to store
  * @return true on success, false otherwise
@@ -107,41 +113,45 @@ int vcache_store(uint64_t key, float value)
 {
     entry_t *entry = NULL;
     list_t *elem = NULL;
+    int ret;
+    
+    rwlock_set_wlock(&rwlock);
 
     /* Check for presence of key */
     HASH_FIND(hh, hash, &key, sizeof(uint64_t), entry);
     if (entry) {
         /* Update value */
         entry->value = value;
-        return TRUE;
-    }
-
-    /* Allocate or re-use memory */
-    vcache_alloc(&entry, &elem);
-
-    /* Update hash table */
-    entry->key = key;
-    entry->value = value;
-    HASH_ADD(hh, hash, key, sizeof(uint64_t), entry);
-
-    /* Update fifo of keys */
-    elem->key = key;
-    elem->next = NULL;
-
-    if (!head || !tail) {
-        head = elem;
-        tail = elem;
+        ret = FALSE;
     } else {
-        tail->next = elem;
-        tail = elem;
-    }
+        /* Allocate or re-use memory */
+        vcache_alloc(&entry, &elem);
 
-    return TRUE;
+        /* Update hash table */
+        entry->key = key;
+        entry->value = value;
+        HASH_ADD(hh, hash, key, sizeof(uint64_t), entry);
+
+        /* Update fifo of keys */
+        elem->key = key;
+        elem->next = NULL;
+
+        if (!head || !tail) {
+            head = elem;
+            tail = elem;
+        } else {
+            tail->next = elem;
+            tail = elem;
+        }
+        ret = TRUE;
+    }
+    
+    rwlock_unset_wlock(&rwlock);
+    return ret;
 }
 
 /**
  * Load a similarity value. The value is associated with 64 bit key.
- * The caller has to take care of locking for now.
  * @param key Key for similarity value
  * @param value Pointer to space for value
  * @return true on success, false otherwise 
@@ -149,17 +159,23 @@ int vcache_store(uint64_t key, float value)
 int vcache_load(uint64_t key, float *value)
 {
     entry_t *entry;
+    int ret;
 
+    rwlock_set_rlock(&rwlock);
+    
     /* Check for presence of key */
     HASH_FIND(hh, hash, &key, sizeof(uint64_t), entry);
     if (!entry) {
         misses++;
-        return FALSE;
+        ret = FALSE;
     } else {
         hits++;
         *value = entry->value;
-        return TRUE;
+        ret = TRUE;
     }
+    
+    rwlock_unset_rlock(&rwlock);
+    return ret;
 }
 
 /**
@@ -200,6 +216,9 @@ void vcache_destroy()
 {
     info_msg(1, "Clearing cache and freeing memory");
 
+    /* Destroy lock */
+    rwlock_destroy(&rwlock);
+    
     /* Clear hash table */
     while (hash) {
         entry_t *entry = hash;

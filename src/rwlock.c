@@ -25,6 +25,7 @@
  * this can be fixed with a non-binary semaphore or a condition variable;
  * which, however, are both not available in OpenMP.  I am unsure how this
  * can be fixed.
+ *
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
  */
@@ -35,9 +36,13 @@
  */
 void rwlock_init(rwlock_t *rw)
 {
+#ifdef BROKEN_RWLOCK
     omp_init_lock(&rw->read);
     omp_init_lock(&rw->write);
     rw->readers = 0;
+#else
+    omp_init_lock(&rw->write);
+#endif    
 }
 
 /**
@@ -46,8 +51,12 @@ void rwlock_init(rwlock_t *rw)
  */
 void rwlock_destroy(rwlock_t *rw)
 {
+#ifdef BROKEN_RWLOCK
     omp_destroy_lock(&rw->read);
     omp_destroy_lock(&rw->write);
+#else
+    omp_destroy_lock(&rw->write);
+#endif    
 }
 
 /**
@@ -56,6 +65,7 @@ void rwlock_destroy(rwlock_t *rw)
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
+#ifdef BROKEN_RWLOCK
     omp_set_lock(&rw->read);
 
     if (rw->readers == 0)
@@ -63,6 +73,9 @@ void rwlock_set_rlock(rwlock_t *rw)
     rw->readers++;
 
     omp_unset_lock(&rw->read);
+#else
+    omp_set_lock(&rw->write);
+#endif    
 }
 
 /**
@@ -71,14 +84,17 @@ void rwlock_set_rlock(rwlock_t *rw)
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
+#ifdef BROKEN_RWLOCK
     omp_set_lock(&rw->read);
 
-    assert(rw->readers > 0);
     rw->readers--;
     if (rw->readers == 0)
         omp_unset_lock(&rw->write);
 
     omp_unset_lock(&rw->read);
+#else
+    omp_unset_lock(&rw->write);
+#endif
 }
 
 /**
@@ -87,8 +103,12 @@ void rwlock_unset_rlock(rwlock_t *rw)
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
+#ifdef BROKEN_RWLOCK
     omp_set_lock(&rw->write);
     assert(rw->readers == 0);
+#else
+    omp_set_lock(&rw->write);
+#endif    
 }
 
 /**
@@ -97,8 +117,12 @@ void rwlock_set_wlock(rwlock_t *rw)
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
+#ifdef BROKEN_RWLOCK
     assert(rw->readers == 0);
     omp_unset_lock(&rw->write);
+#else
+    omp_unset_lock(&rw->write);
+#endif    
 }
 
 /** @} */
