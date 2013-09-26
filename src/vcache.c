@@ -55,7 +55,7 @@ void vcache_init()
 {
     int csize, rwfact;
     config_lookup_int(&cfg, "measures.cache_size", &csize);
-    config_lookup_int(&cfg, "measures.cache_rwfactor", &rwfact);    
+    config_lookup_int(&cfg, "measures.cache_rwfactor", &rwfact);
 
     /* Initialize cache stats */
     space = floor((csize * 1024 * 1024) / entry_size);
@@ -69,7 +69,7 @@ void vcache_init()
     hash = NULL;
     head = NULL;
     tail = NULL;
-    
+
     /* Initialize lock */
     rwlock_init(&rwlock, rwfact);
 }
@@ -115,7 +115,7 @@ int vcache_store(uint64_t key, float value)
     entry_t *entry = NULL;
     list_t *elem = NULL;
     int ret;
-    
+
     rwlock_set_wlock(&rwlock);
 
     /* Check for presence of key */
@@ -146,7 +146,7 @@ int vcache_store(uint64_t key, float value)
         }
         ret = TRUE;
     }
-    
+
     rwlock_unset_wlock(&rwlock);
     return ret;
 }
@@ -163,7 +163,7 @@ int vcache_load(uint64_t key, float *value)
     int ret;
 
     rwlock_set_rlock(&rwlock);
-    
+
     /* Check for presence of key */
     HASH_FIND(hh, hash, &key, sizeof(uint64_t), entry);
     if (!entry) {
@@ -174,7 +174,7 @@ int vcache_load(uint64_t key, float *value)
         *value = entry->value;
         ret = TRUE;
     }
-    
+
     rwlock_unset_rlock(&rwlock);
     return ret;
 }
@@ -219,7 +219,7 @@ void vcache_destroy()
 
     /* Destroy lock */
     rwlock_destroy(&rwlock);
-    
+
     /* Clear hash table */
     while (hash) {
         entry_t *entry = hash;

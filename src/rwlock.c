@@ -29,7 +29,7 @@
  * @param s Pointer to semaphore
  * @param c Start value 
  */
-void sem_init(sem_t *s, int c)
+void sem_init(sem_t * s, int c)
 {
     omp_init_lock(&s->cnt_lock);
     omp_init_lock(&s->sem_lock);
@@ -42,7 +42,7 @@ void sem_init(sem_t *s, int c)
  * Destroy a semaphore
  * @param s pointer to semaphore
  */
-void sem_destroy(sem_t *s)
+void sem_destroy(sem_t * s)
 {
     omp_destroy_lock(&s->cnt_lock);
     omp_destroy_lock(&s->sem_lock);
@@ -52,7 +52,7 @@ void sem_destroy(sem_t *s)
  * Down the semaphore
  * @param s pointer to semaphore
  */
-void sem_down(sem_t *s)
+void sem_down(sem_t * s)
 {
     omp_set_lock(&s->cnt_lock);
     s->cnt--;
@@ -61,14 +61,14 @@ void sem_down(sem_t *s)
         omp_set_lock(&s->sem_lock);
     } else {
         omp_unset_lock(&s->cnt_lock);
-    } 
+    }
 }
 
 /**
  * Up the semaphore
  * @param s pointer to semaphore
  */
-void sem_up(sem_t *s)
+void sem_up(sem_t * s)
 {
     omp_set_lock(&s->cnt_lock);
     s->cnt++;
@@ -85,13 +85,13 @@ void sem_up(sem_t *s)
  * @param s pointer to semaphore
  * @return current counter
  */
-int sem_value(sem_t *s)
+int sem_value(sem_t * s)
 {
     int r;
     omp_set_lock(&s->cnt_lock);
     r = s->cnt;
     omp_unset_lock(&s->cnt_lock);
-    return r;   
+    return r;
 }
 
 /**
@@ -102,7 +102,7 @@ int sem_value(sem_t *s)
 void rwlock_init(rwlock_t *rw, int r)
 {
     omp_init_lock(&rw->up_lock);
-    omp_init_lock(&rw->down_lock);    
+    omp_init_lock(&rw->down_lock);
     sem_init(&rw->semaphore, r);
     rw->readers = r;
 }
@@ -114,8 +114,8 @@ void rwlock_init(rwlock_t *rw, int r)
 void rwlock_destroy(rwlock_t *rw)
 {
     sem_destroy(&rw->semaphore);
-    omp_destroy_lock(&rw->up_lock);    
-    omp_destroy_lock(&rw->down_lock);        
+    omp_destroy_lock(&rw->up_lock);
+    omp_destroy_lock(&rw->down_lock);
 }
 
 /**
@@ -124,9 +124,7 @@ void rwlock_destroy(rwlock_t *rw)
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
-    dprintf("set rlock start (sem %d)", sem_value(&rw->semaphore));
     sem_down(&rw->semaphore);
-    dprintf("set rlock end (sem %d)", sem_value(&rw->semaphore));    
 }
 
 /**
@@ -135,9 +133,7 @@ void rwlock_set_rlock(rwlock_t *rw)
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
-    dprintf("unset rlock start (sem %d)", sem_value(&rw->semaphore));
     sem_up(&rw->semaphore);
-    dprintf("unset rlock end (sem %d)", sem_value(&rw->semaphore));    
 }
 
 /**
@@ -146,14 +142,10 @@ void rwlock_unset_rlock(rwlock_t *rw)
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
-    dprintf("set wlock start (sem %d)", sem_value(&rw->semaphore));                
     omp_set_lock(&rw->down_lock);
-    for (int i = 0; i < rw->readers; i++) {
+    for (int i = 0; i < rw->readers; i++) 
         sem_down(&rw->semaphore);
-        dprintf("down wlock %d (sem %d)", i, sem_value(&rw->semaphore));                    
-    }
     omp_unset_lock(&rw->down_lock);
-    dprintf("set wlock end (sem %d)", sem_value(&rw->semaphore));                    
 }
 
 /**
@@ -162,15 +154,10 @@ void rwlock_set_wlock(rwlock_t *rw)
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
-    dprintf("unset wlock start (sem %d)", sem_value(&rw->semaphore));  
     omp_set_lock(&rw->up_lock);
-    for (int i = 0; i < rw->readers; i++) {
+    for (int i = 0; i < rw->readers; i++) 
         sem_up(&rw->semaphore);
-        dprintf("up wlock %d (sem %d)", i, sem_value(&rw->semaphore));            
-    }
-
     omp_unset_lock(&rw->up_lock);
-    dprintf("unset wlock end (sem %d)", sem_value(&rw->semaphore));      
 }
 
 /** @} */

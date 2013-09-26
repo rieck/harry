@@ -17,8 +17,6 @@
 #include "config.h"
 #include "harry.h"
 
-#define dprintf		debug_msg
-
 /* Fatal message */
 #ifndef fatal
 #define fatal(...)     {err_msg("Error", __func__, __VA_ARGS__); exit(-1);}
