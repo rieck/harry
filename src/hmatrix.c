@@ -9,18 +9,22 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef DIST_JAROWINKLER_H
-#define DIST_JAROWINKLER_H
+/**
+ * @defgroup matrix Matrix functions
+ * Functions for processing similarity values in a matrix
+ * @author Konrad Rieck (konrad@mlsec.org)
+ * @{
+ */
 
+#include "config.h"
+#include "common.h"
+#include "util.h"
 #include "hstring.h"
+#include "murmur.h"
 
-/* Interface 1 */
-void dist_jarowinkler_config();
-float dist_jarowinkler_compare(hstring_t, hstring_t);
-
-/* Interface 2 */
-#define dist_jaro_config dist_jarowinkler_config
-float dist_jaro_compare(hstring_t, hstring_t);
+/* External variable */
+extern int verbose;
+extern config_t cfg;
 
 
-#endif /* DIST_JAROWINKLER_H */
+/** @} */

@@ -9,18 +9,32 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef DIST_JAROWINKLER_H
-#define DIST_JAROWINKLER_H
+#ifndef NORM_H
+#define NORM_H
 
 #include "hstring.h"
 
-/* Interface 1 */
-void dist_jarowinkler_config();
-float dist_jarowinkler_compare(hstring_t, hstring_t);
+/* Length normalizations */
+typedef enum
+{
+    LN_NONE,
+    LN_MIN,
+    LN_MAX,
+    LN_AVG,
+} lnorm_t;
 
-/* Interface 2 */
-#define dist_jaro_config dist_jarowinkler_config
-float dist_jaro_compare(hstring_t, hstring_t);
+lnorm_t lnorm_get(const char *str);
+float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y);
 
+/* Kernel normalizations */
+typedef enum
+{
+    KN_NONE,
+    KN_L2
+} knorm_t;
 
-#endif /* DIST_JAROWINKLER_H */
+knorm_t knorm_get(const char *str);
+float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
+            float (*kernel) (hstring_t, hstring_t));
+
+#endif /* NORM_H */

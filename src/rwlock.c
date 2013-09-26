@@ -81,12 +81,28 @@ void sem_up(sem_t *s)
 }
 
 /**
+ * Return the semaphore counter
+ * @param s pointer to semaphore
+ * @return current counter
+ */
+int sem_value(sem_t *s)
+{
+    int r;
+    omp_set_lock(&s->cnt_lock);
+    r = s->cnt;
+    omp_unset_lock(&s->cnt_lock);
+    return r;   
+}
+
+/**
  * Init a read-write lock.
  * @param rw pointer to lock structure
  * @param r number of readers
  */
 void rwlock_init(rwlock_t *rw, int r)
 {
+    omp_init_lock(&rw->up_lock);
+    omp_init_lock(&rw->down_lock);    
     sem_init(&rw->semaphore, r);
     rw->readers = r;
 }
@@ -98,6 +114,8 @@ void rwlock_init(rwlock_t *rw, int r)
 void rwlock_destroy(rwlock_t *rw)
 {
     sem_destroy(&rw->semaphore);
+    omp_destroy_lock(&rw->up_lock);    
+    omp_destroy_lock(&rw->down_lock);        
 }
 
 /**
@@ -106,7 +124,9 @@ void rwlock_destroy(rwlock_t *rw)
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
+    dprintf("set rlock start (sem %d)", sem_value(&rw->semaphore));
     sem_down(&rw->semaphore);
+    dprintf("set rlock end (sem %d)", sem_value(&rw->semaphore));    
 }
 
 /**
@@ -115,7 +135,9 @@ void rwlock_set_rlock(rwlock_t *rw)
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
+    dprintf("unset rlock start (sem %d)", sem_value(&rw->semaphore));
     sem_up(&rw->semaphore);
+    dprintf("unset rlock end (sem %d)", sem_value(&rw->semaphore));    
 }
 
 /**
@@ -124,8 +146,14 @@ void rwlock_unset_rlock(rwlock_t *rw)
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
-    for (int i = 0; i < rw->readers; i++)
+    dprintf("set wlock start (sem %d)", sem_value(&rw->semaphore));                
+    omp_set_lock(&rw->down_lock);
+    for (int i = 0; i < rw->readers; i++) {
         sem_down(&rw->semaphore);
+        dprintf("down wlock %d (sem %d)", i, sem_value(&rw->semaphore));                    
+    }
+    omp_unset_lock(&rw->down_lock);
+    dprintf("set wlock end (sem %d)", sem_value(&rw->semaphore));                    
 }
 
 /**
@@ -134,8 +162,15 @@ void rwlock_set_wlock(rwlock_t *rw)
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
-    for (int i = 0; i < rw->readers; i++)
+    dprintf("unset wlock start (sem %d)", sem_value(&rw->semaphore));  
+    omp_set_lock(&rw->up_lock);
+    for (int i = 0; i < rw->readers; i++) {
         sem_up(&rw->semaphore);
+        dprintf("up wlock %d (sem %d)", i, sem_value(&rw->semaphore));            
+    }
+
+    omp_unset_lock(&rw->up_lock);
+    dprintf("unset wlock end (sem %d)", sem_value(&rw->semaphore));      
 }
 
 /** @} */

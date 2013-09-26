@@ -25,9 +25,9 @@ config_t cfg;
  */
 struct hstring_test
 {
-    char *x;		/**< String x */
-    char *y;		/**< String y */
-    float v;		/**< Expected output */
+    char *x;            /**< String x */
+    char *y;            /**< String y */
+    float v;            /**< Expected output */
 };
 
 
@@ -36,9 +36,9 @@ struct hstring_test tests[] = {
     {"", "", 0},
     {"a", "", 1.0},
     {"", "a", 1.0},
-    {"MARTHA", "MARHTA", 0.961},
-    {"DWAYNE", "DUANE", 0.84},
-    {"DIXON", "DICKSONX", 0.813},
+    {"MARTHA", "MARHTA", 1 - 0.961},
+    {"DWAYNE", "DUANE", 1 - 0.84},
+    {"DIXON", "DICKSONX", 1 - 0.813},
     {NULL}
 };
 
@@ -51,8 +51,8 @@ int test_compare()
     hstring_t x, y;
 
     for (i = 0; tests[i].x && !err; i++) {
-        measure_config("dist_jarowinkler");    
-    
+        measure_config("dist_jarowinkler");
+
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 

@@ -34,55 +34,6 @@ I<config> and additionally using command-line options.
        Input      Similarity Measures     Output
 
 
-=head1 SIMILARITY MEASURES
-
-Harry is currently under development. The following distance and
-kernel functions for strings are supported so far
-
-=over 36
-
-=item Hamming distance
-
-see measure B<dist_hamming>
-
-=item Levenshtein distance
-
-see measure B<dist_levenshtein>
-
-=item Damerau-Levenshtein distance
-
-see measure B<dist_damerau>
-
-=item Jaro distance
-
-see measure B<dist_jarowinkler>
-
-=item Jaro-Winkler distance
-
-see measure B<dist_jarowinkler>
-
-=item Lee distance
-
-see measure B<dist_lee>
-
-=item Compression distance
-
-see measure B<dist_compression>
-
-=item Weighted-degree kernel
-
-see measure B<kern_wdegree>
-
-=item Weighted-degree kernel with shifts
-
-see measure B<kern_wdegree>
-
-=item Subsequence kernel
-
-see measure B<kern_subsequence>
-
-=back
-
 =head1 CONFIGURATION
 
 The configuration of B<harry> is specified in a configuration file.  This
@@ -143,12 +94,9 @@ are allowed if they are preceded by either ';' or '>'.
 
 =item B<decode_str = 0;>
 
-If this parameter is set to 1, B<harry> automatically decodes strings that
+If this parameter is set to I<1>, B<harry> automatically decodes strings that
 contain URI-encoded characters.  That is, substrings of the form %XX are
-replaced with the byte represented by the hexadecimal number XX.  This
-feature comes handy, if binary data is provided using the textual input
-format "lines".  For example, HTTP requests can be stored in a single line
-if line-breaks are represented by "%0a%0d".
+replaced with the byte represented by the hexadecimal number XX.  
 
 =item B<fasta_regex = " (\\+|-)?[0-9]+";>
 
@@ -165,8 +113,8 @@ expression matching labels, such as +1 and -1.
 
 =item B<reverse_str = 0;>
 
-If this parameter is set to 1, the characters of all input strings will
-[Bbe reversed. Such reversing might help in situations where the 
+If this parameter is set to I<1>, the characters of all input strings will
+be reversed. Such reversing might help in situations where the
 reading direction of the input strings is unspecified.
 
 =item B<stopword_file = "";>
@@ -195,10 +143,72 @@ characters or using words.
 
 =over 4
 
-=item B<type = "dist_levenshtein";>
+=item B<type = "dist_levenshtein">
 
 The parameter B<type> specifies the similarity measure that is used for
-comparing the strings.
+comparing the strings. Supported similarity measures are:
+
+=over 20
+
+=item I<"dist_hamming">
+
+Hamming distance. See configuration section B<dist_hamming>.
+
+=item I<"dist_levenshtein">
+
+Levenshtein or edit distance. See configuration section B<dist_levenshtein>.
+
+=item I<"dist_damerau">
+
+Damerau-Levenshtein distance. See configuration section B<dist_damerau>.
+
+=item I<"dist_jaro">
+
+=item I<"dist_jarowinkler">
+
+Jaro and Jaro-Winkler distance. See configuration section B<dist_jarowinkler>.
+
+=item I<"dist_lee">
+
+Lee distance. See configuration section B<dist_lee>
+
+=item I<"dist_compression">
+
+Normalized compression distance. See configuration section B<dist_compression>.
+
+=item I<"dist_bag">
+
+Bag distance. See configuration section B<dist_bag>.
+
+=item I<"kern_subsequence">
+
+Subsequence kernel (SSK). See configuration section B<kern_subsequence>.
+
+=item I<"kern_wdegree">
+
+Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
+
+=item I<"sim_simpson">
+
+=item I<"sim_jaccard">
+
+=item I<"sim_braun">
+
+=item I<"sim_dice">
+
+=item I<"sim_sokal">
+
+=item I<"sim_kulczynski">
+
+=item I<"sim_otsuka">
+
+Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
+known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
+(also known as Anderberg), second Kulczynski, Otsuka 
+(also known as Ochiai). See configuration section
+B<sim_coefficient>.
+
+=back
 
 =item B<delim = "";>
 
@@ -212,6 +222,13 @@ an emptry strings, B<harry> considers each individual character as a symbol.
 The parameter B<cache_size> specifies the maximum size of the internal cache
 in megabytes (Mb).  The general-purpose cache is used to speed up
 computations of B<harry> for some similarity measures.
+
+=item B<cache_rwfactor = 8;>
+
+The parameter B<cache_rwfactor> defines the expected ratio between read and
+write operations to the cache.  In most cases, the number of read operations
+is much higher than the number of write operation. By default the factor is 
+set to I<6>. Note that the factor has to be an integer number.  
 
 =item B<global_cache = 0;>
 
@@ -234,7 +251,7 @@ to the distance.  The following parameters are supported:
 This parameter specifies the normalization of the distance. Supported values
 are I<"none"> for no normalization, I<"min"> for normalization on the
 minimum length, I<"max"> for normalization on the maximum length, I<"avg">
-for normalization on the average length of the compared .
+for normalization on the average length of the compared strings.
 
 =back
 
@@ -263,7 +280,7 @@ for normalization on the average length of the compared
 
 The computation of the distance can be adapted using three parameters
 defining the cost for an insertation, deletion and substitution,
-respectively.  The default costs are 1.0 for each operation.
+respectively.  The default costs are I<1.0> for each operation.
 
 =back
 
@@ -282,7 +299,7 @@ strings.  The following parameters are supported:
 This parameter specifies the normalization of the distance. Supported values
 are I<"none"> for no normalization, I<"min"> for normalization on the
 minimum length, I<"max"> for normalization on the maximum length, I<"avg">
-for normalization on the average length of the compared 
+for normalization on the average length of the compared strings.
 
 =item B<cost_ins = 1.0;>
 
@@ -294,7 +311,7 @@ for normalization on the average length of the compared
 
 The computation of the distance can be adapted using four parameters
 defining the cost for an insertation, deletion, substitution and
-tranposition, respectively.  The default costs are 1.0 for each operation.
+tranposition, respectively.  The default costs are I<1.0> for each operation.
 
 =back
 
@@ -304,7 +321,10 @@ tranposition, respectively.  The default costs are 1.0 for each operation.
 =item B<dist_jarowinkler = {> 
 
 This module implements the Jaro distance (Jaro, 1989) and the Jaro-Winkler
-distance (Winkler, 1990). The runtime complexity of a comparison is
+distance (Winkler, 1990). In contrast to the original formulation, 
+a true distance function is implemented, where similar
+strings yield a low value and dissimilar strings a high value.
+The runtime complexity of a comparison is
 quadratic in the length of the strings.  The following parameters are
 supported:
 
@@ -312,10 +332,10 @@ supported:
 
 =item B<scaling = 0.1;>
 
-If this parameter is set to 0, the original Jaro distance is returned, 
+If this parameter is set to I<0>, the original Jaro distance is returned,
 otherwise the Jaro-Winkler distance is calculated. This distance uses a
 B<scaling> which gives more favourable ratings to strings that match from
-the beginning up to 4 symbols. The default value is 0.1.
+the beginning up to 4 symbols. The default value is I<0.1>.
 
 =back
 
@@ -330,17 +350,15 @@ string are added to the distance. The following parameters are supported:
 
 =over 4
 
-=item B<alphabet = 256;>
+=item B<min_sym = 0;>
+=item B<max_sym = 255;>
 
-This parameter specifies the alphabet size, that is, the maximum number of
-unique symbols.  If the strings consist of bytes, B<alphabet> needs to be
-set to 256, whereas if words are analyzed using the parameter B<delim>, the
-alphabet size has to be 65536.  
-
-Note that if the alphabet size is set to some other value I<n>, the symbols
-of the strings must be between 0 and I<n>-1.  Hence, a normalization of the
-symbols is often necessary, for example, the ASCII characters '0' and '1'
-need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
+These parameters specify the range of symbols, that is, the minimum and
+maximum value of a symbol in all strings.  If the strings consist of bytes,
+B<min_sym> is typically set to I<0> and B<max_sym> to I<256>.  For printable
+characters the range can be further narrowed to I<32> and I<126>.  If words are
+analyzed using the parameter B<delim>, B<min_sym> must be set to 0 and
+B<max_sym> to I<65535>.
 
 =back
 
@@ -348,18 +366,40 @@ need to be mapped to the bytes 0x00 and 0x01 if I<n> should be 2.
 
 =item B<dist_compression = {> 
 
-This module implements the compression distance for strings (XXX). The
-compression is implemented using B<zlib>.  The runtime complexity of a
-comparison is linear in the length of the strings, though with a large
-constant factor.  The following parameters are supported:
+This module implements the normalized compression distance for strings
+(Cilibrasi and Vitanyi, 2005).  The compression is implemented using
+B<zlib>.  Note that the comparison of strings highly depends on the
+characteristics of the compressor (Cebrian et al., 2005).  The strings
+should not be longer than 16 kilobytes, such that two strings fit into the
+window of B<zlib>.  The runtime complexity of a comparison is linear in the
+length of the strings, though with a large constant factor.  The following
+parameters are supported:
 
 =over 4
 
 =item B<level = 9;> 
 
 This parameter defines the compression level used by B<zlib> and must be 
-between 1 and 9, where 1 gives the best speed and 9 the best compression. 
-See B<zlib(3)>
+between I<1> and I<9>, where I<1> gives the best speed and I<9> the best 
+compression. See B<zlib(3)>
+
+=back
+
+=item B<dist_bag = {> 
+
+This module implements the bag distance (see Bartolini et al., 2002). The
+distance approximates and lower bounds the Levenshtein distance. The
+runtime complexity of a comparison is linear in the length of the strings. 
+The following parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the distance. Supported values
+are I<"none"> for no normalization, I<"min"> for normalization on the
+minimum length, I<"max"> for normalization on the maximum length, I<"avg">
+for normalization on the average length of the compared strings.
 
 =back
 
@@ -375,6 +415,12 @@ string are ignored, in accordance with the kernel definition.  The following
 parameters are supported:
 
 =over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2 
+normalization of kernels.
 
 =item B<degree = 3;>
 
@@ -401,18 +447,42 @@ parameters are supported:
 
 =over 4
 
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2 
+normalization of kernels.
+
 =item B<length = 3;>
 
 This parameter specifies the length of subsequence to consider.
 
 =item B<lambda = 0.1;>
 
-This parameter is a weighting term for gaps.
+This parameter is a weighting term for gaps within subsequences.
 
 =back
 
 =item B<};>
 
+=item B<sim_coefficient = {>
+
+This module implements several similarity coefficients for strings (see
+Cheetham and Hazel, 1969).  The runtime complexity of a comparison is linear
+in the length of the strings.  The following parameters are supported:
+
+=over 4
+
+=item B<matching = "bin";>
+
+The parameter specifies how the symbols of the strings are matched. If the
+parameter is set to I<"bin">, the symbols are considered as binary attributes
+that are either present or not.  If the parameter is set to I<"cnt">, the
+count of each symbol is considered for the matching.
+
+=back
+
+=item B<};>
 
 =back
 
@@ -450,7 +520,7 @@ The similarity values are stored as precomputed kernel for libsvm.
 
 =item B<compress = 0;>
 
-If this parameter is set to 1, the output is stored using zlib compression,
+If this parameter is set to I<1>, the output is stored using zlib compression,
 which can significantly reduce the required disk space.  Several programs
 support reading files compressed using zlib.  Alternatively, the tools
 gzcat(1) and gunzip(1) can be used to access the data.
@@ -478,7 +548,7 @@ overwritten on the command-line.  Following is the list of options:
 
 =head2 Module options
 
-  -t,  --type <name>		 Set similarity measure module
+  -m,  --measure <name>		 Set similarity measure 
   -d   --delim <delimiters>	 Set delimiters for words
   -a,  --cache_size <size>       Set size of cache in megabytes
   -g,  --global_cache <0|1>      Set global cache for similarity values
@@ -488,6 +558,7 @@ overwritten on the command-line.  Following is the list of options:
   -c,  --config_file <file>      Set configuration file.
   -v,  --verbose                 Increase verbosity.
   -q,  --quiet                   Be quiet during processing.
+  -M,  --print_measures          Print list of similarity measures
   -C,  --print_config            Print the current configuration.
   -D,  --print_defaults          Print the default configuration.
   -V,  --version                 Print version and copyright.
@@ -506,6 +577,14 @@ section for further details.
 
 =head1 REFERENCES
 
+Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an Approximate Distance. String Processing and Information Retrieval, LNCS 2476, 271-283, 2002.
+
+Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communicstions in Information and Systems, 5 (4), 367-384, 2005.
+
+Cheetham and Hazel. Binary (Presence-Absence) Similarity Coefficients. Journal of Paleontology, 43:5, 1130-1136, 1969
+
+Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on Information Theory, 51:4, 1523-1545, 2005. 
+
 Damerau. A technique for computer detection and correction of spelling errors, Communications of the ACM, 7(3):171-176, 1964
 
 Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
@@ -521,8 +600,6 @@ Lodhi, Saunders, Shawe-Taylor, Cristianini, and Watkins. Text classification usi
 Sonnenburg, Raetsch, and Rieck. Large scale learning with string kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press, 2007.
 
 Winkler.  String Comparator Metrics and Enhanced Decision Rules in the Fellegi-Sunter Model of Record Linkage. Proceedings of the Section on Survey Research Methods. 354-359, 1990.
-
-XXX. Compression distance 
 
 =head1 COPYRIGHT
 

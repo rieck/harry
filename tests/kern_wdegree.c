@@ -15,6 +15,7 @@
 #include "util.h"
 #include "measures.h"
 #include "tests.h"
+#include "vcache.h"
 
 /* Global variables */
 int verbose = 0;
@@ -25,36 +26,47 @@ config_t cfg;
  */
 struct hstring_test
 {
-    char *x;		/**< String x */
-    char *y;		/**< String y */
-    int d;		/**< Degree of kernel */
-    int s;		/**< Shift of kernel */
-    float v;		/**< Expected output */
+    char *x;            /**< String x */
+    char *y;            /**< String y */
+    int d;              /**< Degree of kernel */
+    int s;              /**< Shift of kernel */
+    char *n;            /**< Norm of kernel */
+    float v;            /**< Expected output */
 };
 
 
 struct hstring_test tests[] = {
     /* No shift */
-    {"", "", 3, 0, 0},
-    {"a", "", 3, 0, 0},
-    {"", "a", 3, 0, 0},
-    {"a", "b", 3, 0, 0},
-    {"a", "a", 3, 0, 1 / 2.0},
-    {"aa", "ab", 3, 0, 1 / 2.0},
-    {"ab", "ab", 3, 0, 2 / 2.0 + 1 / 3.0},
-    {"abc", "abc", 3, 0, 3 / 2.0 + 2 / 3.0 + 1 / 6.0},
-    {"abab", "abab", 3, 0, 4 / 2.0 + 3 / 3.0 + 2 / 6.0},
+    {"", "", 3, 0, "none", 0},
+    {"a", "", 3, 0, "none", 0},
+    {"", "a", 3, 0, "none", 0},
+    {"a", "b", 3, 0, "none", 0},
+    {"a", "a", 3, 0, "none", 1 / 2.0},
+    {"aa", "ab", 3, 0, "none", 1 / 2.0},
+    {"ab", "ab", 3, 0, "none", 2 / 2.0 + 1 / 3.0},
+    {"abc", "abc", 3, 0, "none", 3 / 2.0 + 2 / 3.0 + 1 / 6.0},
+    {"abab", "abab", 3, 0, "none", 4 / 2.0 + 3 / 3.0 + 2 / 6.0},
+
     /* Shift */
-    {"", "", 3, 1, 0},
-    {"a", "", 3, 1, 0},
-    {"", "a", 3, 1, 0},
-    {"a", "b", 3, 1, 0},
-    {"a", "a", 3, 1, 1 / 2.0},
-    {"aa", "a", 3, 1, 2 / 2.0},
-    {"a", "aa", 3, 1, 2 / 2.0},
-    {"aa", "aa", 3, 1, 2 / 2.0 + 2 / 2.0 + 1 / 3.0},
+    {"", "", 3, 1, "none", 0},
+    {"a", "", 3, 1, "none", 0},
+    {"", "a", 3, 1, "none", 0},
+    {"a", "b", 3, 1, "none", 0},
+    {"a", "a", 3, 1, "none", 1 / 2.0},
+    {"aa", "a", 3, 1, "none", 2 / 2.0},
+    {"a", "aa", 3, 1, "none", 2 / 2.0},
+    {"aa", "aa", 3, 1, "none", 2 / 2.0 + 2 / 2.0 + 1 / 3.0},
+
+    /* Normalization */
+    {"a", "b", 3, 0, "l2", 0},
+    {"a", "a", 3, 0, "l2", 1.0},
+    {"ab", "ab", 3, 0, "l2", 1.0},
+    {"abc", "abc", 3, 0, "l2", 1.0},
+
     {NULL}
 };
+
+
 
 /**
  * Test runs
@@ -68,8 +80,10 @@ int test_compare()
     for (i = 0; tests[i].x && !err; i++) {
         config_set_int(&cfg, "measures.kern_wdegree.shift", tests[i].s);
         config_set_int(&cfg, "measures.kern_wdegree.degree", tests[i].d);
+        config_set_string(&cfg, "measures.kern_wdegree.norm", tests[i].n);
+
         measure_config("kern_wdegree");
-    
+
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 
@@ -103,7 +117,11 @@ int main(int argc, char **argv)
     config_init(&cfg);
     config_check(&cfg);
 
+    vcache_init();
+
     err |= test_compare();
+
+    vcache_destroy();
 
     config_destroy(&cfg);
     return err;

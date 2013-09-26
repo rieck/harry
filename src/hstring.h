@@ -34,17 +34,14 @@ typedef struct
         char *c;              /**< String data (not necessary c-style) */
         sym_t *s;             /**< Symbol representation */
     } str;
+
     int len;                  /**< Length of string */
-
-
+    unsigned int type:1;      /**< Type of string */
 
     char *src;                /**< Optional source of string */
     size_t idx;               /**< Optional index of string */
     float label;              /**< Optional label of string */
-
-    unsigned int type:1;      /**< Type of string */
 } hstring_t;
-
 
 void hstring_print(hstring_t);
 void hstring_delim_set(const char *);

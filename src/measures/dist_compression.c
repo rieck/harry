@@ -20,6 +20,9 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_compression</em>: Compression distance for strings.
+ *
+ * Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on
+ * Information Theory, 51:4, 1523-1545, 2005.
  * @{
  */
 
@@ -122,7 +125,7 @@ float dist_compression_compare(hstring_t x, hstring_t y)
     }
 
     xyl = compress_str2(x, y);
-    return (xyl - fmin(xl,yl)) / fmax(xl, yl);
+    return (xyl - fmin(xl, yl)) / fmax(xl, yl);
 }
 
 /** @} */

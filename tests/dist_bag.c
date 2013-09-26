@@ -27,25 +27,44 @@ struct hstring_test
 {
     char *x;            /**< String x */
     char *y;            /**< String y */
+    char *delim;        /**< Delimiter string */
     float v;            /**< Expected output */
 };
 
 struct hstring_test tests[] = {
-    /* comparison using characters */
-    {"", "", 0},
-    {"a", "", 97},
-    {"", "a", 97},
-    {"a", "a", 0},
-    {"ab", "ba", 2},
-    {"bab", "ba", 98},
-    {"\xff", "", 1},
-    {"\x01", "", 1},
+    /* Comparison using characters */
+    {"", "", "", 0},
+    {"a", "", "", 1},
+    {"", "a", "", 1},
+    {"a", "a", "", 0},
+    {"ab", "ba", "", 0},
+    {"bab", "ba", "", 1},
+    {"abba", "babb", "", 2},
+    {"a.b", "a.c", "", 2},
+    {".a.b.", "a..c.", "", 2},
+    /* Comparison using words */
+    {"", "", ".", 0},
+    {"a", "", ".", 1},
+    {"", "a", ".", 1},
+    {"a", "a", ".", 0},
+    {"ab", "ba", ".", 2},
+    {"bab", "ba", ".", 2},
+    {"abba", "babb", ".", 2},
+    {"a.b", "a.c", ".", 2},
+    {".a.b.", "a..c.", ".", 2},
+    /* Further test cases */
+    {"abcd", "axcy", "", 4},
+    {"abc", "axcy", "", 3},
+    {"abcd", "xcy", "", 5},
+    {".x.y.", ".x.y.", ".", 0},
+    {"x...y..", "...x..y", ".", 0},
+    {".x.y", "x.y.", ".", 0},
     {NULL}
 };
 
-/** 
- * Test runs
- * @return error flag
+/**
+ * Test runs 
+ * @param error flag
  */
 int test_compare()
 {
@@ -53,11 +72,12 @@ int test_compare()
     hstring_t x, y;
 
     for (i = 0; tests[i].x && !err; i++) {
-        measure_config("dist_lee");
+        measure_config("dist_bag");
 
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
 
+        hstring_delim_set(tests[i].delim);
         x = hstring_preproc(x);
         y = hstring_preproc(y);
 

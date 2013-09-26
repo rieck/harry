@@ -65,7 +65,6 @@ void info_msg(int v, char *m, ...)
     fflush(stderr);
 }
 
-
 /**
  * Print a formated error/warning message. See the macros error and 
  * warning in util.h
@@ -89,6 +88,25 @@ void err_msg(char *p, const char *f, char *m, ...)
     errno = 0;
 }
 
+/**
+ * Print a formated a debug message
+ * @param m Format string
+ */
+void debug_msg(char *m, ...)
+{
+    va_list ap;
+    char s[256] = { " " };
+
+    if (time_start == -1)
+        time_start = time_stamp();
+
+    va_start(ap, m);
+    vsnprintf(s, 256, m, ap);
+    va_end(ap);
+
+    fprintf(stderr, "[%d] %s\n", omp_get_thread_num(), s);
+    fflush(stderr);
+}
 
 /**
  * Return a timestamp of the real time

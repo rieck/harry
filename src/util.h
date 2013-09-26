@@ -17,6 +17,8 @@
 #include "config.h"
 #include "harry.h"
 
+#define dprintf		debug_msg
+
 /* Fatal message */
 #ifndef fatal
 #define fatal(...)     {err_msg("Error", __func__, __VA_ARGS__); exit(-1);}
@@ -40,5 +42,6 @@ void strtrim(char *x);
 int decode_str(char *str);
 uint64_t hash_str(char *s, int l);
 int strip_newline(char *s, int l);
+void debug_msg(char *m, ...);
 
 #endif /* UTIL_H */

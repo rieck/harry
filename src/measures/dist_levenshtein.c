@@ -13,20 +13,21 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
-
+#include "norm.h"
 #include "dist_levenshtein.h"
 
 /**
  * @addtogroup measures
  * <hr>
  * <em>dist_levenshtein</em>: Levenshtein distance for strings.
+ *
+ * Levenshtein. Binary codes capable of correcting deletions, insertions,
+ * and reversals. Doklady Akademii Nauk SSSR, 163 (4):845-848, 1966.
  * @{
  */
 
 /* Normalizations */
-enum norm_type
-{ NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
-static enum norm_type norm = NORM_NONE;
+static lnorm_t n = LN_NONE;
 static double cost_ins = 1.0;
 static double cost_del = 1.0;
 static double cost_sub = 1.0;
@@ -51,18 +52,7 @@ void dist_levenshtein_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_levenshtein.norm", &str);
-
-    if (!strcasecmp(str, "none")) {
-        norm = NORM_NONE;
-    } else if (!strcasecmp(str, "min")) {
-        norm = NORM_MIN;
-    } else if (!strcasecmp(str, "max")) {
-        norm = NORM_MAX;
-    } else if (!strcasecmp(str, "avg")) {
-        norm = NORM_AVG;
-    } else {
-        warning("Unknown norm '%s'. Using 'none' instead.", str);
-    }
+    n = lnorm_get(str);
 }
 
 /**
@@ -105,9 +95,9 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
                 a = b;
 
             /* Substitution */
-            b = rows[curr][j - 1] + 
+            b = rows[curr][j - 1] +
                 (hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
-                
+
             if (a > b)
                 a = b;
 
@@ -129,17 +119,7 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
         }
     }
 
-    switch (norm) {
-    case NORM_MIN:
-        return rows[curr][y.len] / fmin(x.len, y.len);
-    case NORM_MAX:
-        return rows[curr][y.len] / fmax(x.len, y.len);
-    case NORM_AVG:
-        return rows[curr][y.len] / (0.5 * (x.len + y.len));
-    case NORM_NONE:
-    default:
-        return rows[curr][y.len];
-    }
+    return lnorm(n, rows[curr][y.len], x, y);
 }
 
 /** @} */

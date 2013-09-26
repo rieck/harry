@@ -2,6 +2,7 @@
 # Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
 
 AM_CPPFLAGS          	   = -I$(srcdir)/.. -I$(srcdir)/../input
+EXTRA_DIST		   = measures.txt measures.c.in gen_measures.py
 
 noinst_LTLIBRARIES         = libmeasures.la
 
@@ -13,8 +14,16 @@ libmeasures_la_SOURCES     = measures.h measures.c \
 			     kern_wdegree.c kern_wdegree.h \
 			     dist_damerau.c dist_damerau.h \
 			     kern_subsequence.c kern_subsequence.h \
-			     dist_compression.c	dist_compression.h
+			     dist_compression.c	dist_compression.h \
+			     dist_bag.c dist_bag.h norm.c norm.h \
+			     sim_coefficient.c sim_coefficient.h 
+
+measures.c: measures.c.in gen_measures.py measures.txt
+	python gen_measures.py measures.txt measures.c
+
+distclean-local:
+	rm -f measures.c
 
 beautify:
-			   gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \
-			   	   -nfc1 -nut -T string_t -T FILE *.c *.h
+	gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \
+	        -T string_t -T FILE *.c *.h

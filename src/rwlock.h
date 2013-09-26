@@ -23,8 +23,10 @@ typedef struct
 
 typedef struct
 {
-    sem_t semaphore;	/**< Semaphore */
-    int readers;        /**< Number of readers */
+    omp_lock_t up_lock;		/**< Writer lock */
+    omp_lock_t down_lock;	/**< Writer lock */    
+    sem_t semaphore;		/**< Semaphore */
+    int readers;        	/**< Number of readers */
 } rwlock_t;
 
 /* Semaphore */
@@ -32,6 +34,7 @@ void sem_init(sem_t *, int);
 void sem_destroy(sem_t *);
 void sem_up(sem_t *);
 void sem_down(sem_t *);
+int sem_value(sem_t *);
 
 /* RW lock */
 void rwlock_init(rwlock_t *rw, int);

@@ -17,24 +17,27 @@ measures can be computed, such as bag-of-word kernels.
 Harry is currently under development. The following similarity measures are
 supported so far
 
-### Distances for Strings
-
-+ Hamming distance
-+ Levenshtein distance
-+ Damerau-Levenshtein distance
-+ Jaro distance
-+ Jaro-Winkler distance
-+ Lee distance
-+ Compression distance
-
-### Kernels for Strings
-
-+ Weighted-degree kernel
-+ Weighted-degree kernel with shifts
-+ Subsequence kernel
+    dist_bag             Bag distance
+    dist_compression     Normalized compression distance (NCD)
+    dist_damerau         Damerau-Levenshtein distance
+    dist_hamming         Hamming distance
+    dist_jaro            Jaro distance
+    dist_jarowinkler     Jaro-Winkler distance
+    dist_lee             Lee distance
+    dist_levenshtein     Levenshtein distance
+    kern_subsequence     Subsequence kernel (SSK)
+    kern_wdegree         Weighted-degree kernel (WDK)
+    sim_braun            Braun-Blanquet coefficient
+    sim_dice             Soerencen-Dice coefficient
+    sim_jaccard          Jaccard coefficient
+    sim_kulczynski       second Kulczynski coefficient
+    sim_otsuka           Otsuka coefficient
+    sim_simpson          Simpson coefficient
+    sim_sokal            Sokal-Sneath coefficient
 
 ## Dependencies
 
+    >= OpenMP 2.5
     >= zlib-1.2.1
     >= libconfig-1.4
     >= libarchive-2.70

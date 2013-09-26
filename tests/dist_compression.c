@@ -15,6 +15,7 @@
 #include "util.h"
 #include "measures.h"
 #include "tests.h"
+#include "vcache.h"
 
 /* Global variables */
 int verbose = 0;
@@ -31,21 +32,22 @@ struct hstring_test
 };
 
 struct hstring_test tests[] = {
-    /* comparison using characters */
-    {"", "", 0},
-    {"a", "", 97},
-    {"", "a", 97},
-    {"a", "a", 0},
-    {"ab", "ba", 2},
-    {"bab", "ba", 98},
-    {"\xff", "", 1},
-    {"\x01", "", 1},
+    {"", "abc", 0.272727},
+    {"abc", "", 0.272727},
+    {"abc", "abc", 0.272727},
+    {"dslgjasldjfkasdjlkf", "dslkfjasldkf", 0.518519},
+    {"kasjhdgkjad", "kasjhdgkjad", 0.105263},
+    {"fkjhskljfhalsdkfhalksjdfhsdf", "djfh", 0.727273},
+    {"fkjhskljfhalsdkfhalksjdfhsdf", "", 0.757576},
+    {"", "fkjhskljfhalsdkfhalksjdfhsdf", 0.757576},
+    {"6s6sd7as6d", "7sad8asd76", 0.444444},
+    {"aaaaaaaaaa", "bbbbbbbbb", 0.272727},
     {NULL}
 };
 
-/** 
- * Test runs
- * @return error flag
+/**
+ * Test runs 
+ * @param error flag
  */
 int test_compare()
 {
@@ -53,7 +55,7 @@ int test_compare()
     hstring_t x, y;
 
     for (i = 0; tests[i].x && !err; i++) {
-        measure_config("dist_lee");
+        measure_config("dist_compression");
 
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
@@ -88,7 +90,11 @@ int main(int argc, char **argv)
     config_init(&cfg);
     config_check(&cfg);
 
+    vcache_init();
+
     err |= test_compare();
+
+    vcache_destroy();
 
     config_destroy(&cfg);
     return err;

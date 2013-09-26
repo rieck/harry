@@ -12,30 +12,44 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
-
+#include "vcache.h"
+#include "norm.h"
 #include "kern_wdegree.h"
 
 /**
  * @addtogroup measures
  * <hr>
  * <em>kern_wdegree</em>: Weighted-degree kernel
+ *
+ * Sonnenburg, Raetsch, and Rieck. Large scale learning with string
+ * kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press,
+ * 2007. 
  * @{
  */
 
 /* External variables */
 extern config_t cfg;
 
+/* Normalizations */
+static knorm_t n = KN_NONE;
+
 /* Local variables */
-int degree = 3;         /**< Degree of kernel */
-int shift = 0;          /**< Shift of kernel */
+static int degree = 3;         /**< Degree of kernel */
+static int shift = 0;          /**< Shift of kernel */
 
 /**
  * Initializes the similarity measure
  */
 void kern_wdegree_config()
 {
+    const char *str;
+
     config_lookup_int(&cfg, "measures.kern_wdegree.degree", &degree);
     config_lookup_int(&cfg, "measures.kern_wdegree.shift", &shift);
+
+    /* Normalization */
+    config_lookup_string(&cfg, "measures.kern_wdegree.norm", &str);
+    n = knorm_get(str);
 }
 
 /**
@@ -94,15 +108,13 @@ static float kern_wdegree(hstring_t x, hstring_t y, int xs, int ys, int len)
     return k;
 }
 
-/**
- * Compute the weighted-degree kernel with shift. If the strings have
- * unequal size, the remaining symbols of the longer string are ignored (in
- * accordance with the kernel definition)
- * @param x first string 
+/** 
+ * Internal computation of weighted-degree kernel with shift
+ * @param x first string
  * @param y second string
  * @return weighted-degree kernel
  */
-float kern_wdegree_compare(hstring_t x, hstring_t y)
+static float kernel(hstring_t x, hstring_t y)
 {
     float k = 0;
     int s, len;
@@ -119,6 +131,21 @@ float kern_wdegree_compare(hstring_t x, hstring_t y)
     }
 
     return k;
+}
+
+
+/**
+ * Compute the weighted-degree kernel with shift. If the strings have
+ * unequal size, the remaining symbols of the longer string are ignored (in
+ * accordance with the kernel definition)
+ * @param x first string 
+ * @param y second string
+ * @return weighted-degree kernel
+ */
+float kern_wdegree_compare(hstring_t x, hstring_t y)
+{
+    float k = kernel(x, y);
+    return knorm(n, k, x, y, kernel);
 }
 
 /** @} */

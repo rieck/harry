@@ -53,8 +53,9 @@ static rwlock_t rwlock;
  */
 void vcache_init()
 {
-    int csize;
+    int csize, rwfact;
     config_lookup_int(&cfg, "measures.cache_size", &csize);
+    config_lookup_int(&cfg, "measures.cache_rwfactor", &rwfact);    
 
     /* Initialize cache stats */
     space = floor((csize * 1024 * 1024) / entry_size);
@@ -70,7 +71,7 @@ void vcache_init()
     tail = NULL;
     
     /* Initialize lock */
-    rwlock_init(&rwlock, 10);
+    rwlock_init(&rwlock, rwfact);
 }
 
 /**

@@ -9,18 +9,13 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef DIST_JAROWINKLER_H
-#define DIST_JAROWINKLER_H
+#ifndef DIST_BAG_H
+#define DIST_BAG_H
 
 #include "hstring.h"
 
-/* Interface 1 */
-void dist_jarowinkler_config();
-float dist_jarowinkler_compare(hstring_t, hstring_t);
+/* Module interface */
+void dist_bag_config();
+float dist_bag_compare(hstring_t, hstring_t);
 
-/* Interface 2 */
-#define dist_jaro_config dist_jarowinkler_config
-float dist_jaro_compare(hstring_t, hstring_t);
-
-
-#endif /* DIST_JAROWINKLER_H */
+#endif /* DIST_BAG_H */

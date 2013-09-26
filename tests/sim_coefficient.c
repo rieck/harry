@@ -27,19 +27,23 @@ struct hstring_test
 {
     char *x;            /**< String x */
     char *y;            /**< String y */
+    char *m;		/**< Mode */
     float v;            /**< Expected output */
 };
 
 struct hstring_test tests[] = {
-    /* comparison using characters */
-    {"", "", 0},
-    {"a", "", 97},
-    {"", "a", 97},
-    {"a", "a", 0},
-    {"ab", "ba", 2},
-    {"bab", "ba", 98},
-    {"\xff", "", 1},
-    {"\x01", "", 1},
+    /* Jaccard coefficient 1 */
+    {"", "", "bin", 1.0},
+    {"a", "", "bin", 0.0},
+    {"", "a", "bin", 0.0},
+    {"ab", "ab", "bin", 1.0},
+    {"ba", "ab", "bin", 1.0},
+    {"bbcc", "bbbd", "bin", 1.0 / (1.0 + 2.0)},
+    {"bbcc", "bbbd", "cnt", 2.0 / (2.0 + 4.0)},
+    {"bbcc", "bbbdc", "bin", 2.0 / (2.0 + 1.0)},
+    {"bbbdc", "bbcc", "bin", 2.0 / (2.0 + 1.0)},    
+    {"bbbdc", "bbcc", "cnt", 3.0 / (3.0 + 3.0)},
+    {"bbcc", "bbbyc", "cnt", 3.0 / (3.0 + 3.0)},
     {NULL}
 };
 
@@ -53,7 +57,8 @@ int test_compare()
     hstring_t x, y;
 
     for (i = 0; tests[i].x && !err; i++) {
-        measure_config("dist_lee");
+        config_set_string(&cfg, "measures.sim_coefficient.matching", tests[i].m);
+        measure_config("sim_jaccard");
 
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);

@@ -12,20 +12,21 @@
 #include "common.h"
 #include "harry.h"
 #include "util.h"
-
+#include "norm.h"
 #include "dist_hamming.h"
 
 /**
  * @addtogroup measures
  * <hr>
  * <em>dist_hamming</em>: Hamming distance for strings.
+ * 
+ * Hamming. Error-detecting and error-correcting codes. Bell System
+ * Technical Journal, 29(2):147-160, 1950.
  * @{
  */
 
 /* Normalizations */
-enum norm_type
-{ NORM_NONE, NORM_MIN, NORM_MAX, NORM_AVG };
-static enum norm_type norm = NORM_NONE;
+static lnorm_t n = LN_NONE;
 
 /* External variables */
 extern config_t cfg;
@@ -39,17 +40,7 @@ void dist_hamming_config()
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_hamming.norm", &str);
-    if (!strcasecmp(str, "none")) {
-        norm = NORM_NONE;
-    } else if (!strcasecmp(str, "min")) {
-        norm = NORM_MIN;
-    } else if (!strcasecmp(str, "max")) {
-        norm = NORM_MAX;
-    } else if (!strcasecmp(str, "avg")) {
-        norm = NORM_AVG;
-    } else {
-        warning("Unknown norm '%s'. Using 'none' instead.", str);
-    }
+    n = lnorm_get(str);
 }
 
 /**
@@ -73,17 +64,7 @@ float dist_hamming_compare(hstring_t x, hstring_t y)
     /* Add remaining characters as mismatches */
     d += fabs(y.len - x.len);
 
-    switch (norm) {
-    case NORM_MIN:
-        return d / fmin(x.len, y.len);
-    case NORM_MAX:
-        return d / fmax(x.len, y.len);
-    case NORM_AVG:
-        return d / (0.5 * (x.len + y.len));
-    case NORM_NONE:
-    default:
-        return d;
-    }
+    return lnorm(n, d, x, y);
 }
 
 /** @} */

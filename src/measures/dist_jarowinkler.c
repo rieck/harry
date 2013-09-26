@@ -28,6 +28,14 @@
  * @addtogroup measures
  * <hr>
  * <em>dist_jarowinkler</em>: Jaro-Winkler distance for strings.
+ *
+ * Jaro. Advances in record linkage methodology as applied to the 1985
+ * census of Tampa Florida. Journal of the American Statistical
+ * Association 84 (406): 414-420, 1989.
+ *
+ * Winkler.  String Comparator Metrics and Enhanced Decision Rules in the
+ * Fellegi-Sunter Model of Record Linkage. Proceedings of the Section on
+ * Survey Research Methods. 354-359, 1990.
  * @{
  */
 
@@ -56,19 +64,19 @@ void dist_jarowinkler_config()
     config_lookup_float(&cfg, "measures.dist_jarowinkler.scaling", &scaling);
 }
 
+
 /**
- * Computes the Jaro-Winkler distance of two strings. 
- * @param x first string 
+ * Computes the Jaro distance of two strings.
+ * @param x first string
  * @param y second string
- * @return Jaro-Winkler distance
+ * @return Jaro distance
  */
-float dist_jarowinkler_compare(hstring_t x, hstring_t y)
+float dist_jaro_compare(hstring_t x, hstring_t y)
 {
     int i, j, l;
     int m = 0, t = 0;
     int xflags[x.len], yflags[y.len];
     int range = max(0, max(x.len, y.len) / 2 - 1);
-    float dw;
 
     if (x.len == 0 && y.len == 0)
         return 0.0;
@@ -110,9 +118,20 @@ float dist_jarowinkler_compare(hstring_t x, hstring_t y)
     }
     t /= 2;
 
-    /* Jaro distance */
-    dw = (((float) m / x.len) + ((float) m / y.len) +
-          ((float) (m - t) / m)) / 3.0;
+    return 1 - ((((float) m / x.len) + ((float) m / y.len) +
+           ((float) (m - t) / m)) / 3.0);
+}
+
+/**
+ * Computes the Jaro-Winkler distance of two strings. 
+ * @param x first string 
+ * @param y second string
+ * @return Jaro-Winkler distance
+ */
+float dist_jarowinkler_compare(hstring_t x, hstring_t y)
+{
+    int l;
+    float d = dist_jaro_compare(x, y);
 
     /* Calculate common string prefix up to 4 chars */
     for (l = 0; l < min(min(x.len, y.len), 4); l++)
@@ -120,8 +139,7 @@ float dist_jarowinkler_compare(hstring_t x, hstring_t y)
             break;
 
     /* Jaro-Winkler distance */
-    dw = dw + (l * scaling * (1 - dw));
-    return dw;
+    return d - l * scaling * d;
 }
 
 /** @} */
