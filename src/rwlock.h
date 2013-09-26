@@ -16,12 +16,25 @@
 
 typedef struct
 {
-    omp_lock_t write;   /**< Write lock */
-    omp_lock_t read;    /**< Read lock */
+    int cnt;
+    omp_lock_t cnt_lock;
+    omp_lock_t sem_lock;
+} sem_t;
+
+typedef struct
+{
+    sem_t semaphore;	/**< Semaphore */
     int readers;        /**< Number of readers */
 } rwlock_t;
 
-void rwlock_init(rwlock_t *rw);
+/* Semaphore */
+void sem_init(sem_t *, int);
+void sem_destroy(sem_t *);
+void sem_up(sem_t *);
+void sem_down(sem_t *);
+
+/* RW lock */
+void rwlock_init(rwlock_t *rw, int);
 void rwlock_destroy(rwlock_t *rw);
 void rwlock_set_rlock(rwlock_t *rw);
 void rwlock_unset_rlock(rwlock_t *rw);

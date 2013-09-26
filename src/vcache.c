@@ -70,7 +70,7 @@ void vcache_init()
     tail = NULL;
     
     /* Initialize lock */
-    rwlock_init(&rwlock);
+    rwlock_init(&rwlock, 10);
 }
 
 /**
