@@ -15,16 +15,8 @@
 typedef struct
 {
     uint64_t key;       /**< Hash for sequences */
-    float value;        /**< Cached similarity value */
-    UT_hash_handle hh;  /**< uthash handle */
+    float val;          /**< Cached similarity value */
 } entry_t;
-
-struct list
-{
-    uint64_t key;       /**< Hash for sequences */
-    struct list *next;  /**< Next element */
-};
-typedef struct list list_t;
 
 void vcache_init();
 int vcache_load(uint64_t key, float *value);
