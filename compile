@@ -23,14 +23,14 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib -g -pg -lprofiler" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -pg -lprofiler" \
-       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ./configure --prefix=/opt/rieck --enable-libarchive --enable-pthread
        ;;
    schulle*)
        echo "Configuration: Schulle (ESX Cluster)"
        PKG_CONFIG_PATH="/usr/local/lib/pkgconfig" \
        CC="gcc" \
        CFLAGS="-g -ggdb -pedantic -pipe -O2" \
-       ./configure --enable-libarchive       
+       ./configure --enable-libarchive --enable-pthread
        ;;
    *)    
        echo "Unknown system or configuration"
