@@ -36,7 +36,6 @@ static struct option longopts[] = {
     {"decode_str", 1, NULL, 1000},
     {"reverse_str", 1, NULL, 1001},
     {"stopword_file", 1, NULL, 1002},  
-    {"cache_rwfactor", 1, NULL, 1003},  /* <- last entry */
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"measure", 1, NULL, 'm'},
@@ -105,7 +104,6 @@ static void print_usage(void)
            "  -m,  --measure <name>          Set similarity measure\n"
            "  -d,  --delim <delimiters>      Set delimiters for words\n"
            "  -a,  --cache_size <size>       Set size of cache in megabytes\n"
-           "       --cache_rwfactor <num>    Set read-write factor of cache\n"
            "  -g,  --global_cache <0|1>      Set global cache for similarity values\n"
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
@@ -156,9 +154,6 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 1002:
             config_set_string(&cfg, "input.stopword_file", optarg);
-            break;
-        case 1003:
-            config_set_int(&cfg, "measures.cache_rwfactor", atoi(optarg));
             break;
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
