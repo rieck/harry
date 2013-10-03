@@ -101,8 +101,7 @@ int sem_value(sem_t * s)
  */
 void rwlock_init(rwlock_t *rw, int r)
 {
-    omp_init_lock(&rw->up_lock);
-    omp_init_lock(&rw->down_lock);
+    omp_init_lock(&rw->wrt_lock);
     sem_init(&rw->semaphore, r);
     rw->readers = r;
 }
@@ -114,8 +113,7 @@ void rwlock_init(rwlock_t *rw, int r)
 void rwlock_destroy(rwlock_t *rw)
 {
     sem_destroy(&rw->semaphore);
-    omp_destroy_lock(&rw->up_lock);
-    omp_destroy_lock(&rw->down_lock);
+    omp_destroy_lock(&rw->wrt_lock);
 }
 
 /**
@@ -142,10 +140,11 @@ void rwlock_unset_rlock(rwlock_t *rw)
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
-    omp_set_lock(&rw->down_lock);
+    /* No two writer should acquire the lock concurrently */
+    omp_set_lock(&rw->wrt_lock);
     for (int i = 0; i < rw->readers; i++) 
         sem_down(&rw->semaphore);
-    omp_unset_lock(&rw->down_lock);
+    omp_unset_lock(&rw->wrt_lock);
 }
 
 /**
@@ -154,10 +153,8 @@ void rwlock_set_wlock(rwlock_t *rw)
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
-    omp_set_lock(&rw->up_lock);
     for (int i = 0; i < rw->readers; i++) 
         sem_up(&rw->semaphore);
-    omp_unset_lock(&rw->up_lock);
 }
 
 /** @} */

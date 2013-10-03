@@ -23,8 +23,7 @@ typedef struct
 
 typedef struct
 {
-    omp_lock_t up_lock;         /**< Writer lock */
-    omp_lock_t down_lock;       /**< Writer lock */
+    omp_lock_t wrt_lock;        /**< Writer lock */
     sem_t semaphore;            /**< Semaphore */
     int readers;                /**< Number of readers */
 } rwlock_t;

@@ -350,12 +350,14 @@ static float *harry_process(hstring_t *strs, long num)
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
+
 #pragma omp parallel for collapse(2)
     for (i = 0; i < num; i++) {
         for (int j = 0; j < num; j++) {
             /* Hack for better parallelization using OpenMP */
             if (j < i)
                 continue;
+                
             mat[tr_index(i, j, num)] = measure_compare(strs[i], strs[j]);
 
             if (verbose) {

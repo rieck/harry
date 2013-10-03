@@ -223,12 +223,11 @@ The parameter B<cache_size> specifies the maximum size of the internal cache
 in megabytes (Mb).  The general-purpose cache is used to speed up
 computations of B<harry> for some similarity measures.
 
-=item B<cache_rwfactor = 8;>
+=item B<cache_readers = 8;>
 
-The parameter B<cache_rwfactor> defines the expected ratio between read and
-write operations to the cache.  In most cases, the number of read operations
-is much higher than the number of write operation. By default the factor is 
-set to I<6>. Note that the factor has to be an integer number.  
+The parameter B<cache_readers> specifies the expected number of readers for
+the cache.  The number controls the read-write lock of the cache and
+defines how many threads can read from the cache at the exact same time. 
 
 =item B<global_cache = 0;>
 

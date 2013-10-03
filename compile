@@ -20,9 +20,9 @@ case $arg in
    profile)
        echo "Configuration: Profiling"
        CC="gcc" \
-       LDFLAGS="-L/usr/local/opt/libarchive/lib -g -pg" \
+       LDFLAGS="-L/usr/local/opt/libarchive/lib -g -pg -lprofiler" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
-       CFLAGS="-g -pg" \
+       CFLAGS="-g -pg -lprofiler" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    schulle*)
