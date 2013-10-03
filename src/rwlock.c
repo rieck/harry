@@ -17,93 +17,25 @@
 /**
  * @defgroup rwlock Read-write lock
  *
- * Read-write lock implemented using OpenMP and a semaphore.
+ * Wrapper for read-write lock. If the POSIX thread library is available,
+ * the corresponding lock is directly used.  Otherwise the implementation
+ * resorts to an inefficient OpenMP mutex.  :(
  *
  * @author Konrad Rieck (konrad@mlsec.org)
- * @author Henrik Brosenne (brosenne@cs.uni-goettingen.de)
  * @{
  */
-
-/** 
- * Init a semaphore
- * @param s Pointer to semaphore
- * @param c Start value 
- */
-void sem_init(sem_t * s, int c)
-{
-    omp_init_lock(&s->cnt_lock);
-    omp_init_lock(&s->sem_lock);
-
-    s->cnt = c;
-    omp_set_lock(&s->sem_lock);
-}
-
-/**
- * Destroy a semaphore
- * @param s pointer to semaphore
- */
-void sem_destroy(sem_t * s)
-{
-    omp_destroy_lock(&s->cnt_lock);
-    omp_destroy_lock(&s->sem_lock);
-}
-
-/**
- * Down the semaphore
- * @param s pointer to semaphore
- */
-void sem_down(sem_t * s)
-{
-    omp_set_lock(&s->cnt_lock);
-    s->cnt--;
-    if (s->cnt < 0) {
-        omp_unset_lock(&s->cnt_lock);
-        omp_set_lock(&s->sem_lock);
-    } else {
-        omp_unset_lock(&s->cnt_lock);
-    }
-}
-
-/**
- * Up the semaphore
- * @param s pointer to semaphore
- */
-void sem_up(sem_t * s)
-{
-    omp_set_lock(&s->cnt_lock);
-    s->cnt++;
-    if (s->cnt <= 0) {
-        omp_unset_lock(&s->cnt_lock);
-        omp_unset_lock(&s->sem_lock);
-    } else {
-        omp_unset_lock(&s->cnt_lock);
-    }
-}
-
-/**
- * Return the semaphore counter
- * @param s pointer to semaphore
- * @return current counter
- */
-int sem_value(sem_t * s)
-{
-    int r;
-    omp_set_lock(&s->cnt_lock);
-    r = s->cnt;
-    omp_unset_lock(&s->cnt_lock);
-    return r;
-}
 
 /**
  * Init a read-write lock.
  * @param rw pointer to lock structure
- * @param r number of readers
  */
-void rwlock_init(rwlock_t *rw, int r)
+void rwlock_init(rwlock_t *rw)
 {
-    omp_init_lock(&rw->wrt_lock);
-    sem_init(&rw->semaphore, r);
-    rw->readers = r;
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_init(&rw->lock, NULL);
+#else
+    omp_init_lock(&rw->lock);
+#endif    
 }
 
 /**
@@ -112,8 +44,11 @@ void rwlock_init(rwlock_t *rw, int r)
  */
 void rwlock_destroy(rwlock_t *rw)
 {
-    sem_destroy(&rw->semaphore);
-    omp_destroy_lock(&rw->wrt_lock);
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_destroy(&rw->lock);
+#else    
+    omp_destroy_lock(&rw->lock);
+#endif    
 }
 
 /**
@@ -122,7 +57,11 @@ void rwlock_destroy(rwlock_t *rw)
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
-    sem_down(&rw->semaphore);
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_rdlock(&rw->lock);
+#else    
+    omp_set_lock(&rw->lock);
+#endif    
 }
 
 /**
@@ -131,7 +70,11 @@ void rwlock_set_rlock(rwlock_t *rw)
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
-    sem_up(&rw->semaphore);
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_unlock(&rw->lock);
+#else    
+    omp_unset_lock(&rw->lock);
+#endif    
 }
 
 /**
@@ -140,11 +83,11 @@ void rwlock_unset_rlock(rwlock_t *rw)
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
-    /* No two writer should acquire the lock concurrently */
-    omp_set_lock(&rw->wrt_lock);
-    for (int i = 0; i < rw->readers; i++) 
-        sem_down(&rw->semaphore);
-    omp_unset_lock(&rw->wrt_lock);
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_wrlock(&rw->lock);
+#else    
+    omp_set_lock(&rw->lock);
+#endif    
 }
 
 /**
@@ -153,8 +96,11 @@ void rwlock_set_wlock(rwlock_t *rw)
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
-    for (int i = 0; i < rw->readers; i++) 
-        sem_up(&rw->semaphore);
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_unlock(&rw->lock);
+#else    
+    omp_unset_lock(&rw->lock);
+#endif    
 }
 
 /** @} */

@@ -12,31 +12,25 @@
 #ifndef RWLOCK_H
 #define RWLOCK_H
 
+#ifdef HAVE_PTHREAD_H
+#include <pthread.h>
+#endif
+
+#ifdef HAVE_OMP_H
 #include <omp.h>
+#endif
 
 typedef struct
 {
-    int cnt;
-    omp_lock_t cnt_lock;
-    omp_lock_t sem_lock;
-} sem_t;
-
-typedef struct
-{
-    omp_lock_t wrt_lock;        /**< Writer lock */
-    sem_t semaphore;            /**< Semaphore */
-    int readers;                /**< Number of readers */
+#ifdef HAVE_PTHREAD_H
+    pthread_rwlock_t lock;
+#else
+    omp_lock_t lock;	/* Workaround: Global mutex :( */
+#endif
 } rwlock_t;
 
-/* Semaphore */
-void sem_init(sem_t *, int);
-void sem_destroy(sem_t *);
-void sem_up(sem_t *);
-void sem_down(sem_t *);
-int sem_value(sem_t *);
-
 /* RW lock */
-void rwlock_init(rwlock_t *rw, int);
+void rwlock_init(rwlock_t *rw);
 void rwlock_destroy(rwlock_t *rw);
 void rwlock_set_rlock(rwlock_t *rw);
 void rwlock_unset_rlock(rwlock_t *rw);

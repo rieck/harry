@@ -81,6 +81,13 @@ contents of archives, such as .tgz and .zip.  This allows for
 processing string data in compressed form and may drastically save
 storage space.
 
+    --enable-pthread        Enable support for POSIX thread rwlocks
+
+This feature enables read-write locks (rwlocks) from the POSIX thread
+library.  The locks can accelerate the run-time performance on multi-core
+systems.  However, these POSIX locks are not guaranteed to interplay with
+OpenMP and thus may not work on all platforms.
+
     --enable-md5hash        Enable MD5 as alternative hash
 
 Harry uses a hash function for mapping words to symbols. By default the very

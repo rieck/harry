@@ -53,9 +53,8 @@ static rwlock_t rwlock;
  */
 void vcache_init()
 {
-    int csize, readers;
+    int csize;
     config_lookup_int(&cfg, "measures.cache_size", &csize);
-    config_lookup_int(&cfg, "measures.cache_readers", &readers);
 
     /* Initialize cache stats */
     space = floor((csize * 1024 * 1024) / entry_size);
@@ -63,8 +62,7 @@ void vcache_init()
     misses = 0;
     hits = 0;
 
-    info_msg(1, "Initializing cache with %dMb (%d entries, %d readers)", 
-             csize, space, readers);
+    info_msg(1, "Initializing cache with %dMb (%d entries)", csize, space);
 
     /* Initialize data structures */
     hash = NULL;
@@ -72,7 +70,7 @@ void vcache_init()
     tail = NULL;
 
     /* Initialize lock */
-    rwlock_init(&rwlock, readers);
+    rwlock_init(&rwlock);
 }
 
 /**

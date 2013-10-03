@@ -62,6 +62,7 @@ AM_CPPFLAGS="$AM_CPPFLAGS `pkg-config --cflags-only-I libconfig`"
 AC_CHECK_HEADERS([libconfig.h], HEADER_LIBCONFIG="yes")
 
 # OpenMP 
+AC_CHECK_HEADERS([omp.h], HEADER_OPENMP="yes")
 AX_OPENMP([HAVE_OPENMP=yes],[HAVE_OPENMP=no])
 if test "x$HAVE_OPENMP" = "xno" ; then
     AC_MSG_ERROR([OpenMP required for computation.
@@ -94,6 +95,31 @@ if test "x$ENABLE_LIBARCHIVE" = "xyes" ; then
         AC_MSG_ERROR([libarchive requested but not available
     Debian/Ubuntu package: libarchive-dev
     Source code: http://code.google.com/p/libarchive
+        ])
+    fi
+fi
+
+# POSIX threads
+AC_ARG_ENABLE(pthread,
+    [  --enable-pthread        enable support for POSIX thread rwlocks. ],
+    [
+        if test "x$enableval" = "xyes" ; then
+                ENABLE_PTHREAD=yes
+                AC_DEFINE(ENABLE_PTHREAD, 1, [Enable support for POSIX thread rwlocks])
+        else
+                ENABLE_PTHREAD=no
+        fi
+    ], [ ENABLE_PTHREAD=no ]
+)
+
+AC_CHECK_HEADERS([pthread.h], HEADER_PTHREAD="yes")
+AC_CHECK_LIB([pthread], pthread_rwlock_init, LIBRARY_PTHREAD="yes")
+
+if test "x$ENABLE_PTHREAD" = "xyes" ; then
+    if test "x$LIBRARY_PTHREAD" != "x" && test "x$HEADER_PTHREAD" != "x" ; then
+        LIBS="-lpthread $LIBS"
+    else
+        AC_MSG_ERROR([POSIX thread rwlocks requested but not available
         ])
     fi
 fi
@@ -134,6 +160,7 @@ AC_OUTPUT
 echo
 echo " .Oo Features:"
 echo "     Support for loading archives (--enable-libarchive):    $ENABLE_LIBARCHIVE"
+echo "     Support for POSIX thread rwlocks (--enable-pthread):   $ENABLE_PTHREAD"
 echo "     MD5 as alternative hash (--enable-md5hash):            $ENABLE_MD5HASH"
 echo
 
