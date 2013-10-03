@@ -264,6 +264,13 @@ uint64_t hstring_hash1(hstring_t x)
     return 0;
 }
 
+static uint64_t rol(uint64_t x) {
+    uint64_t r = 0;
+    r |= x << 32;
+    r |= x >> 32;
+    return r;
+}
+
 /**
  * Compute a 64-bit hash for two strings. The computation is symmetric, that is,
  * the same strings retrieve the same hash independent of their order. 
@@ -279,12 +286,12 @@ uint64_t hstring_hash2(hstring_t x, hstring_t y)
     if (x.type == TYPE_CHAR && y.type == TYPE_CHAR && x.str.c && y.str.c) {
         a = MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);
-        return a ^ b;
+        return rol(a) ^ b;
     }
     if (x.type == TYPE_SYM && y.type == TYPE_SYM && x.str.s && y.str.s) {
         a = MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);
-        return a ^ b;
+        return rol(a) ^ b;
     }
 
     warning("Nothing to hash. Strings are missing or incompatible.");
