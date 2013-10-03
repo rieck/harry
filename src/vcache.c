@@ -54,7 +54,7 @@ void vcache_init()
 
     info_msg(1, "Initializing cache with %dMb (%d entries)", csize, space);
 
-    cache = malloc(space * sizeof(entry_t));
+    cache = calloc(space, sizeof(entry_t));
     if (!cache) 
         error("Failed to allocate value cache");
 
@@ -77,11 +77,12 @@ int vcache_store(uint64_t key, float value)
     idx = key % space;
 
     rwlock_set_wlock(&rwlock);
+    
+    if (cache[idx].key == 0)
+       size++;
+    
     cache[idx].key = key;
     cache[idx].val = value;
-
-    size++;
-    size = size > space ? space : size;
     rwlock_unset_wlock(&rwlock);
     
     return TRUE;
