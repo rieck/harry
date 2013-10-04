@@ -77,6 +77,7 @@ int test_compare()
     int i, err = FALSE;
     hstring_t x, y;
 
+    printf("Testing weighted-degree kernel ");
     for (i = 0; tests[i].x && !err; i++) {
         config_set_int(&cfg, "measures.kern_wdegree.shift", tests[i].s);
         config_set_int(&cfg, "measures.kern_wdegree.degree", tests[i].d);
@@ -93,6 +94,7 @@ int test_compare()
         float d = measure_compare(x, y);
         double diff = fabs(tests[i].v - d);
 
+        printf(".");
         if (diff > 1e-6) {
             printf("Error %f != %f\n", d, tests[i].v);
             hstring_print(x);
@@ -103,6 +105,7 @@ int test_compare()
         hstring_destroy(x);
         hstring_destroy(y);
     }
+    printf(" done.\n");
 
     return err;
 }

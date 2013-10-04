@@ -56,6 +56,7 @@ int test_compare()
     int i, err = FALSE;
     hstring_t x, y;
 
+    printf("Testing Jaccard coefficient ");
     for (i = 0; tests[i].x && !err; i++) {
         config_set_string(&cfg, "measures.sim_coefficient.matching", tests[i].m);
         measure_config("sim_jaccard");
@@ -69,6 +70,7 @@ int test_compare()
         float d = measure_compare(x, y);
         double diff = fabs(tests[i].v - d);
 
+        printf(".");
         if (diff > 1e-6) {
             printf("Error %f != %f\n", d, tests[i].v);
             hstring_print(x);
@@ -79,6 +81,7 @@ int test_compare()
         hstring_destroy(x);
         hstring_destroy(y);
     }
+    printf(" done.\n");
 
     return err;
 }

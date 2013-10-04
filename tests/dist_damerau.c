@@ -50,6 +50,7 @@ int test_compare()
     int i, err = FALSE;
     hstring_t x, y;
 
+    printf("Testing Damerau-Levenshtein distance ");
     for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_damerau");
 
@@ -62,6 +63,7 @@ int test_compare()
         float d = measure_compare(x, y);
         double diff = fabs(tests[i].v - d);
 
+        printf(".");
         if (diff > 1e-6) {
             printf("Error %f != %f\n", d, tests[i].v);
             hstring_print(x);
@@ -72,6 +74,7 @@ int test_compare()
         hstring_destroy(x);
         hstring_destroy(y);
     }
+    printf(" done.\n");
 
     return err;
 }
