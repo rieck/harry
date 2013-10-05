@@ -23,7 +23,7 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib -g -ggdb -pg -lprofiler" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -ggdb -pg -lprofiler" \
-       ./configure --prefix=/opt/rieck --enable-libarchive --enable-pthread
+       ./configure --prefix=/opt/rieck --enable-libarchive
        ;;
    schulle*)
        echo "Configuration: Schulle (ESX Cluster)"
