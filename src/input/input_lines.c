@@ -138,6 +138,7 @@ int input_lines_read(hstring_t *strs, int len)
         strip_newline(line, read);
 
         strs[j].str.c = line;
+        strs[j].type = TYPE_CHAR;
         strs[j].len = strlen(line);
 	strs[j].label = get_label(line);
 	snprintf(buf, 32, "line%d", line_num++);
