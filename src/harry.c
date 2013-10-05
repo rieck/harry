@@ -25,6 +25,7 @@ config_t cfg;
 
 static int print_conf = 0;
 static char *measure = NULL;
+static nthreads = 0;
 
 /* Option string */
 #define OPTSTRING       "n:g:a:m:c:i:o:d:z:vqVhMCD"
@@ -283,7 +284,6 @@ static void harry_load_config(int argc, char **argv)
 static void harry_init()
 {
     const char *cfg_str;
-    int nthreads;
 
     if (verbose > 1)
         config_print(&cfg);
@@ -296,8 +296,9 @@ static void harry_init()
     measure = measure_config(cfg_str);
 
     config_lookup_int(&cfg, "measures.num_threads", &nthreads);
-    if (nthreads > 0)
-        omp_set_num_threads(nthreads);
+    if (nthreads <= 0)
+        nthreads = omp_get_num_procs();
+    omp_set_num_threads(nthreads);
 
     /* Load stop words */
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
@@ -348,7 +349,7 @@ static float *harry_process(hstring_t *strs, long num)
     int i, k = 0;
 
     info_msg(1, "Computing similarity measure '%s' with %d threads.",
-             measure, omp_get_num_threads());
+             measure, nthreads);
 
     /* Symbolize strings if requested */
     for (i = 0; i < num; i++)
