@@ -21,9 +21,10 @@
 
 /* Global variables */
 int verbose = 0;
-int print_conf = 0;
 config_t cfg;
 
+static int print_conf = 0;
+static char *measure = NULL;
 
 /* Option string */
 #define OPTSTRING       "n:g:a:m:c:i:o:d:z:vqVhMCD"
@@ -292,8 +293,7 @@ static void harry_init()
 
     /* Configure module (init as first) */
     config_lookup_string(&cfg, "measures.measure", &cfg_str);
-    cfg_str = measure_config(cfg_str);
-    info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
+    measure = measure_config(cfg_str);
 
     config_lookup_int(&cfg, "measures.num_threads", &nthreads);
     if (nthreads > 0)
@@ -346,6 +346,9 @@ static hstring_t *harry_read(char *input, long *num)
 static float *harry_process(hstring_t *strs, long num)
 {
     int i, k = 0;
+
+    info_msg(1, "Computing similarity measure '%s' with %d threads.",
+             measure, omp_get_num_threads());
 
     /* Symbolize strings if requested */
     for (i = 0; i < num; i++)
