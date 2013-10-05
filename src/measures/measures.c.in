@@ -64,7 +64,7 @@ char *measure_config(const char *name)
     float d = FLT_MAX;
 
     /* Set delimiters */
-    config_lookup_string(&cfg, "measures.delim", &cfg_str);
+    config_lookup_string(&cfg, "measures.word_delim", &cfg_str);
     if (strlen(cfg_str) > 0)
         hstring_delim_set(cfg_str);
     else

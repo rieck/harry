@@ -39,7 +39,7 @@ static struct option longopts[] = {
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"measure", 1, NULL, 'm'},
-    {"delim", 1, NULL, 'd'},
+    {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
     {"cache_size", 1, NULL, 'a'},
     {"global_cache", 1, NULL, 'g'},
@@ -103,7 +103,7 @@ static void print_usage(void)
            "  -z,  --compress <0|1>          Set zlib compression of output.\n"
            "\nModule options:\n"
            "  -m,  --measure <name>          Set similarity measure.\n"
-           "  -d,  --delim <delimiters>      Set delimiters for words.\n"
+           "  -d,  --word_delim <delim>      Set delimiters for words.\n"
            "  -n,  --num_threads <num>       Set number of threads.\n"
            "  -a,  --cache_size <size>       Set size of cache in megabytes.\n"
            "  -g,  --global_cache <0|1>      Set global cache for similarity values.\n"
@@ -164,7 +164,7 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_string(&cfg, "measures.measure", optarg);
             break;
         case 'd':
-            config_set_string(&cfg, "measures.delim", optarg);
+            config_set_string(&cfg, "measures.word_delim", optarg);
             break;
         case 'n':
             config_set_int(&cfg, "measures.num_threads", atoi(optarg));
