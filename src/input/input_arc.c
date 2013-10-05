@@ -114,6 +114,7 @@ int input_arc_read(hstring_t *strs, int len)
             strs[j].str.c = malloc(archive_entry_size(entry) * sizeof(char));
             archive_read_data(a, strs[j].str.c, archive_entry_size(entry));
             strs[j].src = strdup(archive_entry_pathname(entry));
+            strs[j].type = TYPE_CHAR;
             strs[j].len = archive_entry_size(entry);
             strs[j].label = get_label(strs[j].src);
 	    strs[j].idx = j;
