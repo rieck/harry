@@ -1,0 +1,11 @@
+ Reference
+   Soeren Sonnenburg, Alexander Zien, and Gunnar Raetsch. ARTS: Accurate
+   Recognition of Transcription Starts in Human. Bioinformatics,
+   22(14):e472-480, 2006.
+ 
+ URL
+   http://www.fml.tuebingen.mpg.de/raetsch/projects/arts/
+
+ Details
+   The dataset contains a sample of 1000 transcription start sites (DNA)
+   from the training set of the original ARTS data.
