@@ -73,27 +73,15 @@ int input_dir_open(char *p)
 int input_dir_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
-    int i, j = 0, l;
-
-    /* Determine maximum path length and allocate buffer */
-    int maxlen = fpathconf(dirfd(dir), _PC_NAME_MAX);
+    int j = 0, l;
+    struct dirent *dp;
 
     /* Load block of files */
-    for (i = 0; i < len; i++) {
-        struct dirent *buf, *dp;
-        buf = malloc(offsetof(struct dirent, d_name) + maxlen + 1);
-
-        /* Read directory entry to local buffer */
-        int r = readdir_r(dir, (struct dirent *) buf, &dp);
-        if (r != 0 || !dp) {
-            free(buf);
-            return j;
-        }
-
+    while (dir && (dp = readdir(dir)) != NULL && j < len) {    
         /* Skip all entries except for regular files and symlinks */
         fix_dtype(path, dp);
         if (dp->d_type != DT_REG && dp->d_type != DT_LNK)
-            goto skip;
+            continue;
 
         strs[j].str.c = load_file(path, dp->d_name, &l);
         strs[j].src = strdup(dp->d_name);
@@ -102,8 +90,6 @@ int input_dir_read(hstring_t *strs, int len)
         strs[j].idx = j;
         strs[j].label = get_label(strs[j].src);
         j++;
-      skip:
-        free(buf);
     }
 
     return j;
