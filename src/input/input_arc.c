@@ -94,15 +94,10 @@ int input_arc_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
     struct archive_entry *entry;
-    int i, j = 0;
+    int j = 0;
 
     /* Load block of files (no OpenMP here) */
-    for (i = 0; i < len; i++) {
-        /* Perform reading of archive */
-        int r = archive_read_next_header(a, &entry);
-        if (r != ARCHIVE_OK)
-            break;
-
+    while (archive_read_next_header(a, &entry) == ARCHIVE_OK && j < len) {    
         if (archive_entry_filetype(entry) != AE_IFREG) {
             archive_read_data_skip(a);
         } else {
