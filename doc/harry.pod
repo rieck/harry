@@ -217,6 +217,12 @@ If this parameter is set the comparison of strings is performed on words,
 that is, each word is considered as a symbol. If the parameter B<delim> is
 an emptry strings, B<harry> considers each individual character as a symbol.
 
+=item B<num_threads = 0;>
+
+The parameter B<num_threads> sets the number of threads for the calculation
+of the similarity measures.  If set 0, B<harry> determines the number of
+available CPU cores using OpenMP and sets the number of threads accordingly.
+
 =item B<cache_size = 256;>
 
 The parameter B<cache_size> specifies the maximum size of the internal cache
@@ -540,11 +546,11 @@ overwritten on the command-line.  Following is the list of options:
   -z,  --compress <0|1>          Set zlib compression of output.
 
 =head2 Module options
-
-  -m,  --measure <name>		 Set similarity measure 
-  -d   --delim <delimiters>	 Set delimiters for words
-  -a,  --cache_size <size>       Set size of cache in megabytes
-  -g,  --global_cache <0|1>      Set global cache for similarity values
+  -m,  --measure <name>          Set similarity measure.
+  -d,  --delim <delimiters>      Set delimiters for words.
+  -n,  --num_threads <num>       Set number of threads.
+  -a,  --cache_size <size>       Set size of cache in megabytes.
+  -g,  --global_cache <0|1>      Set global cache for similarity values.
 
 =head2 Generic options
 

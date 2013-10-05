@@ -39,6 +39,7 @@ static config_default_t defaults[] = {
     {I "", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     {M "", "delim", CONFIG_TYPE_STRING, {.str = ""}},
+    {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},
     {M "", "cache_size", CONFIG_TYPE_INT, {.num = 256}},
     {M "", "global_cache", CONFIG_TYPE_INT, {.num = 0}},
     {M ".dist_hamming", "norm", CONFIG_TYPE_STRING, {.str = "none"}},

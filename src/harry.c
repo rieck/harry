@@ -26,7 +26,7 @@ config_t cfg;
 
 
 /* Option string */
-#define OPTSTRING       "g:a:m:c:i:o:d:z:vqVhMCD"
+#define OPTSTRING       "n:g:a:m:c:i:o:d:z:vqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -40,6 +40,7 @@ static struct option longopts[] = {
     {"compress", 0, NULL, 'z'},
     {"measure", 1, NULL, 'm'},
     {"delim", 1, NULL, 'd'},
+    {"num_threads", 1, NULL, 'n'},
     {"cache_size", 1, NULL, 'a'},
     {"global_cache", 1, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
@@ -101,10 +102,11 @@ static void print_usage(void)
            "  -o,  --output_format <format>  Set output format for vectors.\n"
            "  -z,  --compress <0|1>          Set zlib compression of output.\n"
            "\nModule options:\n"
-           "  -m,  --measure <name>          Set similarity measure\n"
-           "  -d,  --delim <delimiters>      Set delimiters for words\n"
-           "  -a,  --cache_size <size>       Set size of cache in megabytes\n"
-           "  -g,  --global_cache <0|1>      Set global cache for similarity values\n"
+           "  -m,  --measure <name>          Set similarity measure.\n"
+           "  -d,  --delim <delimiters>      Set delimiters for words.\n"
+           "  -n,  --num_threads <num>       Set number of threads.\n"
+           "  -a,  --cache_size <size>       Set size of cache in megabytes.\n"
+           "  -g,  --global_cache <0|1>      Set global cache for similarity values.\n"
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
@@ -163,6 +165,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'd':
             config_set_string(&cfg, "measures.delim", optarg);
+            break;
+        case 'n':
+            config_set_int(&cfg, "measures.num_threads", atoi(optarg));
             break;
         case 'a':
             config_set_int(&cfg, "measures.cache_size", atoi(optarg));
@@ -277,6 +282,7 @@ static void harry_load_config(int argc, char **argv)
 static void harry_init()
 {
     const char *cfg_str;
+    int nthreads;
 
     if (verbose > 1)
         config_print(&cfg);
@@ -288,6 +294,10 @@ static void harry_init()
     config_lookup_string(&cfg, "measures.measure", &cfg_str);
     cfg_str = measure_config(cfg_str);
     info_msg(1, "Configuring similarity measure '%s'.", cfg_str);
+
+    config_lookup_int(&cfg, "measures.num_threads", &nthreads);
+    if (nthreads > 0)
+        omp_set_num_threads(nthreads);
 
     /* Load stop words */
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
