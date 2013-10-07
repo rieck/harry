@@ -15,7 +15,7 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-pedantic -pipe -O3" \
-       ./configure --prefix=/opt/rieck --enable-libarchive --enable-pthread
+       ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    profile|debug)
        echo "Configuration: Profiling & Debugging"

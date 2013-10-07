@@ -14,8 +14,8 @@ for d in $datasets ; do
             for g in $gcache ; do
                 for r in $runs ; do
                     printf "$d $m $n $g $r " 1>&2
-                    time ../src/harry -n $n -g $g -m $m -c $d.cfg \
-                          $d.t*.gz /dev/null 
+                    time ../../src/harry -n $n -g $g -m $m -c ../$d.cfg \
+                         ../$d.t*.gz /dev/null 
                 done
             done
         done
