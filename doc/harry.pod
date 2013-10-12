@@ -66,7 +66,7 @@ This parameter specifies the input format.
 =item I<"lines">
 
 The input strings are available as lines in a text file. The name of the
-file is given as I<input> to B<sally>.  The lines need to be separated by
+file is given as I<input> to B<harry>.  The lines need to be separated by
 newline and may not contain the NUL character.  Labels can be extracted from
 each line using a regular expression (see B<lines_regex>).
 
@@ -86,7 +86,7 @@ labels for the strings.
 =item I<"fasta">
 
 The input strings are available in FASTA format. The name of the file is
-given as I<input> to B<sally>.  Labels can be extracted from the description
+given as I<input> to B<harry>.  Labels can be extracted from the description
 of each sequence using a regular expression (see B<fasta_regex>).  Comments
 are allowed if they are preceded by either ';' or '>'.
 
