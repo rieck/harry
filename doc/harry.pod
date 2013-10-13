@@ -546,7 +546,8 @@ overwritten on the command-line.  Following is the list of options:
   -o,  --output_format <format>  Set output format for vectors.
   -z,  --compress <0|1>          Set zlib compression of output.
 
-=head2 Module options
+=head2 Similarity measure options
+
   -m,  --measure <name>          Set similarity measure.
   -d,  --word_delim <delim>      Set delimiters for words.
   -n,  --num_threads <num>       Set number of threads.
