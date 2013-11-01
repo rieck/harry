@@ -36,19 +36,6 @@ extern config_t cfg;
 static int global_cache;
 static int idx = 0;
 
-/**
- * Structure for measure interface
- */
-typedef struct
-{
-    /** Name of measure */
-    char *name;
-    /** Init function */
-    void (*measure_config) ();
-    /** Comparison function */
-    float (*measure_compare) (hstring_t, hstring_t);
-} func_t;
-
 /* Module interfaces */
 %INTERFACES%
 

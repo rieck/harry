@@ -188,6 +188,10 @@ Subsequence kernel (SSK). See configuration section B<kern_subsequence>.
 
 Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 
+=item I<"kern_distance">
+
+Distance substitution kernel. See configruation section B<kern_distance>.
+
 =item I<"sim_simpson">
 
 =item I<"sim_jaccard">
@@ -463,6 +467,46 @@ This parameter is a weighting term for gaps within subsequences.
 
 =back
 
+=item B<kern_distance = {>
+
+This module implements distance substitution kernels (Haasdonk and Bahlmann,
+2004).  The empty string is considered the origin of the underlying implicit
+vector space.  The runtime complexity depends on the selected distance
+function.  The following parameters are supported:
+
+=over 4
+
+=item B<distance = "levenshtein";>
+
+This parameter selects the distance to use for the kernel. Depending on the
+type of the substitution and the selected distance, the kernel might not be
+positive semi-definite.  
+=item B<type = "linear";> 
+
+Four types of substitutions can be selected for creating a kernel from a
+distance function: I<"linear">, I<"poly">, I<"neg"> and I<"rbf">.  For a
+detailed explanation of each substitution see the paper by Haasdonk and
+Bahlmann (2004).
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2 
+normalization of kernels. 
+
+=item B<gamma = 1.0;>
+
+This parameter specifies a scaling factor for the substitution types
+I<"poly"> and I<"rbf">.
+
+=item B<degree = 1.0;>
+
+This parameter defines a polynomial degree for the substitution types 
+I<"poly"> and I<"neg">.
+
+=back
+
+
 =item B<};>
 
 =item B<sim_coefficient = {>
@@ -587,6 +631,8 @@ Cheetham and Hazel. Binary (Presence-Absence) Similarity Coefficients. Journal o
 Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on Information Theory, 51:4, 1523-1545, 2005. 
 
 Damerau. A technique for computer detection and correction of spelling errors, Communications of the ACM, 7(3):171-176, 1964
+
+Haasdonk and Bahlmann. Learning with Distance Substitution Kernels. Pattern Recognition ; DAGM Symposium, 220-227, 2004.
 
 Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
 

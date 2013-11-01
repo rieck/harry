@@ -68,9 +68,10 @@ void vcache_init()
  * of strings. Collisions may occur, but are not likely. 
  * @param key Key for similarity value
  * @param value Value to store
+ * @param id ID of task
  * @return true on success, false otherwise
  */
-int vcache_store(uint64_t key, float value)
+int vcache_store(uint64_t key, float value, int id)
 {
     int idx;
     
@@ -83,6 +84,7 @@ int vcache_store(uint64_t key, float value)
     
     cache[idx].key = key;
     cache[idx].val = value;
+    cache[idx].id = id;
     rwlock_unset_wlock(&rwlock);
     
     return TRUE;
@@ -92,15 +94,16 @@ int vcache_store(uint64_t key, float value)
  * Load a similarity value. The value is associated with 64 bit key.
  * @param key Key for similarity value
  * @param value Pointer to space for value
+ * @param id ID of task
  * @return true on success, false otherwise 
  */
-int vcache_load(uint64_t key, float *value)
+int vcache_load(uint64_t key, float *value, int id)
 {
     int ret, idx; 
     
     idx = key % space;
     rwlock_set_rlock(&rwlock);
-    if (cache[idx].key == key) {
+    if (cache[idx].key == key && cache[idx].id == id) {
         *value = cache[idx].val;
         ret = TRUE;
         hits++;

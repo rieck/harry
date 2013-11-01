@@ -9,6 +9,7 @@ dist_lee:dist_lee:Lee distance
 dist_levenshtein:dist_levenshtein:Levenshtein distance
 kern_subsequence:kern_subsequence:Subsequence kernel (SSK)
 kern_wdegree:kern_wdegree:Weighted-degree kernel (WDK)
+kern_distance:kern_distance:Distance substitution kernel (DSK)
 sim_braun:sim_coefficient:Braun-Blanquet coefficient 
 sim_dice:sim_coefficient:Soerencen-Dice coefficient
 sim_jaccard:sim_coefficient:Jaccard coefficient

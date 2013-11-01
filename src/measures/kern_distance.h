@@ -9,28 +9,17 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef MEASURES_H
-#define MEASURES_H
+#ifndef KERN_DISTANCE_H
+#define KERN_DISTANCE_H
 
 #include "hstring.h"
 
-/**
- * Structure for measure interface
- */
-typedef struct
-{
-    /** Name of measure */
-    char *name;
-    /** Init function */
-    void (*measure_config) ();
-    /** Comparison function */
-    float (*measure_compare) (hstring_t, hstring_t);
-} func_t;
+typedef enum {
+    DS_LINEAR, DS_POLY, DS_NEG, DS_RBF
+} subst_t;
 
-/* Module functions */
-int measure_match(const char *);
-char *measure_config(const char *);
-double measure_compare(hstring_t, hstring_t);
-void measure_print();
+/* Module interface */
+void kern_distance_config();
+float kern_distance_compare(hstring_t, hstring_t);
 
-#endif /* MEASURES_H */
+#endif /* KERN_DISTANCE_H */

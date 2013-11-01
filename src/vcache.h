@@ -12,15 +12,22 @@
 #ifndef VCACHE_H
 #define VCACHE_H
 
+/** Task identifiers */
+#define ID_COMPARE	0
+#define ID_COMPRESS	1
+#define ID_NORM		2
+#define ID_DIST2KERN	3
+
 typedef struct
 {
     uint64_t key;       /**< Hash for sequences */
+    int id;		/**< ID of task */
     float val;          /**< Cached similarity value */
 } entry_t;
 
 void vcache_init();
-int vcache_load(uint64_t key, float *value);
-int vcache_store(uint64_t key, float value);
+int vcache_load(uint64_t key, float *value, int);
+int vcache_store(uint64_t key, float value, int);
 void vcache_info();
 void vcache_destroy();
 float vcache_get_hitrate();
