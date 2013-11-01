@@ -35,7 +35,6 @@ extern config_t cfg;
 /* Global variables */
 static int global_cache;
 static int idx = 0;
-static float dist = FLT_MAX;
 
 /**
  * Structure for measure interface
@@ -54,6 +53,39 @@ typedef struct
 %INTERFACES%
 
 /**
+ * Find best matching measure name.
+ * @param name to check
+ */
+int measure_match(const char *name)
+{
+    int r = 0;
+    float d, dist = FLT_MAX;
+
+    for (int i = 0; func[i].name; i++) {
+        /* Match full name */
+        d = fabs(strcasecmp(name, func[i].name));
+        if (d < dist) {
+            r = i, dist = d;
+        }
+
+        /* Match from second token */
+        char *token = strchr(func[i].name, '_') + 1;
+        d = fabs(strcasecmp(name, token));
+        if (d < dist) {
+            r = i, dist = d;
+        }
+    }
+    
+    if (dist > 0) {
+        r = 0;
+        warning("Unknown measure '%s'. Using '%s' instead.", name, 
+                func[r].name);
+    }
+
+    return r;
+}
+
+/**
  * Configures the measure for a given similarity measure.
  * @param name Name of similarity measure
  * @return name of selected similarity measure
@@ -61,7 +93,6 @@ typedef struct
 char *measure_config(const char *name)
 {
     const char *cfg_str;
-    float d = FLT_MAX;
 
     /* Set delimiters */
     config_lookup_string(&cfg, "measures.word_delim", &cfg_str);
@@ -73,29 +104,8 @@ char *measure_config(const char *name)
     /* Enable global cache */
     config_lookup_int(&cfg, "measures.global_cache", &global_cache);
 
-    for (int i = 0; func[i].name; i++) {
-        
-        /* Match full name */
-        d = fabs(strcasecmp(name, func[i].name));
-        if (d < dist) {
-            idx = i, dist = d;
-        }
-
-        /* Match from second token */
-        char *token = strchr(func[i].name, '_') + 1;
-        d = fabs(strcasecmp(name, token));
-        if (d < dist) {
-            idx = i, dist = d;
-        }
-    }
-    
-    if (dist > 0) {
-        idx = 0;
-        warning("Unknown measure '%s'. Using '%s' instead.", name, 
-                func[idx].name);
-    }
-
     /* Configure */
+    idx = measure_match(cfg_str);	
     func[idx].measure_config();
     return func[idx].name;
 }
