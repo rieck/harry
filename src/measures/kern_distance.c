@@ -76,6 +76,16 @@ void kern_distance_config()
 
 }
 
+/**
+ * Internal computation of an inner product in an implicit feature space. 
+ * The inner-product space is created by centering the distances at the
+ * empty string. Note that if the distance is not Euclidean, the computed
+ * result is undefined and a feature space may not exist.
+ *
+ * @param x String x
+ * @param y String y
+ * @return inner product (dot)
+ */
 static float dot(hstring_t x, hstring_t y)
 {
     hstring_t o;
@@ -102,7 +112,7 @@ static float dot(hstring_t x, hstring_t y)
 }
 
 /**
- * Internal computation of distance-degree kernel 
+ * Internal computation of distance substitution kernel 
  * @param x first string
  * @param y second string
  * @return distance substitution kernel
