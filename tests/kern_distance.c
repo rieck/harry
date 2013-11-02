@@ -50,10 +50,10 @@ struct hstring_test tests[] = {
     {"ab", "ac", "levenshtein", "poly", 4.5},
 
     /* RBF substituion */
-    {"", "", "levenshtein", "rbf", exp(0)},
-    {"a", "a", "levenshtein", "rbf", exp(0)},
-    {"ab", "ab", "levenshtein", "rbf", exp(0)},
-    {"ab", "ac", "levenshtein", "rbf", exp(-1)},
+    {"", "", "levenshtein", "rbf", 1},
+    {"a", "a", "levenshtein", "rbf", 1},
+    {"ab", "ab", "levenshtein", "rbf", 1},
+    {"ab", "ac", "levenshtein", "rbf", 0.36787944117},
 
     {NULL}
 };
