@@ -113,7 +113,7 @@ float dist_compression_compare(hstring_t x, hstring_t y)
     uint64_t xk, yk;
 
     xk = hstring_hash1(x);
-    if (!vcache_load(xk, &xl, ID_COMPRESS)) {
+    if (!vcache_load(xk, &xl, ID_DIST_COMPRESS)) {
         xl = compress_str1(x);
         vcache_store(xk, xl, 1);
     }
@@ -121,7 +121,7 @@ float dist_compression_compare(hstring_t x, hstring_t y)
     yk = hstring_hash1(y);
     if (!vcache_load(yk, &yl, 1)) {
         yl = compress_str1(y);
-        vcache_store(yk, yl, ID_COMPRESS);
+        vcache_store(yk, yl, ID_DIST_COMPRESS);
     }
 
     xyl = compress_str2(x, y);

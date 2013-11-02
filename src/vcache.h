@@ -13,15 +13,15 @@
 #define VCACHE_H
 
 /** Task identifiers */
-#define ID_COMPARE	0
-#define ID_COMPRESS	1
-#define ID_NORM		2
-#define ID_DIST2KERN	3
+#define ID_COMPARE              0       /* Global comparison cache */
+#define ID_DIST_COMPRESS	1	/* Compression distance cache */
+#define ID_NORM                 2       /* Normalization cache */
+#define ID_KERN_DISTANCE	3	/* Distance substitution kernel cache */
 
 typedef struct
 {
     uint64_t key;       /**< Hash for sequences */
-    int id;		/**< ID of task */
+    int id;             /**< ID of task */
     float val;          /**< Cached similarity value */
 } entry_t;
 

@@ -92,7 +92,7 @@ char *measure_config(const char *name)
     config_lookup_int(&cfg, "measures.global_cache", &global_cache);
 
     /* Configure */
-    idx = measure_match(cfg_str);	
+    idx = measure_match(name);
     func[idx].measure_config();
     return func[idx].name;
 }
@@ -119,9 +119,9 @@ double measure_compare(hstring_t x, hstring_t y)
     uint64_t xyk = hstring_hash2(x, y);
     float m = 0;
 
-    if (!vcache_load(xyk, &m)) {
+    if (!vcache_load(xyk, &m, ID_COMPARE)) {
         m = func[idx].measure_compare(x, y);
-        vcache_store(xyk, m);
+        vcache_store(xyk, m, ID_COMPARE);
     }
     return m;
 }

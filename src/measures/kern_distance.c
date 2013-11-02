@@ -22,7 +22,9 @@
  * <hr>
  * <em>kern_distance</em>: Distance substitution kernel
  *
- * XXX
+ * This module implements distance substitution kernels by 
+ * Haasdonk and Bahlmann (2004).  The empty string is considered as 
+ * the origin of the underlying implicit vector space.
  * @{
  */
 
