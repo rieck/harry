@@ -36,7 +36,7 @@ static struct option longopts[] = {
     {"input_format", 1, NULL, 'i'},
     {"decode_str", 1, NULL, 1000},
     {"reverse_str", 1, NULL, 1001},
-    {"stopword_file", 1, NULL, 1002},  
+    {"stopword_file", 1, NULL, 1002},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"measure", 1, NULL, 'm'},
@@ -358,14 +358,13 @@ static float *harry_process(hstring_t *strs, long num)
     if (!mat) {
         fatal("Could not allocate matrix for similarity measure");
     }
-
 #pragma omp parallel for collapse(2)
     for (i = 0; i < num; i++) {
         for (int j = 0; j < num; j++) {
             /* Hack for better parallelization using OpenMP */
             if (j < i)
                 continue;
-                
+
             mat[tr_index(i, j, num)] = measure_compare(strs[i], strs[j]);
 
             if (verbose) {

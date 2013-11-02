@@ -35,7 +35,7 @@ void rwlock_init(rwlock_t *rw)
     pthread_rwlock_init(&rw->lock, NULL);
 #else
     omp_init_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
@@ -46,9 +46,9 @@ void rwlock_destroy(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_destroy(&rw->lock);
-#else    
+#else
     omp_destroy_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
@@ -59,9 +59,9 @@ void rwlock_set_rlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_rdlock(&rw->lock);
-#else    
+#else
     omp_set_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
@@ -72,9 +72,9 @@ void rwlock_unset_rlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_unlock(&rw->lock);
-#else    
+#else
     omp_unset_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
@@ -85,9 +85,9 @@ void rwlock_set_wlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_wrlock(&rw->lock);
-#else    
+#else
     omp_set_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
@@ -98,9 +98,9 @@ void rwlock_unset_wlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_unlock(&rw->lock);
-#else    
+#else
     omp_unset_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /** @} */

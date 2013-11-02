@@ -14,7 +14,8 @@
 
 #include "hstring.h"
 
-typedef enum {
+typedef enum
+{
     DS_LINEAR, DS_POLY, DS_NEG, DS_RBF
 } subst_t;
 

@@ -52,15 +52,15 @@ lnorm_t lnorm_get(const char *str)
 float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y)
 {
     switch (n) {
-        case LN_MIN:
-            return d / fmin(x.len, y.len);
-        case LN_MAX:
-            return d / fmax(x.len, y.len);
-        case LN_AVG:
-            return d / (0.5 * (x.len + y.len));
-        case LN_NONE:
-        default:
-            return d;
+    case LN_MIN:
+        return d / fmin(x.len, y.len);
+    case LN_MAX:
+        return d / fmax(x.len, y.len);
+    case LN_AVG:
+        return d / (0.5 * (x.len + y.len));
+    case LN_NONE:
+    default:
+        return d;
     }
 }
 

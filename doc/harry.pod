@@ -476,11 +476,12 @@ function.  The following parameters are supported:
 
 =over 4
 
-=item B<distance = "levenshtein";>
+=item B<dist = "levenshtein";>
 
 This parameter selects the distance to use for the kernel. Depending on the
 type of the substitution and the selected distance, the kernel might not be
 positive semi-definite.  
+
 =item B<type = "linear";> 
 
 Four types of substitutions can be selected for creating a kernel from a

@@ -25,7 +25,7 @@ typedef struct
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_t lock;
 #else
-    omp_lock_t lock;	/* Workaround: Global mutex :( */
+    omp_lock_t lock;            /* Workaround: Global mutex :( */
 #endif
 } rwlock_t;
 

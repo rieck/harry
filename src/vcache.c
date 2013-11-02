@@ -55,7 +55,7 @@ void vcache_init()
     info_msg(1, "Initializing cache with %dMb (%d entries)", csize, space);
 
     cache = calloc(space, sizeof(entry_t));
-    if (!cache) 
+    if (!cache)
         error("Failed to allocate value cache");
 
     /* Initialize lock */
@@ -74,19 +74,19 @@ void vcache_init()
 int vcache_store(uint64_t key, float value, int id)
 {
     int idx;
-    
+
     idx = key % space;
 
     rwlock_set_wlock(&rwlock);
-    
+
     if (cache[idx].key == 0)
-       size++;
-    
+        size++;
+
     cache[idx].key = key;
     cache[idx].val = value;
     cache[idx].id = id;
     rwlock_unset_wlock(&rwlock);
-    
+
     return TRUE;
 }
 
@@ -99,8 +99,8 @@ int vcache_store(uint64_t key, float value, int id)
  */
 int vcache_load(uint64_t key, float *value, int id)
 {
-    int ret, idx; 
-    
+    int ret, idx;
+
     idx = key % space;
     rwlock_set_rlock(&rwlock);
     if (cache[idx].key == key && cache[idx].id == id) {
@@ -110,7 +110,7 @@ int vcache_load(uint64_t key, float *value, int id)
     } else {
         ret = FALSE;
         misses++;
-    }    
+    }
 
     rwlock_unset_rlock(&rwlock);
     return ret;

@@ -47,12 +47,12 @@ void kern_distance_config()
     const char *str;
 
     /* Distance measure */
-    config_lookup_string(&cfg, "measures.kern_distance.distance", &str);
+    config_lookup_string(&cfg, "measures.kern_distance.dist", &str);
     dist = measure_match(str);
     func[dist].measure_config();
-    
+
     /* Substitution type */
-    config_lookup_string(&cfg, "measures.kern_distance.distance", &str);
+    config_lookup_string(&cfg, "measures.kern_distance.type", &str);
     if (!strcasecmp(str, "linear")) {
         subst = DS_LINEAR;
     } else if (!strcasecmp(str, "poly")) {
@@ -65,19 +65,39 @@ void kern_distance_config()
         warning("Unknown substitution type '%s'. Using 'linear'.", str);
         subst = DS_LINEAR;
     }
-    
+
     /* Parameters */
     config_lookup_float(&cfg, "measures.kern_distance.fgamma", &fgamma);
-    config_lookup_float(&cfg, "measures.kern_distance.degree", &degree);    
+    config_lookup_float(&cfg, "measures.kern_distance.degree", &degree);
 
-    /* Normalization */    
+    /* Normalization */
     config_lookup_string(&cfg, "measures.kern_distance.norm", &str);
     norm = knorm_get(str);
 }
 
 static float dot(hstring_t x, hstring_t y)
 {
-    /* TODO */    
+    hstring_t o;
+    uint64_t xk, yk;
+    float d1, d2, d3;
+
+    o = hstring_empty(o, x.type);
+
+    xk = hstring_hash1(x);
+    if (!vcache_load(xk, &d1, ID_KERN_DISTANCE)) {
+        d1 = func[dist].measure_compare(x, o);
+        vcache_store(xk, d1, ID_KERN_DISTANCE);
+    }
+
+    yk = hstring_hash1(y);
+    if (!vcache_load(yk, &d2, ID_KERN_DISTANCE)) {
+        d2 = func[dist].measure_compare(o, y);
+        vcache_store(yk, d2, ID_KERN_DISTANCE);
+    }
+
+    /* Not cached here */
+    d3 = func[dist].measure_compare(x, y);
+    return -0.5 * (d3 * d3 - d2 * d2 - d1 * d1);
 }
 
 /**
@@ -88,21 +108,22 @@ static float dot(hstring_t x, hstring_t y)
  */
 static float kernel(hstring_t x, hstring_t y)
 {
-    float k = 0;
-    float d = func[dist].measure_compare(x, y);
+    float d, k = 0;
 
     switch (subst) {
     default:
     case DS_LINEAR:
-        /* TODO */
+        k = dot(x, y);
         break;
     case DS_POLY:
-        /* TODO */
+        k = pow(1 + fgamma * dot(x, y), degree);
         break;
     case DS_NEG:
-        k = -pow(d, degree); 
+        d = func[dist].measure_compare(x, y);
+        k = -pow(d, degree);
         break;
     case DS_RBF:
+        d = func[dist].measure_compare(x, y);
         k = exp(-fgamma * d * d);
         break;
     }
@@ -118,7 +139,7 @@ static float kernel(hstring_t x, hstring_t y)
  */
 float kern_distance_compare(hstring_t x, hstring_t y)
 {
-    float k = kernel(x, y);	
+    float k = kernel(x, y);
     return knorm(norm, k, x, y, kernel);
 }
 

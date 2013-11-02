@@ -14,9 +14,9 @@
 
 /** Task identifiers */
 #define ID_COMPARE              0       /* Global comparison cache */
-#define ID_DIST_COMPRESS	1	/* Compression distance cache */
-#define ID_NORM                 2       /* Normalization cache */
-#define ID_KERN_DISTANCE	3	/* Distance substitution kernel cache */
+#define ID_DIST_COMPRESS	1       /* Compression distance */
+#define ID_NORM                 2       /* Normalization */
+#define ID_KERN_DISTANCE	3       /* Distance substitution kernel */
 
 typedef struct
 {

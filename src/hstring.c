@@ -248,6 +248,22 @@ hstring_t hstring_init(hstring_t x, char *s)
 }
 
 /**
+ * Create an empty string
+ * @param x string structure
+ * @param t type of string
+ */
+hstring_t hstring_empty(hstring_t x, int t)
+{
+    x.str.c = NULL;
+    x.type = t;
+    x.len = 0;
+    x.idx = 0;
+    x.src = NULL;
+
+    return x;
+}
+
+/**
  * Compute a 64-bit hash for a string. The hash is used at different locations.
  * Collisions are possible but not very likely (hopefully)  
  * @param x String to hash
@@ -264,7 +280,8 @@ uint64_t hstring_hash1(hstring_t x)
     return 0;
 }
 
-static uint64_t swap(uint64_t x) {
+static uint64_t swap(uint64_t x)
+{
     uint64_t r = 0;
     r |= x << 32;
     r |= x >> 32;

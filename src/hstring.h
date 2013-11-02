@@ -48,6 +48,7 @@ void hstring_delim_set(const char *);
 void hstring_delim_reset();
 hstring_t hstring_symbolize(hstring_t);
 hstring_t hstring_preproc(hstring_t);
+hstring_t hstring_empty(hstring_t, int type);
 hstring_t hstring_init(hstring_t, char *);
 void hstring_destroy(hstring_t);
 uint64_t hstring_hash1(hstring_t);

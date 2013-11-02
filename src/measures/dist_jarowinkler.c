@@ -119,7 +119,7 @@ float dist_jaro_compare(hstring_t x, hstring_t y)
     t /= 2;
 
     return 1 - ((((float) m / x.len) + ((float) m / y.len) +
-           ((float) (m - t) / m)) / 3.0);
+                 ((float) (m - t) / m)) / 3.0);
 }
 
 /**
