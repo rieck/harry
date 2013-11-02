@@ -254,7 +254,7 @@ hstring_t hstring_init(hstring_t x, char *s)
  */
 hstring_t hstring_empty(hstring_t x, int t)
 {
-    x.str.c = NULL;
+    x.str.c = malloc(0);
     x.type = t;
     x.len = 0;
     x.idx = 0;

@@ -73,6 +73,7 @@ void kern_distance_config()
     /* Normalization */
     config_lookup_string(&cfg, "measures.kern_distance.norm", &str);
     norm = knorm_get(str);
+
 }
 
 static float dot(hstring_t x, hstring_t y)
