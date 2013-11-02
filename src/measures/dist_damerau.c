@@ -96,7 +96,7 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
     for (i = 1; i <= x.len; i++) {
         int db = 0;
         for (j = 1; j <= y.len; j++) {
-            int i1 = alph[hstring_get(y, j - 1)];
+            int i1 = alph[(uint16_t) hstring_get(y, j - 1)];
             int j1 = db;
             int dz = hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0;
             if (dz == 0)

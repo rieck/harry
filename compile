@@ -14,7 +14,7 @@ case $arg in
        CC="gcc" \
        LDFLAGS="-L/usr/local/opt/libarchive/lib" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
-       CFLAGS="-pedantic -pipe -O3" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    profile|debug)
@@ -29,7 +29,7 @@ case $arg in
        echo "Configuration: Schulle (ESX Cluster)"
        PKG_CONFIG_PATH="/usr/local/lib/pkgconfig" \
        CC="gcc" \
-       CFLAGS="-pedantic -pipe -O3" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
        ./configure --enable-libarchive 
        ;;
    *)    
