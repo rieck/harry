@@ -37,8 +37,8 @@ struct hstring_test tests[] = {
     {"", "", 0},
     {"a", "a", 0},
     {"ab", "ab", 0},
-    {"ab", "ax", 0.5},
-    {"ab", "xx", 1.0},
+    {"ab", "ax", 1.25},
+    {"ab", "xx", 2.00},
     {NULL}
 };
 

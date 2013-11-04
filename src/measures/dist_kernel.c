@@ -94,9 +94,6 @@ float dist_kernel_compare(hstring_t x, hstring_t y)
 
     /* Not cached here */
     k3 = kernel(x, y);
-    
-    printf("%f\n", k3);
-    
     d = k1 + k2 - 2 * k3;
 
     return squared ? d : sqrt(d);    

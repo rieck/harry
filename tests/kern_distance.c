@@ -44,7 +44,7 @@ struct hstring_test tests[] = {
     {"ab", "ac", "levenshtein", "linear", 3.5},
 
     /* Polynomial substituion */
-    {"", "", "levenshtein", "poly", 0.0},
+    {"", "", "levenshtein", "poly", 1.0},
     {"a", "a", "levenshtein", "poly", 2.0},
     {"ab", "ab", "levenshtein", "poly", 5.0},
     {"ab", "ac", "levenshtein", "poly", 4.5},
@@ -69,9 +69,9 @@ int test_compare()
 
     printf("Testing distance substitution kernel ");
     for (i = 0; tests[i].x && !err; i++) {
-        measure_config("kern_distance");
         config_set_string(&cfg, "measures.kern_distance.dist", tests[i].d);
         config_set_string(&cfg, "measures.kern_distance.type", tests[i].t);
+        measure_config("kern_distance");
 
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
