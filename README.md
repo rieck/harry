@@ -23,7 +23,7 @@ supported so far
     dist_hamming         Hamming distance
     dist_jaro            Jaro distance
     dist_jarowinkler     Jaro-Winkler distance
-    dist_kernel		 Kernel-based distance
+    dist_kernel          Kernel-based distance
     dist_lee             Lee distance
     dist_levenshtein     Levenshtein distance
     kern_distance        Distance substitution kernel (DSK)
