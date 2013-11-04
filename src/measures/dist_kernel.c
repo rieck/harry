@@ -66,7 +66,7 @@ static float kernel(hstring_t x, hstring_t y)
 {
     double k = func[kern].measure_compare(x, y);
     return knorm(norm, k, x, y, func[kern].measure_compare);
-} 
+}
 
 /**
  * Compute a kernel-based distance
@@ -96,7 +96,7 @@ float dist_kernel_compare(hstring_t x, hstring_t y)
     k3 = kernel(x, y);
     d = k1 + k2 - 2 * k3;
 
-    return squared ? d : sqrt(d);    
+    return squared ? d : sqrt(d);
 }
 
 /** @} */
