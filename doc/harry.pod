@@ -180,6 +180,10 @@ Normalized compression distance. See configuration section B<dist_compression>.
 
 Bag distance. See configuration section B<dist_bag>.
 
+=item I<"dist_kernel">
+
+Kernel-based distance. See configuration section B<dist_kernel>.
+
 =item I<"kern_subsequence">
 
 Subsequence kernel (SSK). See configuration section B<kern_subsequence>.
@@ -389,6 +393,8 @@ compression. See B<zlib(3)>
 
 =back
 
+=item B<};>
+
 =item B<dist_bag = {> 
 
 This module implements the bag distance (see Bartolini et al., 2002). The
@@ -409,6 +415,35 @@ for normalization on the average length of the compared strings.
 
 =item B<};>
 
+=item B<dist_kernel = {> 
+
+This module implements a kernel-based distance. The specified kernel
+function is mapped to a Euclidean distance using simple geometry.  The
+runtime complexity depends on the kernel function.  The following parameters
+are supported:
+
+=over 4
+
+=item B<kern = "kern_wdegree";>
+
+This parameter selects the kernel function to use for the distance. The
+kernel is mapped to a Euclidean distance using simple geometry.
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2
+normalization of kernels.
+
+=item B<squared = 1;>
+
+The module computes a Euclidean distance from the given kernel function. If
+this parameter is specified a squared Euclidean distance is returned which
+is slightly faster due to the omitted root computation.
+
+=back
+
+=item B<};>
 
 =item B<kern_wdegree = {>
 
@@ -476,11 +511,11 @@ function.  The following parameters are supported:
 
 =over 4
 
-=item B<dist = "levenshtein";>
+=item B<dist = "dist_bag";>
 
-This parameter selects the distance to use for the kernel. Depending on the
-type of the substitution and the selected distance, the kernel might not be
-positive semi-definite.  
+This parameter selects the distance function to use for the kernel.
+Depending on the type of the substitution and the selected distance, the
+kernel might not be positive semi-definite.
 
 =item B<type = "linear";> 
 

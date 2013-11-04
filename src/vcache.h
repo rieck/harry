@@ -17,6 +17,7 @@
 #define ID_DIST_COMPRESS	2       /* Compression distance */
 #define ID_NORM                 3       /* Normalization */
 #define ID_KERN_DISTANCE	4       /* Distance substitution kernel */
+#define ID_DIST_KERNEL		5	/* Kernel-based distance */
 
 typedef struct
 {
