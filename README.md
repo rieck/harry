@@ -23,8 +23,10 @@ supported so far
     dist_hamming         Hamming distance
     dist_jaro            Jaro distance
     dist_jarowinkler     Jaro-Winkler distance
+    dist_kernel		 Kernel-based distance
     dist_lee             Lee distance
     dist_levenshtein     Levenshtein distance
+    kern_distance        Distance substitution kernel (DSK)
     kern_subsequence     Subsequence kernel (SSK)
     kern_wdegree         Weighted-degree kernel (WDK)
     sim_braun            Braun-Blanquet coefficient

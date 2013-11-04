@@ -9,8 +9,6 @@
 ## Similarity Measures
 
 + Locality improved kernel
-+ Kernel-to-distance: simple map to Euclidean distance
-+ Distance-to-Kernel: maps by B. Haasdonk 
 
 ## Input and Output
 

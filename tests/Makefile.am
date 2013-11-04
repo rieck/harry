@@ -17,7 +17,8 @@ check_PROGRAMS			= check_vcache \
 				  check_subsequence \
 				  check_bag \
 				  check_coefficient \
-				  check_distance
+				  check_distance \
+				  check_kernel
 				  
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
@@ -58,6 +59,8 @@ check_bag_LDADD			= $(top_builddir)/src/libharry.la
 check_distance_SOURCES		= kern_distance.c tests.h
 check_distance_LDADD		= $(top_builddir)/src/libharry.la
 
+check_kernel_SOURCES		= dist_kernel.c tests.h
+check_kernel_LDADD		= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \
