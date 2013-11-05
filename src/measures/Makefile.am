@@ -17,7 +17,7 @@ libmeasures_la_SOURCES     = measures.h measures.c \
 			     dist_compression.c	dist_compression.h \
 			     dist_bag.c dist_bag.h norm.c norm.h \
 			     sim_coefficient.c sim_coefficient.h \
-			     kern_distance.c kern_distances.h \
+			     kern_distance.c kern_distance.h \
 			     dist_kernel.c dist_kernel.h
 
 measures.c: measures.c.in gen_measures.py measures.txt
