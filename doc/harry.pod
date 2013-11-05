@@ -188,6 +188,10 @@ Kernel-based distance. See configuration section B<dist_kernel>.
 
 Subsequence kernel (SSK). See configuration section B<kern_subsequence>.
 
+=item I<"kern_spectrum">
+
+Spectrum kernel. See configuration section B<kern_spectrum>.
+
 =item I<"kern_wdegree">
 
 Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
@@ -502,6 +506,31 @@ This parameter is a weighting term for gaps within subsequences.
 
 =back
 
+
+=item B<};>
+
+=item B<kern_spectrum = {>
+
+This module implements the spectrum kernel (Leslie et al., 2002). The
+runtime complexity is linear in the length of the strings. The following
+parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the kernel. Supported values
+are I<"none"> for no normalization and I<"l2"> for the standard l2 
+normalization of kernels.
+
+=item B<length = 3;>
+
+This parameter specifies the length of k-mers (or n-grams) to consider.
+
+=back
+
+=item B<};>
+
 =item B<kern_distance = {>
 
 This module implements distance substitution kernels (Haasdonk and Bahlmann,
@@ -541,7 +570,6 @@ This parameter defines a polynomial degree for the substitution types
 I<"poly"> and I<"neg">.
 
 =back
-
 
 =item B<};>
 

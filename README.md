@@ -27,6 +27,7 @@ supported so far
     dist_lee             Lee distance
     dist_levenshtein     Levenshtein distance
     kern_distance        Distance substitution kernel (DSK)
+    kern_spectrum        Spectrum kernel
     kern_subsequence     Subsequence kernel (SSK)
     kern_wdegree         Weighted-degree kernel (WDK)
     sim_braun            Braun-Blanquet coefficient

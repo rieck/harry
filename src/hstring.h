@@ -51,6 +51,7 @@ hstring_t hstring_preproc(hstring_t);
 hstring_t hstring_empty(hstring_t, int type);
 hstring_t hstring_init(hstring_t, char *);
 void hstring_destroy(hstring_t);
+uint64_t hstring_hash_sub(hstring_t x, int i, int l);
 uint64_t hstring_hash1(hstring_t);
 uint64_t hstring_hash2(hstring_t, hstring_t);
 int hstring_has_delim();

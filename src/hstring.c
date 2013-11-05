@@ -280,6 +280,38 @@ uint64_t hstring_hash1(hstring_t x)
     return 0;
 }
 
+/**
+ * Compute a 64-bit hash for a substring. 
+ * Collisions are possible but not very likely (hopefully)  
+ * @param x String to hash
+ * @param i Start of substring
+ * @param l Length of substring
+ * @return hash value
+ */
+uint64_t hstring_hash_sub(hstring_t x, int i, int l)
+{
+
+    if (i > x.len - 1 || i + l > x.len) {
+        warning("Invalid range for substring (i:%d;l:%d;x:%d)", i, l, x.len);
+        return 0;
+    }
+
+    if (x.type == TYPE_CHAR && x.str.c)
+        return MurmurHash64B(x.str.c + i, sizeof(char) * l, 0xc0ffee);
+    if (x.type == TYPE_SYM && x.str.s)
+        return MurmurHash64B(x.str.s + i, sizeof(sym_t) * l, 0xc0ffee);
+
+    warning("Nothing to hash. String is missing");
+    return 0;
+}
+
+
+
+/*+
+ * Swap the high and low 32 bits of a 64 bit integer
+ * @param x integer
+ * @return integer with swapped bits
+ */
 static uint64_t swap(uint64_t x)
 {
     uint64_t r = 0;
