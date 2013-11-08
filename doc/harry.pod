@@ -14,16 +14,16 @@ B<harry> is a small tool for measuring the similarity of strings. The tool
 supports several common distance and kernel functions for strings as well as
 some excotic similarity measures.  The focus of B<harry> lies on implicit
 similarity measures, that is, comparison functions that do not give rise to
-an explicit vector space, such as the Levenshtein distance.  B<harry>
-thereby complements the tool B<harry> that embeds strings in vector spaces
-and allows computing explicit similarity measures, such as bag-of-word
-kernels.
+an explicit vector space.  Examples of such similarity measures are the
+Levenshtein distance, the Jaro-Winkler distance or the subsequence kernel. 
 
-For comparison B<harry> first loads strings from I<input>, computes the
-specified similarity measure and then writes a matrix of similarity values
-to I<output>.  The configuration of this process, such as the input format,
-the similarity measure and the output format, are specified in the file
-I<config> and additionally using command-line options.
+During operation B<harry> loads a set of strings from I<input>, computes the
+specified similarity measure and finally writes a matrix of similarity
+values to I<output>.  The similarity measure can either consider the
+individual characters or words for comparing the strings.  The configuration
+of this process, such as the input format, the similarity measure and the
+output format, are specified in the file I<config> and can be additionally
+refined using command-line options.
 
     .---------.                        .----------.
     |  lines  |                        |   text   |
@@ -34,22 +34,33 @@ I<config> and additionally using command-line options.
        Input      Similarity Measures     Output
 
 
+B<harry> is implemented using the OpenMP framework for multi-processing. 
+The computation time scales linear with the number of available CPU cores. 
+Moreover, efficient implementations of several similarity measures,
+effective caching of similarity values and low-overhead locking further
+speedup the computation.
+
+B<harry> complements the tool B<sally>(1) that embeds strings in a vector
+space and allows computing vectorial similarity measures, such as the cosine
+distance and the bag-of-words kernel.
+
 =head1 CONFIGURATION
 
-The configuration of B<harry> is specified in a configuration file.  This
+The configuration of B<harry> is provided by a configuration file.  This
 file is structured into the three sections B<input>, B<measures> and
 B<output>, which define the parameters of the input format, the similarity
-measures and the output format, respectively.
-
-If no configuration file is provided, B<harry> resorts to a default
-configuration. This default configuration can be dumped using the
-command-line option B<-D>.
+measures and the output format, respectively.  If no configuration file is
+provided, B<harry> resorts to a default configuration.  This default
+configuration can be dumped using the command-line option B<-D> (see
+B<OPTIONS>).
 
 =head2 Input formats
 
-B<harry> supports different formats for reading data sets of strings,
+B<harry> supports different formats for reading sets of strings,
 which may range from plain files to directories and other structured
-resources. Following is a list of supported input formats.
+resources. Following is a list of supported input formats. Additionally, 
+the input format can be specified using the command-line option B<-i> 
+(see B<OPTIONS>).
 
 =over 4
 
@@ -133,9 +144,9 @@ set of delimiters is defined using B<word_delim>.
 =head2 Similarity Measures
 
 B<harry> supports different similarity measures for comparing string,
-including common distance and kernel functions for strings.  Depending on
-the configuration, the strings are either compared using invididual
-characters or using words.
+including common distance and kernel functions. The similarity measure
+can be specified in the configuration file as well as on the command line
+using the option B<-m> (see B<OPTIONS>).
 
 =over 4
 
@@ -602,7 +613,10 @@ count of each symbol is considered for the matching.
 
 Once strings have been compared, B<harry> stores the similarity values in
 one of several common formats, which allows for applying typical tools of
-statistics and machine learning to the data.
+statistics and machine learning to the data.  Following is a list of
+supported output formats and respective parameters.  Additionally, the
+output format can be specified using the command-line option B<-o> (see
+B<OPTIONS>).
 
 =over 4
 

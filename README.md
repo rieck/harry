@@ -47,6 +47,7 @@ supported so far
 
 Corresponding packages
 
++ OpenMP is supported by several modern C compilers, e.g. gcc
 + Debian and Ubuntu Linux: `libz-dev libconfig9-dev libarchive-dev`
 + MacOS X with Homebrew:   `libconfig libarchive (homebrew-dupes)`
 + MacOS X with MacPorts:   `libconfig-hr libarchive`
