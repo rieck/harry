@@ -12,18 +12,18 @@ B<harry> [B<options>] [B<-c> I<config>] I<input> I<output>
 
 B<harry> is a small tool for measuring the similarity of strings. The tool
 supports several common distance and kernel functions for strings as well as
-some excotic similarity measures.  The focus of B<harry> lies on implicit
+some exotic similarity measures.  The focus of B<harry> lies on implicit
 similarity measures, that is, comparison functions that do not give rise to
 an explicit vector space.  Examples of such similarity measures are the
 Levenshtein distance, the Jaro-Winkler distance or the subsequence kernel. 
 
 During operation B<harry> loads a set of strings from I<input>, computes the
-specified similarity measure and finally writes a matrix of similarity
-values to I<output>.  The similarity measure can either consider the
-individual characters or words for comparing the strings.  The configuration
-of this process, such as the input format, the similarity measure and the
-output format, are specified in the file I<config> and can be additionally
-refined using command-line options.
+specified similarity measure and writes a matrix of similarity values to
+I<output>.  The similarity measure can be computed based on the
+granulartiy of characters as well as words contained in the strings.  The
+configuration of this process, such as the input format, the similarity
+measure and the output format, are specified in the file I<config> and can
+be additionally refined using command-line options.
 
     .---------.                        .----------.
     |  lines  |                        |   text   |
@@ -34,8 +34,8 @@ refined using command-line options.
        Input      Similarity Measures     Output
 
 
-B<harry> is implemented using the OpenMP framework for multi-processing. 
-The computation time scales linear with the number of available CPU cores. 
+B<harry> is implemented using OpenMP, such that the computation time for a
+set of strings scales linear with the number of available CPU cores. 
 Moreover, efficient implementations of several similarity measures,
 effective caching of similarity values and low-overhead locking further
 speedup the computation.
@@ -209,7 +209,7 @@ Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
 
 =item I<"kern_distance">
 
-Distance substitution kernel. See configruation section B<kern_distance>.
+Distance substitution kernel. See configuration section B<kern_distance>.
 
 =item I<"sim_simpson">
 
@@ -225,7 +225,7 @@ Distance substitution kernel. See configruation section B<kern_distance>.
 
 =item I<"sim_otsuka">
 
-Similartiy coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
+Similarity coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
 known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
 (also known as Anderberg), second Kulczynski, Otsuka 
 (also known as Ochiai). See configuration section
@@ -238,7 +238,7 @@ B<sim_coefficient>.
 The parameter B<word_delim> defines characters for delimiting words in
 strings.  If this parameter is set the comparison of strings is performed on
 words, that is, each word is considered as a symbol.  If the parameter
-B<word_delim> is an emptry strings, B<harry> considers each individual
+B<word_delim> is an empty strings, B<harry> considers each individual
 character as a symbol.
 
 =item B<num_threads = 0;>
@@ -302,7 +302,7 @@ for normalization on the average length of the compared
 =item B<cost_sub = 1.0;>
 
 The computation of the distance can be adapted using three parameters
-defining the cost for an insertation, deletion and substitution,
+defining the cost for an insertion, deletion and substitution,
 respectively.  The default costs are I<1.0> for each operation.
 
 =back
@@ -333,8 +333,8 @@ for normalization on the average length of the compared strings.
 =item B<cost_tra = 1.0;>
 
 The computation of the distance can be adapted using four parameters
-defining the cost for an insertation, deletion, substitution and
-tranposition, respectively.  The default costs are I<1.0> for each operation.
+defining the cost for an insertion, deletion, substitution and
+transposition, respectively.  The default costs are I<1.0> for each operation.
 
 =back
 
@@ -357,7 +357,7 @@ supported:
 
 If this parameter is set to I<0>, the original Jaro distance is returned,
 otherwise the Jaro-Winkler distance is calculated. This distance uses a
-B<scaling> which gives more favourable ratings to strings that match from
+B<scaling> which gives more favorable ratings to strings that match from
 the beginning up to 4 symbols. The default value is I<0.1>.
 
 =back
@@ -702,7 +702,7 @@ section for further details.
 
 Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an Approximate Distance. String Processing and Information Retrieval, LNCS 2476, 271-283, 2002.
 
-Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communicstions in Information and Systems, 5 (4), 367-384, 2005.
+Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communications in Information and Systems, 5 (4), 367-384, 2005.
 
 Cheetham and Hazel. Binary (Presence-Absence) Similarity Coefficients. Journal of Paleontology, 43:5, 1130-1136, 1969
 

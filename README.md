@@ -8,9 +8,26 @@ Harry is a small tool for comparing strings. The tool supports several
 common distance and kernel functions for strings as well as some excotic
 similarity measures.  The focus of Harry lies on implicit similarity
 measures, that is, comparison functions that do not give rise to an explicit
-vector space, such as the Levenshtein distance.  Harry complements the tool
-Sally that embeds strings in vector spaces, where explicit similarity
-measures can be computed, such as bag-of-word kernels.
+vector space.  Examples of such similarity measures are the Levenshtein
+distance, the Jaro-Winkler distance or the subsequence kernel.
+
+During operation Harry loads a set of strings from input, computes the
+specified similarity measure and writes a matrix of similarity values to
+output.  The similarity measure can be computed based on the granulartiy of
+characters as well as words contained in the strings.  The configuration of
+this process, such as the input format, the similarity measure and the
+output format, are specified in a configuration file and can be additionally
+refined using command-line options.
+
+Harry is implemented using OpenMP, such that the computation time for a
+set of strings scales linear with the number of available CPU cores. 
+Moreover, efficient implementations of several similarity measures,
+effective caching of similarity values and low-overhead locking further
+speedup the computation.
+
+Harry complements the tool sally(1) that embeds strings in a vector space
+and allows computing vectorial similarity measures, such as the cosine
+distance and the bag-of-words kernel.
 
 ## Similarity Measures
 
