@@ -61,12 +61,12 @@ supported so far
 Dependencies
 --
 
-+   OpenMP >= 2.5, (supported by the C compiler)
++   OpenMP >= 2.5 (need to be supported by the C compiler)
 +   zlib >= 1.2.1, <http://www.zlib.net/>
 +   libconfig >= 1.4, <http://www.hyperrealm.com/libconfig/>
 +   libarchive >= 2.70, <http://libarchive.github.com/>
 
-### Debian & Ubuntu Linux
+#### Debian & Ubuntu Linux
 
 The following packages need to be installed for compiling Harry on Debian
 and Ubuntu Linux
@@ -84,7 +84,7 @@ necessary.
     autoconf
     libtool
 
-### Mac OS X
+#### Mac OS X
 
 For compiling Harry on Mac OS X a working installation of Xcode. Moreover, a
 C compiler supporting OpenMP is required (`clang` from Xcode currently does
@@ -95,7 +95,7 @@ Homebrew.
     libconfig
     libarchive (from homebrew-alt)
 
-### OpenBSD
+#### OpenBSD
 
 Due to the vague state of OpenBSD multi-threading, neither the default `gcc`
 nor the packaged `gcc` seem to correctly support OpenMP.  To get Harry to
