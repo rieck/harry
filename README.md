@@ -1,8 +1,10 @@
 ![Harry](harry.png) 
 
-# Harry - A Tool for Measuring String Similarity
+Harry - A Tool for Measuring String Similarity
+==
 
-## Description
+Description
+--
 
 Harry is a small tool for comparing strings. The tool supports several
 common distance and kernel functions for strings as well as some excotic
@@ -29,7 +31,8 @@ Harry complements the tool sally(1) that embeds strings in a vector space
 and allows computing vectorial similarity measures, such as the cosine
 distance and the bag-of-words kernel.
 
-## Similarity Measures
+Similarity Measures
+--
 
 Harry is currently under development. The following similarity measures are
 supported so far
@@ -55,27 +58,53 @@ supported so far
     sim_simpson          Simpson coefficient
     sim_sokal            Sokal-Sneath coefficient
 
-## Dependencies
+Dependencies
+--
 
-    >= OpenMP 2.5
-    >= zlib-1.2.1
-    >= libconfig-1.4
-    >= libarchive-2.70
++   OpenMP >= 2.5, (supported by the C compiler)
++   zlib >= 1.2.1, <http://www.zlib.net/>
++   libconfig >= 1.4, <http://www.hyperrealm.com/libconfig/>
++   libarchive >= 2.70, <http://libarchive.github.com/>
 
-Corresponding packages
+### Debian & Ubuntu Linux
 
-+ OpenMP is supported by several modern C compilers, e.g. gcc
-+ Debian and Ubuntu Linux: `libz-dev libconfig9-dev libarchive-dev`
-+ MacOS X with Homebrew:   `libconfig libarchive (homebrew-dupes)`
-+ MacOS X with MacPorts:   `libconfig-hr libarchive`
+The following packages need to be installed for compiling Harry on Debian
+and Ubuntu Linux
 
-The source code of the libraries is available here:
+    gcc
+    libz-dev
+    libconfig9-dev
+    libarchive-dev
 
-+ zlib        <http://www.zlib.net/>
-+ libconfig   <http://www.hyperrealm.com/libconfig/>
-+ libarchive  <http://libarchive.github.com/>
+For bootstrapping Harry from the GIT repository or manipulating the
+automake/autoconf configuration, the following additional packages are
+necessary.
 
-## Compilation & Installation
+    automake
+    autoconf
+    libtool
+
+### Mac OS X
+
+For compiling Harry on Mac OS X a working installation of Xcode. Moreover, a
+C compiler supporting OpenMP is required (`clang` from Xcode currently does
+not support OpenMP).  The following packages need to be installed from
+Homebrew.
+
+    gcc43 (or download from <http://hpc.sourceforge.net>)
+    libconfig
+    libarchive (from homebrew-alt)
+
+### OpenBSD
+
+Due to the vague state of OpenBSD multi-threading, neither the default `gcc`
+nor the packaged `gcc` seem to correctly support OpenMP.  To get Harry to
+run you can only try to build gcc from scratch
+
+    :(
+
+Compilation & Installation
+--
 
 From GIT repository first run
 

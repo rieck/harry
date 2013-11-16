@@ -17,6 +17,14 @@ case $arg in
        CFLAGS="-pedantic -pipe -O3 -g" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
+   kindl*)
+       echo "Configuration: Kindl (OpenBSD)"
+       CC="egcc" \
+       LDFLAGS="-L/usr/local/lib" \
+       CPPFLAGS="-I/usr/local/include" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ;;
    profile|debug)
        echo "Configuration: Profiling & Debugging"
        CC="gcc" \

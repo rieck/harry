@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# OpenBSD versions
+export AUTOCONF_VERSION=2.69
+export AUTOMAKE_VERSION=1.13 
+
 # Commands for autotools
 ACLOCAL=aclocal
 AUTOHEADER=autoheader
