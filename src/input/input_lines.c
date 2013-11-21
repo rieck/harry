@@ -45,7 +45,7 @@ static float get_label(char *line)
 
     /* No match found */
     if (regexec(&re, line, 1, pmatch, 0))
-        return 0;
+        return 1.0;
 
     name = line + pmatch[0].rm_so;
     old = line[pmatch[0].rm_eo];
@@ -143,7 +143,6 @@ int input_lines_read(hstring_t *strs, int len)
 	strs[j].label = get_label(line);
 	snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);
-        strs[j].idx = j;
         j++;
 
 #ifdef ENABLE_EVALTIME

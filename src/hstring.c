@@ -128,8 +128,8 @@ void hstring_print(hstring_t x)
         printf(" (sym)\n");
     }
 
-    printf("  [type: %d, len: %d; idx:% ld; src: %s, label: %f]\n",
-           x.type, x.len, x.idx, x.src, x.label);
+    printf("  [type: %d, len: %d; src: %s, label: %f]\n",
+           x.type, x.len, x.src, x.label);
 }
 
 /**
@@ -241,7 +241,6 @@ hstring_t hstring_init(hstring_t x, char *s)
     x.str.c = strdup(s);
     x.type = TYPE_CHAR;
     x.len = strlen(s);
-    x.idx = 0;
     x.src = NULL;
 
     return x;
@@ -257,7 +256,6 @@ hstring_t hstring_empty(hstring_t x, int t)
     x.str.c = malloc(0);
     x.type = t;
     x.len = 0;
-    x.idx = 0;
     x.src = NULL;
 
     return x;

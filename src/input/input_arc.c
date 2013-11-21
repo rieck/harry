@@ -112,7 +112,6 @@ int input_arc_read(hstring_t *strs, int len)
             strs[j].type = TYPE_CHAR;
             strs[j].len = archive_entry_size(entry);
             strs[j].label = get_label(strs[j].src);
-	    strs[j].idx = j;
             j++;
         }
     }
