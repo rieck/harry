@@ -27,7 +27,7 @@
 
 /**
  * Init a read-write lock.
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_init(rwlock_t *rw)
 {
@@ -40,7 +40,7 @@ void rwlock_init(rwlock_t *rw)
 
 /**
  * Destroy a read-write lock.
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_destroy(rwlock_t *rw)
 {
@@ -53,7 +53,7 @@ void rwlock_destroy(rwlock_t *rw)
 
 /**
  * Set lock for reading. 
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
@@ -66,7 +66,7 @@ void rwlock_set_rlock(rwlock_t *rw)
 
 /**
  * Unset lock for reading. 
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
@@ -79,7 +79,7 @@ void rwlock_unset_rlock(rwlock_t *rw)
 
 /**
  * Set lock for writing. 
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
@@ -92,7 +92,7 @@ void rwlock_set_wlock(rwlock_t *rw)
 
 /**
  * Unset lock for writing.
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {

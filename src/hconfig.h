@@ -33,7 +33,7 @@ typedef struct
         double flt;     /**< Float value  */
         char *str;      /**< String */
     } val;
-} config_default_t;
+} default_t;
 
 /* Functions */
 void config_print(config_t *);

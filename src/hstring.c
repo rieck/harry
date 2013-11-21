@@ -10,7 +10,7 @@
  */
 
 /**
- * @defgroup string String functions
+ * @defgroup string String object
  * Functions for processing strings and sequences
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
@@ -40,8 +40,8 @@ typedef struct
 static stopword_t *stopwords = NULL;
 
 /**
- * Free memory of the string structure
- * @param x string structure
+ * Free memory of the string object
+ * @param x string object
  */
 void hstring_destroy(hstring_t x)
 {
@@ -106,8 +106,8 @@ sym_t hstring_get(hstring_t x, int i)
 
 
 /** 
- * Print string structure
- * @param x string structure
+ * Print string object
+ * @param x string object
  */
 void hstring_print(hstring_t x)
 {
@@ -231,9 +231,9 @@ hstring_t hstring_symbolize(hstring_t x)
 }
 
 /**
- * Convert a c-style string to a string structure. New memory is allocated
+ * Convert a c-style string to a string object. New memory is allocated
  * and the string is copied.
- * @param x string structure
+ * @param x string object
  * @param s c-style string
  */
 hstring_t hstring_init(hstring_t x, char *s)
@@ -248,7 +248,7 @@ hstring_t hstring_init(hstring_t x, char *s)
 
 /**
  * Create an empty string
- * @param x string structure
+ * @param x string object
  * @param t type of string
  */
 hstring_t hstring_empty(hstring_t x, int t)

@@ -40,8 +40,8 @@ typedef struct
     int (*input_open) (char *);
     int (*input_read) (hstring_t *, int);
     void (*input_close) (void);
-} func_t;
-static func_t func;
+} input_t;
+static input_t func;
 
 /**< Delimiter table */
 extern char delim[256];
