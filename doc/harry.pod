@@ -390,13 +390,13 @@ and B<max_sym> to I<65535>.
 =item B<dist_compression = {> 
 
 This module implements the normalized compression distance for strings
-(Cilibrasi and Vitanyi, 2005).  The compression is implemented using
-B<zlib>.  Note that the comparison of strings highly depends on the
-characteristics of the compressor (Cebrian et al., 2005).  The strings
-should not be longer than 16 kilobytes, such that two strings fit into the
-window of B<zlib>.  The runtime complexity of a comparison is linear in the
-length of the strings, though with a large constant factor.  The following
-parameters are supported:
+(Cilibrasi and Vitanyi, 2005).  The distance is "symmetrized".  The
+compression is implemented using B<zlib>.  Note that the comparison of
+strings highly depends on the characteristics of the compressor (Cebrian et
+al., 2005).  The strings should not be longer than 16 kilobytes, such that
+two strings fit into the window of B<zlib>.  The runtime complexity of a
+comparison is linear in the length of the strings, though with a large
+constant factor.  The following parameters are supported:
 
 =over 4
 
@@ -698,6 +698,14 @@ section for further details.
 
 =back
 
+=head1 LIMITATIONS
+
+B<harry> supports only symmetric similiarity measures, that is, m(x,y) =
+m(x,y) for all x and y.  This restriction saves considerable run-time and
+memory in most cases.  However, some similarity measures need to be
+artificially "symmetrized", such as the normalized compression distance,
+thereby requiring additional computations.
+ 
 =head1 REFERENCES
 
 Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an Approximate Distance. String Processing and Information Retrieval, LNCS 2476, 271-283, 2002.
