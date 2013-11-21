@@ -94,17 +94,17 @@ static range_t parse_range(range_t r, char *str, int n)
 
     /* Start parsing */
     l = strtol(str, &end, 10);
-    if (strlen(str) == 0) 
+    if (strlen(str) == 0)
         r.i = 0;
-    else if (end == '\0') 
+    else if (end == '\0')
         r.i = (int) l;
     else
         error("Could not parse range '%s'.", str);
 
-    l = strtol(ptr+1, &end, 10);
-    if (strlen(ptr+1) == 0)
+    l = strtol(ptr + 1, &end, 10);
+    if (strlen(ptr + 1) == 0)
         r.n = n;
-    else if (end == '\0') 
+    else if (end == '\0')
         r.n = (int) l;
     else
         error("Could not parse range '%s'.", str);
@@ -160,11 +160,11 @@ float *hmatrix_alloc(hmatrix_t *m)
  * @param x Coordinate x
  * @param y Coordinate y
  * @param f Value
- */ 
+ */
 void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 {
     int idx;
-    
+
     idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
     assert(idx < m->size);
     m->values[idx] = f;
@@ -177,11 +177,11 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
  * @param x Coordinate x
  * @param y Coordinate y
  * @return f Value
- */ 
+ */
 float hmatrix_get(hmatrix_t *m, int x, int y)
 {
     int idx;
-    
+
     idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
     assert(idx < m->size);
     return m->values[idx];
@@ -193,8 +193,8 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
  * @param s Array of string objects
  * @param f Similarity measure 
  */
-void hmatrix_compute(hmatrix_t *m, hstring_t *s, 
-                     double (*measure)(hstring_t x, hstring_t y))
+void hmatrix_compute(hmatrix_t *m, hstring_t *s,
+                     double (*measure) (hstring_t x, hstring_t y))
 {
     int i, k = 0;
 
@@ -203,13 +203,13 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
      * collapse both loops. This renders a little ugly, since hmatrix 
      * requires absolute indices.
      */
-    #pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
 
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
-            
+
             if (verbose && k % (m->size / 1000) == 0)
                 prog_bar(0, m->size, k);
 
@@ -220,7 +220,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
     if (verbose)
         prog_bar(0, m->size, m->size);
 }
- 
+
 
 /**
  * Destroy a matrix of simililarity values and free its memory
@@ -233,10 +233,10 @@ void hmatrix_destroy(hmatrix_t *m)
 
     if (m->values)
         free(m->values);
-    for (int i = 0; m->srcs && i < m->num; i++) 
+    for (int i = 0; m->srcs && i < m->num; i++)
         if (m->srcs[i])
             free(m->srcs[i]);
-    
+
     if (m->srcs)
         free(m->srcs);
     if (m->labels)
