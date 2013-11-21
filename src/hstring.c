@@ -256,8 +256,8 @@ hstring_t hstring_empty(hstring_t x, int t)
 {
     x.str.c = malloc(0);
     x.type = t;
+    x.label = 1.0;
     x.len = 0;
-    x.idx = 0;
     x.src = NULL;
 
     return x;

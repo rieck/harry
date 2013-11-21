@@ -194,17 +194,16 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 {
     int i, k = 0;
     
-/* #pragma omp parallel for collapse(2) */
+#pragma omp parallel for collapse(2)
     for (i = m->x.i; i < m->x.n; i++) {
         for (int j = m->y.i; j < m->y.n; j++) {
 
             float f = measure(s[i], s[j]);
             hmatrix_set(m, i, j, f);
             
-            if (verbose && k % 100 == 0) {
+            if (verbose && k % 10 == 0)
                 prog_bar(0, m->size, k);
-                k++;
-            }
+            k++;
         }
     }
 
