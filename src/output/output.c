@@ -34,8 +34,8 @@ typedef struct
     int (*output_open) (char *);
     int (*output_write) (hmatrix_t *);
     void (*output_close) (void);
-} func_t;
-static func_t func;
+} output_t;
+static output_t func;
 
 /** 
  * Configure the output of Harry

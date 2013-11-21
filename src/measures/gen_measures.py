@@ -22,7 +22,7 @@ for m in sorted(modules):
     includes += '#include "%s.h"\n' % m
 
 # Prepare interfaces
-interfaces = 'func_t func[] = {\n'
+interfaces = 'measure_t func[] = {\n'
 for m in sorted(measures):
     interfaces += '    {"%s", %s_config, %s_compare},\n' % (m,m,m)
 interfaces += '    {NULL}\n};'

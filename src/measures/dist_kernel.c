@@ -29,7 +29,7 @@
 
 /* External variables */
 extern config_t cfg;
-extern func_t func[];
+extern measure_t func[];
 
 /* Normalizations */
 static knorm_t norm = KN_NONE;

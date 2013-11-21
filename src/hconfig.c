@@ -30,7 +30,7 @@ extern int verbose;
 #define O "output"
 
 /* Default configuration */
-static config_default_t defaults[] = {
+static default_t defaults[] = {
     {I "", "input_format", CONFIG_TYPE_STRING, {.str = "lines"}},
     {I "", "decode_str", CONFIG_TYPE_INT, {.num = 0}},
     {I "", "fasta_regex", CONFIG_TYPE_STRING, {.str = " (\\+|-)?[0-9]+"}},

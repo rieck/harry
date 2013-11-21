@@ -25,7 +25,7 @@ typedef struct
     void (*measure_config) ();
     /** Comparison function */
     float (*measure_compare) (hstring_t, hstring_t);
-} func_t;
+} measure_t;
 
 /* Module functions */
 int measure_match(const char *);
