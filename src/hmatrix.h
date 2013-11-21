@@ -39,7 +39,8 @@ typedef struct
 } hmatrix_t;
 
 hmatrix_t *hmatrix_init(hstring_t *s, int n);
-void hmatrix_range(hmatrix_t *m, char *x, char *y);
+void hmatrix_xrange(hmatrix_t *m, char *x);
+void hmatrix_yrange(hmatrix_t *m, char *y);
 float *hmatrix_alloc(hmatrix_t *m);
 float hmatrix_get(hmatrix_t *m, int x, int y);
 void hmatrix_set(hmatrix_t *m, int x, int y, float f);

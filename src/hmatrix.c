@@ -10,8 +10,8 @@
  */
 
 /**
- * @defgroup matrix Matrix functions
- * Functions for processing similarity values in a matrix
+ * @defgroup matrix Matrix object
+ * Functions for processing similarity values in a symmetric matrix
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
  */
@@ -29,10 +29,9 @@ extern config_t cfg;
 
 /**
  * Initialize a matrix for similarity values
- * @param m Matrix structure
  * @param s Array of string objects
  * @param n Number of string objects 
- * @return Matrix structure
+ * @return Matrix object
  */
 hmatrix_t *hmatrix_init(hstring_t *s, int n)
 {
@@ -40,16 +39,14 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 
     hmatrix_t *m = malloc(sizeof(hmatrix_t));
     if (!m) {
-        error("Could not allocate matrix structure");
+        error("Could not allocate matrix object");
         return NULL;
     }
 
     /* Set default ranges */
     m->num = n;
-    m->x.i = 0;
-    m->x.n = n;
-    m->y.i = 0;
-    m->y.n = n;
+    m->x.i = 0, m->x.n = n;
+    m->y.i = 0, m->y.n = n;
 
     /* Initialized later */
     m->values = NULL;
@@ -73,10 +70,10 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 
 /**
  * Parse a range string 
- * @param r Range structure
+ * @param r Range object
  * @param str Range string, e.g. 3:14 or 2:-1 or :
  * @param n Maximum size
- * @return Range structure
+ * @return Range object
  */
 static range_t parse_range(range_t r, char *str, int n)
 {
@@ -87,10 +84,10 @@ static range_t parse_range(range_t r, char *str, int n)
     if (!ptr) {
         error("Invalid range string '%s'.", str);
         return r;
+    } else {
+        /* Create split */
+        *ptr = '\0';
     }
-
-    /* Create split */
-    *ptr = '\0';
 
     /* Start parsing */
     l = strtol(str, &end, 10);
@@ -124,20 +121,30 @@ static range_t parse_range(range_t r, char *str, int n)
 }
 
 /**
- * Set the x and y range for computation
- * @param m Matrix structure
+ * Set the x range for computation
+ * @param m Matrix object
  * @param x String for x range 
- * @param y String for y range
  */
-void hmatrix_range(hmatrix_t *m, char *x, char *y)
+void hmatrix_xrange(hmatrix_t *m, char *x)
 {
+    assert(m && x);
     m->x = parse_range(m->x, x, m->num);
+}
+
+/**
+ * Set the y range for computation
+ * @param m Matrix object
+ * @param y String for y range 
+ */
+void hmatrix_yrange(hmatrix_t *m, char *y)
+{
+    assert(m && y);
     m->y = parse_range(m->y, y, m->num);
 }
 
 /** 
  * Allocate memory for matrix
- * @param m Matrix structure
+ * @param m Matrix object
  * @return pointer to floats
  */
 float *hmatrix_alloc(hmatrix_t *m)
@@ -156,7 +163,7 @@ float *hmatrix_alloc(hmatrix_t *m)
 
 /**
  * Set a value in the matrix
- * @param m Matrix structure
+ * @param m Matrix object
  * @param x Coordinate x
  * @param y Coordinate y
  * @param f Value
@@ -173,7 +180,7 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 
 /**
  * Get a value from the matrix
- * @param m Matrix structure
+ * @param m Matrix object
  * @param x Coordinate x
  * @param y Coordinate y
  * @return f Value
@@ -189,9 +196,9 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
 
 /**
  * Compute similarity measure and fill matrix
- * @param m Matrix structure
+ * @param m Matrix object
  * @param s Array of string objects
- * @param f Similarity measure 
+ * @param measure Similarity measure 
  */
 void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
@@ -224,7 +231,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 
 /**
  * Destroy a matrix of simililarity values and free its memory
- * @param m Matrix structure
+ * @param m Matrix object
  */
 void hmatrix_destroy(hmatrix_t *m)
 {

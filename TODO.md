@@ -2,7 +2,6 @@
 
 ## New features
 
-+ Implementation of Matrix object
 + Selection of ranges (rectangular matrices)
 + On-the-fly computation (e.g. for patched libsvm or shogun)
 
