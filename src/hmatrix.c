@@ -163,7 +163,9 @@ float *hmatrix_alloc(hmatrix_t *m)
  */ 
 void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 {
-    int idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
+    int idx;
+    
+    idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
     assert(idx < m->size);
     m->values[idx] = f;
 }
@@ -178,7 +180,9 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
  */ 
 float hmatrix_get(hmatrix_t *m, int x, int y)
 {
-    int idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
+    int idx;
+    
+    idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
     assert(idx < m->size);
     return m->values[idx];
 }
