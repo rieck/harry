@@ -12,23 +12,32 @@
 #ifndef HMATRIX_H
 #define HMATRIX_H
 
+/** 
+ * Range for matrix 
+ */
+typedef struct 
+{
+    int i;    /**< Start of range */
+    int n;    /**< End of range */
+} range_t;
+
 /**
  * Structure for a matrix
  */
 typedef struct
 {
-    float *labels       /**< Labels */
-    char *srcs;         /**< Sources */
+    float *labels;      /**< Labels */
+    char **srcs;        /**< Sources */
     int num;            /**< Number of strings */
 
     float *values;      /**< Similarity values */
-    int xb, xe;         /**< Begin and end indices */
-    int yb, ye;         /**< Begin and end indices */
-    int sym:1;          /**< Symmetric flag */
+    range_t x;          /**< Range x */
+    range_t y;          /**< Range y */
 } hmatrix_t;
 
-void hmatrix_print(hmatrix_t);
-hmatrix_t hmatrix_init(char *x, char *y, int s, int n);
+hmatrix_t hmatrix_init();
+hmatrix_t hmatrix_range(hmatrix_t m, char *x, char *y);
+hmatrix_t hmatrix_alloc(hmatrix_t m);
 void hmatrix_destroy(hmatrix_t);
 
 #endif /* HMATRIX_H */
