@@ -73,7 +73,7 @@ int output_open(char *name)
  * @param m Matrix of similarity values 
  * @return Number of written values
  */
-int output_write(hmatrix_t *m)
+int output_write(hmatrix_t * m)
 {
     return func.output_write(m);
 }

@@ -30,6 +30,9 @@ extern config_t cfg;
 /* Local variables */
 static void *z = NULL;
 static int zlib = 0;
+static int save_indices = 0;
+static int save_labels = 0;
+static int save_sources = 0;
 
 #define output_printf(z, ...) (\
    zlib ? \
@@ -46,6 +49,10 @@ static int zlib = 0;
 int output_text_open(char *fn)
 {
     assert(fn);
+
+    config_lookup_int(&cfg, "output.save_indices", &save_indices);
+    config_lookup_int(&cfg, "output.save_labels", &save_labels);
+    config_lookup_int(&cfg, "output.save_sources", &save_sources);
 
     config_lookup_int(&cfg, "output.compress", &zlib);
 
@@ -73,13 +80,41 @@ int output_text_open(char *fn)
  * @param m Matrix/triangle of similarity values 
  * @return Number of written values
  */
-int output_text_write(hmatrix_t *m)
+int output_text_write(hmatrix_t * m)
 {
     assert(m);
     int i, j, r, k = 0;
 
+    if (save_indices) {
+        output_printf(z, "#");
+        for (j = m->y.i; j < m->y.n; j++) {
+            output_printf(z, " %d", j);
+        }
+        output_printf(z, "\n");
+    }
+
+    if (save_labels) {
+        output_printf(z, "#");
+        for (j = m->y.i; j < m->y.n; j++) {
+            output_printf(z, " %g", m->labels[j]);
+        }
+        output_printf(z, "\n");
+    }
+
+    if (save_sources) {
+        output_printf(z, "#");
+        for (j = m->y.i; j < m->y.n; j++) {
+            output_printf(z, " %s", m->srcs[j]);
+        }
+        output_printf(z, "\n");
+    }
+
     for (i = m->x.i; i < m->x.n; i++) {
         for (j = m->y.i; j < m->y.n; j++) {
+            /* Cut off lower triangle */
+            if (j < i)
+                continue;
+
             r = output_printf(z, "%g ", hmatrix_get(m, i, j));
             if (r < 0) {
                 error("Could not write to output file");
@@ -87,6 +122,19 @@ int output_text_write(hmatrix_t *m)
             }
             k++;
         }
+
+        if (save_indices || save_labels || save_sources)
+            output_printf(z, "#");
+
+        if (save_indices)
+            output_printf(z, " %d", i);
+
+        if (save_labels)
+            output_printf(z, " %g", m->labels[i]);
+
+        if (save_sources)
+            output_printf(z, " %s", m->srcs[i]);
+
         output_printf(z, "\n");
     }
 

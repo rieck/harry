@@ -640,6 +640,21 @@ The similarity values are stored as precomputed kernel for libsvm.
 
 =back
 
+=item B<save_indices = 1;>
+
+If this parameter is to I<1>, the indices of the strings will be stored in
+an extra column and row in some output formats.
+
+=item B<save_labels = 1;>
+
+If this parameter is to I<1>, the labels of the strings will be stored in
+an extra column and row in some output formats.
+
+=item B<save_sources = 1;>
+
+If this parameter is to I<1>, the sources of the strings will be stored in
+an extra column and row in some output formats.
+
 =item B<compress = 0;>
 
 If this parameter is set to I<1>, the output is stored using zlib compression,

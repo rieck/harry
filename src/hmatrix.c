@@ -149,8 +149,11 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
  */
 float *hmatrix_alloc(hmatrix_t *m)
 {
-    m->size = (m->x.n - m->x.i) * (m->y.n - m->y.i);
+    /* TODO: support for arbitrary subsets and ranges */
+    assert(m->x.n == m->y.n);
+    assert(m->x.i == m->y.i && m->x.i == 0);
 
+    m->size = (m->x.n * (m->x.n - 1) / 2 + m->x.n);
     m->values = calloc(sizeof(float), m->size);
 
     if (!m->values) {
@@ -170,9 +173,15 @@ float *hmatrix_alloc(hmatrix_t *m)
  */
 void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 {
-    int idx;
+    int idx, i, j;
 
-    idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
+    if (x > y) {
+        i = y, j = x;
+    } else {
+        i = x, j = y;
+    }
+
+    idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
     assert(idx < m->size);
     m->values[idx] = f;
 }
@@ -187,9 +196,15 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
  */
 float hmatrix_get(hmatrix_t *m, int x, int y)
 {
-    int idx;
+    int idx, i, j;
 
-    idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
+    if (x > y) {
+        i = y, j = x;
+    } else {
+        i = x, j = y;
+    }
+
+    idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
     assert(idx < m->size);
     return m->values[idx];
 }
@@ -213,6 +228,9 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 #pragma omp parallel for collapse(2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
+
+            if (j < i)
+                continue;
 
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
