@@ -8,12 +8,10 @@ EXTRA_DIST = README.md COPYING CHANGES harry.png TODO.md
 
 clean-local:
 	rm -f *~
+	rm -f CHANGES
 
 CHANGES:
 	$(srcdir)/git2changes.py
-	        
-distclean-local:
-	rm -f CHANGES
 
 dist-hook: 
 
