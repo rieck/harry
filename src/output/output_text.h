@@ -14,7 +14,7 @@
 
 /* text output module */
 int output_text_open(char *);
-int output_text_write(float *, int, int, int);
+int output_text_write(hmatrix_t *);
 void output_text_close(void);
 
 #endif /* OUTPUT_TEXT_H */

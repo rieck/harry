@@ -23,13 +23,12 @@ three steps:
    corresponds to opening and initializing a file in matlab format.  The
    function returns 1 on success and on 0 on failure.
      
-       `int output_xxx_write(float *m, int x, int y, int t);`
+       `int output_xxx_write(hmatrix_t *mat);`
 
    The function writes a matrix of similarity/dissimilarity values to the
-   output.  The dimensions of the matrix are given by the parameters `x` and
-   `y`.  If the flag `t` is non-zero, only the upper triangle of the matrix
-   is provided (only useful for symmetric comparisons).  The function should
-   return the number of written values.
+   output.  See the definition of hmatrix_t in hmatrix.h for details on the
+   content of the matrix structure.  The function should return the number
+   of written values.
        
        `void output_xxx_close();`
      

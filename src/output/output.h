@@ -12,12 +12,14 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
+#include "hmatrix.h"
+
 /* Configuration */
 void output_config(const char *);
 
 /* Generic interface */
 int output_open(char *);
-int output_write(float *, int, int, int);
+int output_write(hmatrix_t *);
 void output_close(void);
 
 #endif /* OUTPUT_H */

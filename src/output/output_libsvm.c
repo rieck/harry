@@ -72,31 +72,25 @@ int output_libsvm_open(char *fn)
 /**
  * Write similarity matrux to output
  * @param m Matrix/triangle of similarity values 
- * @param x Dimension of matrix
- * @param y Dimension of matrix
- * @param t 0 if matrix given, 1 for upper-right triangle
  * @return Number of written values
  */
-int output_libsvm_write(float *m, int x, int y, int t)
+int output_libsvm_write(hmatrix_t *m)
 {
-    assert(x && x >= 0 && y >= 0);
-    int i, j, k, r;
+    assert(m);
+    int i, j, r, k = 0;
 
-    for (k = i = 0; i < x; i++) {
-        output_printf(z, "<label> 0:%d", i);
-        for (j = 0; j < y; j++) {
-            if (t)
-                r = output_printf(z, " %d:%g", j + 1, m[tr_index(i,j,x)]);
-            else
-                r = output_printf(z, " %d:%g", j + 1, m[k++]);
+    for (i = m->x.i; i < m->x.n; i++) {
+        output_printf(z, "%f 0:%d", m->labels[i], i);
+        for (j = m->y.i; j < m->y.n; j++) {
+            r = output_printf(z, " %d:%g", j + 1, hmatrix_get(m, i, j));    
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
             }
+            k++;
         }
         output_printf(z, "\n");
     }
-
     return k;
 }
 

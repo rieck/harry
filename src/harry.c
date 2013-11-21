@@ -18,6 +18,7 @@
 #include "measures.h"
 #include "output.h"
 #include "vcache.h"
+#include "hmatrix.h"
 
 /* Global variables */
 int verbose = 0;
@@ -311,9 +312,10 @@ static void harry_init()
  * @param num Pointer to number of strings
  * @return array of string objects
  */
-static hstring_t *harry_read(char *input, long *num)
+static hstring_t *harry_read(char *input, int *num)
 {
     const char *cfg_str;
+    int i;
 
     /* Open input */
     config_lookup_string(&cfg, "input.input_format", &cfg_str);
@@ -326,13 +328,18 @@ static hstring_t *harry_read(char *input, long *num)
 
     /* Allocate memory for strings */
     hstring_t *strs = calloc(*num, sizeof(hstring_t));
+
     if (!strs)
         fatal("Could not allocate memory for strs");
 
-    long read = input_read(strs, *num);
+    int read = input_read(strs, *num);
     if (read <= 0)
         fatal("Failed to read strs from input '%s'", input);
     input_close();
+
+    /* Symbolize strings if requested */
+    for (i = 0; i < *num; i++)
+        strs[i] = hstring_preproc(strs[i]);
 
     return strs;
 }
@@ -341,42 +348,19 @@ static hstring_t *harry_read(char *input, long *num)
  * Compare a set of string objects
  * @param strs Array of string objects
  * @param num Number of strings
- * @return similarity values (upper triangle)
+ * @return Matrix of similarity valurs
  */
-static float *harry_process(hstring_t *strs, long num)
+static hmatrix_t *harry_compute(hstring_t *strs, int num)
 {
-    int i, k = 0;
+    hmatrix_t *mat = hmatrix_init(strs, num);
 
+    if (!hmatrix_alloc(mat))
+        fatal("Could not allocate matrix for similarity measure");
+
+    /* Compute matrix */
     info_msg(1, "Computing similarity measure '%s' with %d threads.",
              measure, omp_get_num_threads());
-
-    /* Symbolize strings if requested */
-    for (i = 0; i < num; i++)
-        strs[i] = hstring_preproc(strs[i]);
-
-    float *mat = malloc(sizeof(float) * tr_size(num));
-    if (!mat) {
-        fatal("Could not allocate matrix for similarity measure");
-    }
-#pragma omp parallel for collapse(2)
-    for (i = 0; i < num; i++) {
-        for (int j = 0; j < num; j++) {
-            /* Hack for better parallelization using OpenMP */
-            if (j < i)
-                continue;
-
-            mat[tr_index(i, j, num)] = measure_compare(strs[i], strs[j]);
-
-            if (verbose) {
-                if (k % num == 0)
-                    prog_bar(0, tr_size(num), k);
-                k++;
-            }
-        }
-    }
-
-    if (verbose)
-        prog_bar(0, tr_size(num), tr_size(num));
+    hmatrix_compute(mat, strs, measure_compare);
 
     return mat;
 }
@@ -384,10 +368,9 @@ static float *harry_process(hstring_t *strs, long num)
 /**
  * Write similarity values to an output file
  * @param output Output filename
- * @param mat Similarity values (upper triangle)
- * @param num Number of strings
+ * @param mat Matrix of similarity values
  */
-static void harry_write(char *output, float *mat, long num)
+static void harry_write(char *output, hmatrix_t *mat)
 {
     const char *cfg_str;
 
@@ -395,11 +378,11 @@ static void harry_write(char *output, float *mat, long num)
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
     output_config(cfg_str);
     info_msg(1, "Writing %ld similarity values to '%0.40s' [%s].",
-             tr_size(num), output, cfg_str);
+             mat->size, output, cfg_str);
     if (!output_open(output))
         fatal("Could not open output destination");
 
-    output_write(mat, num, num, TRUE);
+    output_write(mat);
     output_close();
 }
 
@@ -407,14 +390,16 @@ static void harry_write(char *output, float *mat, long num)
 /**
  * Exit Harry tool. 
  */
-static void harry_exit(hstring_t *strs, float *mat, long num)
+static void harry_exit(hstring_t *strs, hmatrix_t *mat, int num)
 {
     const char *cfg_str;
 
     /* Free memory */
     input_free(strs, num);
-    free(mat);
     free(strs);
+
+    /* Destroy matrix */
+    hmatrix_destroy(mat);
 
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
@@ -435,9 +420,9 @@ static void harry_exit(hstring_t *strs, float *mat, long num)
  */
 int main(int argc, char **argv)
 {
-    float *mat = NULL;
+    hmatrix_t *mat = NULL;
     hstring_t *strs = NULL;
-    long num = 0;
+    int num = 0;
     char *input = NULL;
     char *output = NULL;
 
@@ -446,8 +431,8 @@ int main(int argc, char **argv)
 
     harry_init();
     strs = harry_read(input, &num);
-    mat = harry_process(strs, num);
-    harry_write(output, mat, num);
+    mat = harry_compute(strs, num);
+    harry_write(output, mat);
     harry_exit(strs, mat, num);
 
     return EXIT_SUCCESS;

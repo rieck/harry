@@ -14,7 +14,7 @@
 
 /* libsvm output module */
 int output_libsvm_open(char *);
-int output_libsvm_write(float *, int, int, int);
+int output_libsvm_write(hmatrix_t *);
 void output_libsvm_close(void);
 
 #endif /* OUTPUT_LIBSVM_H */

@@ -34,32 +34,38 @@ extern config_t cfg;
  * @param n Number of string objects 
  * @return Matrix structure
  */
-hmatrix_t hmatrix_init(hmatrix_t m, hstring_t *s, int n)
+hmatrix_t *hmatrix_init(hstring_t *s, int n)
 {
     assert(s && n >= 0);
 
+    hmatrix_t *m = malloc(sizeof(hmatrix_t));
+    if (!m) {
+        error("Could not allocate matrix structure");
+        return NULL;
+    }
+
     /* Set default ranges */
-    m.num = n;
-    m.x.i = 0;
-    m.x.n = n;
-    m.y.i = 0;
-    m.y.n = n;
+    m->num = n;
+    m->x.i = 0;
+    m->x.n = n;
+    m->y.i = 0;
+    m->y.n = n;
 
     /* Initialized later */
-    m.values = NULL;
+    m->values = NULL;
 
     /* Allocate some space */
-    m.labels = calloc(n, sizeof(float));
-    m.srcs = calloc(n, sizeof(char *));
-    if (!m.srcs || !m.labels) {
+    m->labels = calloc(n, sizeof(float));
+    m->srcs = calloc(n, sizeof(char *));
+    if (!m->srcs || !m->labels) {
         error("Failed to initialize matrix for similarity values");
         return m;
     }
 
     /* Copy details from strings */
     for (int i = 0; i < n; i++) {
-        m.labels[i] = s[i].label;
-        m.srcs[i] = s[i].src ? strdup(s[i].src) : NULL;
+        m->labels[i] = s[i].label;
+        m->srcs[i] = s[i].src ? strdup(s[i].src) : NULL;
     }
 
     return m;
@@ -122,28 +128,59 @@ static range_t parse_range(range_t r, char *str, int n)
  * @param m Matrix structure
  * @param x String for x range 
  * @param y String for y range
- * @return Matrix structure
  */
-hstring_t hmatrix_range(hmatrix_t m, char *x, char *y)
+void hmatrix_range(hmatrix_t *m, char *x, char *y)
 {
-    m.x = parse_range(m.x, x, m.num);
-    m.y = parse_range(m.y, y, m.num);
-    return m;
+    m->x = parse_range(m->x, x, m->num);
+    m->y = parse_range(m->y, y, m->num);
 }
 
 /** 
  * Allocate memory for matrix
  * @param m Matrix structure
- * @return Matrix structure
+ * @return pointer to floats
  */
-hmatrix_t hmatrix_alloc(hmatrix_t m)
+float *hmatrix_alloc(hmatrix_t *m)
 {
-    int size = (m.x.n - m.x.i) * (m.y.n - m.y.i);
+    m->size = (m->x.n - m->x.i) * (m->y.n - m->y.i);
 
-    m.values = calloc(sizeof(float), size);
-    if (!m.values) 
+    m->values = calloc(sizeof(float), m->size);
+
+    if (!m->values) {
         error("Could not allocate matrix for similarity values");
-    return m;
+        return NULL;
+    }
+
+    return m->values;
+}
+
+/**
+ * Set a value in the matrix
+ * @param m Matrix structure
+ * @param x Coordinate x
+ * @param y Coordinate y
+ * @param f Value
+ */ 
+void hmatrix_set(hmatrix_t *m, int x, int y, float f)
+{
+    int idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
+    assert(idx < m->size);
+    m->values[idx] = f;
+}
+
+
+/**
+ * Get a value from the matrix
+ * @param m Matrix structure
+ * @param x Coordinate x
+ * @param y Coordinate y
+ * @return f Value
+ */ 
+float hmatrix_get(hmatrix_t *m, int x, int y)
+{
+    int idx = (x - m->x.i) * (m->x.n - m->x.i) + (y - m->y.i);
+    assert(idx < m->size);
+    return m->values[idx];
 }
 
 /**
@@ -151,17 +188,28 @@ hmatrix_t hmatrix_alloc(hmatrix_t m)
  * @param m Matrix structure
  * @param s Array of string objects
  * @param f Similarity measure 
- * @return Matrix structure
  */
-hmatrix_t hmatrix_compute(hmatrix_t m, hstring_t *s, 
-                          float (*measure)(hstring_t x, hstring_t y))
+void hmatrix_compute(hmatrix_t *m, hstring_t *s, 
+                     double (*measure)(hstring_t x, hstring_t y))
 {
-    for (int i = x.i; i < x.n; i++) {
-        for (int j = y.i; j < y.n; j++) {
+    int i, k = 0;
+    
+/* #pragma omp parallel for collapse(2) */
+    for (i = m->x.i; i < m->x.n; i++) {
+        for (int j = m->y.i; j < m->y.n; j++) {
+
             float f = measure(s[i], s[j]);
-            m.values[i - m.x.i][j - m.y.i] = f;
+            hmatrix_set(m, i, j, f);
+            
+            if (verbose && k % 100 == 0) {
+                prog_bar(0, m->size, k);
+                k++;
+            }
         }
     }
+
+    if (verbose)
+        prog_bar(0, m->size, m->size);
 }
  
 
@@ -169,18 +217,23 @@ hmatrix_t hmatrix_compute(hmatrix_t m, hstring_t *s,
  * Destroy a matrix of simililarity values and free its memory
  * @param m Matrix structure
  */
-void hmatrix_destroy(hmatrix_t m)
+void hmatrix_destroy(hmatrix_t *m)
 {
-    if (m.values)
-        free(m.values);
-    for (int i = 0; m.srcs && i < m.num; i++) 
-        if (m.srcs[i])
-            free(m.srcs[i]);
+    if (!m)
+        return;
+
+    if (m->values)
+        free(m->values);
+    for (int i = 0; m->srcs && i < m->num; i++) 
+        if (m->srcs[i])
+            free(m->srcs[i]);
     
-    if (m.srcs)
-        free(m.srcs);
-    if (m.labels)
-        free(m.labels);
+    if (m->srcs)
+        free(m->srcs);
+    if (m->labels)
+        free(m->labels);
+
+    free(m);
 }
 
 /** @} */

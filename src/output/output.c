@@ -32,7 +32,7 @@
 typedef struct
 {
     int (*output_open) (char *);
-    int (*output_write) (float *, int, int, int);
+    int (*output_write) (hmatrix_t *);
     void (*output_close) (void);
 } func_t;
 static func_t func;
@@ -71,14 +71,11 @@ int output_open(char *name)
 /**
  * Wrapper for writing a block to the output destination.
  * @param m Matrix of similarity values 
- * @param x Dimension of matrix
- * @param y Dimension of matrix
- * @param t Set to 1 if only upper triangle given
  * @return Number of written values
  */
-int output_write(float *m, int x, int y, int t)
+int output_write(hmatrix_t *m)
 {
-    return func.output_write(m, x, y, t);
+    return func.output_write(m);
 }
 
 /**

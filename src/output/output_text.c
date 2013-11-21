@@ -71,23 +71,21 @@ int output_text_open(char *fn)
 /**
  * Write similarity matrux to output
  * @param m Matrix/triangle of similarity values 
- * @param x Dimension of matrix
- * @param y Dimension of matrix
- * @param t 0 if matrix given, 1 for upper-right triangle
  * @return Number of written values
  */
-int output_text_write(float *m, int x, int y, int t)
+int output_text_write(hmatrix_t *m)
 {
-    assert(x && x >= 0 && y >= 0);
-    int i, j, k, r;
+    assert(m);
+    int i, j, r, k = 0;
 
-    for (k = i = 0; i < x; i++) {
-        for (j = t ? i : 0; j < y; j++) {
-            r = output_printf(z, "%g ", m[k++]);
+    for (i = m->x.i; i < m->x.n; i++) {
+        for (j = m->y.i; j < m->y.n; j++) {
+            r = output_printf(z, "%g ", hmatrix_get(m, i, j));
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
             }
+            k++;
         }
         output_printf(z, "\n");
     }
