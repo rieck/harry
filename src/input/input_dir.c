@@ -87,7 +87,6 @@ int input_dir_read(hstring_t *strs, int len)
         strs[j].src = strdup(dp->d_name);
         strs[j].type = TYPE_CHAR;
         strs[j].len = l;
-        strs[j].idx = j;
         strs[j].label = get_label(strs[j].src);
         j++;
     }
