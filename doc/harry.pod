@@ -260,6 +260,22 @@ set to 1, all similarity values are stored in the cache.  This feature
 should only be enabled if many of the compared strings are identical and
 thus caching similarity values can provide benefits.
 
+=item B<x_range = "";>
+
+=item B<y_range = "";>
+
+These two parameters control which strings are used for computing the matrix
+of similarity values.  The format of the ranges is similar to indexing of
+Python arrays.  Each parameter specifies an index range of the form
+"I<start>:I<end>", where I<start> defines the index of the first string
+and I<end> defines the index after the last string.  For example, I<"0:4">
+selects the strings at index 0, 1, 2, and 3.  If the start or end index is
+omitted, the minimum or maximum value is substituted, respectively.  For
+example, I<":4"> selects strings starting from the index I<0> and I<":">
+chooses all strings.  If the end index is negative, it is substracted from
+the maximum index, that is, I<":-1"> selects all strings except for the last
+one.
+
 =item B<dist_hamming = {> 
 
 This module implements the Hamming distance (see Hamming, 1950).  The
@@ -690,6 +706,8 @@ overwritten on the command-line.  Following is the list of options:
   -n,  --num_threads <num>       Set number of threads.
   -a,  --cache_size <size>       Set size of cache in megabytes.
   -g,  --global_cache <0|1>      Set global cache for similarity values.
+  -x,  --x_range <start>:<end>   Set the index range (x) of strings.
+  -y,  --y_range <start>:<end>   Set the index range (y) of stirngs.
 
 =head2 Generic options
 

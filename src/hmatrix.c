@@ -77,10 +77,14 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
  */
 static range_t parse_range(range_t r, char *str, int n)
 {
-    char *end = NULL;
-    char *ptr = strchr(str, ':');
+    char *ptr, *end = NULL;
     long l;
 
+    /* Empty string */
+    if (strlen(str) == 0)
+        return r;
+
+    ptr = strchr(str, ':');
     if (!ptr) {
         error("Invalid range string '%s'.", str);
         return r;
@@ -93,27 +97,27 @@ static range_t parse_range(range_t r, char *str, int n)
     l = strtol(str, &end, 10);
     if (strlen(str) == 0)
         r.i = 0;
-    else if (end == '\0')
+    else if (*end == '\0')
         r.i = (int) l;
     else
-        error("Could not parse range '%s'.", str);
+        error("Could not parse range '%s:...'.", str);
 
     l = strtol(ptr + 1, &end, 10);
     if (strlen(ptr + 1) == 0)
         r.n = n;
-    else if (end == '\0')
+    else if (*end == '\0')
         r.n = (int) l;
     else
-        error("Could not parse range '%s'.", str);
+        error("Could not parse range '...:%s'.", ptr + 1);
 
     /* Support negative end index */
     if (r.n < 0) {
-        r.n = n - r.n;
+        r.n = n + r.n;
     }
 
     /* Sanity checks */
     if (r.n < 0 || r.i < 0 || r.n > n || r.i > n - 1 || r.i >= r.n) {
-        error("Invalid range '%s'. Using default '0:%d'.", str, n);
+        error("Invalid range '%s:%s'. Using default '0:%d'.", str, ptr + 1, n);
         r.i = 0, r.n = n;
     }
 

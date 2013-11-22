@@ -28,7 +28,7 @@ static int print_conf = 0;
 static char *measure = NULL;
 
 /* Option string */
-#define OPTSTRING       "n:g:a:m:c:i:o:d:z:vqVhMCD"
+#define OPTSTRING       "n:g:a:m:c:i:o:d:x:y:z:vqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -53,6 +53,8 @@ static struct option longopts[] = {
     {"quiet", 0, NULL, 'q'},
     {"version", 0, NULL, 'V'},
     {"help", 0, NULL, 'h'},
+    {"x_range", 1, NULL, 'x'},
+    {"y_range", 1, NULL, 'y'},
     {NULL, 0, NULL, 0}
 };
 
@@ -109,6 +111,8 @@ static void print_usage(void)
            "  -n,  --num_threads <num>       Set number of threads.\n"
            "  -a,  --cache_size <size>       Set size of cache in megabytes.\n"
            "  -g,  --global_cache <0|1>      Set global cache for similarity values.\n"
+           "  -x,  --x_range <start>:<end>   Set the index range (x) of strings.\n"
+           "  -y,  --y_range <start>:<end>   Set the index range (y) of strings.\n"           
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
@@ -179,6 +183,12 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'z':
             config_set_int(&cfg, "output.compress", atoi(optarg));
+            break;
+        case 'x':
+            config_set_string(&cfg, "measures.x_range", optarg);
+            break;
+        case 'y':
+            config_set_string(&cfg, "measures.y_range", optarg);
             break;
         case 'q':
             verbose = 0;
@@ -352,8 +362,17 @@ static hstring_t *harry_read(char *input, int *num)
  */
 static hmatrix_t *harry_compute(hstring_t *strs, int num)
 {
+    char *cfg_str;
+
     hmatrix_t *mat = hmatrix_init(strs, num);
 
+    /* Set ranges */
+   config_lookup_string(&cfg, "measures.x_range", (const char **) &cfg_str);
+   hmatrix_xrange(mat, cfg_str);;
+   config_lookup_string(&cfg, "measures.y_range", (const char **) &cfg_str);
+   hmatrix_yrange(mat, cfg_str);
+
+    /* Allocate matrix */
     if (!hmatrix_alloc(mat))
         fatal("Could not allocate matrix for similarity measure");
 
