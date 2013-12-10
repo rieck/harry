@@ -27,6 +27,10 @@
 extern int verbose;
 extern config_t cfg;
 
+/* Useful macros */
+#define min(x,y) (x < y ? x : y)
+#define max(x,y) (x > y ? x : y)
+
 /**
  * Initialize a matrix for similarity values
  * @param s Array of string objects
@@ -153,13 +157,17 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
  */
 float *hmatrix_alloc(hmatrix_t *m)
 {
-    /* TODO: support for arbitrary subsets and ranges */
-    assert(m->x.n == m->y.n);
-    assert(m->x.i == m->y.i && m->x.i == 0);
+    int block, os, oe, overlap;
+    
+    m->size = (m->x.n - m->x.i) * (m->y.n - m->y.i);
+    os = max(m->x.i, m->y.i);
+    oe = min(m->x.n, m->y.n);
+    overlap = oe - os;
+    
+    if (overlap > 0) 
+        m->size -= (overlap * overlap) / 2 - overlap / 2;
 
-    m->size = (m->x.n * (m->x.n - 1) / 2 + m->x.n);
     m->values = calloc(sizeof(float), m->size);
-
     if (!m->values) {
         error("Could not allocate matrix for similarity values");
         return NULL;
@@ -177,15 +185,19 @@ float *hmatrix_alloc(hmatrix_t *m)
  */
 void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 {
-    int idx, i, j;
+    int idx, i, j, oe, os, overlap;
 
-    if (x > y) {
-        i = y, j = x;
-    } else {
-        i = x, j = y;
-    }
+    /* Relative spacing */
+    i = x - m->x.i, j = y - m->y.i;
+    idx = j * (m->y.n - m->y.i) + i;
+    
+    os = max(m->x.i, m->y.i);
+    oe = min(m->x.n, m->y.n);
+    overlap = oe - os;
 
-    idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
+    if (i >= os && i < oe && j >= os && j < oe) 
+        idx = ((j - i) + i * overlap - i * (i - 1) / 2);
+    
     assert(idx < m->size);
     m->values[idx] = f;
 }
