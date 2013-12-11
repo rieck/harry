@@ -716,7 +716,7 @@ section for further details.
 =head1 LIMITATIONS
 
 B<harry> supports only symmetric similiarity measures, that is, m(x,y) =
-m(x,y) for all x and y.  This restriction saves considerable run-time and
+m(y,x) for all x and y.  This restriction saves considerable run-time and
 memory in most cases.  However, some similarity measures need to be
 artificially "symmetrized", such as the normalized compression distance,
 thereby requiring additional computations.
