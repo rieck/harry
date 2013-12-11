@@ -112,19 +112,25 @@ int output_text_write(hmatrix_t *m)
     for (i = m->x.i; i < m->x.n; i++) {
         for (j = m->y.i; j < m->y.n; j++) {
             /* Cut off lower triangle */
-            if (j < i)
+            if (j < i) {
+                output_printf(z, ",");
                 continue;
+            }
 
-            r = output_printf(z, "%g ", hmatrix_get(m, i, j));
+            r = output_printf(z, "%g", hmatrix_get(m, i, j));
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
             }
+            
+            if (j < m->y.n - 1)
+                output_printf(z, ",");
+            
             k++;
         }
 
         if (save_indices || save_labels || save_sources)
-            output_printf(z, "#");
+            output_printf(z, " #");
 
         if (save_indices)
             output_printf(z, " %d", i);
