@@ -60,12 +60,6 @@ int output_libsvm_open(char *fn)
         return FALSE;
     }
 
-    /* Write harry header */
-    if (zlib)
-        harry_zversion(z, "# ", "Output module for libsvm format");
-    else
-        harry_version(z, "# ", "Output module for libsvm format");
-
     return TRUE;
 }
 
@@ -80,7 +74,7 @@ int output_libsvm_write(hmatrix_t *m)
     int i, j, r, k = 0;
 
     for (i = m->x.i; i < m->x.n; i++) {
-        output_printf(z, "%f 0:%d", m->labels[i], i);
+        output_printf(z, "%f 0:%d", m->labels[i], i + 1);
         for (j = m->y.i; j < m->y.n; j++) {
             r = output_printf(z, " %d:%g", j + 1, hmatrix_get(m, i, j));
             if (r < 0) {
