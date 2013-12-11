@@ -80,7 +80,7 @@ int output_text_open(char *fn)
  * @param m Matrix/triangle of similarity values 
  * @return Number of written values
  */
-int output_text_write(hmatrix_t * m)
+int output_text_write(hmatrix_t *m)
 {
     assert(m);
     int i, j, r, k = 0;

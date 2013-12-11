@@ -15,4 +15,4 @@ liboutput_la_SOURCES	= output.c output.h \
 beautify:
 			gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \
 				-T string_t -T gzFile -T sm_t -T FILE \
-				$(liboutput_la_SOURCES)                          
+				-T hmatrix_t $(liboutput_la_SOURCES)
