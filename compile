@@ -28,9 +28,9 @@ case $arg in
    profile|debug)
        echo "Configuration: Profiling & Debugging"
        CC="gcc" \
-       LDFLAGS="-L/usr/local/opt/libarchive/lib -g -ggdb -pg -lprofiler" \
+       LDFLAGS="-L/usr/local/opt/libarchive/lib -g -lprofiler" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
-       CFLAGS="-g -ggdb -pg -lprofiler" \
+       CFLAGS="-g -lprofiler  -Wl,-no_pie" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
    schulle*)
