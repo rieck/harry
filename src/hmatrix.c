@@ -219,12 +219,14 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
 {
     int i, k = 0;
+    int step = floor(m->size * 0.001) + 1;
 
     /*
      * It seems that the for-loop has to start at index 0 for OpenMP to 
-     * collapse both loops. This renders a little ugly, since hmatrix 
+     * collapse both loops. This renders it a little ugly, since hmatrix 
      * requires absolute indices.
      */
+
 #pragma omp parallel for collapse(2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
@@ -235,7 +237,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
 
-            if (verbose && k % (m->size / 1000) == 0)
+            if (verbose && k % step == 0)
                 prog_bar(0, m->size, k);
 
             k++;
