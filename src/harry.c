@@ -359,7 +359,7 @@ static hmatrix_t *harry_compute(hstring_t *strs, int num)
 
     /* Compute matrix */
     info_msg(1, "Computing similarity measure '%s' with %d threads.",
-             measure, omp_get_num_threads());
+             measure, omp_get_max_threads());
     hmatrix_compute(mat, strs, measure_compare);
 
     return mat;
