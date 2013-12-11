@@ -6,7 +6,7 @@ if ! which harry > /dev/null ; then
 fi
 
 if ! which svm-train > /dev/null ; then
-    echo "Could not find svm-train in PATH"
+    echo "Could not find svm-train of libsvm in PATH"
     exit
 fi
 
