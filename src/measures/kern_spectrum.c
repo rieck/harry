@@ -74,6 +74,8 @@ static int cmp_uint64(const void *x, const void *y)
  */
 static uint64_t *extract_kmers(hstring_t x)
 {
+    assert(x.len - len + 1 >= 0);
+
     int i;
 
     uint64_t *xh = malloc(x.len * sizeof(uint64_t));
@@ -99,6 +101,10 @@ static float kernel(hstring_t x, hstring_t y)
 {
     float k = 0;
     int i = 0, j = 0;
+    
+    /* Check for small strings */
+    if (x.len < len || y.len < len)
+        return 0;
     
     /* Extract k-mers */
     uint64_t *xh = extract_kmers(x);
