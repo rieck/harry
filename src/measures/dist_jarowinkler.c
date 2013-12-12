@@ -75,17 +75,22 @@ float dist_jaro_compare(hstring_t x, hstring_t y)
 {
     int i, j, l;
     int m = 0, t = 0;
-    int xflags[x.len], yflags[y.len];
     int range = max(0, max(x.len, y.len) / 2 - 1);
 
     if (x.len == 0 && y.len == 0)
         return 0.0;
+        
+    char *xflags = calloc(sizeof(char), x.len);
+    if (!xflags) {
+        error("Could not allocate memory for Jaro distance");
+        return 0;
+    }
 
-    for (i = 0; i < y.len; i++)
-        yflags[i] = 0;
-
-    for (i = 0; i < x.len; i++)
-        xflags[i] = 0;
+    char *yflags = calloc(sizeof(char), y.len);
+    if (!yflags) {
+        error("Could not allocate memory for Jaro distance");
+        return 0;
+    }
 
     /* Calculate matching characters */
     for (i = 0; i < y.len; i++) {
@@ -117,6 +122,9 @@ float dist_jaro_compare(hstring_t x, hstring_t y)
         }
     }
     t /= 2;
+
+    free(xflags);
+    free(yflags);
 
     return 1 - ((((float) m / x.len) + ((float) m / y.len) +
                  ((float) (m - t) / m)) / 3.0);
