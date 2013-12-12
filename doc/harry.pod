@@ -11,19 +11,20 @@ B<harry> [B<options>] [B<-c> I<config>] I<input> I<output>
 =head1 DESCRIPTION
 
 B<harry> is a small tool for measuring the similarity of strings. The tool
-supports several common distance and kernel functions for strings as well as
-some exotic similarity measures.  The focus of B<harry> lies on implicit
+supports common distance and kernel functions for strings as well as some
+exotic similarity measures.  The focus of B<harry> lies on implicit
 similarity measures, that is, comparison functions that do not give rise to
 an explicit vector space.  Examples of such similarity measures are the
-Levenshtein distance, the Jaro-Winkler distance or the subsequence kernel. 
+Levenshtein distance, the Jaro-Winkler distance or the normalized
+compression distance.
 
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
-I<output>.  The similarity measure can be computed based on the
-granulartiy of characters as well as words contained in the strings.  The
-configuration of this process, such as the input format, the similarity
-measure and the output format, are specified in the file I<config> and can
-be additionally refined using command-line options.
+I<output>.  The similarity measure can be computed based on the granulartiy
+of characters or words contained in the strings.  The configuration of this
+process, such as the input format, the similarity measure and the output
+format, are specified in the file I<config> and can be additionally refined
+using command-line options.
 
     .---------.                        .----------.
     |  lines  |                        |   text   |
@@ -51,16 +52,16 @@ file is structured into the three sections B<input>, B<measures> and
 B<output>, which define the parameters of the input format, the similarity
 measures and the output format, respectively.  If no configuration file is
 provided, B<harry> resorts to a default configuration.  This default
-configuration can be dumped using the command-line option B<-D> (see
+configuration can be printed using the command-line option B<-D> (see
 B<OPTIONS>).
 
 =head2 Input formats
 
-B<harry> supports different formats for reading sets of strings,
-which may range from plain files to directories and other structured
-resources. Following is a list of supported input formats. Additionally, 
-the input format can be specified using the command-line option B<-i> 
-(see B<OPTIONS>).
+B<harry> supports different formats for reading sets of strings, which may
+range from plain files to directories and other structured resources.  The
+input format is specified in the configuration file of B<harry>, but can
+also be defined on the command line using the option B<-i> (see B<OPTIONS>).
+Following is a list of supported input formats:  
 
 =over 4
 
@@ -89,10 +90,9 @@ of the files are used as labels for the strings.
 
 =item I<"arc"> 
 
-The input strings are available as binary files in a compressed
-archive, such as a zip or tgz archive.  The name of the archive is
-given as I<input> to B<harry>.  The suffixes of the files are used as
-labels for the strings.
+The input strings are available as binary files in a compressed archive,
+such as a zip or tgz archive.  The name of the archive is given as I<input>
+to B<harry>.  The suffixes of the files are used as labels for the strings.
 
 =item I<"fasta">
 
@@ -105,16 +105,16 @@ are allowed if they are preceded by either ';' or '>'.
 
 =item B<decode_str = 0;>
 
-If this parameter is set to I<1>, B<harry> automatically decodes strings that
-contain URI-encoded characters.  That is, substrings of the form %XX are
-replaced with the byte represented by the hexadecimal number XX.  
+If this parameter is set to I<1>, B<harry> automatically decodes strings
+that contain URI-encoded characters.  That is, substrings of the form %XX
+are replaced with the byte corresponding to the hexadecimal number XX.
 
 =item B<fasta_regex = " (\\+|-)?[0-9]+";>
 
 The FASTA format allows to equip each string with a short description.  In
 several data sets this description contains a numerical label which can be
-useful in supervised learning tasks.  The parameter is a regular expression
-which can be used to match numerical labels, such as +1 and -1.
+used for supervised learning tasks.  The parameter defines a regular
+expression that matches these numerical labels, such as +1 and -1.
 
 =item B<lines_regex = "^(\\+|-)?[0-9]+";>
 
@@ -144,9 +144,12 @@ set of delimiters is defined using B<word_delim>.
 =head2 Similarity Measures
 
 B<harry> supports different similarity measures for comparing string,
-including common distance and kernel functions. The similarity measure
-can be specified in the configuration file as well as on the command line
-using the option B<-m> (see B<OPTIONS>).
+including common distance and kernel functions.  The similarity measure can
+be specified in the configuration file as well as on the command line using
+the option B<-m> (see B<OPTIONS>).  Parameters of the similarity measures
+are organized in individual configuration groups, as for example,
+B<dist_levenshtein> for the Levenshtein distance or B<kern_spectrum> for the
+spectrum kernel.
 
 =over 4
 
@@ -163,53 +166,53 @@ comparing the strings. Supported similarity measures are:
 
 =item I<"dist_hamming">
 
-Hamming distance. See configuration section B<dist_hamming>.
+Hamming distance. See configuration group B<dist_hamming>.
 
 =item I<"dist_levenshtein">
 
-Levenshtein or edit distance. See configuration section B<dist_levenshtein>.
+Levenshtein or edit distance. See configuration group B<dist_levenshtein>.
 
 =item I<"dist_damerau">
 
-Damerau-Levenshtein distance. See configuration section B<dist_damerau>.
+Damerau-Levenshtein distance. See configuration group B<dist_damerau>.
 
 =item I<"dist_jaro">
 
 =item I<"dist_jarowinkler">
 
-Jaro and Jaro-Winkler distance. See configuration section B<dist_jarowinkler>.
+Jaro and Jaro-Winkler distance. See configuration group B<dist_jarowinkler>.
 
 =item I<"dist_lee">
 
-Lee distance. See configuration section B<dist_lee>
+Lee distance. See configuration group B<dist_lee>
 
 =item I<"dist_compression">
 
-Normalized compression distance. See configuration section B<dist_compression>.
+Normalized compression distance. See configuration group B<dist_compression>.
 
 =item I<"dist_bag">
 
-Bag distance. See configuration section B<dist_bag>.
+Bag distance. See configuration group B<dist_bag>.
 
 =item I<"dist_kernel">
 
-Kernel-based distance. See configuration section B<dist_kernel>.
+Kernel-based distance. See configuration group B<dist_kernel>.
 
 =item I<"kern_subsequence">
 
-Subsequence kernel (SSK). See configuration section B<kern_subsequence>.
+Subsequence kernel (SSK). See configuration group B<kern_subsequence>.
 
 =item I<"kern_spectrum">
 
-Spectrum kernel. See configuration section B<kern_spectrum>.
+Spectrum kernel. See configuration group B<kern_spectrum>.
 
 =item I<"kern_wdegree">
 
-Weighted-degree kernel with shifts. See configuration section B<kern_wdegree>.
+Weighted-degree kernel with shifts. See configuration group B<kern_wdegree>.
 
 =item I<"kern_distance">
 
-Distance substitution kernel. See configuration section B<kern_distance>.
+Distance substitution kernel. See configuration group B<kern_distance>.
 
 =item I<"sim_simpson">
 
@@ -228,7 +231,7 @@ Distance substitution kernel. See configuration section B<kern_distance>.
 Similarity coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
 known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
 (also known as Anderberg), second Kulczynski, Otsuka 
-(also known as Ochiai). See configuration section
+(also known as Ochiai). See configuration group
 B<sim_coefficient>.
 
 =back
@@ -236,8 +239,8 @@ B<sim_coefficient>.
 =item B<word_delim = "";>
 
 The parameter B<word_delim> defines characters for delimiting words in
-strings.  If this parameter is set the comparison of strings is performed on
-words, that is, each word is considered as a symbol.  If the parameter
+strings.  If this parameter is set, the comparison of strings is performed
+on words, that is, each word is considered as a symbol.  If the parameter
 B<word_delim> is an empty strings, B<harry> considers each individual
 character as a symbol.
 
@@ -311,9 +314,9 @@ respectively.  The default costs are I<1.0> for each operation.
 
 =item B<dist_damerau = {> 
 
-This module implements the Damerau-Levenshtein distance (see Damerau, 1964).
-The runtime complexity of a comparison is quadratic in the length of the
-strings.  The following parameters are supported:
+This module implements the Damerau-Levenshtein distance (see Damerau, 1964). 
+The runtime and space complexity of a comparison is quadratic in the length
+of the strings.  The following parameters are supported:
 
 =over 4
 
@@ -334,7 +337,8 @@ for normalization on the average length of the compared strings.
 
 The computation of the distance can be adapted using four parameters
 defining the cost for an insertion, deletion, substitution and
-transposition, respectively.  The default costs are I<1.0> for each operation.
+transposition, respectively.  The default costs are I<1.0> for each
+operation.
 
 =back
 
@@ -344,11 +348,10 @@ transposition, respectively.  The default costs are I<1.0> for each operation.
 =item B<dist_jarowinkler = {> 
 
 This module implements the Jaro distance (Jaro, 1989) and the Jaro-Winkler
-distance (Winkler, 1990). In contrast to the original formulation, 
-a true distance function is implemented, where similar
-strings yield a low value and dissimilar strings a high value.
-The runtime complexity of a comparison is
-quadratic in the length of the strings.  The following parameters are
+distance (Winkler, 1990).  In contrast to the original formulation, a valid
+distance function is implemented, where similar strings yield a low value
+and dissimilar strings a high value.  The runtime complexity of a comparison
+is quadratic in the length of the strings.  The following parameters are
 supported:
 
 =over 4
@@ -378,10 +381,11 @@ string are added to the distance. The following parameters are supported:
 
 These parameters specify the range of symbols, that is, the minimum and
 maximum value of a symbol in all strings.  If the strings consist of bytes,
-B<min_sym> is typically set to I<0> and B<max_sym> to I<256>.  For printable
+B<min_sym> is typically set to I<0> and B<max_sym> to I<255>.  For printable
 characters the range can be further narrowed to I<32> and I<126>.  If words
 are analyzed using the parameter B<word_delim>, B<min_sym> must be set to 0
-and B<max_sym> to I<65535>.
+and B<max_sym> to I<65535>, as the words are mapped to integers in this
+range.
 
 =back
 
@@ -402,9 +406,9 @@ constant factor.  The following parameters are supported:
 
 =item B<level = 9;> 
 
-This parameter defines the compression level used by B<zlib> and must be 
-between I<1> and I<9>, where I<1> gives the best speed and I<9> the best 
-compression. See B<zlib(3)>
+This parameter defines the compression level used by B<zlib> and must be
+between I<1> and I<9>, where I<1> gives the best speed and I<9> the best
+compression.  See B<zlib(3)>
 
 =back
 
@@ -413,7 +417,7 @@ compression. See B<zlib(3)>
 =item B<dist_bag = {> 
 
 This module implements the bag distance (see Bartolini et al., 2002). The
-distance approximates and lower bounds the Levenshtein distance. The
+distance approximates and lower bounds the Levenshtein distance.  The
 runtime complexity of a comparison is linear in the length of the strings. 
 The following parameters are supported:
 
@@ -432,10 +436,11 @@ for normalization on the average length of the compared strings.
 
 =item B<dist_kernel = {> 
 
-This module implements a kernel-based distance. The specified kernel
-function is mapped to a Euclidean distance using simple geometry.  The
-runtime complexity depends on the kernel function.  The following parameters
-are supported:
+This module implements a kernel-based distance, that is, a distance  is
+computed given a kernel function for strings.  The specified kernel function
+is mapped to a Euclidean distance using simple geometry.  The runtime
+complexity depends on the kernel function.  The following parameters are
+supported:
 
 =over 4
 
@@ -523,8 +528,11 @@ This parameter is a weighting term for gaps within subsequences.
 =item B<kern_spectrum = {>
 
 This module implements the spectrum kernel (Leslie et al., 2002). The
-runtime complexity is linear in the length of the strings. The following
-parameters are supported:
+runtime complexity is linear in the length of the strings.  The spectrum
+kernel is closely related to bag-of-words kernels.  Thus, the tool
+B<sally(1)> may be alternatively used to compute the kernel using an
+explicit vector space.  The following parameters are supported by the
+implementation:
 
 =over 4
 
@@ -536,7 +544,7 @@ normalization of kernels.
 
 =item B<length = 3;>
 
-This parameter specifies the length of k-mers (or n-grams) to consider.
+This parameter specifies the length of k-mers/k-grams to consider. 
 
 =back
 
@@ -670,9 +678,9 @@ gzcat(1) and gunzip(1) can be used to access the data.
 
 =head1 OPTIONS
 
-The configuration of B<harry> can be refined and altered using several
-command-line options.  Moreover, some parameters of the configuration can be
-overwritten on the command-line.  Following is the list of options:
+The configuration of B<harry> can be refined using several command-line
+options.  Moreover, some parameters of the configuration can be overwritten
+on the command line.  Following is the list of options:
 
 =head2 I/O options
 
@@ -723,31 +731,49 @@ thereby requiring additional computations.
  
 =head1 REFERENCES
 
-Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an Approximate Distance. String Processing and Information Retrieval, LNCS 2476, 271-283, 2002.
+Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an
+Approximate Distance.  String Processing and Information Retrieval, LNCS
+2476, 271-283, 2002.
 
-Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized compression distance. Communications in Information and Systems, 5 (4), 367-384, 2005.
+Cebrian, Alfonseca, and Ortega. Common pitfalls using the normalized
+compression distance.  Communications in Information and Systems, 5 (4),
+367-384, 2005.
 
-Cheetham and Hazel. Binary (Presence-Absence) Similarity Coefficients. Journal of Paleontology, 43:5, 1130-1136, 1969
+Cheetham and Hazel. Binary (Presence-Absence) Similarity Coefficients.
+Journal of Paleontology, 43:5, 1130-1136, 1969
 
-Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on Information Theory, 51:4, 1523-1545, 2005. 
+Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on
+Information Theory, 51:4, 1523-1545, 2005.
 
-Damerau. A technique for computer detection and correction of spelling errors, Communications of the ACM, 7(3):171-176, 1964
+Damerau. A technique for computer detection and correction of spelling
+errors, Communications of the ACM, 7(3):171-176, 1964
 
-Haasdonk and Bahlmann. Learning with Distance Substitution Kernels. Pattern Recognition ; DAGM Symposium, 220-227, 2004.
+Haasdonk and Bahlmann. Learning with Distance Substitution Kernels. Pattern
+Recognition ; DAGM Symposium, 220-227, 2004.
 
-Hamming. Error-detecting and error-correcting codes. Bell System Technical Journal, 29(2):147-160, 1950.
+Hamming. Error-detecting and error-correcting codes. Bell System Technical
+Journal, 29(2):147-160, 1950.
 
-Jaro. Advances in record linkage methodology as applied to the 1985 census of Tampa Florida. Journal of the American Statistical Association 84 (406): 414-420, 1989.
+Jaro. Advances in record linkage methodology as applied to the 1985 census
+of Tampa Florida.  Journal of the American Statistical Association 84 (406):
+414-420, 1989.
 
-Lee. Some properties of nonbinary error-correcting codes. IRE Transactions on Information Theory 4 (2): 77-82, 1958.
+Lee. Some properties of nonbinary error-correcting codes. IRE Transactions
+on Information Theory 4 (2): 77-82, 1958.
 
-Levenshtein. Binary codes capable of correcting deletions, insertions, and reversals. Doklady Akademii Nauk SSSR, 163 (4):845-848, 1966.
+Levenshtein. Binary codes capable of correcting deletions, insertions, and
+reversals.  Doklady Akademii Nauk SSSR, 163 (4):845-848, 1966.
 
-Lodhi, Saunders, Shawe-Taylor, Cristianini, and Watkins. Text classification using string kernels. Journal of Machine Learning Research, 2:419-444, 2002.
+Lodhi, Saunders, Shawe-Taylor, Cristianini, and Watkins. Text classification
+using string kernels.  Journal of Machine Learning Research, 2:419-444,
+2002.
 
-Sonnenburg, Raetsch, and Rieck. Large scale learning with string kernels. In Large Scale Kernel Machines, pages 73--103. MIT Press, 2007.
+Sonnenburg, Raetsch, and Rieck. Large scale learning with string kernels. In
+Large Scale Kernel Machines, pages 73--103.  MIT Press, 2007.
 
-Winkler.  String Comparator Metrics and Enhanced Decision Rules in the Fellegi-Sunter Model of Record Linkage. Proceedings of the Section on Survey Research Methods. 354-359, 1990.
+Winkler.  String Comparator Metrics and Enhanced Decision Rules in the
+Fellegi-Sunter Model of Record Linkage.  Proceedings of the Section on
+Survey Research Methods.  354-359, 1990.
 
 =head1 COPYRIGHT
 
