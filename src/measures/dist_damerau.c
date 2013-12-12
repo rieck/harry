@@ -62,6 +62,9 @@ void dist_damerau_config()
     n = lnorm_get(str);
 }
 
+/* Ugly macros to access arrays */
+#define D(i,j)       d[(i) * (y.len + 2) + (j)]
+
 /**
  * Computes the Damerau-Levenshtein distance of two strings. Adapted from 
  * Wikipedia entry and comments from Stackoverflow.com
@@ -72,25 +75,31 @@ void dist_damerau_config()
 float dist_damerau_compare(hstring_t x, hstring_t y)
 {
     int i, j, inf = x.len + y.len;
-    int d[x.len + 2][y.len + 2];
 
     if (x.len == 0 && y.len == 0)
         return 0;
 
+    /* Allocate table for dynamic programming */
+    int *d = malloc((x.len + 2) * (y.len + 2) * sizeof(int));
+
     /* FIXME. This should be replaced with a hash table */
     int max_alph = 1 << (8 * sizeof(sym_t));
-    int alph[max_alph];
-    memset(alph, 0, max_alph * sizeof(int));
+    int *alph = calloc(max_alph, sizeof(int));
+
+    if (!d || !alph) {
+        error("Could not allocate memory for Damerau-Levenshtein distance");
+        return 0;
+    }
 
     /* Initialize distance matrix */
-    d[0][0] = inf;
+    D(0, 0) = inf;
     for (i = 0; i <= x.len; i++) {
-        d[i + 1][1] = i;
-        d[i + 1][0] = inf;
+        D(i + 1, 1) = i;
+        D(i + 1, 0) = inf;
     }
     for (j = 0; j <= y.len; j++) {
-        d[1][j + 1] = j;
-        d[0][j + 1] = inf;
+        D(1, j + 1) = j;
+        D(0, j + 1) = inf;
     }
 
     for (i = 1; i <= x.len; i++) {
@@ -102,17 +111,22 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
             if (dz == 0)
                 db = j;
 
-            d[i + 1][j + 1] = min(d[i][j] + dz,
-                                  d[i + 1][j] + cost_ins,
-                                  d[i][j + 1] + cost_del,
-                                  d[i1][j1] + (i - i1 - 1) + cost_tra +
+            D(i + 1, j + 1) = min(D(i, j) + dz,
+                                  D(i + 1, j) + cost_ins,
+                                  D(i, j + 1) + cost_del,
+                                  D(i1, j1) + (i - i1 - 1) + cost_tra +
                                   (j - j1 - 1));
         }
 
         alph[hstring_get(x, i - 1)] = i;
     }
 
-    float r = d[x.len + 1][y.len + 1];
+    float r = D(x.len + 1, y.len + 1);
+    
+    /* Free memory */
+    free(d);
+    free(alph);
+    
     return lnorm(n, r, x, y);
 }
 
