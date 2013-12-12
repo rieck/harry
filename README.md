@@ -11,7 +11,7 @@ common distance and kernel functions for strings as well as some excotic
 similarity measures.  The focus of Harry lies on implicit similarity
 measures, that is, comparison functions that do not give rise to an explicit
 vector space.  Examples of such similarity measures are the Levenshtein
-distance, the Jaro-Winkler distance or the subsequence kernel.
+distance, the Jaro-Winkler distance or the spectrum kernel.
 
 During operation Harry loads a set of strings from input, computes the
 specified similarity measure and writes a matrix of similarity values to
@@ -34,8 +34,7 @@ distance and the bag-of-words kernel.
 Similarity Measures
 --
 
-Harry is currently under development. The following similarity measures are
-supported so far
+The following similarity measures are supported so by Harry
 
     dist_bag             Bag distance
     dist_compression     Normalized compression distance (NCD)
@@ -86,10 +85,10 @@ necessary.
 
 #### Mac OS X
 
-For compiling Harry on Mac OS X a working installation of Xcode. Moreover, a
-C compiler supporting OpenMP is required (`clang` from Xcode currently does
-not support OpenMP).  The following packages need to be installed from
-Homebrew.
+For compiling Harry on Mac OS X a working installation of Xcode is needed.
+Moreover, a C compiler supporting OpenMP is required (`clang` from Xcode
+currently does not support OpenMP).  The following packages need to be
+installed from Homebrew.
 
     gcc43 (or download from <http://hpc.sourceforge.net>)
     libconfig

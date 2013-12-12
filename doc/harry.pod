@@ -21,10 +21,10 @@ compression distance.
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
 I<output>.  The similarity measure can be computed based on the granulartiy
-of characters or words contained in the strings.  The configuration of this
-process, such as the input format, the similarity measure and the output
-format, are specified in the file I<config> and can be additionally refined
-using command-line options.
+of characters as well as words contained in the strings.  The configuration
+of this process, such as the input format, the similarity measure and the
+output format, are specified in the file I<config> and can be additionally
+refined using command-line options.
 
     .---------.                        .----------.
     |  lines  |                        |   text   |
