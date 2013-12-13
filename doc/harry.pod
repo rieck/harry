@@ -20,7 +20,7 @@ compression distance.
 
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
-I<output>.  The similarity measure can be computed based on the granulartiy
+I<output>.  The similarity measure can be computed based on the granularity
 of characters as well as words contained in the strings.  The configuration
 of this process, such as the input format, the similarity measure and the
 output format, are specified in the file I<config> and can be additionally
@@ -723,7 +723,7 @@ section for further details.
 
 =head1 LIMITATIONS
 
-B<harry> supports only symmetric similiarity measures, that is, m(x,y) =
+B<harry> supports only symmetric similarity measures, that is, m(x,y) =
 m(y,x) for all x and y.  This restriction saves considerable run-time and
 memory in most cases.  However, some similarity measures need to be
 artificially "symmetrized", such as the normalized compression distance,
