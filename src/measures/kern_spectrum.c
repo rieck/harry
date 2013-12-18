@@ -21,6 +21,11 @@
  * <hr>
  * <em>kern_spectrum</em>: Spectrum kernel
  *
+ * The runtime complexity of the kernel is linear in the length of the 
+ * strings. However, the implementation is not very efficient, as the 
+ * k-mers are repeatedly extracted from the strings. A caching mechanism
+ * might provide a considerable acceleration here.
+ *
  * C. Leslie, E. Eskin, and W. Noble. The spectrum kernel: a string kernel
  * for SVM protein classifica- tion.  In Proc. of Pacific Symposium on
  * Biocomputing (PSB), pages 564-575, 2002.
