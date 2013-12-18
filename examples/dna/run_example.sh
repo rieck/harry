@@ -13,9 +13,9 @@ fi
 # Compute the weighted-degree kernel
 harry -v -c harry.cfg -m wdegree dna_hg16.txt kern_wdegree.txt
 
-# Compute the Spectrum kernel
+# Compute the spectrum kernel
 harry -v -c harry.cfg -m spectrum dna_hg16.txt kern_spectrum.txt
 
 # Train SVM (cross-validation)
-svm-train -v 5 -t 4 kern_wdegree.txt
-svm-train -v 5 -t 4 kern_spectrum.txt
+svm-train -q -v 5 -t 4 kern_wdegree.txt
+svm-train -q -v 5 -t 4 kern_spectrum.txt
