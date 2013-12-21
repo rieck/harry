@@ -30,9 +30,12 @@ extern config_t cfg;
 /* Local variables */
 static void *z = NULL;
 static int zlib = 0;
+
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
+
+static const char *separator = ",";
 
 #define output_printf(z, ...) (\
    zlib ? \
@@ -53,7 +56,7 @@ int output_text_open(char *fn)
     config_lookup_int(&cfg, "output.save_indices", &save_indices);
     config_lookup_int(&cfg, "output.save_labels", &save_labels);
     config_lookup_int(&cfg, "output.save_sources", &save_sources);
-
+    config_lookup_string(&cfg, "output.separator", &separator);
     config_lookup_int(&cfg, "output.compress", &zlib);
 
     if (zlib)
@@ -113,7 +116,7 @@ int output_text_write(hmatrix_t *m)
         for (j = m->y.i; j < m->y.n; j++) {
             /* Cut off lower triangle */
             if (j < i) {
-                output_printf(z, ",");
+                output_printf(z, "%s", separator);
                 continue;
             }
 
@@ -124,7 +127,7 @@ int output_text_write(hmatrix_t *m)
             }
             
             if (j < m->y.n - 1)
-                output_printf(z, ",");
+                output_printf(z, "%s", separator);
             
             k++;
         }

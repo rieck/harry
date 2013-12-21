@@ -640,13 +640,20 @@ Following is a list of output formats supported by B<harry>:
 
 =item I<"text"> 
 
-The similarity values are stored as plain text.
+The similarity values are stored as plain text. Only the upper triangle of
+the symmetric similarity matrix is saved.
 
 =item I<"libsvm">
 
-The similarity values are stored as precomputed kernel for libsvm. 
+The similarity values are stored as precomputed kernel for libsvm. The full
+similarity matrix is stored.
 
 =back
+
+=item B<separator = ",";>
+
+This parameter defines the separator used in text mode for separating
+the similarity values.
 
 =item B<save_indices = 1;>
 
