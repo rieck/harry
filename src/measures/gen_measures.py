@@ -3,6 +3,7 @@ import sys
 
 measures = set()
 modules = set()
+aliases = {}
 description = {}
 
 # Read data
@@ -10,11 +11,12 @@ for line in open(sys.argv[1]).readlines():
     if line.startswith('#'):
         continue
     tok = line.strip().split(':')
+    ms = tok[0].split(',')
 
-    # Extract data
-    measures.add(tok[0])
+    measures.add(ms[0])
+    aliases[ms[0]] = ms[1:]
     modules.add(tok[1])
-    description[tok[0]] = tok[2]
+    description[ms[0]] = tok[2]
     
 # Prepare includes
 includes = ""
@@ -25,12 +27,17 @@ for m in sorted(modules):
 interfaces = 'measure_t func[] = {\n'
 for m in sorted(measures):
     interfaces += '    {"%s", %s_config, %s_compare},\n' % (m,m,m)
+    for a in aliases[m]:
+        interfaces += '    {"%s", %s_config, %s_compare},\n' % (a,m,m)
 interfaces += '    {NULL}\n};'
 
 # Prepare list
 list = '    printf(\n'
 for m in sorted(measures):
-    list += '           "    %-20s %s\\n"\n' % (m, description[m])
+    s = m
+    for a in aliases[m]:
+        s += ', %s' % a
+    list += '           "    %-30s %s\\n"\n' % (s, description[m])
 list += '    );\n'
 
 # Replace 
