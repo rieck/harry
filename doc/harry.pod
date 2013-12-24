@@ -146,10 +146,17 @@ set of delimiters is defined using B<word_delim>.
 B<harry> supports different similarity measures for comparing string,
 including common distance and kernel functions.  The similarity measure can
 be specified in the configuration file as well as on the command line using
-the option B<-m> (see B<OPTIONS>).  Parameters of the similarity measures
-are organized in individual configuration groups, as for example,
-B<dist_levenshtein> for the Levenshtein distance or B<kern_spectrum> for the
-spectrum kernel.
+the option B<-m> (see B<OPTIONS>).  The name of each similarity measure is
+prefixed by its type (I<dist_> for distances, I<kern_> for kernels and
+I<sim_> for similarity measures).  For convenience, this prefix can be
+omitted.  Moreover, the names of some similarity measures are aliased,
+for example, the normalized compression distance is available as
+I<dist_compression> and I<dist_ncd>.
+
+Parameters of the similarity measures are organized in individual
+configuration groups.  For instance, parameters of the Levenshtein distance
+are defined in the group B<dist_levenshtein>, while parameters for the Jaro
+and Jaro-Winkler distance are given in B<dist_jarowinkler>.
 
 =over 4
 
@@ -162,15 +169,15 @@ spectrum kernel.
 The parameter B<type> specifies the similarity measure that is used for
 comparing the strings. Supported similarity measures are:
 
-=over 20
+=over 4
 
 =item I<"dist_hamming">
 
 Hamming distance. See configuration group B<dist_hamming>.
 
-=item I<"dist_levenshtein">
+=item I<"dist_levenshtein">, I<"dist_edit">
 
-Levenshtein or edit distance. See configuration group B<dist_levenshtein>.
+Levenshtein distance. See configuration group B<dist_levenshtein>.
 
 =item I<"dist_damerau">
 
@@ -178,17 +185,19 @@ Damerau-Levenshtein distance. See configuration group B<dist_damerau>.
 
 =item I<"dist_jaro">
 
+Jaro distance. See configuration group B<dist_jarowinkler>.
+
 =item I<"dist_jarowinkler">
 
-Jaro and Jaro-Winkler distance. See configuration group B<dist_jarowinkler>.
+Jaro-Winkler distance. See configuration group B<dist_jarowinkler>.
 
 =item I<"dist_lee">
 
 Lee distance. See configuration group B<dist_lee>
 
-=item I<"dist_compression">
+=item I<"dist_compression">, I<"dist_ncd">
 
-Normalized compression distance. See configuration group B<dist_compression>.
+Normalized compression distance (NCD). See configuration group B<dist_compression>.
 
 =item I<"dist_bag">
 
@@ -198,40 +207,51 @@ Bag distance. See configuration group B<dist_bag>.
 
 Kernel-based distance. See configuration group B<dist_kernel>.
 
-=item I<"kern_subsequence">
+=item I<"kern_subsequence">, I<"kern_ssk">
 
 Subsequence kernel (SSK). See configuration group B<kern_subsequence>.
 
-=item I<"kern_spectrum">
+=item I<"kern_spectrum">, I<"kern_ngram">
 
-Spectrum kernel. See configuration group B<kern_spectrum>.
+Spectrum kernel (also n-gram kernel). See configuration group B<kern_spectrum>.
 
-=item I<"kern_wdegree">
+=item I<"kern_wdegree">, I<"kern_wdk">
 
-Weighted-degree kernel with shifts. See configuration group B<kern_wdegree>.
+Weighted-degree kernel (WDK) with shifts. See configuration group B<kern_wdegree>.
 
-=item I<"kern_distance">
+=item I<"kern_distance">, I<"kern_dsk">
 
-Distance substitution kernel. See configuration group B<kern_distance>.
+Distance substitution kernel (DSK). See configuration group B<kern_distance>.
 
 =item I<"sim_simpson">
 
+Simpson coefficient. See configuration group B<sim_coefficient>.
+
 =item I<"sim_jaccard">
+
+Jaccard coefficient.  See configuration group B<sim_coefficient>.
 
 =item I<"sim_braun">
 
-=item I<"sim_dice">
+Braun-Blanquet coefficient.  See configuration group B<sim_coefficient>.
 
-=item I<"sim_sokal">
+=item I<"sim_dice">, I<"sim_czekanowski">
+
+Dice-coefficient (Czekanowsi coefficient) See configuration group
+B<sim_coefficient>.
+
+=item I<"sim_sokal">, I<"sim_anderberg">
+
+Sokal-Sneath coefficient (Anderberg coefficient).  See configuration group
+B<sim_coefficient>.
 
 =item I<"sim_kulczynski">
 
-=item I<"sim_otsuka">
+Second Kulczynski coefficient.  See configuration group B<sim_coefficient>.
 
-Similarity coefficients: Simpson, Jaccard Braun-Blanquet, Dice (also
-known as Soerensen-Dice and Czekanowski), Sokal-Sneath 
-(also known as Anderberg), second Kulczynski, Otsuka 
-(also known as Ochiai). See configuration group
+=item I<"sim_otsuka">, I<"sim_ochiai">
+
+Otsuka coefficient (Ochiai coefficient).  See configuration group
 B<sim_coefficient>.
 
 =back
