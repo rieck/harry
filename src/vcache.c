@@ -75,7 +75,7 @@ int vcache_store(uint64_t key, float value, int id)
 {
     int idx;
 
-    idx = key % space;
+    idx = (key ^ id) % space;
 
     rwlock_set_wlock(&rwlock);
 
@@ -101,7 +101,7 @@ int vcache_load(uint64_t key, float *value, int id)
 {
     int ret, idx;
 
-    idx = key % space;
+    idx = (key ^ id) % space;
     rwlock_set_rlock(&rwlock);
     if (cache[idx].key == key && cache[idx].id == id) {
         *value = cache[idx].val;
