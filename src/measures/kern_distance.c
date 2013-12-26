@@ -102,7 +102,7 @@ static float dot(hstring_t x, hstring_t y)
 
     yk = hstring_hash1(y);
     if (!vcache_load(yk, &d2, ID_KERN_DISTANCE)) {
-        d2 = func[dist].measure_compare(o, y);
+        d2 = func[dist].measure_compare(y, o);
         vcache_store(yk, d2, ID_KERN_DISTANCE);
     }
 

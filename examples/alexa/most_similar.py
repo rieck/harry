@@ -5,14 +5,14 @@ from numpy import *
 fname = sys.argv[1]
 
 # Load top alexa websites
-N = array(open('alex1000.txt').read().splitlines())
+N = array(open('alexa1000.txt').read().splitlines())
 
 # Load and expand distance matrix
 D = genfromtxt(fname, delimiter=',')
 D[isnan(D)] = 0
 D = D.T + D
 
-# Sort columns of distance matrix
+# Sort rows of distance matrix
 j = argsort(D)
 
 # Print 3 most similar names for first 5 sites
