@@ -10,10 +10,9 @@ if ! which svm-train > /dev/null ; then
     exit
 fi
 
-for kern in kern_distance ; do 
+for kern in kern_spectrum kern_subsequence kern_distance ; do 
     # Compute the kernel
     harry -v -c harry.cfg -m $kern reuters.zip $kern.txt
-
     # Train SVM (cross-validation)
     svm-train -q -v 5 -t 4 $kern.txt
 done
