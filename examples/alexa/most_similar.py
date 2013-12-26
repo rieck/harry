@@ -12,10 +12,10 @@ D = genfromtxt(fname, delimiter=',')
 D[isnan(D)] = 0
 D = D.T + D
 
+# Sort columns of distance matrix
+j = argsort(D)
+
 # Print 3 most similar names for first 5 sites
-print '\n%s' % fname
 for i in range(5):
-    print '%s:\t' % N[i],
-    j = argsort(D[i,:])
-    print N[j[1:4]]
+    print '%s:\t%s' % (N[i], N[j[i, 1:4]])
 
