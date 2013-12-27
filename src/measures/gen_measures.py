@@ -35,9 +35,9 @@ interfaces += '    {NULL}\n};'
 list = '    printf(\n'
 for m in sorted(measures):
     s = m
-    for a in aliases[m]:
-        s += ', %s' % a
-    list += '           "    %-40s -  %s\\n"\n' % (description[m], s)
+    #for a in aliases[m]:
+    #    s += ', %s' % a
+    list += '           "    %-20s %s\\n"\n' % (s, description[m])
 list += '    );\n'
 
 # Replace 
