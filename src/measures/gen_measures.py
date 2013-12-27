@@ -37,7 +37,7 @@ for m in sorted(measures):
     s = m
     for a in aliases[m]:
         s += ', %s' % a
-    list += '           "    %-30s %s\\n"\n' % (s, description[m])
+    list += '           "    %-40s -  %s\\n"\n' % (description[m], s)
 list += '    );\n'
 
 # Replace 

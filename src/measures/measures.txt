@@ -13,7 +13,7 @@ kern_subsequence,kern_ssk:kern_subsequence:Subsequence kernel (SSK)
 kern_spectrum,kern_ngram:kern_spectrum:Spectrum kernel
 kern_wdegree,kern_wdk:kern_wdegree:Weighted-degree kernel (WDK)
 sim_braun:sim_coefficient:Braun-Blanquet coefficient 
-sim_dice,sim_czekanowski:sim_coefficient:Soerencen-Dice coefficient
+sim_dice,sim_czekanowski:sim_coefficient:Soerensen-Dice coefficient
 sim_jaccard:sim_coefficient:Jaccard coefficient
 sim_kulczynski:sim_coefficient:second Kulczynski coefficient
 sim_otsuka,sim_ochiai:sim_coefficient:Otsuka coefficient
