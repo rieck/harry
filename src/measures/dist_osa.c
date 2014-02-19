@@ -93,9 +93,10 @@ float dist_osa_compare(hstring_t x, hstring_t y)
                 a = b;
 
             /* Transposition */
-            if (i > 1 && j > 1 && hstring_compare(x, i - 1, y, j - 2) &&
+            if (i > 1 && j > 1 && 
+                hstring_compare(x, i - 1, y, j - 2) &&
                 hstring_compare(x, i - 2, y, j - 1)) {
-                b = D(i - 2, i - 2) + cost_tra;
+                b = D(i - 2, j - 2) + cost_tra;
                 if (a > b)
                     a = b;
             }
