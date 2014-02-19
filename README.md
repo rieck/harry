@@ -45,12 +45,13 @@ The following similarity measures are supported so by Harry
     dist_kernel          Kernel-based distance
     dist_lee             Lee distance
     dist_levenshtein     Levenshtein distance
+    dist_osa             Optimal string alignment (OSA) distance
     kern_distance        Distance substitution kernel (DSK)
     kern_spectrum        Spectrum kernel
     kern_subsequence     Subsequence kernel (SSK)
     kern_wdegree         Weighted-degree kernel (WDK)
     sim_braun            Braun-Blanquet coefficient
-    sim_dice             Soerencen-Dice coefficient
+    sim_dice             Soerensen-Dice coefficient
     sim_jaccard          Jaccard coefficient
     sim_kulczynski       second Kulczynski coefficient
     sim_otsuka           Otsuka coefficient
