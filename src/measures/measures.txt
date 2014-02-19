@@ -8,6 +8,7 @@ dist_jarowinkler:dist_jarowinkler:Jaro-Winkler distance
 dist_kernel:dist_kernel:Kernel-based distance
 dist_lee:dist_lee:Lee distance
 dist_levenshtein,dist_edit:dist_levenshtein:Levenshtein distance
+dist_osa:dist_osa:Optimal string alignment (OSA) distance
 kern_distance,kern_dsk:kern_distance:Distance substitution kernel (DSK)
 kern_subsequence,kern_ssk:kern_subsequence:Subsequence kernel (SSK)
 kern_spectrum,kern_ngram:kern_spectrum:Spectrum kernel

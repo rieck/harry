@@ -183,6 +183,10 @@ Levenshtein distance. See configuration group B<dist_levenshtein>.
 
 Damerau-Levenshtein distance. See configuration group B<dist_damerau>.
 
+=item I<"dist_osa">
+
+Optimal string alignment (OSA) distance. See configuration group B<dist_osa>.
+
 =item I<"dist_jaro">
 
 Jaro distance. See configuration group B<dist_jarowinkler>.
@@ -364,6 +368,43 @@ operation.
 
 =item B<};>
 
+
+=item B<dist_osa = {> 
+
+This module implements the optimal string alignment (OSA) distance, which is
+often confused with the Damerau-Levenshtein distance.  The difference
+between the two is that the OSA distance computes the number of edit
+operations needed to make the strings equal under the condition that no
+substring is edited more than once.  (see the Wikipedia article on the
+Damerau-Levenshtein distance).  The runtime and space complexity of a
+comparison is quadratic in the length of the strings.  The following
+parameters are supported:
+
+=over 4
+
+=item B<norm = "none";>
+
+This parameter specifies the normalization of the distance. Supported values
+are I<"none"> for no normalization, I<"min"> for normalization on the
+minimum length, I<"max"> for normalization on the maximum length, I<"avg">
+for normalization on the average length of the compared strings.
+
+=item B<cost_ins = 1.0;>
+
+=item B<cost_del = 1.0;>
+
+=item B<cost_sub = 1.0;>
+
+=item B<cost_tra = 1.0;>
+
+The computation of the distance can be adapted using four parameters
+defining the cost for an insertion, deletion, substitution and
+transposition, respectively.  The default costs are I<1.0> for each
+operation.
+
+=back
+
+=item B<};>
 
 =item B<dist_jarowinkler = {> 
 
