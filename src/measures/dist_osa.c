@@ -64,7 +64,7 @@ void dist_osa_config()
  */
 float dist_osa_compare(hstring_t x, hstring_t y)
 {
-    int i, j, a, b;
+    int i, j, a, b, c;
 
     if (x.len == 0 && y.len == 0)
         return 0;
@@ -80,6 +80,9 @@ float dist_osa_compare(hstring_t x, hstring_t y)
     for (i = 1; i <= x.len; i++) {
         for (j = 1; j <= y.len; j++) {
 
+            /* Comparison */
+            c = hstring_compare(x, i - 1, y, j - 1);
+
             /* Insertion an deletion */
             a = D(i - 1, j) + cost_ins;
             b = D(i, j - 1) + cost_del;
@@ -87,16 +90,15 @@ float dist_osa_compare(hstring_t x, hstring_t y)
                 a = b;
 
             /* Substitution */
-            b = D(i - 1, j - 1) +
-                (hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
+            b = D(i - 1, j - 1) + c ? cost_sub : 0;
             if (a > b)
                 a = b;
 
             /* Transposition */
             if (i > 1 && j > 1 && 
-                hstring_compare(x, i - 1, y, j - 2) &&
-                hstring_compare(x, i - 2, y, j - 1)) {
-                b = D(i - 2, j - 2) + cost_tra;
+                !hstring_compare(x, i - 1, y, j - 2) &&
+                !hstring_compare(x, i - 2, y, j - 1)) {
+                b = D(i - 2, j - 2) + c ? cost_tra : 0;
                 if (a > b)
                     a = b;
             }
