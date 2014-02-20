@@ -17,6 +17,25 @@ case $arg in
        CFLAGS="-pedantic -pipe -O3 -g" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
        ;;
+       
+   gwd*)
+       echo "Configuration: GWDG Cluster (Goettingen)"
+       CC="gcc" \
+       LDFLAGS="-L$HOME/usr/lib" \
+       CPPFLAGS="-I$HOME/usr/include" \
+       PKG_CONFIG_PATH="$HOME/usr/lib/pkgconfig" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --prefix=$HOME/usr --enable-libarchive 
+       ;;
+
+   schulle*)
+       echo "Configuration: Schulle (ESX Cluster)"
+
+       CC="gcc" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --enable-libarchive 
+       ;;
+       
    kindl*)
        echo "Configuration: Kindl (OpenBSD)"
        CC="egcc" \
@@ -32,13 +51,6 @@ case $arg in
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -lprofiler  -Wl,-no_pie" \
        ./configure --prefix=/opt/rieck --enable-libarchive 
-       ;;
-   schulle*)
-       echo "Configuration: Schulle (ESX Cluster)"
-       PKG_CONFIG_PATH="/usr/local/lib/pkgconfig" \
-       CC="gcc" \
-       CFLAGS="-pedantic -pipe -O3 -g" \
-       ./configure --enable-libarchive 
        ;;
    *)    
        echo "Unknown system or configuration"

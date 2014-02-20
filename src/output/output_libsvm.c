@@ -74,7 +74,7 @@ int output_libsvm_write(hmatrix_t *m)
     int i, j, r, k = 0;
 
     for (i = m->x.i; i < m->x.n; i++) {
-        output_printf(z, "%f 0:%d", m->labels[i], i + 1);
+        output_printf(z, "%d 0:%d", (int) m->labels[i], i + 1);
         for (j = m->y.i; j < m->y.n; j++) {
             r = output_printf(z, " %d:%g", j + 1, hmatrix_get(m, i, j));
             if (r < 0) {
