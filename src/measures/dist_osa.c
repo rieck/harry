@@ -91,7 +91,7 @@ float dist_osa_compare(hstring_t x, hstring_t y)
                 a = b;
 
             /* Substitution */
-            b = D(i - 1, j - 1) + c ? cost_sub : 0;
+            b = D(i - 1, j - 1) + (c ? cost_sub : 0);
             if (a > b)
                 a = b;
 
@@ -99,7 +99,7 @@ float dist_osa_compare(hstring_t x, hstring_t y)
             if (i > 1 && j > 1 && 
                 !hstring_compare(x, i - 1, y, j - 2) &&
                 !hstring_compare(x, i - 2, y, j - 1)) {
-                b = D(i - 2, j - 2) + c ? cost_tra : 0;
+                b = D(i - 2, j - 2) + (c ? cost_tra : 0);
                 if (a > b)
                     a = b;
             }
@@ -108,6 +108,7 @@ float dist_osa_compare(hstring_t x, hstring_t y)
             D(i, j) = a;
         }
     }
+
     double m = D(x.len, y.len);
     free(d);
 
