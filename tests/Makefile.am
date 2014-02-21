@@ -19,7 +19,8 @@ check_PROGRAMS			= check_vcache \
 				  check_coefficient \
 				  check_distance \
 				  check_kernel \
-				  check_spectrum
+				  check_spectrum \
+				  check_osa
 				  
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
@@ -65,6 +66,9 @@ check_kernel_LDADD		= $(top_builddir)/src/libharry.la
 
 check_spectrum_SOURCES		= kern_spectrum.c tests.h
 check_spectrum_LDADD		= $(top_builddir)/src/libharry.la
+
+check_osa_SOURCES		= dist_osa.c tests.h
+check_osa_LDADD			= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

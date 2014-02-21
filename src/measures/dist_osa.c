@@ -72,10 +72,11 @@ float dist_osa_compare(hstring_t x, hstring_t y)
     /* Allocate matrix. We might reduce this to some rows only */
     int *d = (int *) calloc((x.len + 1) * (y.len + 1), sizeof(int));
 
+    /* Init margin of matrix */
     for (i = 0; i <= x.len; i++)
-        D(i, 0) = i;
-    for (j = 1; j <= y.len; j++)
-        D(0, j) = j;
+        D(i, 0) = i * cost_ins;
+    for (j = 0; j <= y.len; j++)
+        D(0, j) = j * cost_ins;
 
     for (i = 1; i <= x.len; i++) {
         for (j = 1; j <= y.len; j++) {
