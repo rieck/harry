@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-B<harry> -- a tool for measuring string similarity 
+B<harry> - a tool for measuring string similarity 
 
 =head1 SYNOPSIS
 
