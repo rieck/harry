@@ -382,6 +382,8 @@ void log_print(long a, long b, long c)
            "eta: %dh%.2dm%.2ds\n", buf,
            perc * 100, omp_get_num_threads(), vcache_get_used() * 100, 
            vcache_get_hitrate() * 100, hours, mins, secs);
+           
+    fflush(stdout);
 }
 
 
