@@ -42,4 +42,6 @@ uint64_t hash_str(char *s, int l);
 int strip_newline(char *s, int l);
 void debug_msg(char *m, ...);
 
+void log_print(long, long, long);
+
 #endif /* UTIL_H */

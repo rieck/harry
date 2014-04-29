@@ -771,6 +771,7 @@ on the command line.  Following is the list of options:
 
   -c,  --config_file <file>      Set configuration file.
   -v,  --verbose                 Increase verbosity.
+  -l,  --log_line                Print a log line every minute
   -q,  --quiet                   Be quiet during processing.
   -M,  --print_measures          Print list of similarity measures
   -C,  --print_config            Print the current configuration.

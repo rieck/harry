@@ -22,13 +22,14 @@
 
 /* Global variables */
 int verbose = 0;
+int log_line = 0;
 config_t cfg;
 
 static int print_conf = 0;
 static char *measure = NULL;
 
 /* Option string */
-#define OPTSTRING       "n:g:a:m:c:i:o:d:z:vqVhMCD"
+#define OPTSTRING       "n:g:a:m:c:i:o:d:z:lvqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -47,6 +48,7 @@ static struct option longopts[] = {
     {"global_cache", 1, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
+    {"log_line", 0, NULL, 'l' },
     {"print_measures", 0, NULL, 'M'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
@@ -112,6 +114,7 @@ static void print_usage(void)
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
+           "  -l,  --log_line                Print a log line every minute\n"
            "  -q,  --quiet                   Be quiet during processing.\n"
            "  -M,  --print_measures          Print list of similarity measures\n"
            "  -C,  --print_config            Print the current configuration.\n"
@@ -182,6 +185,10 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'q':
             verbose = 0;
+            log_line = 0;
+            break;
+        case 'l':
+            log_line = 1;
             break;
         case 'v':
             verbose++;

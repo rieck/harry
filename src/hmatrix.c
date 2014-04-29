@@ -25,6 +25,7 @@
 
 /* External variable */
 extern int verbose;
+extern int log_line;
 extern config_t cfg;
 
 /**
@@ -219,14 +220,15 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
 {
     int i, k = 0;
-    int step = floor(m->size * 0.001) + 1;
+    int step1 = floor(m->size * 0.01) + 1;
+    float ts1 = time_stamp();
+    float ts2 = time_stamp();
 
     /*
      * It seems that the for-loop has to start at index 0 for OpenMP to 
      * collapse both loops. This renders it a little ugly, since hmatrix 
      * requires absolute indices.
      */
-
 #pragma omp parallel for collapse(2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
@@ -237,15 +239,29 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
 
-            if (verbose && k % step == 0)
+            /* Update progress bar every 100th step and 100ms */
+            if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
                 prog_bar(0, m->size, k);
+                ts1 = time_stamp();
+            }
+
+            /* Print log line every minute if enabled */
+            if (log_line && time_stamp() - ts2 > 60) {
+                log_print(0, m->size, k);
+                ts2 = time_stamp();
+            }
 
             k++;
         }
     }
 
-    if (verbose)
+    if (verbose) {
         prog_bar(0, m->size, m->size);
+    }
+    
+    if (log_line) {
+        log_print(0, m->size, m->size);
+    }
 }
 
 
