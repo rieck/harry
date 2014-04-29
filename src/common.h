@@ -35,6 +35,7 @@
 #include <errno.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 #include <assert.h>
 #include <dirent.h>
 #include <omp.h>

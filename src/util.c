@@ -372,8 +372,8 @@ void log_print(long a, long b, long c)
 
     int ptime = (max - in) * (time_stamp() - log_start) / (in - min);
     int hours = (int) floor(ptime / (60 * 60));
-    int mins = (int) floor(ptime / 60);
-    int secs = (int) floor(ptime - mins * 60);
+    int mins = (int) floor((ptime - (hours * 60 * 60)) / 60);
+    int secs = (int) floor(ptime - (hours * 60 * 60 + mins * 60));
 
     time(&rawtime);
     strftime(buf, 255, "%F %T", localtime(&rawtime));

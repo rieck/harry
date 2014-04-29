@@ -247,6 +247,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 
             /* Print log line every minute if enabled */
             if (log_line && time_stamp() - ts2 > 60) {
+#pragma omp critical            
                 log_print(0, m->size, k);
                 ts2 = time_stamp();
             }
