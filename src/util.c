@@ -366,9 +366,8 @@ void log_print(long a, long b, long c)
     perc = (in - min) / (max - min);
 
     /* Start of progress */
-    if (log_start < 0) {
+    if (log_start < 0)
         log_start = time_stamp();
-    }
 
     int ptime = (max - in) * (time_stamp() - log_start) / (in - min);
     int hours = (int) floor(ptime / (60 * 60));
