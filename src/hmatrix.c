@@ -221,20 +221,24 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 {
     int i, k = 0;
     int step1 = floor(m->size * 0.01) + 1;
-    float ts1 = time_stamp();
-    float ts2 = time_stamp();
+    float ts1, ts2;
 
     /*
      * It seems that the for-loop has to start at index 0 for OpenMP to 
      * collapse both loops. This renders it a little ugly, since hmatrix 
      * requires absolute indices.
      */
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2) private(ts1, ts2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
-
             if (j < i)
                 continue;
+                
+            /* First iteration */
+            if (k == 0) {
+                ts1 = time_stamp();
+                ts2 = time_stamp();
+            }
 
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
@@ -247,7 +251,6 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 
             /* Print log line every minute if enabled */
             if (log_line && time_stamp() - ts2 > 60) {
-#pragma omp critical            
                 log_print(0, m->size, k);
                 ts2 = time_stamp();
             }
