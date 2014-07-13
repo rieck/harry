@@ -18,16 +18,16 @@ The development of a new input module basically involves three steps:
      
    This function opens the input source for reading of strings. For example,
    if `xxx` refers to an archive, this functions corresponds to opening the
-   archive and preparing it for loading entries.  The function returns the
-   number of available entries.
+   archive and preparing it for loading entries.  The function returns 
+   1 if the input could be successfully opened and 0 otherwise.
      
        `int input_xxx_read(string_t *strs, int len);`
      
    This function reads a block of strings. The parameter `strs` is used to
    store the loaded strings and respective information (see input.h) The
    array need to be allocated by the caller, where its length is given in
-   `len`.  The function returns the number of loaded strings; 0 indicates
-   the end of the input source.
+   `len`.  The function returns the number of loaded strings; any number
+   smaller than `len` indicates the end of the input source.
        
        `void input_xxx_close();`
      

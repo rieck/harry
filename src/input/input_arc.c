@@ -40,12 +40,11 @@ static float get_label(char *desc);
 /**
  * Opens an archive for reading files. 
  * @param name Archive name
- * @return number of regular files or -1 on error
+ * @return 1 on success, 0 otherwise
  */
 int input_arc_open(char *name)
 {
     assert(name);
-    struct archive_entry *entry;
 
     a = archive_read_new();
     archive_read_support_filter_all(a);
@@ -54,34 +53,17 @@ int input_arc_open(char *name)
     FILE *f = fopen(name, "r");
     if (f == NULL) {
         error("Failed to open '%s", name);
-        return -1;
+        return FALSE;
     }
 
     int r = archive_read_open_FILE(a, f);
     if (r != 0) {
         fclose(f);
         error("%s", archive_error_string(a));
-        return -1;
+        return FALSE;
     }
 
-    /* Count regular files in archive */
-    int num_files = 0;
-    while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-        if (archive_entry_filetype(entry) == AE_IFREG) {
-            num_files++;
-        }
-        archive_read_data_skip(a);
-    }
-    archive_read_close(a);
-
-    /* Open file again */
-    a = archive_read_new();
-    archive_read_support_filter_all(a);
-    archive_read_support_format_all(a);
-
-    fseek(f, 0, SEEK_SET);
-    archive_read_open_FILE(a, f);
-    return num_files;
+    return TRUE;
 }
 
 /**

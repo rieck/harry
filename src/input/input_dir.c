@@ -38,30 +38,21 @@ static char *path = NULL;
 /**
  * Opens a directory for reading files. 
  * @param p Directory name
- * @return number of regular files or -1 on error
+ * @return 1 on success, 0 otherwise
  */
 int input_dir_open(char *p)
 {
     assert(p);
-    struct dirent *dp;
     path = p;
 
     /* Open directory */
     dir = opendir(path);
     if (!dir) {
         error("Could not open directory '%s'", path);
-        return -1;
+        return FALSE;
     }
 
-    /* Count files */
-    int num_files = 0;
-    while (dir && (dp = readdir(dir)) != NULL) {
-        fix_dtype(path, dp);
-        if (dp->d_type == DT_REG || dp->d_type == DT_LNK)
-            num_files++;
-    }
-    rewinddir(dir);
-    return num_files;
+    return TRUE;
 }
 
 /**

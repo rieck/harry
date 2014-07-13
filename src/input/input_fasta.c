@@ -65,46 +65,27 @@ static float get_label(char *desc)
 /**
  * Opens a file for reading text fasta. 
  * @param name File name
- * @return number of fasta or -1 on error
+ * @return 1 on success, 0 otherwise
  */
 int input_fasta_open(char *name)
 {
     assert(name);
-    size_t read, size;
-    char *line = NULL;
     const char *pattern;
 
     /* Compile regular expression for label */
     config_lookup_string(&cfg, "input.fasta_regex", &pattern);
     if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
         error("Could not compile regex for label");
-        return -1;
+        return FALSE;
     }
 
     in = gzopen(name, "r");
     if (!in) {
         error("Could not open '%s' for reading", name);
-        return -1;
+        return FALSE;
     }
 
-    int num = 0, cont = FALSE;
-    while (!gzeof(in)) {
-        line = NULL;
-        read = gzgetline(&line, &size, in);
-        if (read > 0)
-            strtrim(line);
-        if (read > 1 && !cont && (line[0] == '>' || line[0] == ';')) {
-            num++;
-            cont = TRUE;
-        } else {
-            cont = FALSE;
-        }
-        free(line);
-    }
-
-    /* Prepare reading */
-    gzrewind(in);
-    return num;
+    return TRUE;
 }
 
 /**

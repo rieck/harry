@@ -69,7 +69,7 @@ static float get_label(char *line)
 /**
  * Opens a file for reading text lines. 
  * @param name File name
- * @return number of lines or -1 on error
+ * @return 1 on success, 0 otherwise
  */
 int input_lines_open(char *name)
 {
@@ -79,33 +79,18 @@ int input_lines_open(char *name)
     in = gzopen(name, "r");
     if (!in) {
         error("Could not open '%s' for reading", name);
-        return -1;
+        return FALSE;
     }
 
     /* Compile regular expression for label */
     config_lookup_string(&cfg, "input.lines_regex", &pattern);
     if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
         error("Could not compile regex for label");
-        return -1;
+        return FALSE;
     }
 
-    /* Count lines in file (I hope this is buffered) */
-    int c = -1, prev, num_lines = 0;
-    do {
-        prev = c;
-        c = gzgetc(in);
-        if (c == '\n')
-            num_lines++;
-    } while (c != -1);
-
-    if (prev >= 0 && prev != '\n')
-        num_lines++;
-
-    /* Prepare reading */
-    gzrewind(in);
     line_num = 0;
-
-    return num_lines;
+    return TRUE;
 }
 
 /**
@@ -122,17 +107,12 @@ int input_lines_read(hstring_t *strs, int len)
     char buf[32], *line = NULL;
 
     for (i = 0; i < len; i++) {
-#ifdef ENABLE_EVALTIME
-        double t1 = time_stamp();
-#endif
-
         line = NULL;
         read = gzgetline(&line, &size, in);
         if (read == -1) {
             free(line);
             break;
         }
-
 
         /* Strip newline characters */
         strip_newline(line, read);
@@ -146,10 +126,6 @@ int input_lines_read(hstring_t *strs, int len)
 	snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);
         j++;
-
-#ifdef ENABLE_EVALTIME
-        printf("strlen %d read %f\n", strs[j - 1].len, time_stamp() - t1);
-#endif
     }
 
     return j;
