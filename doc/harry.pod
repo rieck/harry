@@ -103,6 +103,13 @@ are allowed if they are preceded by either ';' or '>'.
 
 =back 
 
+=item B<chunk_size = 256;>
+
+To enable an efficient processing of large data sets, B<harry> loads strings
+in chunks.  This parameter defines the number of strings in one of these
+chunks.  Depending on the lengths and type of the strings, this parameter
+can be adjusted to improve loading times.
+
 =item B<decode_str = 0;>
 
 If this parameter is set to I<1>, B<harry> automatically decodes strings

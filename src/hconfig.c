@@ -32,6 +32,7 @@ extern int verbose;
 /* Default configuration */
 static default_t defaults[] = {
     {I "", "input_format", CONFIG_TYPE_STRING, {.str = "lines"}},
+    {I "", "chunk_size", CONFIG_TYPE_INT, {.num = 256}},
     {I "", "decode_str", CONFIG_TYPE_INT, {.num = 0}},
     {I "", "fasta_regex", CONFIG_TYPE_STRING, {.str = " (\\+|-)?[0-9]+"}},
     {I "", "lines_regex", CONFIG_TYPE_STRING, {.str = "^(\\+|-)?[0-9]+"}},
