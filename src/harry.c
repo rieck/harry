@@ -322,26 +322,31 @@ static void harry_init()
 static hstring_t *harry_read(char *input, int *num)
 {
     const char *cfg_str;
-    int i;
+    int i, chunk, read;
+    hstring_t *strs = NULL;
 
+    /* Get chunk size */
+    config_lookup_int(&cfg, "input.chunk_size", &chunk);
+    
     /* Open input */
     config_lookup_string(&cfg, "input.input_format", &cfg_str);
+    info_msg(1, "Opening input '%0.40s' [%s].", input, cfg_str);    
     input_config(cfg_str);
-    *num = input_open(input);
-    if (*num < 0)
+    if (!input_open(input))
         fatal("Could not open input source");
-    info_msg(1, "Reading %ld strings from '%0.40s' [%s].", *num, input,
-             cfg_str);
 
-    /* Allocate memory for strings */
-    hstring_t *strs = calloc(*num, sizeof(hstring_t));
+    info_msg(1, "Reading strings in chunks of %d", chunk);
+    for (*num = 0, read = chunk; read == chunk; *num += read) {
+        /* Allocate memory for strings */
+        strs = realloc(strs, (*num + chunk) * sizeof(hstring_t));
+        if (!strs) 
+            fatal("Could not allocate memory for strings");
+    
+        /* Read chunk */
+        read = input_read(strs + *num, chunk);
+    }
 
-    if (!strs)
-        fatal("Could not allocate memory for strs");
-
-    int read = input_read(strs, *num);
-    if (read <= 0)
-        fatal("Failed to read strs from input '%s'", input);
+    /* Close input */        
     input_close();
 
     /* Symbolize strings if requested */
