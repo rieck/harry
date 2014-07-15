@@ -25,6 +25,7 @@
 /* Modules */
 #include "output_text.h"
 #include "output_libsvm.h"
+#include "output_stdout.h"
 
 /**
  * Structure for output interface
@@ -48,6 +49,10 @@ void output_config(const char *format)
         func.output_open = output_text_open;
         func.output_write = output_text_write;
         func.output_close = output_text_close;
+    } else if (!strcasecmp(format, "stdout")) {
+        func.output_open = output_stdout_open;
+        func.output_write = output_stdout_write;
+        func.output_close = output_stdout_close;
     } else if (!strcasecmp(format, "libsvm")) {
         func.output_open = output_libsvm_open;
         func.output_write = output_libsvm_write;

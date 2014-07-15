@@ -8,7 +8,7 @@ EXTRA_DIST		= README.md
 
 noinst_LTLIBRARIES	= liboutput.la
 
-liboutput_la_SOURCES	= output.c output.h \
+liboutput_la_SOURCES	= output.c output.h output_stdout.c output_stdout.h \
                           output_text.c output_text.h \
                           output_libsvm.c output_libsvm.h
 
