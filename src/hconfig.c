@@ -131,7 +131,8 @@ static void config_setting_fprint(FILE *f, config_setting_t * cs, int d)
         break;
     case CONFIG_TYPE_BOOL:
         fprintf(f, "%s\t= %s;\n", n, config_setting_get_bool(cs)
-                   ? "true" : "false");        
+                ? "true" : "false");
+        break;
     default:
         error("Unsupported type for configuration setting '%s'", n);
         break;
