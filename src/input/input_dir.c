@@ -68,7 +68,7 @@ int input_dir_read(hstring_t *strs, int len)
     struct dirent *dp;
 
     /* Load block of files */
-    while (dir && (dp = readdir(dir)) != NULL && j < len) {    
+    while (dir && (dp = readdir(dir)) != NULL && j < len) {
         /* Skip all entries except for regular files and symlinks */
         fix_dtype(path, dp);
         if (dp->d_type != DT_REG && dp->d_type != DT_LNK)
@@ -108,7 +108,7 @@ static char *load_file(char *path, char *name, int *size)
     char *x = NULL, file[512];
     struct stat st;
 
-    #pragma omp critical (snprintf)
+#pragma omp critical (snprintf)
     {
         /* snprintf is not necessary thread-safe. good to know. */
         if (name)

@@ -75,7 +75,7 @@ int input_lines_open(char *name)
 {
     assert(name);
     const char *pattern;
-  
+
     in = gzopen(name, "r");
     if (!in) {
         error("Could not open '%s' for reading", name);
@@ -118,12 +118,12 @@ int input_lines_read(hstring_t *strs, int len)
         strip_newline(line, read);
 
         /* Caution: May modify the line */
-	strs[j].label = get_label(line);
+        strs[j].label = get_label(line);
 
         strs[j].str.c = line;
         strs[j].type = TYPE_CHAR;
         strs[j].len = strlen(line);
-	snprintf(buf, 32, "line%d", line_num++);
+        snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);
         j++;
     }

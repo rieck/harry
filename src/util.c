@@ -113,7 +113,7 @@ double time_stamp()
     return tv.tv_sec + tv.tv_usec / 1e6;
 #if 0
     return omp_get_wtime();
-#endif    
+#endif
 }
 
 /**
@@ -379,9 +379,9 @@ void log_print(long a, long b, long c)
 
     printf("[%s] state: %.0f%%, omp: %d, vcache: %.0f%%/%.0f%%, "
            "eta: %dh%.2dm%.2ds\n", buf,
-           perc * 100, omp_get_num_threads(), vcache_get_used() * 100, 
+           perc * 100, omp_get_num_threads(), vcache_get_used() * 100,
            vcache_get_hitrate() * 100, hours, mins, secs);
-           
+
     fflush(stdout);
 }
 

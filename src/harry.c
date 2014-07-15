@@ -41,7 +41,7 @@ static struct option longopts[] = {
     {"stopword_file", 1, NULL, 1002},
     {"output_format", 1, NULL, 'o'},
     {"compress", 1, NULL, 'z'},
-    {"upper_triangle", 1, NULL, 'u'},    
+    {"upper_triangle", 1, NULL, 'u'},
     {"measure", 1, NULL, 'm'},
     {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
@@ -49,7 +49,7 @@ static struct option longopts[] = {
     {"global_cache", 1, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
-    {"log_line", 0, NULL, 'l' },
+    {"log_line", 0, NULL, 'l'},
     {"print_measures", 0, NULL, 'M'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
@@ -243,11 +243,11 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
         *in = argv[0];
         *out = argv[1];
     }
-    
+
     /* Check for stdin and stdout "filenames" */
-    if (!strcmp(*in, "-")) 
+    if (!strcmp(*in, "-"))
         config_set_string(&cfg, "input.input_format", "stdin");
-    if (!strcmp(*out, "-")) 
+    if (!strcmp(*out, "-"))
         config_set_string(&cfg, "output.output_format", "stdout");
 }
 
@@ -338,10 +338,10 @@ static hstring_t *harry_read(char *input, int *num)
 
     /* Get chunk size */
     config_lookup_int(&cfg, "input.chunk_size", &chunk);
-    
+
     /* Open input */
     config_lookup_string(&cfg, "input.input_format", &cfg_str);
-    info_msg(1, "Opening input '%0.40s' [%s].", input, cfg_str);    
+    info_msg(1, "Opening input '%0.40s' [%s].", input, cfg_str);
     input_config(cfg_str);
     if (!input_open(input))
         fatal("Could not open input source");
@@ -350,14 +350,14 @@ static hstring_t *harry_read(char *input, int *num)
     for (*num = 0, read = chunk; read == chunk; *num += read) {
         /* Allocate memory for strings */
         strs = realloc(strs, (*num + chunk) * sizeof(hstring_t));
-        if (!strs) 
+        if (!strs)
             fatal("Could not allocate memory for strings");
-    
+
         /* Read chunk */
         read = input_read(strs + *num, chunk);
     }
 
-    /* Close input */        
+    /* Close input */
     input_close();
 
     /* Symbolize strings if requested */

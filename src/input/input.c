@@ -120,7 +120,7 @@ void input_free(hstring_t *strs, int len)
     assert(strs);
 
     int j;
-    for (j = 0; j < len; j++) 
+    for (j = 0; j < len; j++)
         hstring_destroy(strs[j]);
 }
 

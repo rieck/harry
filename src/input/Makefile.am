@@ -13,5 +13,6 @@ libinput_la_SOURCES	= input.h input.c input_arc.c input_arc.h \
                           
 beautify:
 			gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 \
-			        -nut -T str_t -T gzFile $(libinput_la_SOURCES)
+			        -nut -T str_t -T gzFile -T hstring_t \
+			        $(libinput_la_SOURCES)
 		

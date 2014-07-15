@@ -47,7 +47,7 @@ int output_stdout_open(char *fn)
     config_lookup_int(&cfg, "output.save_indices", &save_indices);
     config_lookup_int(&cfg, "output.save_labels", &save_labels);
     config_lookup_int(&cfg, "output.save_sources", &save_sources);
-    config_lookup_int(&cfg, "output.upper_triangle", &upper_triangle);    
+    config_lookup_int(&cfg, "output.upper_triangle", &upper_triangle);
     config_lookup_string(&cfg, "output.separator", &separator);
 
     if (!stdout) {
@@ -108,10 +108,10 @@ int output_stdout_write(hmatrix_t *m)
                 error("Could not write to output file");
                 return -k;
             }
-            
+
             if (j < m->y.n - 1)
                 fprintf(stdout, "%s", separator);
-            
+
             k++;
         }
 

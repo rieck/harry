@@ -74,7 +74,7 @@ int input_stdin_open(char *name)
 {
     assert(name);
     const char *pattern;
-  
+
     if (!stdin) {
         error("Could not open <stdin> for reading");
         return FALSE;
@@ -116,12 +116,12 @@ int input_stdin_read(hstring_t *strs, int len)
         strip_newline(line, read);
 
         /* Caution: May modify the line */
-	strs[j].label = get_label(line);
+        strs[j].label = get_label(line);
 
         strs[j].str.c = line;
         strs[j].type = TYPE_CHAR;
         strs[j].len = strlen(line);
-	snprintf(buf, 32, "line%d", line_num++);
+        snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);
         j++;
     }

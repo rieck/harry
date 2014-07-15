@@ -233,7 +233,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         for (int j = 0; j < m->y.n - m->y.i; j++) {
             if (j < i)
                 continue;
-                
+
             /* First iteration */
             if (k == 0) {
                 ts1 = time_stamp();
@@ -262,7 +262,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
     if (verbose) {
         prog_bar(0, m->size, m->size);
     }
-    
+
     if (log_line) {
         log_print(0, m->size, m->size);
     }
