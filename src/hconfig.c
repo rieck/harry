@@ -85,6 +85,7 @@ static default_t defaults[] = {
     {O "", "save_indices", CONFIG_TYPE_INT, {.num = 1}},
     {O "", "save_labels", CONFIG_TYPE_INT, {.num = 0}},
     {O "", "save_sources", CONFIG_TYPE_INT, {.num = 0}},
+    {O "", "upper_triangle", CONFIG_TYPE_INT, {.num = 0}},
     {O "", "compress", CONFIG_TYPE_INT, {.num = 0}},
     {NULL}
 };

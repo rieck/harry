@@ -715,18 +715,15 @@ Following is a list of output formats supported by B<harry>:
 
 =item I<"text"> 
 
-The similarity values are stored as plain text. Only the upper triangle of
-the symmetric similarity matrix is saved.
+The similarity values are stored as plain text. 
 
 =item I<"stdout">
 
 The similarity values are written to standard output (stdout) as plain text.
-Only the upper triangle of the symmetric similarity matrix is saved.
 
 =item I<"libsvm">
 
-The similarity values are stored as precomputed kernel for libsvm. The full
-similarity matrix is stored.
+The similarity values are stored as precomputed kernel for libsvm. 
 
 =back
 
@@ -750,6 +747,11 @@ an extra column and row in some output formats.
 If this parameter is to I<1>, the sources of the strings will be stored in
 an extra column and row in some output formats.
 
+=item B<upper_triangle = 0;>
+
+If this parameter is set to I<1> only the upper triangle of the similarity
+matrix will be stored in most output formats.
+
 =item B<compress = 0;>
 
 If this parameter is set to I<1>, the output is stored using zlib compression,
@@ -770,24 +772,22 @@ options.  Moreover, some parameters of the configuration can be overwritten
 on the command line.  Following is the list of options:
 
 =head2 I/O options
-
   -i,  --input_format <format>   Set input format for strings.
        --decode_str <0|1>        Set URI-decoding of strings.
        --reverse_str <0|1>       Reverse (flip) all strings.
        --stopword_file <file>    Provide a file with stop words.
   -o,  --output_format <format>  Set output format for vectors.
   -z,  --compress <0|1>          Set zlib compression of output.
+  -u,  --upper_triangle <0|1>    Save only upper triangle of matrix.
 
-=head2 Similarity measure options
-
+=head2 Module options:
   -m,  --measure <name>          Set similarity measure.
   -d,  --word_delim <delim>      Set delimiters for words.
   -n,  --num_threads <num>       Set number of threads.
   -a,  --cache_size <size>       Set size of cache in megabytes.
   -g,  --global_cache <0|1>      Set global cache for similarity values.
 
-=head2 Generic options
-
+=head2 Generic options:
   -c,  --config_file <file>      Set configuration file.
   -v,  --verbose                 Increase verbosity.
   -l,  --log_line                Print a log line every minute
