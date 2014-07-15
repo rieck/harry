@@ -82,6 +82,13 @@ file is given as I<input> to B<harry>.  The lines need to be separated by
 newline and may not contain the NUL character.  Labels can be extracted from
 each line using a regular expression (see B<lines_regex>).
 
+=item I<"stdin">
+
+The input strings are available as text lines on standard input (stdin). 
+The parameter I<input> is ignored. The lines need to be separated by
+newline and may not contain the NUL character.  Labels can be extracted from
+each line using a regular expression (see B<lines_regex>).
+
 =item I<"dir"> 
 
 The input strings are available as binary files in a directory and the

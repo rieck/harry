@@ -28,6 +28,7 @@
 #include "input_dir.h"
 #include "input_lines.h"
 #include "input_fasta.h"
+#include "input_stdin.h"
 
 /* Other stuff */
 #include "uthash.h"
@@ -65,7 +66,11 @@ void input_config(const char *format)
     } else if (!strcasecmp(format, "fasta")) {
         func.input_open = input_fasta_open;
         func.input_read = input_fasta_read;
-        func.input_close = input_lines_close;
+        func.input_close = input_fasta_close;
+    } else if (!strcasecmp(format, "stdin")) {
+        func.input_open = input_stdin_open;
+        func.input_read = input_stdin_read;
+        func.input_close = input_stdin_close;
 #ifdef ENABLE_LIBARCHIVE
     } else if (!strcasecmp(format, "arc")) {
         func.input_open = input_arc_open;
