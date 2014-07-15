@@ -29,7 +29,7 @@ refined using command-line options.
     .---------.                        .----------.
     |  lines  |                        |   text   |
     |   dir   |   \   .---------.   /  |  libsvm  |
-    |   arc   |   --  |  Harry  |  --  |  matlab  |
+    |  stdin  |   --  |  Harry  |  --  |  stdout  |
     |   ...   |   /   '---------'   \  |   ...    |
     '---------'                        '----------'
        Input      Similarity Measures     Output
@@ -717,6 +717,11 @@ Following is a list of output formats supported by B<harry>:
 
 The similarity values are stored as plain text. Only the upper triangle of
 the symmetric similarity matrix is saved.
+
+=item I<"stdout">
+
+The similarity values are written to standard output (stdout) as plain text.
+Only the upper triangle of the symmetric similarity matrix is saved.
 
 =item I<"libsvm">
 
