@@ -238,6 +238,12 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
         *in = argv[0];
         *out = argv[1];
     }
+    
+    /* Check for stdin and stdout "filenames" */
+    if (!strcmp(*in, "-")) 
+        config_set_string(&cfg, "input.input_format", "stdin");
+    if (!strcmp(*out, "-")) 
+        config_set_string(&cfg, "output.output_format", "stdout");
 }
 
 
