@@ -48,7 +48,7 @@ int output_libsvm_open(char *fn)
 {
     assert(fn);
 
-    config_lookup_int(&cfg, "output.compress", &zlib);
+    config_lookup_bool(&cfg, "output.compress", &zlib);
 
     if (zlib)
         z = gzopen(fn, "w9");

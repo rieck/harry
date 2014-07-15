@@ -29,24 +29,24 @@ static int print_conf = 0;
 static char *measure = NULL;
 
 /* Option string */
-#define OPTSTRING       "n:g:a:m:c:i:o:d:z:u:lvqVhMCD"
+#define OPTSTRING       "n:ga:m:c:i:o:d:zulvqVhMCD"
 
 /**
  * Array of options of getopt_long()
  */
 static struct option longopts[] = {
     {"input_format", 1, NULL, 'i'},
-    {"decode_str", 1, NULL, 1000},
-    {"reverse_str", 1, NULL, 1001},
+    {"decode_str", 0, NULL, 1000},
+    {"reverse_str", 0, NULL, 1001},
     {"stopword_file", 1, NULL, 1002},
     {"output_format", 1, NULL, 'o'},
-    {"compress", 1, NULL, 'z'},
-    {"upper_triangle", 1, NULL, 'u'},
+    {"compress", 0, NULL, 'z'},
+    {"upper_triangle", 0, NULL, 'u'},
     {"measure", 1, NULL, 'm'},
     {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
     {"cache_size", 1, NULL, 'a'},
-    {"global_cache", 1, NULL, 'g'},
+    {"global_cache", 0, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"log_line", 0, NULL, 'l'},
@@ -101,18 +101,18 @@ static void print_usage(void)
     printf("Usage: harry [options] <input> <output>\n"
            "\nI/O options\n"
            "  -i,  --input_format <format>   Set input format for strings.\n"
-           "       --decode_str <0|1>        Set URI-decoding of strings.\n"
-           "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
+           "       --decode_str              Enable URI-decoding of strings.\n"
+           "       --reverse_str             Reverse (flip) all strings.\n"
            "       --stopword_file <file>    Provide a file with stop words.\n"
            "  -o,  --output_format <format>  Set output format for vectors.\n"
-           "  -z,  --compress <0|1>          Set zlib compression of output.\n"
-           "  -u,  --upper_triangle <0|1>    Save only upper triangle of matrix.\n"
+           "  -z,  --compress                Enable zlib compression of output.\n"
+           "  -u,  --upper_triangle          Save only upper triangle of matrix.\n"
            "\nModule options:\n"
            "  -m,  --measure <name>          Set similarity measure.\n"
            "  -d,  --word_delim <delim>      Set delimiters for words.\n"
            "  -n,  --num_threads <num>       Set number of threads.\n"
            "  -a,  --cache_size <size>       Set size of cache in megabytes.\n"
-           "  -g,  --global_cache <0|1>      Set global cache for similarity values.\n"
+           "  -g,  --global_cache            Enable global cache for similarity values.\n"
            "\nGeneric options:\n"
            "  -c,  --config_file <file>      Set configuration file.\n"
            "  -v,  --verbose                 Increase verbosity.\n"
@@ -156,10 +156,10 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_string(&cfg, "input.input_format", optarg);
             break;
         case 1000:
-            config_set_int(&cfg, "input.decode_str", atoi(optarg));
+            config_set_bool(&cfg, "input.decode_str", CONFIG_TRUE);
             break;
         case 1001:
-            config_set_int(&cfg, "input.reverse_str", atoi(optarg));
+            config_set_bool(&cfg, "input.reverse_str", CONFIG_TRUE);
             break;
         case 1002:
             config_set_string(&cfg, "input.stopword_file", optarg);
@@ -180,13 +180,13 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_int(&cfg, "measures.cache_size", atoi(optarg));
             break;
         case 'g':
-            config_set_int(&cfg, "measures.global_cache", atoi(optarg));
+            config_set_bool(&cfg, "measures.global_cache", CONFIG_TRUE);
             break;
         case 'z':
-            config_set_int(&cfg, "output.compress", atoi(optarg));
+            config_set_bool(&cfg, "output.compress", CONFIG_TRUE);
             break;
         case 'u':
-            config_set_int(&cfg, "output.upper_triangle", atoi(optarg));
+            config_set_bool(&cfg, "output.upper_triangle", CONFIG_TRUE);
             break;
         case 'q':
             verbose = 0;

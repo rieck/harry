@@ -414,8 +414,8 @@ hstring_t hstring_preproc(hstring_t x)
     assert(x.type == TYPE_CHAR);
     int decode, reverse, c, i, k;
 
-    config_lookup_int(&cfg, "input.decode_str", &decode);
-    config_lookup_int(&cfg, "input.reverse_str", &reverse);
+    config_lookup_bool(&cfg, "input.decode_str", &decode);
+    config_lookup_bool(&cfg, "input.reverse_str", &reverse);
 
     if (decode) {
         x.len = decode_str(x.str.c);

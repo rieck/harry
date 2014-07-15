@@ -23,5 +23,7 @@ int harry_zversion(gzFile *, char *, char *);
       config_setting_set_int(config_lookup(c,x),s)
 #define config_set_float(c,x,s) \
       config_setting_set_float(config_lookup(c,x),s)
+#define config_set_bool(c,x,s) \
+      config_setting_set_bool(config_lookup(c,x),s)
 
 #endif

@@ -49,7 +49,7 @@ void dist_kernel_config()
     func[kern].measure_config();
 
     /* Parameters */
-    config_lookup_int(&cfg, "measures.dist_kernel.squared", &squared);
+    config_lookup_bool(&cfg, "measures.dist_kernel.squared", &squared);
 
     /* Normalization */
     config_lookup_string(&cfg, "measures.dist_kernel.norm", &str);

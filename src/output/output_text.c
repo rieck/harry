@@ -54,12 +54,12 @@ int output_text_open(char *fn)
 {
     assert(fn);
 
-    config_lookup_int(&cfg, "output.save_indices", &save_indices);
-    config_lookup_int(&cfg, "output.save_labels", &save_labels);
-    config_lookup_int(&cfg, "output.save_sources", &save_sources);
-    config_lookup_int(&cfg, "output.upper_triangle", &upper_triangle);
+    config_lookup_bool(&cfg, "output.save_indices", &save_indices);
+    config_lookup_bool(&cfg, "output.save_labels", &save_labels);
+    config_lookup_bool(&cfg, "output.save_sources", &save_sources);
+    config_lookup_bool(&cfg, "output.upper_triangle", &upper_triangle);
     config_lookup_string(&cfg, "output.separator", &separator);
-    config_lookup_int(&cfg, "output.compress", &zlib);
+    config_lookup_bool(&cfg, "output.compress", &zlib);
 
     if (zlib)
         z = gzopen(fn, "w9");

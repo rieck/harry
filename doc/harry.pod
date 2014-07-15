@@ -117,9 +117,9 @@ in chunks.  This parameter defines the number of strings in one of these
 chunks.  Depending on the lengths and type of the strings, this parameter
 can be adjusted to improve loading times.
 
-=item B<decode_str = 0;>
+=item B<decode_str = false;>
 
-If this parameter is set to I<1>, B<harry> automatically decodes strings
+If this parameter is set to I<true>, B<harry> automatically decodes strings
 that contain URI-encoded characters.  That is, substrings of the form %XX
 are replaced with the byte corresponding to the hexadecimal number XX.
 
@@ -136,11 +136,11 @@ If the strings are available as text lines, the parameter can be used to
 extract a numerical label from the strings.  The parameter is a regular
 expression matching labels, such as +1 and -1.
 
-=item B<reverse_str = 0;>
+=item B<reverse_str = false;>
 
-If this parameter is set to I<1>, the characters of all input strings will
-be reversed. Such reversing might help in situations where the
-reading direction of the input strings is unspecified.
+If this parameter is set to I<true>, the characters of all input strings
+will be reversed.  Such reversing might help in situations where the reading
+direction of the input strings is unspecified.
 
 =item B<stopword_file = "";>
 
@@ -294,10 +294,10 @@ The parameter B<cache_size> specifies the maximum size of the internal cache
 in megabytes (Mb).  The general-purpose cache is used to speed up
 computations of B<harry> for some similarity measures.
 
-=item B<global_cache = 0;>
+=item B<global_cache = false;>
 
 By default B<harry> caches only internal computations. If this parameter is
-set to 1, all similarity values are stored in the cache.  This feature
+set to I<true>, all similarity values are stored in the cache.  This feature
 should only be enabled if many of the compared strings are identical and
 thus caching similarity values can provide benefits.
 
@@ -530,10 +530,10 @@ This parameter specifies the normalization of the kernel. Supported values
 are I<"none"> for no normalization and I<"l2"> for the standard l2
 normalization of kernels.
 
-=item B<squared = 1;>
+=item B<squared = true;>
 
 The module computes a Euclidean distance from the given kernel function. If
-this parameter is specified a squared Euclidean distance is returned which
+this parameter is enabled a squared Euclidean distance is returned which
 is slightly faster due to the omitted root computation.
 
 =back
@@ -732,32 +732,33 @@ The similarity values are stored as precomputed kernel for libsvm.
 This parameter defines the separator used in text mode for separating
 the similarity values.
 
-=item B<save_indices = 1;>
+=item B<save_indices = true;>
 
-If this parameter is to I<1>, the indices of the strings will be stored in
+If this parameter is to I<true>, the indices of the strings will be stored
+in an extra column and row in some output formats.
+
+=item B<save_labels = false;>
+
+If this parameter is to I<true>, the labels of the strings will be stored in
 an extra column and row in some output formats.
 
-=item B<save_labels = 1;>
+=item B<save_sources = false;>
 
-If this parameter is to I<1>, the labels of the strings will be stored in
-an extra column and row in some output formats.
+If this parameter is to I<true>, the sources of the strings will be stored
+in an extra column and row in some output formats.
 
-=item B<save_sources = 1;>
+=item B<upper_triangle = false;>
 
-If this parameter is to I<1>, the sources of the strings will be stored in
-an extra column and row in some output formats.
+If this parameter is set to I<true> only the upper triangle of the
+similarity matrix will be stored in most output formats.
 
-=item B<upper_triangle = 0;>
+=item B<compress = false;>
 
-If this parameter is set to I<1> only the upper triangle of the similarity
-matrix will be stored in most output formats.
-
-=item B<compress = 0;>
-
-If this parameter is set to I<1>, the output is stored using zlib compression,
-which can significantly reduce the required disk space.  Several programs
-support reading files compressed using zlib.  Alternatively, the tools
-gzcat(1) and gunzip(1) can be used to access the data.
+If this parameter is set to I<true>, the output is stored using zlib
+compression, which can significantly reduce the required disk space. 
+Several programs support reading files compressed using zlib. 
+Alternatively, the tools gzcat(1) and gunzip(1) can be used to access the
+data.
 
 =back
 
@@ -773,19 +774,19 @@ on the command line.  Following is the list of options:
 
 =head2 I/O options
   -i,  --input_format <format>   Set input format for strings.
-       --decode_str <0|1>        Set URI-decoding of strings.
-       --reverse_str <0|1>       Reverse (flip) all strings.
+       --decode_str              Enable URI-decoding of strings.
+       --reverse_str             Reverse (flip) all strings.
        --stopword_file <file>    Provide a file with stop words.
   -o,  --output_format <format>  Set output format for vectors.
-  -z,  --compress <0|1>          Set zlib compression of output.
-  -u,  --upper_triangle <0|1>    Save only upper triangle of matrix.
+  -z,  --compress                Enable zlib compression of output.
+  -u,  --upper_triangle          Save only upper triangle of matrix.
 
 =head2 Module options:
   -m,  --measure <name>          Set similarity measure.
   -d,  --word_delim <delim>      Set delimiters for words.
   -n,  --num_threads <num>       Set number of threads.
   -a,  --cache_size <size>       Set size of cache in megabytes.
-  -g,  --global_cache <0|1>      Set global cache for similarity values.
+  -g,  --global_cache            Enable global cache for similarity values.
 
 =head2 Generic options:
   -c,  --config_file <file>      Set configuration file.

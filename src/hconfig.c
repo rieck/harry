@@ -33,16 +33,16 @@ extern int verbose;
 static default_t defaults[] = {
     {I "", "input_format", CONFIG_TYPE_STRING, {.str = "lines"}},
     {I "", "chunk_size", CONFIG_TYPE_INT, {.num = 256}},
-    {I "", "decode_str", CONFIG_TYPE_INT, {.num = 0}},
+    {I "", "decode_str", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {I "", "fasta_regex", CONFIG_TYPE_STRING, {.str = " (\\+|-)?[0-9]+"}},
     {I "", "lines_regex", CONFIG_TYPE_STRING, {.str = "^(\\+|-)?[0-9]+"}},
-    {I "", "reverse_str", CONFIG_TYPE_INT, {.num = 0}},
+    {I "", "reverse_str", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {I "", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     {M "", "word_delim", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},
     {M "", "cache_size", CONFIG_TYPE_INT, {.num = 256}},
-    {M "", "global_cache", CONFIG_TYPE_INT, {.num = 0}},
+    {M "", "global_cache", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M ".dist_hamming", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".dist_levenshtein", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".dist_levenshtein", "cost_ins", CONFIG_TYPE_FLOAT, {.flt = 1.0}},
@@ -65,7 +65,7 @@ static default_t defaults[] = {
     {M ".dist_bag", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".dist_kernel", "kern", CONFIG_TYPE_STRING, {.str = "kern_wdegree"}},
     {M ".dist_kernel", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
-    {M ".dist_kernel", "squared", CONFIG_TYPE_INT, {.num = 1}},
+    {M ".dist_kernel", "squared", CONFIG_TYPE_BOOL, {.num = CONFIG_TRUE}},
     {M ".kern_wdegree", "degree", CONFIG_TYPE_INT, {.num = 3}},
     {M ".kern_wdegree", "shift", CONFIG_TYPE_INT, {.num = 0}},
     {M ".kern_wdegree", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
@@ -82,11 +82,11 @@ static default_t defaults[] = {
     {M ".sim_coefficient", "matching", CONFIG_TYPE_STRING, {.str = "bin"}},
     {O "", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
     {O "", "separator", CONFIG_TYPE_STRING, {.str = ","}},
-    {O "", "save_indices", CONFIG_TYPE_INT, {.num = 1}},
-    {O "", "save_labels", CONFIG_TYPE_INT, {.num = 0}},
-    {O "", "save_sources", CONFIG_TYPE_INT, {.num = 0}},
-    {O "", "upper_triangle", CONFIG_TYPE_INT, {.num = 0}},
-    {O "", "compress", CONFIG_TYPE_INT, {.num = 0}},
+    {O "", "save_indices", CONFIG_TYPE_BOOL, {.num = CONFIG_TRUE}},
+    {O "", "save_labels", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
+    {O "", "save_sources", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
+    {O "", "upper_triangle", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
+    {O "", "compress", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {NULL}
 };
 
@@ -129,6 +129,9 @@ static void config_setting_fprint(FILE *f, config_setting_t * cs, int d)
     case CONFIG_TYPE_INT:
         fprintf(f, "%s\t= %d;\n", n, config_setting_get_int(cs));
         break;
+    case CONFIG_TYPE_BOOL:
+        fprintf(f, "%s\t= %s;\n", n, config_setting_get_bool(cs)
+                   ? "true" : "false");        
     default:
         error("Unsupported type for configuration setting '%s'", n);
         break;
@@ -184,6 +187,7 @@ static void config_default(config_t * cfg)
                 continue;
 
             /* Add default value */
+            config_setting_remove(cs, defaults[i].name);
             vs = config_setting_add(cs, defaults[i].name, CONFIG_TYPE_STRING);
             config_setting_set_string(vs, defaults[i].val.str);
             break;
@@ -201,6 +205,7 @@ static void config_default(config_t * cfg)
             }
 
             /* Add default value */
+            config_setting_remove(cs, defaults[i].name);
             vs = config_setting_add(cs, defaults[i].name, CONFIG_TYPE_FLOAT);
             config_setting_set_float(vs, defaults[i].val.flt);
             break;
@@ -218,9 +223,30 @@ static void config_default(config_t * cfg)
             }
 
             /* Add default value */
+            config_setting_remove(cs, defaults[i].name);
             vs = config_setting_add(cs, defaults[i].name, CONFIG_TYPE_INT);
             config_setting_set_int(vs, defaults[i].val.num);
             break;
+        case CONFIG_TYPE_BOOL:
+            if (config_setting_lookup_bool(cs, defaults[i].name, &j))
+                continue;
+
+            /* Check for mis-interpreted integer */
+            if (config_setting_lookup_int(cs, defaults[i].name, &j)) {
+                config_setting_remove(cs, defaults[i].name);
+                vs = config_setting_add(cs, defaults[i].name,
+                                        CONFIG_TYPE_BOOL);
+                config_setting_set_bool(vs,
+                                        j == 0 ? CONFIG_FALSE : CONFIG_TRUE);
+                continue;
+            }
+
+            /* Add default value */
+            config_setting_remove(cs, defaults[i].name);
+            vs = config_setting_add(cs, defaults[i].name, CONFIG_TYPE_BOOL);
+            config_setting_set_bool(vs, defaults[i].val.num);
+            break;
+
         }
     }
 }
