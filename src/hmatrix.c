@@ -48,7 +48,8 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
     m->num = n;
     m->x.i = 0, m->x.n = n;
     m->y.i = 0, m->y.n = n;
-
+    m->triangular = TRUE;
+    
     /* Initialized later */
     m->values = NULL;
 
@@ -150,13 +151,18 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
  */
 float *hmatrix_alloc(hmatrix_t *m)
 {
-    /* TODO: support for arbitrary subsets and ranges */
-    assert(m->x.n == m->y.n);
-    assert(m->x.i == m->y.i && m->x.i == 0);
+    if (m->x.n == m->y.n && m->x.i == m->y.i && m->x.i == 0) {
+        /* Full matrix -> allocate triangle */
+        m->triangular = TRUE;
+        m->size = (m->x.n * (m->x.n - 1) / 2 + m->x.n);
+    } else {
+        /* Patrial matrix -> allocate rectangle */
+        m->triangular = FALSE;
+        m->size = (m->x.n - m->x.i) * (m->y.n - m->y.i);
+    }
 
-    m->size = (m->x.n * (m->x.n - 1) / 2 + m->x.n);
+    /* Allocate memory */
     m->values = calloc(sizeof(float), m->size);
-
     if (!m->values) {
         error("Could not allocate matrix for similarity values");
         return NULL;
@@ -176,13 +182,17 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 {
     int idx, i, j;
 
-    if (x > y) {
-        i = y, j = x;
+    if (m->triangular) {
+        if (x > y) {
+            i = y, j = x;
+        } else {
+            i = x, j = y;
+        }
+        idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
     } else {
-        i = x, j = y;
+        idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
     }
-
-    idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
+    
     assert(idx < m->size);
     m->values[idx] = f;
 }
@@ -199,13 +209,17 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
 {
     int idx, i, j;
 
-    if (x > y) {
-        i = y, j = x;
+    if (m->triangular) {
+        if (x > y) {
+            i = y, j = x;
+        } else {
+            i = x, j = y;
+        }
+        idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
     } else {
-        i = x, j = y;
+        idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);    
     }
-
-    idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
+    
     assert(idx < m->size);
     return m->values[idx];
 }
@@ -231,6 +245,8 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 #pragma omp parallel for collapse(2) firstprivate(ts1, ts2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
+        
+            /* Skip symmetric values */
             if (j < i)
                 continue;
 
@@ -241,7 +257,10 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             }
 
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
+            
+            /* Store value twice (irrelevant if triangular) */
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
+            hmatrix_set(m, j + m->y.i, i + m->x.i, f);
 
             /* Update progress bar every 100th step and 100ms */
             if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
