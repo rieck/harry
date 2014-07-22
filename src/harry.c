@@ -41,7 +41,7 @@ static struct option longopts[] = {
     {"stopword_file", 1, NULL, 1002},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
-    {"upper_triangle", 0, NULL, 'u'},
+    {"triangular", 0, NULL, 'u'},
     {"measure", 1, NULL, 'm'},
     {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
@@ -106,7 +106,7 @@ static void print_usage(void)
            "       --stopword_file <file>    Provide a file with stop words.\n"
            "  -o,  --output_format <format>  Set output format for vectors.\n"
            "  -z,  --compress                Enable zlib compression of output.\n"
-           "  -u,  --upper_triangle          Save only upper triangle of matrix.\n"
+           "  -u,  --triangular              Save triangular matrix only.\n"
            "\nModule options:\n"
            "  -m,  --measure <name>          Set similarity measure.\n"
            "  -d,  --word_delim <delim>      Set delimiters for words.\n"
@@ -186,7 +186,7 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_bool(&cfg, "output.compress", CONFIG_TRUE);
             break;
         case 'u':
-            config_set_bool(&cfg, "output.upper_triangle", CONFIG_TRUE);
+            config_set_bool(&cfg, "output.triangular", CONFIG_TRUE);
             break;
         case 'q':
             verbose = 0;

@@ -734,23 +734,24 @@ the similarity values.
 
 =item B<save_indices = true;>
 
-If this parameter is to I<true>, the indices of the strings will be stored
-in an extra column and row in some output formats.
+If this parameter is to I<true> and supported by the output format, the
+indices of the strings will be stored in an extra column and row.
 
 =item B<save_labels = false;>
 
-If this parameter is to I<true>, the labels of the strings will be stored in
-an extra column and row in some output formats.
+If this parameter is to I<true> and supported by the output format, the
+labels of the strings will be stored in an extra column and row.
 
 =item B<save_sources = false;>
 
-If this parameter is to I<true>, the sources of the strings will be stored
-in an extra column and row in some output formats.
+If this parameter is to I<true> and supported by the output format, the
+sources of the strings will be stored in an extra column and row.
 
-=item B<upper_triangle = false;>
+=item B<triangular = false;>
 
-If this parameter is set to I<true> only the upper triangle of the
-similarity matrix will be stored in most output formats.
+If this parameter is set to I<true> and supported by the output format, a
+triangular matrix (upper triangle of the similarity matrix) will be stored. 
+The required storage space is reduced by almost a half.
 
 =item B<compress = false;>
 
@@ -779,7 +780,7 @@ on the command line.  Following is the list of options:
        --stopword_file <file>    Provide a file with stop words.
   -o,  --output_format <format>  Set output format for vectors.
   -z,  --compress                Enable zlib compression of output.
-  -u,  --upper_triangle          Save only upper triangle of matrix.
+  -u,  --triangular              Save triangular matrix only.
 
 =head2 Module options:
   -m,  --measure <name>          Set similarity measure.

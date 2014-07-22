@@ -31,7 +31,7 @@ extern config_t cfg;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
-static int upper_triangle = 0;
+static int triangular = 0;
 
 static const char *separator = ",";
 
@@ -47,7 +47,7 @@ int output_stdout_open(char *fn)
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
-    config_lookup_bool(&cfg, "output.upper_triangle", &upper_triangle);
+    config_lookup_bool(&cfg, "output.triangular", &triangular);
     config_lookup_string(&cfg, "output.separator", &separator);
 
     if (!stdout) {
@@ -98,7 +98,7 @@ int output_stdout_write(hmatrix_t *m)
     for (i = m->x.i; i < m->x.n; i++) {
         for (j = m->y.i; j < m->y.n; j++) {
             /* Cut off lower triangle */
-            if (upper_triangle && j < i) {
+            if (triangular && j < i) {
                 fprintf(stdout, "%s", separator);
                 continue;
             }
