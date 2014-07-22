@@ -106,7 +106,7 @@ static void print_usage(void)
            "       --decode_str              Enable URI-decoding of strings.\n"
            "       --reverse_str             Reverse (flip) all strings.\n"
            "       --stopword_file <file>    Provide a file with stop words.\n"
-           "  -o,  --output_format <format>  Set output format for vectors.\n"
+           "  -o,  --output_format <format>  Set output format for matrix.\n"
            "  -z,  --compress                Enable zlib compression of output.\n"
            "  -u,  --triangular              Save triangular matrix only.\n"
            "\nModule options:\n"

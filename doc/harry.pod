@@ -794,7 +794,7 @@ on the command line.  Following is the list of options:
        --decode_str              Enable URI-decoding of strings.
        --reverse_str             Reverse (flip) all strings.
        --stopword_file <file>    Provide a file with stop words.
-  -o,  --output_format <format>  Set output format for vectors.
+  -o,  --output_format <format>  Set output format for matrix.
   -z,  --compress                Enable zlib compression of output.
   -u,  --triangular              Save triangular matrix only.
 
