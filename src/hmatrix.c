@@ -221,14 +221,14 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 {
     int i, k = 0;
     int step1 = floor(m->size * 0.01) + 1;
-    float ts1, ts2;
+    float ts1 = 0, ts2 = 0;
 
     /*
      * It seems that the for-loop has to start at index 0 for OpenMP to 
      * collapse both loops. This renders it a little ugly, since hmatrix 
      * requires absolute indices.
      */
-#pragma omp parallel for collapse(2) private(ts1, ts2)
+#pragma omp parallel for collapse(2) firstprivate(ts1, ts2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
             if (j < i)
