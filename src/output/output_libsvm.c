@@ -73,9 +73,9 @@ int output_libsvm_write(hmatrix_t *m)
     assert(m);
     int i, j, r, k = 0;
 
-    for (i = m->x.i; i < m->x.n; i++) {
+    for (i = m->y.i; i < m->y.n; i++) {
         output_printf(z, "%d 0:%d", (int) m->labels[i], i + 1);
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->x.i; j < m->x.n; j++) {
             r = output_printf(z, " %d:%g", j + 1, hmatrix_get(m, i, j));
             if (r < 0) {
                 error("Could not write to output file");

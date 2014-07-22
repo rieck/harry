@@ -92,7 +92,7 @@ int output_text_write(hmatrix_t *m)
 
     if (save_indices) {
         output_printf(z, "#");
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, " %d", j);
         }
         output_printf(z, "\n");
@@ -100,7 +100,7 @@ int output_text_write(hmatrix_t *m)
 
     if (save_labels) {
         output_printf(z, "#");
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, " %g", m->labels[j]);
         }
         output_printf(z, "\n");
@@ -108,14 +108,14 @@ int output_text_write(hmatrix_t *m)
 
     if (save_sources) {
         output_printf(z, "#");
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, " %s", m->srcs[j]);
         }
         output_printf(z, "\n");
     }
 
-    for (i = m->x.i; i < m->x.n; i++) {
-        for (j = m->y.i; j < m->y.n; j++) {
+    for (i = m->y.i; i < m->y.n; i++) {
+        for (j = m->x.i; j < m->x.n; j++) {
             /* Cut off lower triangle */
             if (triangular && j < i) {
                 output_printf(z, "%s", separator);
@@ -128,7 +128,7 @@ int output_text_write(hmatrix_t *m)
                 return -k;
             }
 
-            if (j < m->y.n - 1)
+            if (j < m->x.n - 1)
                 output_printf(z, "%s", separator);
 
             k++;
