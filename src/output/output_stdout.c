@@ -103,7 +103,7 @@ int output_stdout_write(hmatrix_t *m)
                 continue;
             }
 
-            r = fprintf(stdout, "%g", hmatrix_get(m, i, j));
+            r = fprintf(stdout, "%g", hmatrix_get(m, j, i));
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;

@@ -122,7 +122,7 @@ int output_text_write(hmatrix_t *m)
                 continue;
             }
 
-            r = output_printf(z, "%g", hmatrix_get(m, i, j));
+            r = output_printf(z, "%g", hmatrix_get(m, j, i));
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
