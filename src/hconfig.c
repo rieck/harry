@@ -45,6 +45,7 @@ static default_t defaults[] = {
     {M "", "global_cache", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M "", "x_range", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "y_range", CONFIG_TYPE_STRING, {.str = ""}},
+    {M "", "split", CONFIG_TYPE_STRING, {.str = ""}},
     {M ".dist_hamming", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".dist_levenshtein", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".dist_levenshtein", "cost_ins", CONFIG_TYPE_FLOAT, {.flt = 1.0}},

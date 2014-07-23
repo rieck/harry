@@ -29,7 +29,7 @@ static int print_conf = 0;
 static char *measure = NULL;
 
 /* Option string */
-#define OPTSTRING       "n:ga:m:c:i:o:d:x:y:zulvqVhMCD"
+#define OPTSTRING       "n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -58,6 +58,7 @@ static struct option longopts[] = {
     {"help", 0, NULL, 'h'},
     {"x_range", 1, NULL, 'x'},
     {"y_range", 1, NULL, 'y'},
+    {"split", 1, NULL, 's'},
     {NULL, 0, NULL, 0}
 };
 
@@ -102,31 +103,32 @@ static void print_usage(void)
 {
     printf("Usage: harry [options] <input> <output>\n"
            "\nI/O options\n"
-           "  -i,  --input_format <format>   Set input format for strings.\n"
-           "       --decode_str              Enable URI-decoding of strings.\n"
-           "       --reverse_str             Reverse (flip) all strings.\n"
-           "       --stopword_file <file>    Provide a file with stop words.\n"
-           "  -o,  --output_format <format>  Set output format for matrix.\n"
-           "  -z,  --compress                Enable zlib compression of output.\n"
-           "  -u,  --triangular              Save triangular matrix only.\n"
+           "  -i,  --input_format <format>      Set input format for strings.\n"
+           "       --decode_str                 Enable URI-decoding of strings.\n"
+           "       --reverse_str                Reverse (flip) all strings.\n"
+           "       --stopword_file <file>       Provide a file with stop words.\n"
+           "  -o,  --output_format <format>     Set output format for matrix.\n"
+           "  -z,  --compress                   Enable zlib compression of output.\n"
+           "  -u,  --triangular                 Save triangular matrix only.\n"
            "\nModule options:\n"
-           "  -m,  --measure <name>          Set similarity measure.\n"
-           "  -d,  --word_delim <delim>      Set delimiters for words.\n"
-           "  -n,  --num_threads <num>       Set number of threads.\n"
-           "  -a,  --cache_size <size>       Set size of cache in megabytes.\n"
-           "  -g,  --global_cache            Enable global cache for similarity values.\n"
-           "  -x,  --x_range <start>:<end>   Set the index range (x) of strings.\n"
-           "  -y,  --y_range <start>:<end>   Set the index range (y) of strings.\n"
+           "  -m,  --measure <name>             Set similarity measure.\n"
+           "  -d,  --word_delim <delim>         Set delimiters for words.\n"
+           "  -n,  --num_threads <num>          Set number of threads.\n"
+           "  -a,  --cache_size <size>          Set size of cache in megabytes.\n"
+           "  -g,  --global_cache               Enable global cache for similarity values.\n"
+           "  -x,  --x_range <start>:<end>      Set the index range (x) of strings.\n"
+           "  -y,  --y_range <start>:<end>      Set the index range (y) of strings.\n"
+           "  -s,  --split <cols>:<rows>:<idx>  Split matrix into submatrices.\n"
            "\nGeneric options:\n"
-           "  -c,  --config_file <file>      Set configuration file.\n"
-           "  -v,  --verbose                 Increase verbosity.\n"
-           "  -l,  --log_line                Print a log line every minute\n"
-           "  -q,  --quiet                   Be quiet during processing.\n"
-           "  -M,  --print_measures          Print list of similarity measures\n"
-           "  -C,  --print_config            Print the current configuration.\n"
-           "  -D,  --print_defaults          Print the default configuration.\n"
-           "  -V,  --version                 Print version and copyright.\n"
-           "  -h,  --help                    Print this help screen.\n" "\n");
+           "  -c,  --config_file <file>         Set configuration file.\n"
+           "  -v,  --verbose                    Increase verbosity.\n"
+           "  -l,  --log_line                   Print a log line every minute\n"
+           "  -q,  --quiet                      Be quiet during processing.\n"
+           "  -M,  --print_measures             Print list of similarity measures\n"
+           "  -C,  --print_config               Print the current configuration.\n"
+           "  -D,  --print_defaults             Print the default configuration.\n"
+           "  -V,  --version                    Print version and copyright.\n"
+           "  -h,  --help                       Print this help screen.\n" "\n");
 }
 
 /**
@@ -197,6 +199,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'y':
             config_set_string(&cfg, "measures.y_range", optarg);
+            break;
+        case 's':
+            config_set_string(&cfg, "measures.split", optarg);
             break;
         case 'q':
             verbose = 0;
@@ -394,6 +399,10 @@ static hmatrix_t *harry_compute(hstring_t *strs, int num)
    hmatrix_xrange(mat, cfg_str);
    config_lookup_string(&cfg, "measures.y_range", (const char **) &cfg_str);
    hmatrix_yrange(mat, cfg_str);
+   
+   /* Set matrix split */
+   config_lookup_string(&cfg, "measures.split", (const char **) &cfg_str);
+   hmatrix_split(mat, cfg_str);
 
     /* Allocate matrix */
     if (!hmatrix_alloc(mat))

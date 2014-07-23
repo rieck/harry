@@ -126,6 +126,33 @@ static range_t parse_range(range_t r, char *str, int n)
     return r;
 }
 
+
+/**
+ * Enable splitting matrix 
+ * @param m Matrix object
+ * @param s Split string
+ */
+void hmatrix_split(hmatrix_t *m, char *str)
+{
+    int cols, rows, index, width, height;
+
+    /* Empty string */
+    if (strlen(str) == 0)
+        return;
+
+    /* Parse split string */
+    if (sscanf(str, "%d:%d:%d", &cols, &rows, &index) != 3) {
+        error("Invalid split string '%s'.", str);
+        return;
+    } 
+    
+    width = ceil((m->x.n - m->x.i) / (float) cols);
+    height = ceil((m->y.n - m->y.i) / (float) rows);
+    
+    printf("%d %d %d -> %d %d\n", cols, rows, index, width, height);
+}
+
+
 /**
  * Set the x range for computation
  * @param m Matrix object
