@@ -86,6 +86,10 @@ static range_t parse_range(range_t r, char *str, int n)
     if (strlen(str) == 0)
         return r;
 
+    /* 
+     * Since "1:1", "1:", ":1"  and ":" are all valid indices, sscanf 
+     * won't do it and we have to stick to manual parsing :(
+     */
     ptr = strchr(str, ':');
     if (!ptr) {
         error("Invalid range string '%s'.", str);
@@ -294,7 +298,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         for (int j = 0; j < m->y.n - m->y.i; j++) {
         
             /* Skip symmetric values */
-            if (j < i)
+            if (m->triangular && j < i)
                 continue;
 
             /* First iteration */
@@ -305,9 +309,8 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             
-            /* Store value twice (irrelevant if triangular) */
+            /* Set value in matrix */
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
-            hmatrix_set(m, j + m->y.i, i + m->x.i, f);
 
             /* Update progress bar every 100th step and 100ms */
             if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
