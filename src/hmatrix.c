@@ -134,22 +134,38 @@ static range_t parse_range(range_t r, char *str, int n)
  */
 void hmatrix_split(hmatrix_t *m, char *str)
 {
-    int cols, rows, index, width, height;
+    int blocks, index, height;
 
     /* Empty string */
     if (strlen(str) == 0)
         return;
 
     /* Parse split string */
-    if (sscanf(str, "%d:%d:%d", &cols, &rows, &index) != 3) {
-        error("Invalid split string '%s'.", str);
+    if (sscanf(str, "%d:%d", &blocks, &index) != 2) {
+        fatal("Invalid split string '%s'.", str);
         return;
     } 
     
-    width = ceil((m->x.n - m->x.i) / (float) cols);
-    height = ceil((m->y.n - m->y.i) / (float) rows);
+    height = ceil((m->y.n - m->y.i) / (float) blocks);
     
-    printf("%d %d %d -> %d %d\n", cols, rows, index, width, height);
+    /* Sanity checks with fatal error */
+    if (blocks <= 0 || blocks > m->y.n - m->y.i) {
+        fatal("Invalid number of blocks (%d).", blocks);
+        return;
+    }
+    if (height <= 0 || height > m->y.n - m->y.i) {
+        fatal("Block height too small (%d).", height);
+        return;
+    }
+    if (index < 0 || index > blocks - 1) {
+        fatal("Block index out of range (%d).", index);
+        return;
+    }
+
+    /* Update range */
+    m->y.i = m->y.i + index * height;
+    if (m->y.n > m->y.i + height)
+        m->y.n = m->y.i + height;
 }
 
 

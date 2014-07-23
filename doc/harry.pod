@@ -320,14 +320,11 @@ one.
 =item B<split = "";>
 
 To ease the computation of large similarity matrices, B<harry> supports
-automatically splitting the matrix into small submatrices and processing
-each of these individually.  This splitting is defined by a string of the
-form "I<cols>:I<rows>:I<idx>", where I<cols> and I<rows> define the number
-of submatrix columns and rows, respectively, and I<idx> the index of the
-submatrix to consider.  For example, the string "I<3:3:7>" corresponds to a
-3x3 split of the matrix where the 7th out of the total 9 submatrices is
-computed.  For convenience the variable I<idx> ranges from I<1> to
-I<rows>*I<cols>.
+automatically splitting a matrix into blocks.  This splitting is defined by
+a string of the form "I<blocks>:I<idx>", where I<blocks> defines the number
+of blocks and I<idx> the index of the block to compute.  The matrix is
+splitted across the y-axis.  For many output formats the blocks can be
+simply concatenated to get the original matrix.
 
 =item B<dist_hamming = {> 
 
