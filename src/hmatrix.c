@@ -80,7 +80,6 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 static range_t parse_range(range_t r, char *str, int n)
 {
     char *ptr, *end = NULL;
-    int ret, start, end;
     long l;
 
     /* Empty string */
