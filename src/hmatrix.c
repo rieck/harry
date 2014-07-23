@@ -80,12 +80,17 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 static range_t parse_range(range_t r, char *str, int n)
 {
     char *ptr, *end = NULL;
+    int ret, start, end;
     long l;
 
     /* Empty string */
     if (strlen(str) == 0)
         return r;
 
+    /* 
+     * Since "1:1", "1:", ":1"  and ":" are all valid indices, sscanf 
+     * won't do it and we have to stick to manual parsing :(
+     */
     ptr = strchr(str, ':');
     if (!ptr) {
         error("Invalid range string '%s'.", str);
