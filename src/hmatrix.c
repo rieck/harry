@@ -255,7 +255,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         for (int j = 0; j < m->y.n - m->y.i; j++) {
         
             /* Skip symmetric values */
-            if (j < i)
+            if (m->triangular && j < i)
                 continue;
 
             /* First iteration */
@@ -266,9 +266,8 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 
             float f = measure(s[i + m->x.i], s[j + m->y.i]);
             
-            /* Store value twice (irrelevant if triangular) */
+            /* Set value in matrix */
             hmatrix_set(m, i + m->x.i, j + m->y.i, f);
-            hmatrix_set(m, j + m->y.i, i + m->x.i, f);
 
             /* Update progress bar every 100th step and 100ms */
             if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
