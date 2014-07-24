@@ -32,7 +32,7 @@ struct hstring_test
 {
     char *x;            /**< String x */
     char *y;            /**< String y */
-    char *d;		/**< Delimiters */
+    char *d;            /**< Delimiters */
     int p;              /**< Length of subsequences */
     float v;            /**< Expected output */
 };
@@ -50,13 +50,13 @@ struct hstring_test tests[] = {
     {"aaaabbb", "aaaa", "", 2, 9},
     {"aaaabbb", "aaaabb", "", 2, 9 + 1 + 2},
 
-    /* Words */    
+    /* Words */
     {"a b", "a b", " ", 1, 2},
     {"a b a b", "a b a b", " ", 1, 4 + 4},
     {"a b", "a b", " ", 2, 1},
     {"a b a b", "a b a b", " ", 2, 4 + 1},
     {"a b", "a b", " ", 3, 0},
-    {"a b a b", "a b a b", " ", 3, 1 + 1},    
+    {"a b a b", "a b a b", " ", 3, 1 + 1},
     {NULL}
 };
 
@@ -92,8 +92,8 @@ int test_compare()
             err = TRUE;
         }
 
-        hstring_destroy(x);
-        hstring_destroy(y);
+        hstring_destroy(&x);
+        hstring_destroy(&y);
     }
     printf(" done.\n");
 

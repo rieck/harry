@@ -27,7 +27,7 @@ struct hstring_test
 {
     char *x;            /**< String x */
     char *y;            /**< String y */
-    char *m;		/**< Mode */
+    char *m;            /**< Mode */
     float v;            /**< Expected output */
 };
 
@@ -41,7 +41,7 @@ struct hstring_test tests[] = {
     {"bbcc", "bbbd", "bin", 1.0 / (1.0 + 2.0)},
     {"bbcc", "bbbd", "cnt", 2.0 / (2.0 + 4.0)},
     {"bbcc", "bbbdc", "bin", 2.0 / (2.0 + 1.0)},
-    {"bbbdc", "bbcc", "bin", 2.0 / (2.0 + 1.0)},    
+    {"bbbdc", "bbcc", "bin", 2.0 / (2.0 + 1.0)},
     {"bbbdc", "bbcc", "cnt", 3.0 / (3.0 + 3.0)},
     {"bbcc", "bbbyc", "cnt", 3.0 / (3.0 + 3.0)},
     {NULL}
@@ -58,7 +58,8 @@ int test_compare()
 
     printf("Testing Jaccard coefficient ");
     for (i = 0; tests[i].x && !err; i++) {
-        config_set_string(&cfg, "measures.sim_coefficient.matching", tests[i].m);
+        config_set_string(&cfg, "measures.sim_coefficient.matching",
+                          tests[i].m);
         measure_config("sim_jaccard");
 
         x = hstring_init(x, tests[i].x);
@@ -78,8 +79,8 @@ int test_compare()
             err = TRUE;
         }
 
-        hstring_destroy(x);
-        hstring_destroy(y);
+        hstring_destroy(&x);
+        hstring_destroy(&y);
     }
     printf(" done.\n");
 

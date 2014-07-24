@@ -50,7 +50,7 @@ int test_compare()
     int i, err = FALSE;
     hstring_t x, y;
 
-   printf("Testing Jaro-Winkler distance ");
+    printf("Testing Jaro-Winkler distance ");
     for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_jarowinkler");
 
@@ -71,8 +71,8 @@ int test_compare()
             err = TRUE;
         }
 
-        hstring_destroy(x);
-        hstring_destroy(y);
+        hstring_destroy(&x);
+        hstring_destroy(&y);
     }
     printf(" done.\n");
 

@@ -70,8 +70,8 @@ int test_compare()
             err = TRUE;
         }
 
-        hstring_destroy(x);
-        hstring_destroy(y);
+        hstring_destroy(&x);
+        hstring_destroy(&y);
     }
     printf(" done.\n");
 
