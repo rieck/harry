@@ -49,7 +49,7 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
     m->x.i = 0, m->x.n = n;
     m->y.i = 0, m->y.n = n;
     m->triangular = TRUE;
-    
+
     /* Initialized later */
     m->values = NULL;
 
@@ -123,7 +123,8 @@ static range_t parse_range(range_t r, char *str, int n)
 
     /* Sanity checks */
     if (r.n < 0 || r.i < 0 || r.n > n || r.i > n - 1 || r.i >= r.n) {
-        error("Invalid range '%s:%s'. Using default '0:%d'.", str, ptr + 1, n);
+        error("Invalid range '%s:%s'. Using default '0:%d'.", str, ptr + 1,
+              n);
         r.i = 0, r.n = n;
     }
 
@@ -148,10 +149,10 @@ void hmatrix_split(hmatrix_t *m, char *str)
     if (sscanf(str, "%d:%d", &blocks, &index) != 2) {
         fatal("Invalid split string '%s'.", str);
         return;
-    } 
-    
+    }
+
     height = ceil((m->y.n - m->y.i) / (float) blocks);
-    
+
     /* Sanity checks with fatal error */
     if (blocks <= 0 || blocks > m->y.n - m->y.i) {
         fatal("Invalid number of blocks (%d).", blocks);
@@ -249,7 +250,7 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
     } else {
         idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
     }
-    
+
     assert(idx < m->size);
     m->values[idx] = f;
 }
@@ -274,9 +275,9 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
         }
         idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
     } else {
-        idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);    
+        idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
     }
-    
+
     assert(idx < m->size);
     return m->values[idx];
 }
@@ -304,7 +305,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         for (int j = 0; j < m->y.n - m->y.i; j++) {
             int xi = i + m->x.i;
             int yi = j + m->y.i;
-        
+
             /* Skip symmetric values */
             if (yi > xi)
                 continue;
@@ -316,13 +317,12 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             }
 
             float f = measure(s[xi], s[yi]);
-            
+
             /* Set value in matrix */
             hmatrix_set(m, xi, yi, f);
 
             /* Set symmetric value if in range */
-            if (yi >= m->x.i && yi < m->x.n &&
-                xi >= m->y.i && xi < m->y.n)
+            if (yi >= m->x.i && yi < m->x.n && xi >= m->y.i && xi < m->y.n)
                 hmatrix_set(m, yi, xi, f);
 
             /* Update progress bar every 100th step and 100ms */

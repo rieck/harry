@@ -128,7 +128,8 @@ static void print_usage(void)
            "  -C,  --print_config             Print the current configuration.\n"
            "  -D,  --print_defaults           Print the default configuration.\n"
            "  -V,  --version                  Print version and copyright.\n"
-           "  -h,  --help                     Print this help screen.\n" "\n");
+           "  -h,  --help                     Print this help screen.\n"
+           "\n");
 }
 
 /**
@@ -395,14 +396,14 @@ static hmatrix_t *harry_compute(hstring_t *strs, int num)
     hmatrix_t *mat = hmatrix_init(strs, num);
 
     /* Set ranges */
-   config_lookup_string(&cfg, "measures.x_range", (const char **) &cfg_str);
-   hmatrix_xrange(mat, cfg_str);
-   config_lookup_string(&cfg, "measures.y_range", (const char **) &cfg_str);
-   hmatrix_yrange(mat, cfg_str);
-   
-   /* Set matrix split */
-   config_lookup_string(&cfg, "measures.split", (const char **) &cfg_str);
-   hmatrix_split(mat, cfg_str);
+    config_lookup_string(&cfg, "measures.x_range", (const char **) &cfg_str);
+    hmatrix_xrange(mat, cfg_str);
+    config_lookup_string(&cfg, "measures.y_range", (const char **) &cfg_str);
+    hmatrix_yrange(mat, cfg_str);
+
+    /* Set matrix split */
+    config_lookup_string(&cfg, "measures.split", (const char **) &cfg_str);
+    hmatrix_split(mat, cfg_str);
 
     /* Allocate matrix */
     if (!hmatrix_alloc(mat))

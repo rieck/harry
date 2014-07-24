@@ -36,7 +36,7 @@ typedef struct
     int size;           /**< Size of memory */
     range_t x;          /**< Range x */
     range_t y;          /**< Range y */
-    int triangular;	/**< Flag for triangular storage */
+    int triangular;     /**< Flag for triangular storage */
 } hmatrix_t;
 
 hmatrix_t *hmatrix_init(hstring_t *s, int n);
