@@ -1,5 +1,5 @@
 # Harry - A Tool for Measuring String Similarity
-# Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+# Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
 
 AM_CPPFLAGS          	   = -I$(srcdir)/.. -I$(srcdir)/../input
 EXTRA_DIST		   = measures.txt measures.c.in gen_measures.py
