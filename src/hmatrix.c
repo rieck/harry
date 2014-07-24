@@ -302,9 +302,11 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 #pragma omp parallel for collapse(2) firstprivate(ts1, ts2)
     for (i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
+            int xi = i + m->x.i;
+            int yi = j + m->y.i;
         
             /* Skip symmetric values */
-            if (m->triangular && j < i)
+            if (yi > xi)
                 continue;
 
             /* First iteration */
@@ -313,10 +315,15 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                 ts2 = time_stamp();
             }
 
-            float f = measure(s[i + m->x.i], s[j + m->y.i]);
+            float f = measure(s[xi], s[yi]);
             
             /* Set value in matrix */
-            hmatrix_set(m, i + m->x.i, j + m->y.i, f);
+            hmatrix_set(m, xi, yi, f);
+
+            /* Set symmetric value if in range */
+            if (yi >= m->x.i && yi < m->x.n &&
+                xi >= m->y.i && xi < m->y.n)
+                hmatrix_set(m, yi, xi, f);
 
             /* Update progress bar every 100th step and 100ms */
             if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
