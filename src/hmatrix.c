@@ -202,14 +202,20 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
  */
 float *hmatrix_alloc(hmatrix_t *m)
 {
-    if (m->x.n == m->y.n && m->x.i == m->y.i && m->x.i == 0) {
-        /* Full matrix -> allocate triangle */
+    int xl, yl;
+
+    /* Compute dimensions of matrix */
+    xl = m->x.n - m->x.i;
+    yl = m->y.n - m->y.i;
+
+    if (m->x.n == m->y.n && m->x.i == m->y.i) {
+        /* Symmetric matrix -> allocate triangle */
         m->triangular = TRUE;
-        m->size = (m->x.n * (m->x.n - 1) / 2 + m->x.n);
+        m->size = xl * (xl - 1) / 2 + xl;
     } else {
         /* Patrial matrix -> allocate rectangle */
         m->triangular = FALSE;
-        m->size = (m->x.n - m->x.i) * (m->y.n - m->y.i);
+        m->size = xl * yl;
     }
 
     /* Allocate memory */
