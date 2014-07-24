@@ -43,14 +43,20 @@ static stopword_t *stopwords = NULL;
  * Free memory of the string object
  * @param x string object
  */
-void hstring_destroy(hstring_t x)
+void hstring_destroy(hstring_t *x)
 {
-    if (x.type == TYPE_CHAR && x.str.c)
-        free(x.str.c);
-    if (x.type == TYPE_SYM && x.str.s)
-        free(x.str.s);
-    if (x.src)
-        free(x.src);
+    if (x->type == TYPE_CHAR && x->str.c)
+        free(x->str.c);
+    if (x->type == TYPE_SYM && x->str.s)
+        free(x->str.s);
+    if (x->src)
+        free(x->src);
+
+    /* Make sure everything is null */
+    x->str.c = NULL;
+    x->str.s = NULL;
+    x->src = NULL;
+    x->len = 0;
 }
 
 /** 

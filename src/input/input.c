@@ -121,7 +121,7 @@ void input_free(hstring_t *strs, int len)
 
     int j;
     for (j = 0; j < len; j++)
-        hstring_destroy(strs[j]);
+        hstring_destroy(&strs[j]);
 }
 
 /** @} */

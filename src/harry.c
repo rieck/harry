@@ -392,6 +392,7 @@ static hstring_t *harry_read(char *input, int *num)
 static hmatrix_t *harry_compute(hstring_t *strs, int num)
 {
     char *cfg_str;
+    int i;
 
     hmatrix_t *mat = hmatrix_init(strs, num);
 
@@ -404,6 +405,14 @@ static hmatrix_t *harry_compute(hstring_t *strs, int num)
     /* Set matrix split */
     config_lookup_string(&cfg, "measures.split", (const char **) &cfg_str);
     hmatrix_split(mat, cfg_str);
+
+    /* Free unused memory */
+    for (i = 0; i < num; i++) {
+        if (i < mat->x.i && i < mat->y.i)
+            hstring_destroy(&strs[i]);
+        if (i >= mat->x.n && i >= mat->y.n)
+            hstring_destroy(&strs[i]);
+    }
 
     /* Allocate matrix */
     if (!hmatrix_alloc(mat))
