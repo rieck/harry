@@ -1,23 +1,9 @@
 #!/bin/sh
 
-# OpenBSD versions
-export AUTOCONF_VERSION=2.69
-export AUTOMAKE_VERSION=1.13 
-
-# Commands for autotools
-ACLOCAL=aclocal
-AUTOHEADER=autoheader
-AUTOMAKE=automake
-AUTOCONF=autoconf
-LIBTOOLIZE=libtoolize
-
 # Remove auto-generated m4 files
 rm -f aclocal.m4
 rm -f m4/lib* m4/lt*
 
-# Generate environment
-$ACLOCAL -I m4 && \
-$LIBTOOLIZE --force --copy && \
-$AUTOHEADER -f  && \
-$AUTOMAKE --foreign --add-missing --copy && \
-$AUTOCONF
+# Setup autotools elegantly
+autoreconf --install --force --symlink
+

@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Make sure autotools are setup
+if ! test -f ./configure ; then
+   autoreconf -install --force --symlink
+fi
+
 # Get requested configuration
 if test -n "$1" ; then
    arg=$1
