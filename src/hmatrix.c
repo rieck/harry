@@ -241,12 +241,12 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
     int idx, i, j;
 
     if (m->triangular) {
-        if (x > y) {
-            i = y, j = x;
+        if (x - m->x.i > y - m->y.i) {
+            i = y - m->y.i, j = x - m->x.i;
         } else {
-            i = x, j = y;
+            i = x - m->x.i, j = y - m->y.i;
         }
-        idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
+        idx = ((j - i) + i * (m->x.n - m->x.i) - i * (i - 1) / 2);
     } else {
         idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
     }
@@ -268,12 +268,12 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
     int idx, i, j;
 
     if (m->triangular) {
-        if (x > y) {
-            i = y, j = x;
+        if (x - m->x.i > y - m->y.i) {
+            i = y - m->y.i, j = x - m->x.i;
         } else {
-            i = x, j = y;
+            i = x - m->x.i, j = y - m->y.i;
         }
-        idx = ((j - i) + i * m->x.n - i * (i - 1) / 2);
+        idx = ((j - i) + i * (m->x.n - m->y.i) - i * (i - 1) / 2);
     } else {
         idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
     }
