@@ -321,9 +321,11 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             /* Set value in matrix */
             hmatrix_set(m, xi, yi, f);
 
+#if 0
             /* Set symmetric value if in range */
             if (yi >= m->x.i && yi < m->x.n && xi >= m->y.i && xi < m->y.n)
                 hmatrix_set(m, yi, xi, f);
+#endif
 
             /* Update progress bar every 100th step and 100ms */
             if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
