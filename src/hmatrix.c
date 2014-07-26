@@ -307,7 +307,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             int yi = j + m->y.i;
 
             /* Skip symmetric values */
-            if (yi > xi)
+            if (m->triangular && yi > xi)
                 continue;
 
             /* First iteration */
