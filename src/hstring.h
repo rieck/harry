@@ -16,9 +16,9 @@
 #define DELIM_NOT_INIT  42
 
 /* 
- * Symbols for words. We keep this signed.
+ * Symbols for words.
  */
-typedef int16_t sym_t;
+typedef uint64_t sym_t;
 
 /* Support types for strings. See union str in struct */
 #define TYPE_CHAR		0x00
