@@ -19,7 +19,7 @@
  * Symbols for words. Note: Some measures enumerate all possible symbols.
  * These need to be patched first to support larger symbol sizes.
  */
-typedef uint16_t sym_t;
+typedef uint64_t sym_t;
 
 /* Support types for strings. See union str in struct */
 #define TYPE_CHAR		0x00

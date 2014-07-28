@@ -36,12 +36,77 @@ static double cost_tra = 1.0;
 /* External variables */
 extern config_t cfg;
 
+/* Symbols hash table */
+typedef struct
+{
+    sym_t sym;          /**< Symbol (key) */
+    int val;            /**< Value associated with symbol */
+    UT_hash_handle hh;  /**< Makes struct hashable */
+} sym_hash_t;
+
 /*
  * Four-way minimum
  */
 static float min(float a, float b, float c, float d)
 {
     return fmin(fmin(a, b), fmin(c, d));
+}
+
+/**
+ * Get value associated with a symbol from the hash
+ * @param hash hash table
+ * @param s symbol
+ * @return value
+ */
+static int hash_get(sym_hash_t **hash, sym_t s)
+{
+    sym_hash_t *entry = NULL;
+
+    HASH_FIND(hh, *hash, &s, sizeof(sym_t), entry);
+    if (!entry) {
+        entry = malloc(sizeof(sym_hash_t));
+        entry->sym = s;
+        entry->val = 0;
+        HASH_ADD(hh, *hash, sym, sizeof(sym_t), entry);
+    }
+
+    return entry->val;
+}
+
+/**
+ * Set the value of a symbol in the hash
+ * @param hash hash table
+ * @param s symbol
+ * @param val value
+ */
+static void hash_set(sym_hash_t **hash, sym_t s, int val)
+{
+    sym_hash_t *entry = NULL;
+
+    HASH_FIND(hh, *hash, &s, sizeof(sym_t), entry);
+    if (!entry) {
+        entry = malloc(sizeof(sym_hash_t));
+        entry->sym = s;
+        entry->val = val;
+        HASH_ADD(hh, *hash, sym, sizeof(sym_t), entry);
+    }
+
+    entry->val = val;
+}
+
+/**
+ * Destroy hash table
+ * @param hash hash table
+ */
+static void hash_destroy(sym_hash_t **hash)
+{
+    sym_hash_t *entry;
+
+    while (*hash) {
+        entry = *hash;
+        HASH_DEL(*hash, entry);
+        free(entry);
+    }
 }
 
 /**
@@ -74,6 +139,7 @@ void dist_damerau_config()
  */
 float dist_damerau_compare(hstring_t x, hstring_t y)
 {
+    sym_hash_t *shash = NULL;
     int i, j, inf = x.len + y.len;
 
     if (x.len == 0 && y.len == 0)
@@ -81,12 +147,7 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
 
     /* Allocate table for dynamic programming */
     int *d = malloc((x.len + 2) * (y.len + 2) * sizeof(int));
-
-    /* FIXME. This should be replaced with a hash table */
-    int max_alph = 1 << (8 * sizeof(sym_t));
-    int *alph = calloc(max_alph, sizeof(int));
-
-    if (!d || !alph) {
+    if (!d) {
         error("Could not allocate memory for Damerau-Levenshtein distance");
         return 0;
     }
@@ -105,7 +166,7 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
     for (i = 1; i <= x.len; i++) {
         int db = 0;
         for (j = 1; j <= y.len; j++) {
-            int i1 = alph[(uint16_t) hstring_get(y, j - 1)];
+            int i1 = hash_get(&shash, hstring_get(y, j - 1));
             int j1 = db;
             int dz = hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0;
             if (dz == 0)
@@ -118,15 +179,15 @@ float dist_damerau_compare(hstring_t x, hstring_t y)
                                   (j - j1 - 1));
         }
 
-        alph[hstring_get(x, i - 1)] = i;
+        hash_set(&shash, hstring_get(x, i - 1), i);
     }
 
     float r = D(x.len + 1, y.len + 1);
-    
+
     /* Free memory */
     free(d);
-    free(alph);
-    
+    hash_destroy(&shash);
+
     return lnorm(n, r, x, y);
 }
 
