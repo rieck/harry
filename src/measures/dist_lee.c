@@ -63,7 +63,7 @@ float dist_lee_compare(hstring_t x, hstring_t y)
         else
             ad = fabs(hstring_get(y, i) - min_sym);
 
-        if (ad >= q) {
+        if (ad > q) {
             warning("Distance of symbols larger than alphabet. Fixing.");
             ad = q - 1;
         }
