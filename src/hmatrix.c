@@ -135,7 +135,7 @@ static range_t parse_range(range_t r, char *str, int n)
 /**
  * Enable splitting matrix 
  * @param m Matrix object
- * @param s Split string
+ * @param str Split string
  */
 void hmatrix_split(hmatrix_t *m, char *str)
 {
