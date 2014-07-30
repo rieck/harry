@@ -799,6 +799,7 @@ options.  Moreover, some parameters of the configuration can be overwritten
 on the command line.  Following is the list of options:
 
 =head2 I/O options
+
   -i,  --input_format <format>   Set input format for strings.
        --decode_str              Enable URI-decoding of strings.
        --reverse_str             Reverse (flip) all strings.
@@ -808,6 +809,7 @@ on the command line.  Following is the list of options:
   -u,  --triangular              Save triangular matrix only.
 
 =head2 Module options:
+
   -m,  --measure <name>          Set similarity measure.
   -d,  --word_delim <delim>      Set delimiters for words.
   -n,  --num_threads <num>       Set number of threads.
@@ -817,6 +819,7 @@ on the command line.  Following is the list of options:
   -y,  --y_range <start>:<end>   Set the index range (y) of stirngs.
 
 =head2 Generic options:
+
   -c,  --config_file <file>      Set configuration file.
   -v,  --verbose                 Increase verbosity.
   -l,  --log_line                Print a log line every minute
