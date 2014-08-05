@@ -465,8 +465,9 @@ void stopwords_destroy()
 
 /**
  * Soundex code as implemented by Kevin Setter, 8/27/97 with some 
- * slight modifications. It seems that the original soundex index is
- * more involved. We are implementing a slightly simpler variant.
+ * slight modifications. Known bugs: Consonants separated by a vowel
+ * are treated as one character, if they have the same index. This
+ * is wrong. :(
  *
  * @param in input string
  * @param len end of input string
