@@ -124,13 +124,13 @@ void hstring_print(hstring_t x)
             if (isprint(x.str.c[i]))
                 printf("%c", x.str.c[i]);
             else
-                printf("%%%.2x", x.str.c[i]);
+                printf("%%%.2x", (char) x.str.c[i]);
         printf(" (char)\n");
     }
 
     if (x.type == TYPE_SYM && x.str.s) {
         for (i = 0; i < x.len; i++)
-            printf("%d ", x.str.s[i]);
+            printf("%llu ", (uint64_t) x.str.s[i]);
         printf(" (sym)\n");
     }
 
@@ -418,10 +418,11 @@ hstring_t stopwords_filter(hstring_t x)
 hstring_t hstring_preproc(hstring_t x)
 {
     assert(x.type == TYPE_CHAR);
-    int decode, reverse, c, i, k;
+    int decode, reverse, soundex, c, i, k;
 
     config_lookup_bool(&cfg, "input.decode_str", &decode);
     config_lookup_bool(&cfg, "input.reverse_str", &reverse);
+    config_lookup_bool(&cfg, "input.soundex", &soundex);
 
     if (decode) {
         x.len = decode_str(x.str.c);
@@ -435,6 +436,9 @@ hstring_t hstring_preproc(hstring_t x)
             x.str.c[k] = c;
         }
     }
+
+    if (soundex)
+        x = hstring_soundex(x);
 
     if (hstring_has_delim())
         x = hstring_symbolize(x);
@@ -457,6 +461,152 @@ void stopwords_destroy()
         HASH_DEL(stopwords, s);
         free(s);
     }
+}
+
+/**
+ * Soundex code as implemented by Kevin Setter, 8/27/97 with some 
+ * slight modifications. It seems that the original soundex index is
+ * more involved. We are implementing a slightly simpler variant.
+ *
+ * @param in input string
+ * @param len end of input string
+ * @param out output buffer of 5 bytes
+ * @return soundex 
+ */
+static void soundex(char *in, int len, char *out)
+{
+    int i = 0, j = 0;
+    char c, prev = '*';
+
+    /* Skip first letter if in the following set */
+    switch(tolower(in[0])) {
+    case 'a':
+    case 'e':
+    case 'i':
+    case 'o':
+    case 'y':
+    case 'h':
+    case 'w':
+        i++; j++;
+        break;
+    }
+
+    while (i < len && j <= 4) {
+        in[i] = tolower(in[i]);
+        switch (in[i]) {
+        case 'b':
+            c = '1';
+            break;
+        case 'p':
+            c = '1';
+            break;
+        case 'f':
+            c = '1';
+            break;
+        case 'v':
+            c = '1';
+            break;
+        case 'c':
+            c = '2';
+            break;
+        case 's':
+            c = '2';
+            break;
+        case 'k':
+            c = '2';
+            break;
+        case 'g':
+            c = '2';
+            break;
+        case 'j':
+            c = '2';
+            break;
+        case 'q':
+            c = '2';
+            break;
+        case 'x':
+            c = '2';
+            break;
+        case 'z':
+            c = '2';
+            break;
+        case 'd':
+            c = '3';
+            break;
+        case 't':
+            c = '3';
+            break;
+        case 'l':
+            c = '4';
+            break;
+        case 'm':
+            c = '5';
+            break;
+        case 'n':
+            c = '5';
+            break;
+        case 'r':
+            c = '6';
+            break;
+        default:
+            c = '*';
+        }
+        if ((c != prev) && (c != '*')) {
+            out[j] = c;
+            prev = out[j];
+            j++;
+        }
+        i++;
+    }
+
+    if (j < 4)
+        for (i = j; i < 4; i++)
+            out[i] = '0';
+
+
+    out[0] = toupper(in[0]);
+    out[4] = 0;
+}
+
+
+
+/**
+ * Perform a soundex transformation of each word.
+ * @param s string
+ */
+hstring_t hstring_soundex(hstring_t x)
+{
+    int start = 0, i, alloc = 0, end = 0;
+    char sdx[5], *out = NULL;
+
+    assert(x.type == TYPE_CHAR);
+
+    for (i = 0; i < x.len; i++) {
+        /* Compute soundex for each substring of letters */
+        if (i == x.len - 1 || !isalpha(x.str.c[i])) {
+            if (start < i) {
+                int len = i - start + ((i == x.len - 1) ? 1 : 0);
+                soundex(x.str.c + start, len, sdx);
+            }
+            start = i + 1;
+
+            /* Reallocate memory if necessary */
+            if (end + 6 > alloc) {
+                alloc += 128;   /* Use small blocks */
+                out = realloc(out, alloc);
+            }
+
+            /* Append soundex */
+            snprintf(out + end, 6, "%s ", sdx);
+            end += 5;
+        }
+    }
+
+    /* Overwrite original stirng data */
+    free(x.str.c);
+    x.str.c = out;
+    x.len = end - 1;
+    return x;
 }
 
 /** @} */

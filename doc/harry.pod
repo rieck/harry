@@ -149,6 +149,15 @@ a file containing these words; one per line.  Non-printable characters can
 be escaped using URI encoding (%XX).  Stop words can only be filtered, if a
 set of delimiters is defined using B<word_delim>.
 
+=item B<soundex = false;>
+
+All words in the strings are mapped to the soundex index. For example,
+"Pfister" is mapped to "P236" and "Jackson" to "J250".  The soundex index
+has been originally designed for comparing names, however, in B<harry> it
+can be applied to all sorts of words, if they are composed of alphabetic
+letters.  Punctation characters are ignored and thus the string "Hey, I am
+here with Harry!", gets mapped to "H000 I000 A500 H600 W300 H600".
+
 =back
 
 =item B<};>

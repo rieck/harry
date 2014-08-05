@@ -38,6 +38,7 @@ static default_t defaults[] = {
     {I "", "lines_regex", CONFIG_TYPE_STRING, {.str = "^(\\+|-)?[0-9]+"}},
     {I "", "reverse_str", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {I "", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
+    {I "", "soundex", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     {M "", "word_delim", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},

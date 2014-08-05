@@ -57,6 +57,7 @@ uint64_t hstring_hash2(hstring_t, hstring_t);
 int hstring_has_delim();
 int hstring_compare(hstring_t x, int i, hstring_t y, int j);
 sym_t hstring_get(hstring_t x, int i);
+hstring_t hstring_soundex(hstring_t);
 
 /* Additional functions */
 void stopwords_load(const char *f);
