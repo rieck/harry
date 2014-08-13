@@ -12,6 +12,8 @@
 #ifndef HCONFIG_H
 #define HCONFIG_H
 
+#include "config.h"
+
 #ifdef HAVE_LIBCONFIG_H
 #include <libconfig.h>
 #endif
