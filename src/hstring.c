@@ -389,7 +389,7 @@ void stopwords_load(const char *file)
  */
 hstring_t stopwords_filter(hstring_t x)
 {
-    assert(x.type = TYPE_SYM);
+    assert(x.type == TYPE_SYM);
     stopword_t *stopword;
     int i, j;
 
