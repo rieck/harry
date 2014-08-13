@@ -24,7 +24,6 @@
 #include <inttypes.h>
 
 /* External variable */
-extern int verbose;
 extern config_t cfg;
 
 /* Global delimiter table */

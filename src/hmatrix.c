@@ -26,7 +26,6 @@
 /* External variable */
 extern int verbose;
 extern int log_line;
-extern config_t cfg;
 
 /**
  * Initialize a matrix for similarity values

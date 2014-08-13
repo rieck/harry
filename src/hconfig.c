@@ -22,9 +22,6 @@
 #include "util.h"
 #include "hconfig.h"
 
-/* External variables */
-extern int verbose;
-
 #define I "input"
 #define M "measures"
 #define O "output"
