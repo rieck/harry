@@ -81,7 +81,7 @@ int harry_version(FILE *f, char *p, char *m)
  * @param m Message
  * @return number of written characters
  */
-int harry_zversion(gzFile * z, char *p, char *m)
+int harry_zversion(gzFile z, char *p, char *m)
 {
     return gzprintf(z, "%sHarry %s - %s\n", p, PACKAGE_VERSION, m);
 }

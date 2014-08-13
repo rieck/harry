@@ -15,7 +15,7 @@
 #define BLOCK_SIZE	4096
 
 int harry_version(FILE *, char *, char *);
-int harry_zversion(gzFile *, char *, char *);
+int harry_zversion(gzFile, char *, char *);
 
 #define config_set_string(c,x,s) \
       config_setting_set_string(config_lookup(c,x),s)
