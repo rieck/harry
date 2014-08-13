@@ -21,6 +21,7 @@
 #include "util.h"
 #include "hstring.h"
 #include "murmur.h"
+#include <inttypes.h>
 
 /* External variable */
 extern int verbose;
@@ -130,7 +131,7 @@ void hstring_print(hstring_t x)
 
     if (x.type == TYPE_SYM && x.str.s) {
         for (i = 0; i < x.len; i++)
-            printf("%llu ", (uint64_t) x.str.s[i]);
+            printf("%"PRIu64" ", (uint64_t) x.str.s[i]);
         printf(" (sym)\n");
     }
 
