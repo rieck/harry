@@ -34,7 +34,7 @@ static int zlib = 0;
 /* Dirty hack to support compression */
 #define output_printf(z, ...) (\
    zlib ? \
-       gzprintf((gzFile *) z, __VA_ARGS__) \
+       gzprintf((gzFile) z, __VA_ARGS__) \
    : \
        fprintf((FILE *) z, __VA_ARGS__) \
 )
