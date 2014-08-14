@@ -290,17 +290,17 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
 void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
 {
-    int i, k = 0;
+    int k = 0;
     int step1 = floor(m->size * 0.01) + 1;
-    float ts1 = 0, ts2 = 0;
+    double ts, ts1 = time_stamp(), ts2 = ts1;
 
     /*
      * It seems that the for-loop has to start at index 0 for OpenMP to 
      * collapse both loops. This renders it a little ugly, since hmatrix 
      * requires absolute indices.
      */
-#pragma omp parallel for collapse(2) firstprivate(ts1, ts2)
-    for (i = 0; i < m->x.n - m->x.i; i++) {
+#pragma omp parallel for collapse(2) private(ts)
+    for (int i = 0; i < m->x.n - m->x.i; i++) {
         for (int j = 0; j < m->y.n - m->y.i; j++) {
             int xi = i + m->x.i;
             int yi = j + m->y.i;
@@ -308,12 +308,6 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             /* Skip symmetric values */
             if (m->triangular && yi > xi)
                 continue;
-
-            /* First iteration */
-            if (k == 0) {
-                ts1 = time_stamp();
-                ts2 = time_stamp();
-            }
 
             float f = measure(s[xi], s[yi]);
 
@@ -326,19 +320,25 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                 hmatrix_set(m, yi, xi, f);
 #endif
 
-            /* Update progress bar every 100th step and 100ms */
-            if (verbose && (k % step1 == 0 || time_stamp() - ts1 > 0.1)) {
-                prog_bar(0, m->size, k);
-                ts1 = time_stamp();
-            }
 
-            /* Print log line every minute if enabled */
-            if (log_line && time_stamp() - ts2 > 60) {
-                log_print(0, m->size, k);
-                ts2 = time_stamp();
-            }
+			if (verbose || log_line)
+#pragma omp critical
+			{
+				ts = time_stamp();
 
-            k++;
+				/* Update progress bar every 100th step and 100ms */
+				if (verbose && (k % step1 == 0 || ts - ts1 > 0.1)) {
+					prog_bar(0, m->size, k);
+					ts1 = ts;
+				}
+
+				/* Print log line every minute if enabled */
+				if (log_line && ts - ts2 > 60) {
+					log_print(0, m->size, k);
+					ts2 = ts;
+				}
+            	k++;
+			}
         }
     }
 
