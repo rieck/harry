@@ -144,7 +144,8 @@ float vcache_get_used()
  */
 float vcache_get_hitrate()
 {
-    return 100 * hits / (hits + misses);
+	const double total = (hits + misses);
+    return (total <= 0 ? 0 : 100 * hits / (hits + misses));
 }
 
 /**
