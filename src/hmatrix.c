@@ -115,7 +115,7 @@ static range_t parse_range(range_t r, char *str, int n)
     else
         error("Could not parse range '...:%s'.", ptr + 1);
 
-    /* Support negative end index */
+    /* Support negative start and end indices */
     if (r.i < 0)
         r.i = n + r.i;
     if (r.n < 0)
