@@ -1,7 +1,7 @@
 /*
  * Harry - A Tool for Measuring String Similarity
  * Copyright (C) 2006 Stephen Toub 
- *               2013  Konrad Rieck (konrad@mlsec.org)
+ *               2013-2014  Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -55,6 +55,9 @@ void dist_levenshtein_config()
     n = lnorm_get(str);
 }
 
+/* Ugly macros to access arrays */
+#define ROWS(i,j)	rows[(i) * (y.len + 1) + (j)]
+
 /**
  * Computes the Levenshtein distance of two strings. 
  * Adapted from Stephen Toub's C# implementation. 
@@ -76,26 +79,30 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
      * has a length m+1, so just O(m) space.  Initialize the curr row.
      */
     int curr = 0, next = 1;
-    int rows[2][y.len + 1];
+    int *rows = malloc(sizeof(int) * (y.len + 1) * 2);
+    if (!rows) {
+        error("Failed to allocate memory for Levenshtein distance");
+        return 0;
+    }
 
     for (j = 0; j <= y.len; j++)
-        rows[curr][j] = j;
+         ROWS(curr,j) = j;
 
     /* For each virtual row (we only have physical storage for two) */
     for (i = 1; i <= x.len; i++) {
 
         /* Fill in the values in the row */
-        rows[next][0] = i;
+        ROWS(next,0) = i;
         for (j = 1; j <= y.len; j++) {
 
             /* Insertion and deletion */
-            a = rows[curr][j] + cost_ins;
-            b = rows[next][j - 1] + cost_del;
+            a = ROWS(curr,j) + cost_ins;
+            b = ROWS(next, j - 1) + cost_del;
             if (a > b)
                 a = b;
 
             /* Substitution */
-            b = rows[curr][j - 1] +
+            b = ROWS(curr, j - 1) +
                 (hstring_compare(x, i - 1, y, j - 1) ? cost_sub : 0);
 
             if (a > b)
@@ -106,7 +113,7 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
              * this implementation, as only two rows of the distance matrix
              * are available. Potential fix: provide three rows.
              */
-            rows[next][j] = a;
+            ROWS(next, j) = a;
         }
 
         /* Swap the current and next rows */
@@ -118,8 +125,12 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
             next = 1;
         }
     }
+    double d = ROWS(curr, y.len);
 
-    return lnorm(n, rows[curr][y.len], x, y);
+    /* Free memory */
+    free(rows);
+
+    return lnorm(n, d, x, y);
 }
 
 /** @} */

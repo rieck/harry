@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,7 +27,7 @@
 
 /**
  * Init a read-write lock.
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_init(rwlock_t *rw)
 {
@@ -35,72 +35,72 @@ void rwlock_init(rwlock_t *rw)
     pthread_rwlock_init(&rw->lock, NULL);
 #else
     omp_init_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
  * Destroy a read-write lock.
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_destroy(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_destroy(&rw->lock);
-#else    
+#else
     omp_destroy_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
  * Set lock for reading. 
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_rdlock(&rw->lock);
-#else    
+#else
     omp_set_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
  * Unset lock for reading. 
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_unlock(&rw->lock);
-#else    
+#else
     omp_unset_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
  * Set lock for writing. 
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_wrlock(&rw->lock);
-#else    
+#else
     omp_set_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /**
  * Unset lock for writing.
- * @param rw pointer to lock structure
+ * @param rw pointer to lock object
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
 #ifdef HAVE_PTHREAD_H
     pthread_rwlock_unlock(&rw->lock);
-#else    
+#else
     omp_unset_lock(&rw->lock);
-#endif    
+#endif
 }
 
 /** @} */

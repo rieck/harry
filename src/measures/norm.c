@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -52,15 +52,15 @@ lnorm_t lnorm_get(const char *str)
 float lnorm(lnorm_t n, float d, hstring_t x, hstring_t y)
 {
     switch (n) {
-        case LN_MIN:
-            return d / fmin(x.len, y.len);
-        case LN_MAX:
-            return d / fmax(x.len, y.len);
-        case LN_AVG:
-            return d / (0.5 * (x.len + y.len));
-        case LN_NONE:
-        default:
-            return d;
+    case LN_MIN:
+        return d / fmin(x.len, y.len);
+    case LN_MAX:
+        return d / fmax(x.len, y.len);
+    case LN_AVG:
+        return d / (0.5 * (x.len + y.len));
+    case LN_NONE:
+    default:
+        return d;
     }
 }
 
@@ -100,15 +100,15 @@ float knorm(knorm_t n, float k, hstring_t x, hstring_t y,
     switch (n) {
     case KN_L2:
         xk = hstring_hash1(x);
-        if (!vcache_load(xk, &xv)) {
+        if (!vcache_load(xk, &xv, ID_NORM)) {
             xv = kernel(x, x);
-            vcache_store(xk, xv);
+            vcache_store(xk, xv, ID_NORM);
         }
 
         yk = hstring_hash1(y);
-        if (!vcache_load(yk, &yv)) {
+        if (!vcache_load(yk, &yv, ID_NORM)) {
             yv = kernel(y, y);
-            vcache_store(yk, yv);
+            vcache_store(yk, yv, ID_NORM);
         }
         return k / sqrt(xv * yv);
     case KN_NONE:

@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -34,12 +34,12 @@
 
 /* External variable */
 extern int verbose;
-/* Global variable */
-static double time_start = -1;
 /** Progress bar (with NULL) */
 static char pb_string[PROGBAR_LEN + 1];
 /** Start timestamp measured */
 static double pb_start = -1;
+static double log_start = -1;
+
 
 /**
  * Print a formated info message with timestamp. 
@@ -50,9 +50,6 @@ void info_msg(int v, char *m, ...)
 {
     va_list ap;
     char s[256] = { " " };
-
-    if (time_start == -1)
-        time_start = time_stamp();
 
     if (v > verbose)
         return;
@@ -97,9 +94,6 @@ void debug_msg(char *m, ...)
     va_list ap;
     char s[256] = { " " };
 
-    if (time_start == -1)
-        time_start = time_stamp();
-
     va_start(ap, m);
     vsnprintf(s, 256, m, ap);
     va_end(ap);
@@ -115,11 +109,13 @@ void debug_msg(char *m, ...)
 double time_stamp()
 {
 #if 0
+    return omp_get_wtime();
+
+#else
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + tv.tv_usec / 1e6;
 #endif
-    return omp_get_wtime();     
 }
 
 /**
@@ -353,5 +349,43 @@ uint64_t hash_str(char *s, int l)
 
     return ret;
 }
+
+/**
+ * Print a log line 
+ * @param a Minimum value 
+ * @param b Maximum value
+ * @param c Current value
+ */
+void log_print(long a, long b, long c)
+{
+    double perc, min, max, in;
+    char buf[256];
+    time_t rawtime;
+
+    min = (double) a;
+    max = (double) b;
+    in = (double) c;
+    perc = (in - min) / (max - min);
+
+    /* Start of progress */
+    if (log_start < 0)
+        log_start = time_stamp();
+
+    int ptime = (max - in) * (time_stamp() - log_start) / (in - min);
+    int hours = (int) floor(ptime / (60 * 60));
+    int mins = (int) floor((ptime - (hours * 60 * 60)) / 60);
+    int secs = (int) floor(ptime - (hours * 60 * 60 + mins * 60));
+
+    time(&rawtime);
+    strftime(buf, 255, "%F %T", localtime(&rawtime));
+
+    printf("[%s] state: %.0f%%, omp: %d, vcache: %.0f%%/%.0f%%, "
+           "eta: %dh%.2dm%.2ds\n", buf,
+           perc * 100, omp_get_num_threads(), vcache_get_used() * 100,
+           vcache_get_hitrate() * 100, hours, mins, secs);
+
+    fflush(stdout);
+}
+
 
 /** @} */

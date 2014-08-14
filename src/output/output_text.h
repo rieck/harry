@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -14,7 +14,7 @@
 
 /* text output module */
 int output_text_open(char *);
-int output_text_write(float *, int, int, int);
+int output_text_write(hmatrix_t *);
 void output_text_close(void);
 
 #endif /* OUTPUT_TEXT_H */

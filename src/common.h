@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -35,6 +35,7 @@
 #include <errno.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 #include <assert.h>
 #include <dirent.h>
 #include <omp.h>

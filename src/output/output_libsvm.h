@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -14,7 +14,7 @@
 
 /* libsvm output module */
 int output_libsvm_open(char *);
-int output_libsvm_write(float *, int, int, int);
+int output_libsvm_write(hmatrix_t *);
 void output_libsvm_close(void);
 
 #endif /* OUTPUT_LIBSVM_H */

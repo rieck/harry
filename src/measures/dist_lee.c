@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -63,7 +63,7 @@ float dist_lee_compare(hstring_t x, hstring_t y)
         else
             ad = fabs(hstring_get(y, i) - min_sym);
 
-        if (ad >= q) {
+        if (ad > q) {
             warning("Distance of symbols larger than alphabet. Fixing.");
             ad = q - 1;
         }

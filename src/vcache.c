@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -55,7 +55,7 @@ void vcache_init()
     info_msg(1, "Initializing cache with %dMb (%d entries)", csize, space);
 
     cache = calloc(space, sizeof(entry_t));
-    if (!cache) 
+    if (!cache)
         error("Failed to allocate value cache");
 
     /* Initialize lock */
@@ -68,23 +68,25 @@ void vcache_init()
  * of strings. Collisions may occur, but are not likely. 
  * @param key Key for similarity value
  * @param value Value to store
+ * @param id ID of task
  * @return true on success, false otherwise
  */
-int vcache_store(uint64_t key, float value)
+int vcache_store(uint64_t key, float value, int id)
 {
     int idx;
-    
-    idx = key % space;
+
+    idx = (key ^ id) % space;
 
     rwlock_set_wlock(&rwlock);
-    
+
     if (cache[idx].key == 0)
-       size++;
-    
+        size++;
+
     cache[idx].key = key;
     cache[idx].val = value;
+    cache[idx].id = id;
     rwlock_unset_wlock(&rwlock);
-    
+
     return TRUE;
 }
 
@@ -92,22 +94,23 @@ int vcache_store(uint64_t key, float value)
  * Load a similarity value. The value is associated with 64 bit key.
  * @param key Key for similarity value
  * @param value Pointer to space for value
+ * @param id ID of task
  * @return true on success, false otherwise 
  */
-int vcache_load(uint64_t key, float *value)
+int vcache_load(uint64_t key, float *value, int id)
 {
-    int ret, idx; 
-    
-    idx = key % space;
+    int ret, idx;
+
+    idx = (key ^ id) % space;
     rwlock_set_rlock(&rwlock);
-    if (cache[idx].key == key) {
+    if (cache[idx].key == key && cache[idx].id == id) {
         *value = cache[idx].val;
         ret = TRUE;
         hits++;
     } else {
         ret = FALSE;
         misses++;
-    }    
+    }
 
     rwlock_unset_rlock(&rwlock);
     return ret;
@@ -141,7 +144,8 @@ float vcache_get_used()
  */
 float vcache_get_hitrate()
 {
-    return 100 * hits / (hits + misses);
+    const double total = (hits + misses);
+    return (total <= 0 ? 0 : 100 * hits / (hits + misses));
 }
 
 /**

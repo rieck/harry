@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org);
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org);
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -45,7 +45,7 @@ static float get_label(char *line)
 
     /* No match found */
     if (regexec(&re, line, 1, pmatch, 0))
-        return 0;
+        return 1.0;
 
     name = line + pmatch[0].rm_so;
     old = line[pmatch[0].rm_eo];
@@ -69,43 +69,28 @@ static float get_label(char *line)
 /**
  * Opens a file for reading text lines. 
  * @param name File name
- * @return number of lines or -1 on error
+ * @return 1 on success, 0 otherwise
  */
 int input_lines_open(char *name)
 {
     assert(name);
     const char *pattern;
-  
+
     in = gzopen(name, "r");
     if (!in) {
         error("Could not open '%s' for reading", name);
-        return -1;
+        return FALSE;
     }
 
     /* Compile regular expression for label */
     config_lookup_string(&cfg, "input.lines_regex", &pattern);
     if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
         error("Could not compile regex for label");
-        return -1;
+        return FALSE;
     }
 
-    /* Count lines in file (I hope this is buffered) */
-    int c = -1, prev, num_lines = 0;
-    do {
-        prev = c;
-        c = gzgetc(in);
-        if (c == '\n')
-            num_lines++;
-    } while (c != -1);
-
-    if (prev >= 0 && prev != '\n')
-        num_lines++;
-
-    /* Prepare reading */
-    gzrewind(in);
     line_num = 0;
-
-    return num_lines;
+    return TRUE;
 }
 
 /**
@@ -122,10 +107,6 @@ int input_lines_read(hstring_t *strs, int len)
     char buf[32], *line = NULL;
 
     for (i = 0; i < len; i++) {
-#ifdef ENABLE_EVALTIME
-        double t1 = time_stamp();
-#endif
-
         line = NULL;
         read = gzgetline(&line, &size, in);
         if (read == -1) {
@@ -133,22 +114,18 @@ int input_lines_read(hstring_t *strs, int len)
             break;
         }
 
-
         /* Strip newline characters */
         strip_newline(line, read);
+
+        /* Caution: May modify the line */
+        strs[j].label = get_label(line);
 
         strs[j].str.c = line;
         strs[j].type = TYPE_CHAR;
         strs[j].len = strlen(line);
-	strs[j].label = get_label(line);
-	snprintf(buf, 32, "line%d", line_num++);
+        snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);
-        strs[j].idx = j;
         j++;
-
-#ifdef ENABLE_EVALTIME
-        printf("strlen %d read %f\n", strs[j - 1].len, time_stamp() - t1);
-#endif
     }
 
     return j;

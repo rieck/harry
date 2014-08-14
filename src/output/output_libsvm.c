@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -34,7 +34,7 @@ static int zlib = 0;
 /* Dirty hack to support compression */
 #define output_printf(z, ...) (\
    zlib ? \
-       gzprintf((gzFile *) z, __VA_ARGS__) \
+       gzprintf((gzFile) z, __VA_ARGS__) \
    : \
        fprintf((FILE *) z, __VA_ARGS__) \
 )
@@ -48,7 +48,7 @@ int output_libsvm_open(char *fn)
 {
     assert(fn);
 
-    config_lookup_int(&cfg, "output.compress", &zlib);
+    config_lookup_bool(&cfg, "output.compress", &zlib);
 
     if (zlib)
         z = gzopen(fn, "w9");
@@ -60,43 +60,31 @@ int output_libsvm_open(char *fn)
         return FALSE;
     }
 
-    /* Write harry header */
-    if (zlib)
-        harry_zversion(z, "# ", "Output module for libsvm format");
-    else
-        harry_version(z, "# ", "Output module for libsvm format");
-
     return TRUE;
 }
 
 /**
  * Write similarity matrux to output
  * @param m Matrix/triangle of similarity values 
- * @param x Dimension of matrix
- * @param y Dimension of matrix
- * @param t 0 if matrix given, 1 for upper-right triangle
  * @return Number of written values
  */
-int output_libsvm_write(float *m, int x, int y, int t)
+int output_libsvm_write(hmatrix_t *m)
 {
-    assert(x && x >= 0 && y >= 0);
-    int i, j, k, r;
+    assert(m);
+    int i, j, r, k = 0;
 
-    for (k = i = 0; i < x; i++) {
-        output_printf(z, "<label> 0:%d", i);
-        for (j = 0; j < y; j++) {
-            if (t)
-                r = output_printf(z, " %d:%g", j + 1, m[tr_index(i,j,x)]);
-            else
-                r = output_printf(z, " %d:%g", j + 1, m[k++]);
+    for (i = m->y.i; i < m->y.n; i++) {
+        output_printf(z, "%d 0:%d", (int) m->labels[i], i + 1);
+        for (j = m->x.i; j < m->x.n; j++) {
+            r = output_printf(z, " %d:%g", j + 1, hmatrix_get(m, j, i));
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
             }
+            k++;
         }
         output_printf(z, "\n");
     }
-
     return k;
 }
 

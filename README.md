@@ -1,21 +1,40 @@
 ![Harry](harry.png) 
 
-# Harry - A Tool for Measuring String Similarity
+Harry - A Tool for Measuring String Similarity
+==
 
-## Description
+Description
+--
 
 Harry is a small tool for comparing strings. The tool supports several
 common distance and kernel functions for strings as well as some excotic
 similarity measures.  The focus of Harry lies on implicit similarity
 measures, that is, comparison functions that do not give rise to an explicit
-vector space, such as the Levenshtein distance.  Harry complements the tool
-Sally that embeds strings in vector spaces, where explicit similarity
-measures can be computed, such as bag-of-word kernels.
+vector space.  Examples of such similarity measures are the Levenshtein
+distance, the Jaro-Winkler distance or the spectrum kernel.
 
-## Similarity Measures
+During operation Harry loads a set of strings from input, computes the
+specified similarity measure and writes a matrix of similarity values to
+output.  The similarity measure can be computed based on the granulartiy of
+characters as well as words contained in the strings.  The configuration of
+this process, such as the input format, the similarity measure and the
+output format, are specified in a configuration file and can be additionally
+refined using command-line options.
 
-Harry is currently under development. The following similarity measures are
-supported so far
+Harry is implemented using OpenMP, such that the computation time for a
+set of strings scales linear with the number of available CPU cores. 
+Moreover, efficient implementations of several similarity measures,
+effective caching of similarity values and low-overhead locking further
+speedup the computation.
+
+Harry complements the tool sally(1) that embeds strings in a vector space
+and allows computing vectorial similarity measures, such as the cosine
+distance and the bag-of-words kernel.
+
+Similarity Measures
+--
+
+The following similarity measures are supported so by Harry
 
     dist_bag             Bag distance
     dist_compression     Normalized compression distance (NCD)
@@ -23,38 +42,69 @@ supported so far
     dist_hamming         Hamming distance
     dist_jaro            Jaro distance
     dist_jarowinkler     Jaro-Winkler distance
+    dist_kernel          Kernel-based distance
     dist_lee             Lee distance
     dist_levenshtein     Levenshtein distance
+    dist_osa             Optimal string alignment (OSA) distance
+    kern_distance        Distance substitution kernel (DSK)
+    kern_spectrum        Spectrum kernel
     kern_subsequence     Subsequence kernel (SSK)
     kern_wdegree         Weighted-degree kernel (WDK)
     sim_braun            Braun-Blanquet coefficient
-    sim_dice             Soerencen-Dice coefficient
+    sim_dice             Soerensen-Dice coefficient
     sim_jaccard          Jaccard coefficient
     sim_kulczynski       second Kulczynski coefficient
     sim_otsuka           Otsuka coefficient
     sim_simpson          Simpson coefficient
     sim_sokal            Sokal-Sneath coefficient
 
-## Dependencies
+Dependencies
+--
 
-    >= OpenMP 2.5
-    >= zlib-1.2.1
-    >= libconfig-1.4
-    >= libarchive-2.70
++   OpenMP >= 2.5 (need to be supported by the C compiler)
++   zlib >= 1.2.1, <http://www.zlib.net/>
++   libconfig >= 1.4, <http://www.hyperrealm.com/libconfig/>
++   libarchive >= 2.70, <http://libarchive.github.com/>
 
-Corresponding packages
+#### Debian & Ubuntu Linux
 
-+ Debian and Ubuntu Linux: `libz-dev libconfig9-dev libarchive-dev`
-+ MacOS X with Homebrew:   `libconfig libarchive (homebrew-dupes)`
-+ MacOS X with MacPorts:   `libconfig-hr libarchive`
+The following packages need to be installed for compiling Harry on Debian
+and Ubuntu Linux
 
-The source code of the libraries is available here:
+    gcc
+    libz-dev
+    libconfig9-dev
+    libarchive-dev
 
-+ zlib        <http://www.zlib.net/>
-+ libconfig   <http://www.hyperrealm.com/libconfig/>
-+ libarchive  <http://libarchive.github.com/>
+For bootstrapping Harry from the GIT repository or manipulating the
+automake/autoconf configuration, the following additional packages are
+necessary.
 
-## Compilation & Installation
+    automake
+    autoconf
+    libtool
+
+#### Mac OS X
+
+For compiling Harry on Mac OS X a working installation of Xcode is needed.
+Moreover, a C compiler supporting OpenMP is required (`clang` from Xcode
+currently does not support OpenMP).  The following packages need to be
+installed from Homebrew.
+
+    gcc43 (or download from <http://hpc.sourceforge.net>)
+    libconfig
+    libarchive (from homebrew-alt)
+
+#### OpenBSD
+
+Due to the vague state of OpenBSD multi-threading, neither the default `gcc`
+nor the packaged `gcc` seem to correctly support OpenMP.  To get Harry to
+run you can only try to build gcc from scratch
+
+    :(
+
+Compilation & Installation
+--
 
 From GIT repository first run
 

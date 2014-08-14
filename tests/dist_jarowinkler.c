@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -50,7 +50,7 @@ int test_compare()
     int i, err = FALSE;
     hstring_t x, y;
 
-   printf("Testing Jaro-Winkler distance ");
+    printf("Testing Jaro-Winkler distance ");
     for (i = 0; tests[i].x && !err; i++) {
         measure_config("dist_jarowinkler");
 
@@ -71,8 +71,8 @@ int test_compare()
             err = TRUE;
         }
 
-        hstring_destroy(x);
-        hstring_destroy(y);
+        hstring_destroy(&x);
+        hstring_destroy(&y);
     }
     printf(" done.\n");
 

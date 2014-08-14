@@ -1,5 +1,5 @@
 # Harry - A Tool for Measuring String Similarity
-# Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+# Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
   
 AM_CPPFLAGS     		= -I$(top_srcdir)/src \
 		          	  -I$(top_srcdir)/src/measures 
@@ -16,7 +16,11 @@ check_PROGRAMS			= check_vcache \
 				  check_wdegree \
 				  check_subsequence \
 				  check_bag \
-				  check_coefficient
+				  check_coefficient \
+				  check_distance \
+				  check_kernel \
+				  check_spectrum \
+				  check_osa
 				  
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS)
@@ -53,6 +57,18 @@ check_coefficient_LDADD		= $(top_builddir)/src/libharry.la
 
 check_bag_SOURCES		= dist_bag.c tests.h
 check_bag_LDADD			= $(top_builddir)/src/libharry.la
+
+check_distance_SOURCES		= kern_distance.c tests.h
+check_distance_LDADD		= $(top_builddir)/src/libharry.la
+
+check_kernel_SOURCES		= dist_kernel.c tests.h
+check_kernel_LDADD		= $(top_builddir)/src/libharry.la
+
+check_spectrum_SOURCES		= kern_spectrum.c tests.h
+check_spectrum_LDADD		= $(top_builddir)/src/libharry.la
+
+check_osa_SOURCES		= dist_osa.c tests.h
+check_osa_LDADD			= $(top_builddir)/src/libharry.la
 
 beautify:
 		gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

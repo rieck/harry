@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -25,6 +25,7 @@
 /* Modules */
 #include "output_text.h"
 #include "output_libsvm.h"
+#include "output_stdout.h"
 
 /**
  * Structure for output interface
@@ -32,10 +33,10 @@
 typedef struct
 {
     int (*output_open) (char *);
-    int (*output_write) (float *, int, int, int);
+    int (*output_write) (hmatrix_t *);
     void (*output_close) (void);
-} func_t;
-static func_t func;
+} output_t;
+static output_t func;
 
 /** 
  * Configure the output of Harry
@@ -48,6 +49,10 @@ void output_config(const char *format)
         func.output_open = output_text_open;
         func.output_write = output_text_write;
         func.output_close = output_text_close;
+    } else if (!strcasecmp(format, "stdout")) {
+        func.output_open = output_stdout_open;
+        func.output_write = output_stdout_write;
+        func.output_close = output_stdout_close;
     } else if (!strcasecmp(format, "libsvm")) {
         func.output_open = output_libsvm_open;
         func.output_write = output_libsvm_write;
@@ -71,14 +76,11 @@ int output_open(char *name)
 /**
  * Wrapper for writing a block to the output destination.
  * @param m Matrix of similarity values 
- * @param x Dimension of matrix
- * @param y Dimension of matrix
- * @param t Set to 1 if only upper triangle given
  * @return Number of written values
  */
-int output_write(float *m, int x, int y, int t)
+int output_write(hmatrix_t *m)
 {
-    return func.output_write(m, x, y, t);
+    return func.output_write(m);
 }
 
 /**

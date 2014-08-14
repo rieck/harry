@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -35,23 +35,42 @@ extern config_t cfg;
 /* Global variables */
 static int global_cache;
 static int idx = 0;
-static float dist = FLT_MAX;
-
-/**
- * Structure for measure interface
- */
-typedef struct
-{
-    /** Name of measure */
-    char *name;
-    /** Init function */
-    void (*measure_config) ();
-    /** Comparison function */
-    float (*measure_compare) (hstring_t, hstring_t);
-} func_t;
 
 /* Module interfaces */
 %INTERFACES%
+
+/**
+ * Find best matching measure name.
+ * @param name to check
+ */
+int measure_match(const char *name)
+{
+    int r = 0;
+    float d, dist = FLT_MAX;
+
+    for (int i = 0; func[i].name; i++) {
+        /* Match full name */
+        d = fabs(strcasecmp(name, func[i].name));
+        if (d < dist) {
+            r = i, dist = d;
+        }
+
+        /* Match from second token */
+        char *token = strchr(func[i].name, '_') + 1;
+        d = fabs(strcasecmp(name, token));
+        if (d < dist) {
+            r = i, dist = d;
+        }
+    }
+    
+    if (dist > 0) {
+        r = 0;
+        warning("Unknown measure '%s'. Using '%s' instead.", name, 
+                func[r].name);
+    }
+
+    return r;
+}
 
 /**
  * Configures the measure for a given similarity measure.
@@ -61,7 +80,6 @@ typedef struct
 char *measure_config(const char *name)
 {
     const char *cfg_str;
-    float d = FLT_MAX;
 
     /* Set delimiters */
     config_lookup_string(&cfg, "measures.word_delim", &cfg_str);
@@ -73,29 +91,8 @@ char *measure_config(const char *name)
     /* Enable global cache */
     config_lookup_int(&cfg, "measures.global_cache", &global_cache);
 
-    for (int i = 0; func[i].name; i++) {
-        
-        /* Match full name */
-        d = fabs(strcasecmp(name, func[i].name));
-        if (d < dist) {
-            idx = i, dist = d;
-        }
-
-        /* Match from second token */
-        char *token = strchr(func[i].name, '_') + 1;
-        d = fabs(strcasecmp(name, token));
-        if (d < dist) {
-            idx = i, dist = d;
-        }
-    }
-    
-    if (dist > 0) {
-        idx = 0;
-        warning("Unknown measure '%s'. Using '%s' instead.", name, 
-                func[idx].name);
-    }
-
     /* Configure */
+    idx = measure_match(name);
     func[idx].measure_config();
     return func[idx].name;
 }
@@ -122,9 +119,9 @@ double measure_compare(hstring_t x, hstring_t y)
     uint64_t xyk = hstring_hash2(x, y);
     float m = 0;
 
-    if (!vcache_load(xyk, &m)) {
+    if (!vcache_load(xyk, &m, ID_COMPARE)) {
         m = func[idx].measure_compare(x, y);
-        vcache_store(xyk, m);
+        vcache_store(xyk, m, ID_COMPARE);
     }
     return m;
 }

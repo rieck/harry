@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -11,6 +11,8 @@
 
 #ifndef HCONFIG_H
 #define HCONFIG_H
+
+#include "config.h"
 
 #ifdef HAVE_LIBCONFIG_H
 #include <libconfig.h>
@@ -33,7 +35,7 @@ typedef struct
         double flt;     /**< Float value  */
         char *str;      /**< String */
     } val;
-} config_default_t;
+} default_t;
 
 /* Functions */
 void config_print(config_t *);

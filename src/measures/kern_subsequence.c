@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -52,6 +52,11 @@ void kern_subsequence_config()
     n = knorm_get(str);
 }
 
+
+/* Ugly macros to access arrays */
+#define DP(i,j)     dp[(i) * (y.len + 1) + (j)]
+#define DPS(i,j)    dps[(i) * y.len + (j)]
+
 /**
  * Internal computation of subsequence kernel
  * @param x first string
@@ -60,8 +65,7 @@ void kern_subsequence_config()
  */
 static float kernel(hstring_t x, hstring_t y)
 {
-    float dps[x.len][y.len];
-    float dp[x.len + 1][y.len + 1];
+    float *dps, *dp;
     float kern[length];
     int i, j, l;
 
@@ -73,33 +77,46 @@ static float kernel(hstring_t x, hstring_t y)
     if (x.len == 0 || y.len == 0)
         return 0.0;
 
+    /* Allocate temporary memory */
+    dp = malloc(sizeof(float) * (x.len + 1) * (y.len + 1));
+    dps = malloc(sizeof(float) * x.len * y.len);
+    if (!dp || !dps) {
+        error("Could not allocate memory for subsequence kernel");
+        return 0;
+    }
+
     /* Initalize dps */
     for (i = 0; i < x.len; i++)
-        for (j = 0; j < y.len; j++)
+        for (j = 0; j < y.len; j++) {
             if (!hstring_compare(x, i, y, j))
-                dps[i][j] = lambda * lambda;
+                DPS(i,j) = lambda * lambda;
             else
-                dps[i][j] = 0;
+                DPS(i,j) = 0;
+        }
 
     /* Initialize dp */
     for (i = 0; i < x.len + 1; i++)
-        dp[i][0] = 0;
+        DP(i, 0) = 0;
     for (j = 0; j < y.len + 1; j++)
-        dp[0][j] = 0;
+        DP(0, j) = 0;
 
     for (l = 0; l < length; l++) {
         kern[l] = 0;
         for (i = 0; i < x.len; i++) {
             for (j = 0; j < y.len; j++) {
-                dp[i + 1][j + 1] = dps[i][j] + lambda * dp[i][j + 1] +
-                    lambda * dp[i + 1][j] - lambda * lambda * dp[i][j];
+                DP(i + 1, j + 1) = DPS(i,j) + lambda * DP(i, j + 1) +
+                    lambda * DP(i + 1, j) - lambda * lambda * DP(i, j);
                 if (!hstring_compare(x, i, y, j)) {
-                    kern[l] = kern[l] + dps[i][j];
-                    dps[i][j] = lambda * lambda * dp[i][j];
+                    kern[l] = kern[l] + DPS(i,j);
+                    DPS(i,j) = lambda * lambda * DP(i, j);
                 }
             }
         }
     }
+    
+    free(dps);
+    free(dp);
+    
     return kern[length - 1];
 }
 

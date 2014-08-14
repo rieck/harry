@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# Make sure autotools are setup
+if ! test -f ./configure ; then
+   autoreconf -install --force --symlink
+fi
+
+# Get requested configuration
+if test -n "$1" ; then
+   arg=$1
+else
+   arg=`hostname`
+fi
+
+# Apply configuration
+case $arg in
+   scarecrow*|sec01*)
+       echo "Configuration: Laptop (Goettingen)"
+       CC="gcc" \
+       LDFLAGS="-L/usr/local/opt/libarchive/lib" \
+       CPPFLAGS="-I/usr/local/opt/libarchive/include" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ;;
+       
+   gwd*)
+       echo "Configuration: GWDG Cluster (Goettingen)"
+       CC="gcc" \
+       LDFLAGS="-L$HOME/usr/lib" \
+       CPPFLAGS="-I$HOME/usr/include" \
+       PKG_CONFIG_PATH="$HOME/usr/lib/pkgconfig" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --prefix=$HOME/usr --enable-libarchive 
+       ;;
+
+   schulle*)
+       echo "Configuration: Schulle (ESX Cluster)"
+
+       CC="gcc" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --enable-libarchive 
+       ;;
+       
+   kindl*)
+       echo "Configuration: Kindl (OpenBSD)"
+       CC="egcc" \
+       LDFLAGS="-L/usr/local/lib" \
+       CPPFLAGS="-I/usr/local/include" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ;;
+   profile|debug)
+       echo "Configuration: Profiling & Debugging"
+       CC="gcc" \
+       LDFLAGS="-L/usr/local/opt/libarchive/lib -g -lprofiler" \
+       CPPFLAGS="-I/usr/local/opt/libarchive/include" \
+       CFLAGS="-g -lprofiler  -Wl,-no_pie" \
+       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ;;
+   *)    
+       echo "Unknown system or configuration"
+       exit
+       ;;
+esac
+
+if test $? -gt 0 ; then
+   echo "Error: Configuration failed"
+   exit 1
+fi
+
+echo
+echo "Done. Press <enter> to compile"
+read x
+
+# Compile
+make clean 
+make -j 4 

@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -38,30 +38,21 @@ static char *path = NULL;
 /**
  * Opens a directory for reading files. 
  * @param p Directory name
- * @return number of regular files or -1 on error
+ * @return 1 on success, 0 otherwise
  */
 int input_dir_open(char *p)
 {
     assert(p);
-    struct dirent *dp;
     path = p;
 
     /* Open directory */
     dir = opendir(path);
     if (!dir) {
         error("Could not open directory '%s'", path);
-        return -1;
+        return FALSE;
     }
 
-    /* Count files */
-    int num_files = 0;
-    while (dir && (dp = readdir(dir)) != NULL) {
-        fix_dtype(path, dp);
-        if (dp->d_type == DT_REG || dp->d_type == DT_LNK)
-            num_files++;
-    }
-    rewinddir(dir);
-    return num_files;
+    return TRUE;
 }
 
 /**
@@ -77,7 +68,7 @@ int input_dir_read(hstring_t *strs, int len)
     struct dirent *dp;
 
     /* Load block of files */
-    while (dir && (dp = readdir(dir)) != NULL && j < len) {    
+    while (dir && (dp = readdir(dir)) != NULL && j < len) {
         /* Skip all entries except for regular files and symlinks */
         fix_dtype(path, dp);
         if (dp->d_type != DT_REG && dp->d_type != DT_LNK)
@@ -87,7 +78,6 @@ int input_dir_read(hstring_t *strs, int len)
         strs[j].src = strdup(dp->d_name);
         strs[j].type = TYPE_CHAR;
         strs[j].len = l;
-        strs[j].idx = j;
         strs[j].label = get_label(strs[j].src);
         j++;
     }
@@ -118,7 +108,7 @@ static char *load_file(char *path, char *name, int *size)
     char *x = NULL, file[512];
     struct stat st;
 
-    #pragma omp critical (snprintf)
+#pragma omp critical (snprintf)
     {
         /* snprintf is not necessary thread-safe. good to know. */
         if (name)

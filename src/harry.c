@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,9 +18,11 @@
 #include "measures.h"
 #include "output.h"
 #include "vcache.h"
+#include "hmatrix.h"
 
 /* Global variables */
 int verbose = 0;
+int log_line = 0;
 config_t cfg;
 
 static int print_conf = 0;
@@ -28,31 +30,37 @@ static char *measure = NULL;
 static nthreads = 0;
 
 /* Option string */
-#define OPTSTRING       "n:g:a:m:c:i:o:d:z:vqVhMCD"
+#define OPTSTRING       "n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
 
 /**
  * Array of options of getopt_long()
  */
 static struct option longopts[] = {
     {"input_format", 1, NULL, 'i'},
-    {"decode_str", 1, NULL, 1000},
-    {"reverse_str", 1, NULL, 1001},
-    {"stopword_file", 1, NULL, 1002},  
+    {"decode_str", 0, NULL, 1000},
+    {"reverse_str", 0, NULL, 1001},
+    {"stopword_file", 1, NULL, 1002},
+    {"soundex", 0, NULL, 1003},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
+    {"triangular", 0, NULL, 'u'},
     {"measure", 1, NULL, 'm'},
     {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
     {"cache_size", 1, NULL, 'a'},
-    {"global_cache", 1, NULL, 'g'},
+    {"global_cache", 0, NULL, 'g'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
+    {"log_line", 0, NULL, 'l'},
     {"print_measures", 0, NULL, 'M'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
     {"quiet", 0, NULL, 'q'},
     {"version", 0, NULL, 'V'},
     {"help", 0, NULL, 'h'},
+    {"x_range", 1, NULL, 'x'},
+    {"y_range", 1, NULL, 'y'},
+    {"split", 1, NULL, 's'},
     {NULL, 0, NULL, 0}
 };
 
@@ -75,7 +83,7 @@ int harry_version(FILE *f, char *p, char *m)
  * @param m Message
  * @return number of written characters
  */
-int harry_zversion(gzFile * z, char *p, char *m)
+int harry_zversion(gzFile z, char *p, char *m)
 {
     return gzprintf(z, "%sHarry %s - %s\n", p, PACKAGE_VERSION, m);
 }
@@ -97,27 +105,34 @@ static void print_usage(void)
 {
     printf("Usage: harry [options] <input> <output>\n"
            "\nI/O options\n"
-           "  -i,  --input_format <format>   Set input format for strings.\n"
-           "       --decode_str <0|1>        Set URI-decoding of strings.\n"
-           "       --reverse_str <0|1>       Reverse (flip) all strings.\n"
-           "       --stopword_file <file>    Provide a file with stop words.\n"
-           "  -o,  --output_format <format>  Set output format for vectors.\n"
-           "  -z,  --compress <0|1>          Set zlib compression of output.\n"
+           "  -i,  --input_format <format>    Set input format for strings.\n"
+           "       --decode_str               Enable URI-decoding of strings.\n"
+           "       --reverse_str              Reverse (flip) all strings.\n"
+           "       --stopword_file <file>     Provide a file with stop words.\n"
+           "       --soundex                  Enable soundex encoding of words.\n"
+           "  -o,  --output_format <format>   Set output format for matrix.\n"
+           "  -z,  --compress                 Enable zlib compression of output.\n"
+           "  -u,  --triangular               Save triangular matrix only.\n"
            "\nModule options:\n"
-           "  -m,  --measure <name>          Set similarity measure.\n"
-           "  -d,  --word_delim <delim>      Set delimiters for words.\n"
-           "  -n,  --num_threads <num>       Set number of threads.\n"
-           "  -a,  --cache_size <size>       Set size of cache in megabytes.\n"
-           "  -g,  --global_cache <0|1>      Set global cache for similarity values.\n"
+           "  -m,  --measure <name>           Set similarity measure.\n"
+           "  -d,  --word_delim <delim>       Set delimiters for words.\n"
+           "  -n,  --num_threads <num>        Set number of threads.\n"
+           "  -a,  --cache_size <size>        Set size of cache in megabytes.\n"
+           "  -g,  --global_cache             Enable global cache for similarity values.\n"
+           "  -x,  --x_range <start>:<end>    Set the index range (x) of strings.\n"
+           "  -y,  --y_range <start>:<end>    Set the index range (y) of strings.\n"
+           "  -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.\n"
            "\nGeneric options:\n"
-           "  -c,  --config_file <file>      Set configuration file.\n"
-           "  -v,  --verbose                 Increase verbosity.\n"
-           "  -q,  --quiet                   Be quiet during processing.\n"
-           "  -M,  --print_measures          Print list of similarity measures\n"
-           "  -C,  --print_config            Print the current configuration.\n"
-           "  -D,  --print_defaults          Print the default configuration.\n"
-           "  -V,  --version                 Print version and copyright.\n"
-           "  -h,  --help                    Print this help screen.\n" "\n");
+           "  -c,  --config_file <file>       Set configuration file.\n"
+           "  -v,  --verbose                  Increase verbosity.\n"
+           "  -l,  --log_line                 Print a log line every minute\n"
+           "  -q,  --quiet                    Be quiet during processing.\n"
+           "  -M,  --print_measures           Print list of similarity measures\n"
+           "  -C,  --print_config             Print the current configuration.\n"
+           "  -D,  --print_defaults           Print the default configuration.\n"
+           "  -V,  --version                  Print version and copyright.\n"
+           "  -h,  --help                     Print this help screen.\n"
+           "\n");
 }
 
 /**
@@ -126,7 +141,7 @@ static void print_usage(void)
 static void print_version(void)
 {
     printf("Harry %s - A Tool for Measuring String Similarity\n"
-           "Copyright (c) 2013 Konrad Rieck (konrad@mlsec.org)\n",
+           "Copyright (c) 2013-2014 Konrad Rieck (konrad@mlsec.org)\n",
            PACKAGE_VERSION);
 }
 
@@ -151,13 +166,16 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_string(&cfg, "input.input_format", optarg);
             break;
         case 1000:
-            config_set_int(&cfg, "input.decode_str", atoi(optarg));
+            config_set_bool(&cfg, "input.decode_str", CONFIG_TRUE);
             break;
         case 1001:
-            config_set_int(&cfg, "input.reverse_str", atoi(optarg));
+            config_set_bool(&cfg, "input.reverse_str", CONFIG_TRUE);
             break;
         case 1002:
             config_set_string(&cfg, "input.stopword_file", optarg);
+            break;
+        case 1003:
+            config_set_bool(&cfg, "input.soundex", CONFIG_TRUE);
             break;
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
@@ -175,13 +193,29 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_int(&cfg, "measures.cache_size", atoi(optarg));
             break;
         case 'g':
-            config_set_int(&cfg, "measures.global_cache", atoi(optarg));
+            config_set_bool(&cfg, "measures.global_cache", CONFIG_TRUE);
             break;
         case 'z':
-            config_set_int(&cfg, "output.compress", atoi(optarg));
+            config_set_bool(&cfg, "output.compress", CONFIG_TRUE);
+            break;
+        case 'u':
+            config_set_bool(&cfg, "output.triangular", CONFIG_TRUE);
+            break;
+        case 'x':
+            config_set_string(&cfg, "measures.x_range", optarg);
+            break;
+        case 'y':
+            config_set_string(&cfg, "measures.y_range", optarg);
+            break;
+        case 's':
+            config_set_string(&cfg, "measures.split", optarg);
             break;
         case 'q':
             verbose = 0;
+            log_line = 0;
+            break;
+        case 'l':
+            log_line = 1;
             break;
         case 'v':
             verbose++;
@@ -231,6 +265,12 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
         *in = argv[0];
         *out = argv[1];
     }
+
+    /* Check for stdin and stdout "filenames" */
+    if (!strcmp(*in, "-"))
+        config_set_string(&cfg, "input.input_format", "stdin");
+    if (!strcmp(*out, "-"))
+        config_set_string(&cfg, "output.output_format", "stdout");
 }
 
 
@@ -312,28 +352,39 @@ static void harry_init()
  * @param num Pointer to number of strings
  * @return array of string objects
  */
-static hstring_t *harry_read(char *input, long *num)
+static hstring_t *harry_read(char *input, int *num)
 {
     const char *cfg_str;
+    int i, chunk, read;
+    hstring_t *strs = NULL;
+
+    /* Get chunk size */
+    config_lookup_int(&cfg, "input.chunk_size", &chunk);
 
     /* Open input */
     config_lookup_string(&cfg, "input.input_format", &cfg_str);
+    info_msg(1, "Opening input '%0.40s' [%s].", input, cfg_str);
     input_config(cfg_str);
-    *num = input_open(input);
-    if (*num < 0)
+    if (!input_open(input))
         fatal("Could not open input source");
-    info_msg(1, "Reading %ld strings from '%0.40s' [%s].", *num, input,
-             cfg_str);
 
-    /* Allocate memory for strings */
-    hstring_t *strs = calloc(*num, sizeof(hstring_t));
-    if (!strs)
-        fatal("Could not allocate memory for strs");
+    info_msg(1, "Reading strings in chunks of %d", chunk);
+    for (*num = 0, read = chunk; read == chunk; *num += read) {
+        /* Allocate memory for strings */
+        strs = realloc(strs, (*num + chunk) * sizeof(hstring_t));
+        if (!strs)
+            fatal("Could not allocate memory for strings");
 
-    long read = input_read(strs, *num);
-    if (read <= 0)
-        fatal("Failed to read strs from input '%s'", input);
+        /* Read chunk */
+        read = input_read(strs + *num, chunk);
+    }
+
+    /* Close input */
     input_close();
+
+    /* Symbolize strings if requested */
+    for (i = 0; i < *num; i++)
+        strs[i] = hstring_preproc(strs[i]);
 
     return strs;
 }
@@ -342,43 +393,41 @@ static hstring_t *harry_read(char *input, long *num)
  * Compare a set of string objects
  * @param strs Array of string objects
  * @param num Number of strings
- * @return similarity values (upper triangle)
+ * @return Matrix of similarity valurs
  */
-static float *harry_process(hstring_t *strs, long num)
+static hmatrix_t *harry_compute(hstring_t *strs, int num)
 {
-    int i, k = 0;
+    char *cfg_str;
+    int i;
 
-    info_msg(1, "Computing similarity measure '%s' with %d threads.",
-             measure, nthreads);
+    hmatrix_t *mat = hmatrix_init(strs, num);
 
-    /* Symbolize strings if requested */
-    for (i = 0; i < num; i++)
-        strs[i] = hstring_preproc(strs[i]);
+    /* Set ranges */
+    config_lookup_string(&cfg, "measures.x_range", (const char **) &cfg_str);
+    hmatrix_xrange(mat, cfg_str);
+    config_lookup_string(&cfg, "measures.y_range", (const char **) &cfg_str);
+    hmatrix_yrange(mat, cfg_str);
 
-    float *mat = malloc(sizeof(float) * tr_size(num));
-    if (!mat) {
-        fatal("Could not allocate matrix for similarity measure");
-    }
+    /* Set matrix split */
+    config_lookup_string(&cfg, "measures.split", (const char **) &cfg_str);
+    hmatrix_split(mat, cfg_str);
 
-#pragma omp parallel for collapse(2)
+    /* Free unused memory */
     for (i = 0; i < num; i++) {
-        for (int j = 0; j < num; j++) {
-            /* Hack for better parallelization using OpenMP */
-            if (j < i)
-                continue;
-                
-            mat[tr_index(i, j, num)] = measure_compare(strs[i], strs[j]);
-
-            if (verbose) {
-                if (k % num == 0)
-                    prog_bar(0, tr_size(num), k);
-                k++;
-            }
-        }
+        if (i < mat->x.i && i < mat->y.i)
+            hstring_destroy(&strs[i]);
+        if (i >= mat->x.n && i >= mat->y.n)
+            hstring_destroy(&strs[i]);
     }
 
-    if (verbose)
-        prog_bar(0, tr_size(num), tr_size(num));
+    /* Allocate matrix */
+    if (!hmatrix_alloc(mat))
+        fatal("Could not allocate matrix for similarity measure");
+
+    /* Compute matrix */
+    info_msg(1, "Computing similarity measure '%s' with %d threads.",
+             measure, omp_get_max_threads());
+    hmatrix_compute(mat, strs, measure_compare);
 
     return mat;
 }
@@ -386,10 +435,9 @@ static float *harry_process(hstring_t *strs, long num)
 /**
  * Write similarity values to an output file
  * @param output Output filename
- * @param mat Similarity values (upper triangle)
- * @param num Number of strings
+ * @param mat Matrix of similarity values
  */
-static void harry_write(char *output, float *mat, long num)
+static void harry_write(char *output, hmatrix_t *mat)
 {
     const char *cfg_str;
 
@@ -397,11 +445,11 @@ static void harry_write(char *output, float *mat, long num)
     config_lookup_string(&cfg, "output.output_format", &cfg_str);
     output_config(cfg_str);
     info_msg(1, "Writing %ld similarity values to '%0.40s' [%s].",
-             tr_size(num), output, cfg_str);
+             mat->size, output, cfg_str);
     if (!output_open(output))
         fatal("Could not open output destination");
 
-    output_write(mat, num, num, TRUE);
+    output_write(mat);
     output_close();
 }
 
@@ -409,14 +457,16 @@ static void harry_write(char *output, float *mat, long num)
 /**
  * Exit Harry tool. 
  */
-static void harry_exit(hstring_t *strs, float *mat, long num)
+static void harry_exit(hstring_t *strs, hmatrix_t *mat, int num)
 {
     const char *cfg_str;
 
     /* Free memory */
     input_free(strs, num);
-    free(mat);
     free(strs);
+
+    /* Destroy matrix */
+    hmatrix_destroy(mat);
 
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
     if (strlen(cfg_str) > 0)
@@ -437,9 +487,9 @@ static void harry_exit(hstring_t *strs, float *mat, long num)
  */
 int main(int argc, char **argv)
 {
-    float *mat = NULL;
+    hmatrix_t *mat = NULL;
     hstring_t *strs = NULL;
-    long num = 0;
+    int num = 0;
     char *input = NULL;
     char *output = NULL;
 
@@ -448,8 +498,8 @@ int main(int argc, char **argv)
 
     harry_init();
     strs = harry_read(input, &num);
-    mat = harry_process(strs, num);
-    harry_write(output, mat, num);
+    mat = harry_compute(strs, num);
+    harry_write(output, mat);
     harry_exit(strs, mat, num);
 
     return EXIT_SUCCESS;

@@ -1,5 +1,5 @@
 # Harry - A Tool for Measuring String Similarity
-# Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+# Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
 
 AM_CPPFLAGS          	   = -I$(srcdir)/.. -I$(srcdir)/../input
 EXTRA_DIST		   = measures.txt measures.c.in gen_measures.py
@@ -16,7 +16,11 @@ libmeasures_la_SOURCES     = measures.h measures.c \
 			     kern_subsequence.c kern_subsequence.h \
 			     dist_compression.c	dist_compression.h \
 			     dist_bag.c dist_bag.h norm.c norm.h \
-			     sim_coefficient.c sim_coefficient.h 
+			     sim_coefficient.c sim_coefficient.h \
+			     kern_distance.c kern_distance.h \
+			     dist_kernel.c dist_kernel.h \
+			     kern_spectrum.c kern_spectrum.h \
+			     dist_osa.c dist_osa.h
 
 measures.c: measures.c.in gen_measures.py measures.txt
 	python gen_measures.py measures.txt measures.c

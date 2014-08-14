@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org);
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org);
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -28,6 +28,7 @@
 #include "input_dir.h"
 #include "input_lines.h"
 #include "input_fasta.h"
+#include "input_stdin.h"
 
 /* Other stuff */
 #include "uthash.h"
@@ -40,8 +41,8 @@ typedef struct
     int (*input_open) (char *);
     int (*input_read) (hstring_t *, int);
     void (*input_close) (void);
-} func_t;
-static func_t func;
+} input_t;
+static input_t func;
 
 /**< Delimiter table */
 extern char delim[256];
@@ -65,7 +66,11 @@ void input_config(const char *format)
     } else if (!strcasecmp(format, "fasta")) {
         func.input_open = input_fasta_open;
         func.input_read = input_fasta_read;
-        func.input_close = input_lines_close;
+        func.input_close = input_fasta_close;
+    } else if (!strcasecmp(format, "stdin")) {
+        func.input_open = input_stdin_open;
+        func.input_read = input_stdin_read;
+        func.input_close = input_stdin_close;
 #ifdef ENABLE_LIBARCHIVE
     } else if (!strcasecmp(format, "arc")) {
         func.input_open = input_arc_open;
@@ -115,8 +120,8 @@ void input_free(hstring_t *strs, int len)
     assert(strs);
 
     int j;
-    for (j = 0; j < len; j++) 
-        hstring_destroy(strs[j]);
+    for (j = 0; j < len; j++)
+        hstring_destroy(&strs[j]);
 }
 
 /** @} */

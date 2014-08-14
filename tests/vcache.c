@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -36,8 +36,8 @@ int test_storage()
         key = lrand48();
         v1 = drand48();
 
-        vcache_store(key, v1);
-        vcache_load(key, &v2);
+        vcache_store(key, v1, ID_COMPARE);
+        vcache_load(key, &v2, ID_COMPARE);
 
         if (v1 != v2) {
             printf("Error: %f != %f\n", v1, v2);
@@ -68,15 +68,15 @@ int test_stress()
     for (i = 0; i < 2000000 && !err; i++) {
         key = lrand48();
         v1 = drand48();
-        vcache_store(key, v1);
+        vcache_store(key, v1, ID_COMPARE);
     }
 
     for (i = 0; i < 50000 && !err; i++) {
         key = lrand48();
         v1 = drand48();
 
-        vcache_store(key, v1);
-        vcache_load(key, &v2);
+        vcache_store(key, v1, ID_COMPARE);
+        vcache_load(key, &v2, ID_COMPARE);
 
         if (v1 != v2) {
             printf("Error: %f != %f\n", v1, v2);

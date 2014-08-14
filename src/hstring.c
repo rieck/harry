@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -10,7 +10,7 @@
  */
 
 /**
- * @defgroup string String functions
+ * @defgroup string String object
  * Functions for processing strings and sequences
  * @author Konrad Rieck (konrad@mlsec.org)
  * @{
@@ -21,9 +21,9 @@
 #include "util.h"
 #include "hstring.h"
 #include "murmur.h"
+#include <inttypes.h>
 
 /* External variable */
-extern int verbose;
 extern config_t cfg;
 
 /* Global delimiter table */
@@ -40,17 +40,23 @@ typedef struct
 static stopword_t *stopwords = NULL;
 
 /**
- * Free memory of the string structure
- * @param x string structure
+ * Free memory of the string object
+ * @param x string object
  */
-void hstring_destroy(hstring_t x)
+void hstring_destroy(hstring_t *x)
 {
-    if (x.type == TYPE_CHAR && x.str.c)
-        free(x.str.c);
-    if (x.type == TYPE_SYM && x.str.s)
-        free(x.str.s);
-    if (x.src)
-        free(x.src);
+    if (x->type == TYPE_CHAR && x->str.c)
+        free(x->str.c);
+    if (x->type == TYPE_SYM && x->str.s)
+        free(x->str.s);
+    if (x->src)
+        free(x->src);
+
+    /* Make sure everything is null */
+    x->str.c = NULL;
+    x->str.s = NULL;
+    x->src = NULL;
+    x->len = 0;
 }
 
 /** 
@@ -106,8 +112,8 @@ sym_t hstring_get(hstring_t x, int i)
 
 
 /** 
- * Print string structure
- * @param x string structure
+ * Print string object
+ * @param x string object
  */
 void hstring_print(hstring_t x)
 {
@@ -118,18 +124,18 @@ void hstring_print(hstring_t x)
             if (isprint(x.str.c[i]))
                 printf("%c", x.str.c[i]);
             else
-                printf("%%%.2x", x.str.c[i]);
+                printf("%%%.2x", (char) x.str.c[i]);
         printf(" (char)\n");
     }
 
     if (x.type == TYPE_SYM && x.str.s) {
         for (i = 0; i < x.len; i++)
-            printf("%d ", x.str.s[i]);
+            printf("%" PRIu64 " ", (uint64_t) x.str.s[i]);
         printf(" (sym)\n");
     }
 
-    printf("  [type: %d, len: %d; idx:% ld; src: %s, label: %f]\n",
-           x.type, x.len, x.idx, x.src, x.label);
+    printf("  [type: %d, len: %d; src: %s, label: %f]\n",
+           x.type, x.len, x.src, x.label);
 }
 
 /**
@@ -231,9 +237,9 @@ hstring_t hstring_symbolize(hstring_t x)
 }
 
 /**
- * Convert a c-style string to a string structure. New memory is allocated
+ * Convert a c-style string to a string object. New memory is allocated
  * and the string is copied.
- * @param x string structure
+ * @param x string object
  * @param s c-style string
  */
 hstring_t hstring_init(hstring_t x, char *s)
@@ -241,7 +247,22 @@ hstring_t hstring_init(hstring_t x, char *s)
     x.str.c = strdup(s);
     x.type = TYPE_CHAR;
     x.len = strlen(s);
-    x.idx = 0;
+    x.src = NULL;
+
+    return x;
+}
+
+/**
+ * Create an empty string
+ * @param x string object
+ * @param t type of string
+ */
+hstring_t hstring_empty(hstring_t x, int t)
+{
+    x.str.c = malloc(0);
+    x.type = t;
+    x.label = 1.0;
+    x.len = 0;
     x.src = NULL;
 
     return x;
@@ -264,7 +285,40 @@ uint64_t hstring_hash1(hstring_t x)
     return 0;
 }
 
-static uint64_t swap(uint64_t x) {
+/**
+ * Compute a 64-bit hash for a substring. 
+ * Collisions are possible but not very likely (hopefully)  
+ * @param x String to hash
+ * @param i Start of substring
+ * @param l Length of substring
+ * @return hash value
+ */
+uint64_t hstring_hash_sub(hstring_t x, int i, int l)
+{
+
+    if (i > x.len - 1 || i + l > x.len) {
+        warning("Invalid range for substring (i:%d;l:%d;x:%d)", i, l, x.len);
+        return 0;
+    }
+
+    if (x.type == TYPE_CHAR && x.str.c)
+        return MurmurHash64B(x.str.c + i, sizeof(char) * l, 0xc0ffee);
+    if (x.type == TYPE_SYM && x.str.s)
+        return MurmurHash64B(x.str.s + i, sizeof(sym_t) * l, 0xc0ffee);
+
+    warning("Nothing to hash. String is missing");
+    return 0;
+}
+
+
+
+/*+
+ * Swap the high and low 32 bits of a 64 bit integer
+ * @param x integer
+ * @return integer with swapped bits
+ */
+static uint64_t swap(uint64_t x)
+{
     uint64_t r = 0;
     r |= x << 32;
     r |= x >> 32;
@@ -335,7 +389,7 @@ void stopwords_load(const char *file)
  */
 hstring_t stopwords_filter(hstring_t x)
 {
-    assert(x.type = TYPE_SYM);
+    assert(x.type == TYPE_SYM);
     stopword_t *stopword;
     int i, j;
 
@@ -364,10 +418,11 @@ hstring_t stopwords_filter(hstring_t x)
 hstring_t hstring_preproc(hstring_t x)
 {
     assert(x.type == TYPE_CHAR);
-    int decode, reverse, c, i, k;
+    int decode, reverse, soundex, c, i, k;
 
-    config_lookup_int(&cfg, "input.decode_str", &decode);
-    config_lookup_int(&cfg, "input.reverse_str", &reverse);
+    config_lookup_bool(&cfg, "input.decode_str", &decode);
+    config_lookup_bool(&cfg, "input.reverse_str", &reverse);
+    config_lookup_bool(&cfg, "input.soundex", &soundex);
 
     if (decode) {
         x.len = decode_str(x.str.c);
@@ -381,6 +436,9 @@ hstring_t hstring_preproc(hstring_t x)
             x.str.c[k] = c;
         }
     }
+
+    if (soundex)
+        x = hstring_soundex(x);
 
     if (hstring_has_delim())
         x = hstring_symbolize(x);
@@ -403,6 +461,154 @@ void stopwords_destroy()
         HASH_DEL(stopwords, s);
         free(s);
     }
+}
+
+/**
+ * Soundex code as implemented by Kevin Setter, 8/27/97 with some 
+ * slight modifications. Known bugs: Consonants separated by a vowel
+ * are treated as one character, if they have the same index. This
+ * is wrong. :(
+ *
+ * @param in input string
+ * @param len end of input string
+ * @param out output buffer of 5 bytes
+ * @return soundex 
+ */
+static void soundex(char *in, int len, char *out)
+{
+    int i = 0, j = 0;
+    char c, prev = '*';
+
+    /* Skip first letter if in the following set */
+    switch (tolower(in[0])) {
+    case 'a':
+    case 'e':
+    case 'i':
+    case 'o':
+    case 'y':
+    case 'h':
+    case 'w':
+        i++;
+        j++;
+        break;
+    }
+
+    while (i < len && j <= 4) {
+        in[i] = tolower(in[i]);
+        switch (in[i]) {
+        case 'b':
+            c = '1';
+            break;
+        case 'p':
+            c = '1';
+            break;
+        case 'f':
+            c = '1';
+            break;
+        case 'v':
+            c = '1';
+            break;
+        case 'c':
+            c = '2';
+            break;
+        case 's':
+            c = '2';
+            break;
+        case 'k':
+            c = '2';
+            break;
+        case 'g':
+            c = '2';
+            break;
+        case 'j':
+            c = '2';
+            break;
+        case 'q':
+            c = '2';
+            break;
+        case 'x':
+            c = '2';
+            break;
+        case 'z':
+            c = '2';
+            break;
+        case 'd':
+            c = '3';
+            break;
+        case 't':
+            c = '3';
+            break;
+        case 'l':
+            c = '4';
+            break;
+        case 'm':
+            c = '5';
+            break;
+        case 'n':
+            c = '5';
+            break;
+        case 'r':
+            c = '6';
+            break;
+        default:
+            c = '*';
+        }
+        if ((c != prev) && (c != '*')) {
+            out[j] = c;
+            prev = out[j];
+            j++;
+        }
+        i++;
+    }
+
+    if (j < 4)
+        for (i = j; i < 4; i++)
+            out[i] = '0';
+
+
+    out[0] = toupper(in[0]);
+    out[4] = 0;
+}
+
+
+
+/**
+ * Perform a soundex transformation of each word.
+ * @param s string
+ */
+hstring_t hstring_soundex(hstring_t x)
+{
+    int start = 0, i, alloc = 0, end = 0;
+    char sdx[5], *out = NULL;
+
+    assert(x.type == TYPE_CHAR);
+
+    for (i = 0; i < x.len; i++) {
+        /* Compute soundex for each substring of letters */
+        if (i == x.len - 1 || !isalpha(x.str.c[i])) {
+            if (start < i) {
+                int len = i - start + ((i == x.len - 1) ? 1 : 0);
+                soundex(x.str.c + start, len, sdx);
+            }
+            start = i + 1;
+
+            /* Reallocate memory if necessary */
+            if (end + 6 > alloc) {
+                alloc += 128;   /* Use small blocks */
+                out = realloc(out, alloc);
+            }
+
+            /* Append soundex */
+            snprintf(out + end, 6, "%s ", sdx);
+            end += 5;
+        }
+    }
+
+    /* Overwrite original stirng data */
+    free(x.str.c);
+    x.str.c = out;
+    x.len = end - 1;
+    return x;
 }
 
 /** @} */

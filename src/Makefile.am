@@ -1,5 +1,5 @@
 # Harry - A Tool for Measuring String Similarity
-# Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+# Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
 
 SUBDIRS		     = 	measures input output
 AM_CPPFLAGS          = 	-I$(srcdir)/measures -I$(srcdir)/input \
@@ -20,4 +20,4 @@ libharry_la_LIBADD   =  input/libinput.la measures/libmeasures.la \
 beautify:
 			gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \
 			        -nfc1 -nut -T FILE -T hstring_t -T rwlock_t \
-			        *.c *.h
+			        -T hmatrix_t *.c *.h

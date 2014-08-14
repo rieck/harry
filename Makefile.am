@@ -4,16 +4,14 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src tests doc .
 ACLOCAL_AMFLAGS = -I m4
-EXTRA_DIST = README.md COPYING CHANGES harry.png TODO.md
+EXTRA_DIST = README.md COPYING CHANGES harry.png
 
 clean-local:
 	rm -f *~
+	rm -f CHANGES
 
 CHANGES:
 	$(srcdir)/git2changes.py
-	        
-distclean-local:
-	rm -f CHANGES
 
 dist-hook: 
 

@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,7 +19,7 @@
 /**
  * @addtogroup measures
  * <hr>
- * <em>dist_compression</em>: Compression distance for strings.
+ * <em>dist_compression</em>: Compression distance for strings. 
  *
  * Cilibrasi and Vitanyi. Clustering by compression, IEEE Transactions on
  * Information Theory, 51:4, 1523-1545, 2005.
@@ -109,23 +109,35 @@ static float compress_str2(hstring_t x, hstring_t y)
  */
 float dist_compression_compare(hstring_t x, hstring_t y)
 {
-    float xl, yl, xyl;
-    uint64_t xk, yk;
+    float xl, yl, xyl, yxl;
+    uint64_t xk, yk, xyk, yxk;
 
     xk = hstring_hash1(x);
-    if (!vcache_load(xk, &xl)) {
+    if (!vcache_load(xk, &xl, ID_DIST_COMPRESS)) {
         xl = compress_str1(x);
-        vcache_store(xk, xl);
+        vcache_store(xk, xl, 1);
     }
 
     yk = hstring_hash1(y);
-    if (!vcache_load(yk, &yl)) {
+    if (!vcache_load(yk, &yl, 1)) {
         yl = compress_str1(y);
-        vcache_store(yk, yl);
+        vcache_store(yk, yl, ID_DIST_COMPRESS);
     }
 
-    xyl = compress_str2(x, y);
-    return (xyl - fmin(xl, yl)) / fmax(xl, yl);
+    xyk = hstring_hash2(x, y);
+    if (!vcache_load(xyk, &xyl, 1)) {
+        xyl = compress_str2(x, y);
+        vcache_store(xyk, xyl, ID_DIST_COMPRESS);
+    }
+
+    yxk = hstring_hash2(y, x);
+    if (!vcache_load(yxk, &yxl, 1)) {
+        yxl = compress_str2(y, x);
+        vcache_store(yxk, yxl, ID_DIST_COMPRESS);
+    }
+
+    /* Symmetric version of distance */
+    return (0.5 * (xyl + yxl) - fmin(xl, yl)) / fmax(xl, yl);
 }
 
 /** @} */
