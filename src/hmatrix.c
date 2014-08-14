@@ -321,24 +321,24 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 #endif
 
 
-			if (verbose || log_line)
+            if (verbose || log_line)
 #pragma omp critical
-			{
-				ts = time_stamp();
+            {
+                ts = time_stamp();
 
-				/* Update progress bar every 100th step and 100ms */
-				if (verbose && (k % step1 == 0 || ts - ts1 > 0.1)) {
-					prog_bar(0, m->size, k);
-					ts1 = ts;
-				}
+                /* Update progress bar every 100th step and 100ms */
+                if (verbose && (k % step1 == 0 || ts - ts1 > 0.1)) {
+                    prog_bar(0, m->size, k);
+                    ts1 = ts;
+                }
 
-				/* Print log line every minute if enabled */
-				if (log_line && ts - ts2 > 60) {
-					log_print(0, m->size, k);
-					ts2 = ts;
-				}
-            	k++;
-			}
+                /* Print log line every minute if enabled */
+                if (log_line && ts - ts2 > 60) {
+                    log_print(0, m->size, k);
+                    ts2 = ts;
+                }
+                k++;
+            }
         }
     }
 

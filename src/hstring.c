@@ -130,7 +130,7 @@ void hstring_print(hstring_t x)
 
     if (x.type == TYPE_SYM && x.str.s) {
         for (i = 0; i < x.len; i++)
-            printf("%"PRIu64" ", (uint64_t) x.str.s[i]);
+            printf("%" PRIu64 " ", (uint64_t) x.str.s[i]);
         printf(" (sym)\n");
     }
 
@@ -480,7 +480,7 @@ static void soundex(char *in, int len, char *out)
     char c, prev = '*';
 
     /* Skip first letter if in the following set */
-    switch(tolower(in[0])) {
+    switch (tolower(in[0])) {
     case 'a':
     case 'e':
     case 'i':
@@ -488,7 +488,8 @@ static void soundex(char *in, int len, char *out)
     case 'y':
     case 'h':
     case 'w':
-        i++; j++;
+        i++;
+        j++;
         break;
     }
 
