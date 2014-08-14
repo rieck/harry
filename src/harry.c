@@ -39,6 +39,7 @@ static struct option longopts[] = {
     {"decode_str", 0, NULL, 1000},
     {"reverse_str", 0, NULL, 1001},
     {"stopword_file", 1, NULL, 1002},
+    {"soundex", 0, NULL, 1003},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"triangular", 0, NULL, 'u'},
@@ -107,6 +108,7 @@ static void print_usage(void)
            "       --decode_str               Enable URI-decoding of strings.\n"
            "       --reverse_str              Reverse (flip) all strings.\n"
            "       --stopword_file <file>     Provide a file with stop words.\n"
+           "       --soundex                  Enable soundex encoding of words.\n"
            "  -o,  --output_format <format>   Set output format for matrix.\n"
            "  -z,  --compress                 Enable zlib compression of output.\n"
            "  -u,  --triangular               Save triangular matrix only.\n"
@@ -170,6 +172,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 1002:
             config_set_string(&cfg, "input.stopword_file", optarg);
+            break;
+        case 1003:
+            config_set_bool(&cfg, "input.soundex", CONFIG_TRUE);
             break;
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
