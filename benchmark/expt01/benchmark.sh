@@ -1,8 +1,8 @@
 #!/bin/bash
 
 datasets="enron hids nids reuters sentences sprot" # arts
-measures="hamming levenshtein"
-nthreads="1 2 3 4 5 6 7 8"
+measures="levenshtein compression hamming"
+nthreads="3 1 2 4 5 6 7 8"
 runs="1 2 3"
 
 export TIMEFORMAT="%R %U %S" 
