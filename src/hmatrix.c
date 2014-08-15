@@ -133,46 +133,114 @@ static range_t parse_range(range_t r, char *str, int n)
     return r;
 }
 
-
 /**
- * Enable splitting matrix 
+ * Enable splitting matrix
  * @param m Matrix object
  * @param str Split string
  */
 void hmatrix_split(hmatrix_t *m, char *str)
 {
-    int blocks, index, height;
-
     /* Empty string */
     if (strlen(str) == 0)
         return;
 
     /* Parse split string */
+    int blocks, index;
     if (sscanf(str, "%d:%d", &blocks, &index) != 2) {
         fatal("Invalid split string '%s'.", str);
         return;
     }
 
-    height = ceil((m->y.n - m->y.i) / (float) blocks);
-
     /* Sanity checks with fatal error */
-    if (blocks <= 0 || blocks > m->y.n - m->y.i) {
-        fatal("Invalid number of blocks (%d).", blocks);
-        return;
-    }
-    if (height <= 0 || height > m->y.n - m->y.i) {
-        fatal("Block height too small (%d).", height);
-        return;
-    }
-    if (index < 0 || index > blocks - 1) {
+    if (index < 0 || index >= blocks) {
         fatal("Block index out of range (%d).", index);
         return;
     }
 
+    hmatrix_split_ex(m, blocks, index);
+}
+
+typedef struct {
+    unsigned int n;
+
+    unsigned int n_top;
+    unsigned int n_mid;
+    unsigned int n_bottom;
+
+    unsigned int a;
+    int b_top;
+    int b_bottom;
+    int b_left;
+    int b_right;
+} hmatrixspec_t;
+
+int hmatrix_split_cidx(const unsigned int N, const hmatrixspec_t *spec, const range_t *rows)
+{
+	assert(spec != NULL);
+
+	unsigned int n = N;
+	unsigned long width = (spec->b_left + spec->a + spec->b_right);
+
+	if (n <= 0) {
+		return rows->i;
+
+	} else if (n <= spec->n_top) {
+		return rows->i +rint(((double) n) /width);
+
+	} else if ((n -= spec->n_top) <= spec->n_mid) {
+		const long p = 1 + 2l*width;
+		const long q = 2*n;
+
+		const double foo = sqrt(pow(p, 2) /4.0 - q);
+		//const double x1 = p/2.0 +foo;
+		const double x2 = p/2.0 -foo;
+		return rows->i +spec->b_top +rint(x2);
+
+	} else if ((n -= spec->n_mid) <= spec->n_bottom) {
+		return rows->i +spec->b_top + spec->a +rint(((double) n) /width);
+
+	}
+	return rows->i +spec->b_top + spec->a + spec->b_bottom;
+}
+
+void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
+{
+    const int width = RANGE_LENGTH(m->x);
+    const int height = RANGE_LENGTH(m->y);
+
+    if (blocks <= 0 || blocks > height) {
+        fatal("Invalid number of blocks (%d).", blocks);
+        return;
+    }
+
+    const range_t x = m->x; //(width <= height ? m->x : m->y);
+    const range_t y = m->y; //(width >  height ? m->x : m->y);
+
+    hmatrixspec_t spec;
+    spec.b_top = MAX(x.i -y.i, 0);
+    spec.b_bottom = MAX(y.n -x.n, 0);
+    spec.b_left = MAX(y.i -x.i, 0);
+    spec.b_right = MAX(x.n -y.n, 0);
+    spec.a = (y.i >= x.n && x.n <= y.i) || (y.n <= x.i && x.i >= y.n) ? 0 : (height -spec.b_top -spec.b_bottom);
+
+    assert(spec.b_left + spec.a + spec.b_right == width);
+
+    spec.n_top = width *spec.b_top;
+    spec.n_mid = spec.a*spec.b_left + (pow(spec.a, 2) +spec.a) /2 + spec.a*spec.b_right;
+    spec.n_bottom = width *spec.b_bottom;
+    spec.n = spec.n_top + spec.n_mid + spec.n_bottom;
+
+    const unsigned long blocksize = ceil(((double) spec.n) /blocks);
+
+    if (blocksize < width) {
+    	const unsigned int max = floor(((double) spec.n) /width);
+        fatal("Block size too small. Choose %d blocks at a max for optimal performance.", max);
+        return;
+    }
+
     /* Update range */
-    m->y.i = m->y.i + index * height;
-    if (m->y.n > m->y.i + height)
-        m->y.n = m->y.i + height;
+    m->y.i = hmatrix_split_cidx(blocksize * index, &spec, &y);
+    m->y.n = hmatrix_split_cidx(blocksize *(index +1), &spec, &y);
 }
 
 

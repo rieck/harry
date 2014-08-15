@@ -23,6 +23,8 @@ typedef struct
     int n;    /**< End of range */
 } range_t;
 
+#define RANGE_LENGTH(r) (r.n -r.i)
+
 /**
  * Structure for a matrix
  */
@@ -44,6 +46,7 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n);
 void hmatrix_xrange(hmatrix_t *m, char *x);
 void hmatrix_yrange(hmatrix_t *m, char *y);
 void hmatrix_split(hmatrix_t *m, char *s);
+void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index);
 float *hmatrix_alloc(hmatrix_t *m);
 float hmatrix_get(hmatrix_t *m, int x, int y);
 void hmatrix_set(hmatrix_t *m, int x, int y, float f);
