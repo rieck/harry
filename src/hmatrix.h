@@ -34,6 +34,7 @@ typedef struct
 
     float *values;      /**< Similarity values */
     int size;           /**< Size of memory */
+    int calcs;          /**< Required calculations */
     range_t x;          /**< Range x */
     range_t y;          /**< Range y */
     int triangular;     /**< Flag for triangular storage */
