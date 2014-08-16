@@ -203,7 +203,7 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
  */
 float *hmatrix_alloc(hmatrix_t *m)
 {
-    int xl, yl;
+    int xl, yl, i;
 
     /* Compute dimensions of matrix */
     xl = m->x.n - m->x.i;
@@ -220,11 +220,15 @@ float *hmatrix_alloc(hmatrix_t *m)
     }
 
     /* Allocate memory */
-    m->values = calloc(sizeof(float), m->size);
+    m->values = malloc(sizeof(float) * m->size);
     if (!m->values) {
         error("Could not allocate matrix for similarity values");
         return NULL;
     }
+
+    /* Initialize to NaN values */
+    for (i = 0; i < m->size; i++)
+        m->values[i] = NAN;
 
     return m->values;
 }
@@ -306,21 +310,18 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
             int xi = i + m->x.i;
             int yi = j + m->y.i;
 
-            /* Skip symmetric values */
-            if (m->triangular && yi > xi)
+            /* Skip values that have been computed earlier */
+            float f = hmatrix_get(m, xi, yi);
+            if (!isnan(f))
                 continue;
 
-            float f = measure(s[xi], s[yi]);
-
             /* Set value in matrix */
+            f = measure(s[xi], s[yi]);
             hmatrix_set(m, xi, yi, f);
 
-#if 0
             /* Set symmetric value if in range */
             if (yi >= m->x.i && yi < m->x.n && xi >= m->y.i && xi < m->y.n)
                 hmatrix_set(m, yi, xi, f);
-#endif
-
 
             if (verbose || log_line)
 #pragma omp critical
