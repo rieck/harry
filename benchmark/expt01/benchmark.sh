@@ -12,7 +12,7 @@ for r in $runs ; do
         for m in $measures ; do
             for n in $nthreads ; do
                 printf "$d $m $n $r " 1>&2
-                time ../../src/harry -x 000:100 -y 100:200 -n $n -m $m -c ../$d.cfg \
+                time ../../src/harry -n $n -m $m -c ../$d.cfg \
                      ../$d.t*.gz /dev/null 
             done
         done
