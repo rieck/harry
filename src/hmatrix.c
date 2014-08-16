@@ -295,52 +295,49 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
 void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
 {
-    int k = 0;
-    int step1 = floor(m->size * 0.01) + 1;
+    assert(m);
+
+    int step = floor(m->size * 0.01) + 1;
+    int j = 0, n = (m->x.n - m->x.i) * (m->y.n - m->y.i);
     double ts, ts1 = time_stamp(), ts2 = ts1;
 
-    /*
-     * It seems that the for-loop has to start at index 0 for OpenMP to 
-     * collapse both loops. This renders it a little ugly, since hmatrix 
-     * requires absolute indices.
-     */
-#pragma omp parallel for collapse(2) private(ts)
-    for (int i = 0; i < m->x.n - m->x.i; i++) {
-        for (int j = 0; j < m->y.n - m->y.i; j++) {
-            int xi = i + m->x.i;
-            int yi = j + m->y.i;
+#pragma omp parallel for private(ts)
+    for (int k = 0; k < n; k++) {
+        int xi = k / (m->y.n - m->y.i) + m->x.i;
+        int yi = k % (m->y.n - m->y.i) + m->y.i;
 
-            /* Skip values that have been computed earlier */
-            float f = hmatrix_get(m, xi, yi);
-            if (!isnan(f))
-                continue;
+        /* Skip values that have been computed earlier */
+        float f = hmatrix_get(m, xi, yi);
+        if (!isnan(f))
+            continue;
 
-            /* Set value in matrix */
-            f = measure(s[xi], s[yi]);
-            hmatrix_set(m, xi, yi, f);
+        /* Set value in matrix */
+        f = measure(s[xi], s[yi]);
+        hmatrix_set(m, xi, yi, f);
 
-            /* Set symmetric value if in range */
-            if (yi >= m->x.i && yi < m->x.n && xi >= m->y.i && xi < m->y.n)
-                hmatrix_set(m, yi, xi, f);
+        /* Set symmetric value if in range */
+        if (yi >= m->x.i && yi < m->x.n && xi >= m->y.i && xi < m->y.n)
+            hmatrix_set(m, yi, xi, f);
 
-            if (verbose || log_line)
+        if (verbose || log_line)
 #pragma omp critical
-            {
-                ts = time_stamp();
+        {
+            ts = time_stamp();
 
-                /* Update progress bar every 100th step and 100ms */
-                if (verbose && (k % step1 == 0 || ts - ts1 > 0.1)) {
-                    prog_bar(0, m->size, k);
-                    ts1 = ts;
-                }
-
-                /* Print log line every minute if enabled */
-                if (log_line && ts - ts2 > 60) {
-                    log_print(0, m->size, k);
-                    ts2 = ts;
-                }
-                k++;
+            /* Update progress bar every 100th step and 100ms */
+            if (verbose && (j % step == 0 || ts - ts1 > 0.1)) {
+                prog_bar(0, n, j);
+                ts1 = ts;
             }
+
+            /* Print log line every minute if enabled */
+            if (log_line && ts - ts2 > 60) {
+                log_print(0, n, j);
+                ts2 = ts;
+            }
+
+            /* Use independent counter for progress bar */
+            j++;
         }
     }
 
