@@ -27,7 +27,7 @@ config_t cfg;
 
 static int print_conf = 0;
 static char *measure = NULL;
-static nthreads = 0;
+static int nthreads = 0;
 
 /* Option string */
 #define OPTSTRING       "n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
