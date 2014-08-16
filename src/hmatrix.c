@@ -51,6 +51,8 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 
     /* Initialized later */
     m->values = NULL;
+    m->size = 0;
+    m->calcs = 0;
 
     /* Allocate some space */
     m->labels = calloc(n, sizeof(float));
@@ -203,7 +205,7 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
  */
 float *hmatrix_alloc(hmatrix_t *m)
 {
-    int xl, yl, i;
+    int xl, yl, k;
 
     /* Compute dimensions of matrix */
     xl = m->x.n - m->x.i;
@@ -220,15 +222,25 @@ float *hmatrix_alloc(hmatrix_t *m)
     }
 
     /* Allocate memory */
-    m->values = malloc(sizeof(float) * m->size);
+    m->values = calloc(sizeof(float), m->size);
     if (!m->values) {
         error("Could not allocate matrix for similarity values");
         return NULL;
     }
 
-    /* Initialize to NaN values */
-    for (i = 0; i < m->size; i++)
-        m->values[i] = NAN;
+    /* Initialize to NaN values and count calculations */
+    int n = (m->x.n - m->x.i) * (m->y.n - m->y.i);
+    for (k = 0; k < n; k++) {
+        int xi = k / (m->y.n - m->y.i) + m->x.i;
+        int yi = k % (m->y.n - m->y.i) + m->y.i;
+
+        /* Count non-redundant calculations */
+        float f = hmatrix_get(m, xi, yi);
+        if (!isnan(f))
+            m->calcs++;
+
+        hmatrix_set(m, xi, yi, NAN);
+    }
 
     return m->values;
 }
@@ -257,6 +269,15 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 
     assert(idx < m->size);
     m->values[idx] = f;
+
+    /* Set symmetric value on squared matrix */
+    if (!m->triangular &&
+        y >= m->x.i && y < m->x.n && x >= m->y.i && x < m->y.n) {
+        idx = (y - m->x.i) + (x - m->y.i) * (m->x.n - m->x.i);
+
+        assert(idx < m->size);
+        m->values[idx] = f;
+    }
 }
 
 
@@ -297,9 +318,9 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 {
     assert(m);
 
-    int step = floor(m->size * 0.01) + 1;
     int j = 0, n = (m->x.n - m->x.i) * (m->y.n - m->y.i);
     double ts, ts1 = time_stamp(), ts2 = ts1;
+    float f;
 
 #pragma omp parallel for private(ts)
     for (int k = 0; k < n; k++) {
@@ -307,7 +328,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         int yi = k % (m->y.n - m->y.i) + m->y.i;
 
         /* Skip values that have been computed earlier */
-        float f = hmatrix_get(m, xi, yi);
+        f = hmatrix_get(m, xi, yi);
         if (!isnan(f))
             continue;
 
@@ -315,38 +336,41 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         f = measure(s[xi], s[yi]);
         hmatrix_set(m, xi, yi, f);
 
-        /* Set symmetric value if in range */
-        if (yi >= m->x.i && yi < m->x.n && xi >= m->y.i && xi < m->y.n)
-            hmatrix_set(m, yi, xi, f);
-
         if (verbose || log_line)
 #pragma omp critical
         {
             ts = time_stamp();
 
-            /* Update progress bar every 100th step and 100ms */
-            if (verbose && (j % step == 0 || ts - ts1 > 0.1)) {
-                prog_bar(0, n, j);
+            /*
+             * Update internal counter. Note that we have slightly more
+             * calculations as expected, since we don't lock the matrix and
+             * two threads might compute the same value in parallel.  As
+             * long as writing to the matrix is atomic this should not be a
+             * problem.
+             */
+            if (j < m->calcs)
+                j++;
+
+            /* Update progress bar every 100ms */
+            if (verbose && ts - ts1 > 0.1) {
+                prog_bar(0, m->calcs, j);
                 ts1 = ts;
             }
 
             /* Print log line every minute if enabled */
             if (log_line && ts - ts2 > 60) {
-                log_print(0, n, j);
+                log_print(0, m->calcs, j);
                 ts2 = ts;
             }
-
-            /* Use independent counter for progress bar */
-            j++;
         }
     }
 
     if (verbose) {
-        prog_bar(0, m->size, m->size);
+        prog_bar(0, m->calcs, m->calcs);
     }
 
     if (log_line) {
-        log_print(0, m->size, m->size);
+        log_print(0, m->calcs, m->calcs);
     }
 }
 
