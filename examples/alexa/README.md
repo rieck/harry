@@ -56,7 +56,7 @@
       D = D.T + D
 
   [![fig1](figure_2.png)](figure_2.png)
-  [![fig2](/igure_1.png)](figure_1.png)
+  [![fig2](figure_1.png)](figure_1.png)
 
   The following two figures illustrate how the distance matrix is
   reconstructed.  The figures have been generated using the function
