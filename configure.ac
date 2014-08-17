@@ -154,6 +154,9 @@ AC_CONFIG_FILES([
    src/output/Makefile \
    tests/Makefile \
    doc/Makefile \
+   examples/Makefile \
+   examples/alexa/Makefile \
+   examples/reuters/Makefile \
 ])
 AC_OUTPUT
 
