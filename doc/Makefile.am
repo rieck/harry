@@ -5,7 +5,7 @@ EXTRA_DIST = harry.pod doxygen.cfg example.cfg harry.txt harry.pdf \
 	     latex-pre.inc.in latex-post.inc
 	
 man1_MANS = harry.man
-doc_DATA = example.cfg harry.txt harry.pdf
+doc_DATA = example.cfg
 
 harry.man: harry.pod
 	pod2man -c "User Manual" -s 1 -r "Harry $(VERSION)" $< > $@
