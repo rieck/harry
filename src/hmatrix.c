@@ -134,6 +134,37 @@ static range_t parse_range(range_t r, char *str, int n)
 }
 
 /**
+ * Infer the matrix' detailed specifications. This can be used
+ * to accurately determine the number of \b unique values.
+ *
+ * @param[in] m Matrix object.
+ * @param[out] spec The struct holding the specification.
+ */
+void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec)
+{
+	assert(m != NULL && spec != NULL);
+
+    const int width = RANGE_LENGTH(m->x);
+    const int height = RANGE_LENGTH(m->y);
+
+    const range_t x = m->x;
+    const range_t y = m->y;
+
+    spec->b_top = MAX(x.i -y.i, 0);
+    spec->b_bottom = MAX(y.n -x.n, 0);
+    spec->b_left = MAX(y.i -x.i, 0);
+    spec->b_right = MAX(x.n -y.n, 0);
+    spec->a = (y.i >= x.n && x.n <= y.i) || (y.n <= x.i && x.i >= y.n) ? 0 : (height -spec->b_top -spec->b_bottom);
+
+    assert(spec->b_left + spec->a + spec->b_right == width);
+
+    spec->n_top = width *spec->b_top;
+    spec->n_mid = spec->a*spec->b_left + (pow(spec->a, 2) +spec->a) /2 + spec->a*spec->b_right;
+    spec->n_bottom = width *spec->b_bottom;
+    spec->n = spec->n_top + spec->n_mid + spec->n_bottom;
+}
+
+/**
  * Enable splitting matrix
  * @param m Matrix object
  * @param str Split string
@@ -160,21 +191,15 @@ void hmatrix_split(hmatrix_t *m, char *str)
     hmatrix_split_ex(m, blocks, index);
 }
 
-typedef struct {
-    unsigned int n;
-
-    unsigned int n_top;
-    unsigned int n_mid;
-    unsigned int n_bottom;
-
-    unsigned int a;
-    int b_top;
-    int b_bottom;
-    int b_left;
-    int b_right;
-} hmatrixspec_t;
-
-int hmatrix_split_cidx(const unsigned int N, const hmatrixspec_t *spec, const range_t *rows)
+/**
+ * Determine the column slice 0:x that approximately holds
+ * given the number of \b unique values.
+ *
+ * @param[in] N The approximate number of \b unique values.
+ * @param[in] spec The detailed matrix specification.
+ * @param[in] rows The range determining the contained number of rows.
+ */
+int hmatrix_split_ridx(const unsigned int N, const hmatrixspec_t *spec, const range_t *rows)
 {
 	assert(spec != NULL);
 
@@ -191,9 +216,9 @@ int hmatrix_split_cidx(const unsigned int N, const hmatrixspec_t *spec, const ra
 		const long p = 1 + 2l*width;
 		const long q = 2*n;
 
-		const double foo = sqrt(pow(p, 2) /4.0 - q);
-		//const double x1 = p/2.0 +foo;
-		const double x2 = p/2.0 -foo;
+		const double y = sqrt(pow(p, 2) /4.0 - q);
+		//const double x1 = p/2.0 +y;
+		const double x2 = p/2.0 -y;
 		return rows->i +spec->b_top +rint(x2);
 
 	} else if ((n -= spec->n_mid) <= spec->n_bottom) {
@@ -213,22 +238,8 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
         return;
     }
 
-    const range_t x = m->x; //(width <= height ? m->x : m->y);
-    const range_t y = m->y; //(width >  height ? m->x : m->y);
-
-    hmatrixspec_t spec;
-    spec.b_top = MAX(x.i -y.i, 0);
-    spec.b_bottom = MAX(y.n -x.n, 0);
-    spec.b_left = MAX(y.i -x.i, 0);
-    spec.b_right = MAX(x.n -y.n, 0);
-    spec.a = (y.i >= x.n && x.n <= y.i) || (y.n <= x.i && x.i >= y.n) ? 0 : (height -spec.b_top -spec.b_bottom);
-
-    assert(spec.b_left + spec.a + spec.b_right == width);
-
-    spec.n_top = width *spec.b_top;
-    spec.n_mid = spec.a*spec.b_left + (pow(spec.a, 2) +spec.a) /2 + spec.a*spec.b_right;
-    spec.n_bottom = width *spec.b_bottom;
-    spec.n = spec.n_top + spec.n_mid + spec.n_bottom;
+    hmatrixspec_t spec = {0};
+    hmatrix_inferspec(m, &spec);
 
     const unsigned long blocksize = ceil(((double) spec.n) /blocks);
 
@@ -239,10 +250,9 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
     }
 
     /* Update range */
-    m->y.i = hmatrix_split_cidx(blocksize * index, &spec, &y);
-    m->y.n = hmatrix_split_cidx(blocksize *(index +1), &spec, &y);
+    m->y.i = hmatrix_split_ridx(blocksize * index, &spec, &m->y);
+    m->y.n = hmatrix_split_ridx(blocksize *(index +1), &spec, &m->y);
 }
-
 
 /**
  * Set the x range for computation
