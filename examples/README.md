@@ -6,7 +6,7 @@
   basic functionality.  You get a quick overview of the most common features
   and how to use them.
 
-## Comparison of domain names
+## Comparison of Domain Names
 
 * [Example 1](alexa) deals with the comparison of domain names.  The example
   shows how Harry can be used to find similar domain names given a target
