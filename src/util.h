@@ -48,4 +48,6 @@ void log_print(long, long, long);
 #define MIN(a, b) (a < b ? a : b)
 #define MAX(a, b) (a > b ? a : b)
 
+#define UNUSED(x) (void)(x)
+
 #endif /* UTIL_H */

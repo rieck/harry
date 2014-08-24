@@ -164,6 +164,8 @@ void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec)
     spec->n = spec->n_top + spec->n_mid + spec->n_bottom;
 }
 
+//#define USE_UNIFORM_SPLITTING
+
 /**
  * Enable splitting matrix
  * @param m Matrix object
@@ -191,6 +193,7 @@ void hmatrix_split(hmatrix_t *m, char *str)
     hmatrix_split_ex(m, blocks, index);
 }
 
+#ifdef USE_UNIFORM_SPLITTING
 /**
  * Determine the column slice 0:x that approximately holds
  * given the number of \b unique values.
@@ -227,6 +230,7 @@ int hmatrix_split_ridx(const unsigned int N, const hmatrixspec_t *spec, const ra
 	}
 	return rows->i +spec->b_top + spec->a + spec->b_bottom;
 }
+#endif
 
 void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
 {
@@ -238,6 +242,7 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
         return;
     }
 
+#ifdef USE_UNIFORM_SPLITTING
     hmatrixspec_t spec = {0};
     hmatrix_inferspec(m, &spec);
 
@@ -252,6 +257,21 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
     /* Update range */
     m->y.i = hmatrix_split_ridx(blocksize * index, &spec, &m->y);
     m->y.n = hmatrix_split_ridx(blocksize *(index +1), &spec, &m->y);
+
+#else
+    UNUSED(width);
+    const int block_height = ceil(height / (float) blocks);
+
+    if (block_height <= 0 || block_height > height) {
+        fatal("Block height too small (%d).", block_height);
+        return;
+    }
+
+    /* Update range */
+    m->y.i = m->y.i + index * block_height;
+    if (m->y.n > m->y.i + block_height)
+        m->y.n = m->y.i + block_height;
+#endif
 }
 
 /**
