@@ -306,19 +306,12 @@ float *hmatrix_alloc(hmatrix_t *m)
         return NULL;
     }
 
+    hmatrixspec_t spec;
+    hmatrix_inferspec(m, &spec);
+    m->calcs = spec.n;
+
     /* Initialize to NaN values and count calculations */
-    int n = (m->x.n - m->x.i) * (m->y.n - m->y.i);
-    for (k = 0; k < n; k++) {
-        int xi = k / (m->y.n - m->y.i) + m->x.i;
-        int yi = k % (m->y.n - m->y.i) + m->y.i;
-
-        /* Count non-redundant calculations */
-        float f = hmatrix_get(m, xi, yi);
-        if (!isnan(f))
-            m->calcs++;
-
-        hmatrix_set(m, xi, yi, NAN);
-    }
+    for (k = 0; k < m->size; k++) m->values[k] = NAN;
 
     return m->values;
 }
