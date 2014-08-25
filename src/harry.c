@@ -28,6 +28,7 @@ config_t cfg;
 static int print_conf = 0;
 static char *measure = NULL;
 static int nthreads = 0;
+static int benchmark = 0;
 
 /* Option string */
 #define OPTSTRING       "n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
@@ -41,6 +42,7 @@ static struct option longopts[] = {
     {"reverse_str", 0, NULL, 1001},
     {"stopword_file", 1, NULL, 1002},
     {"soundex", 0, NULL, 1003},
+    {"benchmark", 1, NULL, 1004},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"triangular", 0, NULL, 'u'},
@@ -110,6 +112,7 @@ static void print_usage(void)
            "       --reverse_str              Reverse (flip) all strings.\n"
            "       --stopword_file <file>     Provide a file with stop words.\n"
            "       --soundex                  Enable soundex encoding of words.\n"
+           "       --benchmark <seconds>      Perform benchmark run.\n"
            "  -o,  --output_format <format>   Set output format for matrix.\n"
            "  -z,  --compress                 Enable zlib compression of output.\n"
            "  -u,  --triangular               Save triangular matrix only.\n"
@@ -176,6 +179,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 1003:
             config_set_bool(&cfg, "input.soundex", CONFIG_TRUE);
+            break;
+        case 1004:
+            benchmark = atoi(optarg);
             break;
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
@@ -395,7 +401,37 @@ static hstring_t *harry_read(char *input, int *num)
  * @param num Number of strings
  * @return Matrix of similarity valurs
  */
-static hmatrix_t *harry_compute(hstring_t *strs, int num)
+void harry_compute(hmatrix_t *mat, hstring_t *strs, int num)
+{
+    /* Compute matrix */
+    info_msg(1, "Computing similarity measure '%s' with %d threads.",
+             measure, omp_get_max_threads());
+    hmatrix_compute(mat, strs, measure_compare);
+}
+
+
+/**
+ * Benchmark runtime
+ * @param strs Array of string objects
+ * @param num Number of strings
+ * @return Matrix of similarity valurs
+ */
+void harry_benchmark(hmatrix_t *mat, hstring_t *strs, int num)
+{
+    /* Compute matrix */
+    info_msg(1, "Benchmarking similarity measure '%s' (%d threads; %d seconds).",
+             measure, omp_get_max_threads(), benchmark);
+    float cmps = hmatrix_benchmark(mat, strs, measure_compare, benchmark);
+    printf("%.0f cmps %d secs\n", cmps, benchmark);
+}
+
+/**
+ * Init and allocate matrix for computation
+ * @param strs Array of string objects
+ * @param num Number of strings
+ * @return Empty matrix
+ */
+static hmatrix_t *harry_alloc(hstring_t *strs, int num)
 {
     char *cfg_str;
     int i;
@@ -424,13 +460,9 @@ static hmatrix_t *harry_compute(hstring_t *strs, int num)
     if (!hmatrix_alloc(mat))
         fatal("Could not allocate matrix for similarity measure");
 
-    /* Compute matrix */
-    info_msg(1, "Computing similarity measure '%s' with %d threads.",
-             measure, omp_get_max_threads());
-    hmatrix_compute(mat, strs, measure_compare);
-
     return mat;
 }
+
 
 /**
  * Write similarity values to an output file
@@ -498,9 +530,15 @@ int main(int argc, char **argv)
 
     harry_init();
     strs = harry_read(input, &num);
-    mat = harry_compute(strs, num);
-    harry_write(output, mat);
-    harry_exit(strs, mat, num);
+    mat = harry_alloc(strs, num);
 
+    if (benchmark) {
+        harry_benchmark(mat, strs, num);
+    } else {
+        harry_compute(mat, strs, num);
+        harry_write(output, mat);
+    }
+
+    harry_exit(strs, mat, num);
     return EXIT_SUCCESS;
 }

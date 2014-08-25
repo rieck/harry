@@ -139,5 +139,8 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f);
 void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y));
 void hmatrix_destroy(hmatrix_t *m);
+float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
+                        double (*measure) (hstring_t x, hstring_t y),
+                        double);
 
 #endif /* HMATRIX_H */

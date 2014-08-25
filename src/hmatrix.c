@@ -467,6 +467,50 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 
 
 /**
+ * Benchmark computation of similarity measure
+ * @param m Matrix object
+ * @param s Array of string objects
+ * @param measure Similarity measure
+ * @param t Time to run benchmark in seconds
+ * @return Number of computations
+ */
+float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
+                        double (*measure) (hstring_t x, hstring_t y),
+                        double t)
+{
+    assert(m);
+    uint64_t j = 0;
+    int mt = omp_get_max_threads();
+    double ts = time_stamp();
+
+    /*
+     * Naive implementation of a while loop. The loop terminates
+     * after roughly t seconds by setting k to the maximum value.
+     */
+#pragma omp parallel for
+    for (uint64_t k = 0; k < UINT64_MAX - mt; k++) {
+
+        /* Select random pair of strings */
+        int xi = lrand48() % (m->x.n - m->x.i) + m->x.i;
+        int yi = lrand48() % (m->y.n - m->y.i) + m->y.i;
+
+        /* Calculate similarity value */
+        hmatrix_get(m, xi, yi);
+
+#pragma omp critical
+        {
+            j++;
+            if (time_stamp() - ts > t)
+                k = UINT64_MAX - mt;
+        }
+    }
+
+    return (float) j;
+}
+
+
+
+/**
  * Destroy a matrix of simililarity values and free its memory
  * @param m Matrix object
  */
