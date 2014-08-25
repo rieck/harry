@@ -23,6 +23,8 @@ typedef struct
     int n;    /**< End of range */
 } range_t;
 
+#define RANGE_LENGTH(r) (r.n -r.i)
+
 /**
  * Structure for a matrix
  */
@@ -40,10 +42,97 @@ typedef struct
     int triangular;     /**< Flag for triangular storage */
 } hmatrix_t;
 
+
+/**
+ * Detailed structural specification of matrices.
+ *
+ * These values are of special interest of matrix slices which
+ * may represent subranges along or completely away the diagonal.
+ * Such ranges can be represented as a composition of three
+ * different parts: (1) Top, (2) Middle and (3) Bottom.
+ * The top and bottom parts represents ranges that need to be
+ * fully computed whereas the middle range is cut be the matrix'
+ * diagonal and therefore, contains "duplicate" values, i.e. values
+ * from above the diagonal equal those from below it.
+ *
+ * <code>$ harry -x 2:6 -y 1:8
+ *
+ *
+ *      0   1 | 2   3   4   5 | 6   7   8
+ *            |               |
+ * 0    x   . | .   .   .   . | .   .   .
+ * -----------+---------------+--------------
+ * 1    .   x | .   .   .   . | .   .   .   b_top
+ *            |               +--------------
+ * 2    .   . | x   .   .   . | .   .   .
+ *            |               |
+ * 3    .   . | .   x   .   . | .   .   .
+ *            |               |             a
+ * 4    .   . | .   .   x   . | .   .   .
+ *            |               |
+ * 5    .   . | .   .   .   x | .   .   .
+ *            |               +--------------
+ * 6    .   . | .   .   .   . | x   .   .
+ *            |               |             b_bottom
+ * 7    .   . | .   .   .   . | .   x   .
+ * -----------+---------------+--------------
+ * 8    .   . | .   .   .   . | .   .   x
+ *            |               |
+ *                 width
+ *
+ * </code>
+ *
+ * Please note that \a A_middle is not necessarily squared
+ * but may itself have regions that need to be fully computed.
+ * In the following example these parts are defined by \a b_left
+ * and \a b_right respectively.
+ *
+ * <code>$ harry -x 1:8 -y 2:6
+ *
+ *      0 | 1   2   3   4   5   6   7 | 8
+ *        |                           |
+ * 0    x | .   .   .   .   .   .   . | .
+ *        |                           |
+ * 1    . | x   .   .   .   .   .   . | .
+ * -------+---------------------------+------
+ * 2    . | .   x   .   .   .   .   . | .
+ *        |                           |
+ * 3    . | .   .   x   .   .   .   . | .
+ *        |                           |    height
+ * 4    . | .   .   .   x   .   .   . | .
+ *        |                           |
+ * 5    . | .   .   .   .   x   .   . | .
+ * -------+---+---------------+-------+------
+ * 6    . | . | .   .   .   . | x   . | .
+ *        |   |               |       |
+ * 7    . | . | .   .   .   . | .   x | .
+ *        |   |               |       |
+ * 8    . | . | .   .   .   . | .   . | x
+ *        |   |               |       |
+ *       b_left       a        b_right
+ *
+ * </code>
+ */
+typedef struct {
+    unsigned int n;
+
+    unsigned int n_top;
+    unsigned int n_mid;
+    unsigned int n_bottom;
+
+    unsigned int a;
+    int b_top;
+    int b_bottom;
+    int b_left;
+    int b_right;
+} hmatrixspec_t;
+
 hmatrix_t *hmatrix_init(hstring_t *s, int n);
 void hmatrix_xrange(hmatrix_t *m, char *x);
 void hmatrix_yrange(hmatrix_t *m, char *y);
+void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec);
 void hmatrix_split(hmatrix_t *m, char *s);
+void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index);
 float *hmatrix_alloc(hmatrix_t *m);
 float hmatrix_get(hmatrix_t *m, int x, int y);
 void hmatrix_set(hmatrix_t *m, int x, int y, float f);
