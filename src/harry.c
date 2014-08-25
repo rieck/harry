@@ -422,7 +422,8 @@ void harry_benchmark(hmatrix_t *mat, hstring_t *strs, int num)
     info_msg(1, "Benchmarking similarity measure '%s' (%d threads; %d seconds).",
              measure, omp_get_max_threads(), benchmark);
     float cmps = hmatrix_benchmark(mat, strs, measure_compare, benchmark);
-    printf("%.0f cmps %d secs\n", cmps, benchmark);
+    printf("%.0f comparisons %d seconds %d threads\n", cmps, benchmark,
+           omp_get_max_threads());
 }
 
 /**

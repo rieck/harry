@@ -495,7 +495,7 @@ float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
         int yi = lrand48() % (m->y.n - m->y.i) + m->y.i;
 
         /* Calculate similarity value */
-        hmatrix_get(m, xi, yi);
+        measure(s[xi], s[yi]);
 
 #pragma omp critical
         {
