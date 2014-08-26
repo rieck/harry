@@ -55,12 +55,38 @@ uint64_t hstring_hash_sub(hstring_t x, int i, int l);
 uint64_t hstring_hash1(hstring_t);
 uint64_t hstring_hash2(hstring_t, hstring_t);
 int hstring_has_delim();
-int hstring_compare(hstring_t x, int i, hstring_t y, int j);
 sym_t hstring_get(hstring_t x, int i);
 hstring_t hstring_soundex(hstring_t);
 
 /* Additional functions */
 void stopwords_load(const char *f);
 void stopwords_destroy();
+
+/* Inline functions */
+
+/** 
+ * Compare two symbols/characters
+ * @param x string x
+ * @param i position in string x
+ * @param y string y
+ * @param j position in string y
+ * @return 0 if equal, < 0 if x smaller, > 0 if y smaller
+ */
+inline int hstring_compare(hstring_t x, int i, hstring_t y, int j)
+{
+    assert(x.type == y.type);
+    assert(i < x.len && j < y.len);
+
+    if (x.type == TYPE_SYM)
+        return (x.str.s[i] - y.str.s[j]);
+    else if (x.type == TYPE_CHAR)
+        return (x.str.c[i] - y.str.c[j]);
+    else
+        error("Unknown string type");
+    return 0;
+}
+
+
+
 
 #endif /* HSTRING_H */

@@ -69,29 +69,6 @@ int hstring_has_delim()
 }
 
 /** 
- * Compare two symbols/characters
- * @param x string x
- * @param i position in string x
- * @param y string y
- * @param j position in string y
- * @return 0 if equal, < 0 if x smaller, > 0 if y smaller
- */
-int hstring_compare(hstring_t x, int i, hstring_t y, int j)
-{
-    assert(x.type == y.type);
-    assert(i < x.len && j < y.len);
-
-    if (x.type == TYPE_SYM)
-        return (x.str.s[i] - y.str.s[j]);
-    else if (x.type == TYPE_CHAR)
-        return (x.str.c[i] - y.str.c[j]);
-    else
-        error("Unknown string type");
-    return 0;
-}
-
-
-/** 
  * Return symbol/character at given positions
  * @param x string x
  * @param i position in string x
