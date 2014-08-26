@@ -37,7 +37,7 @@ typedef struct
     } str;
 
     int len;                  /**< Length of string */
-    unsigned int type:1;      /**< Type of string */
+    unsigned int type;        /**< Type of string */
 
     char *src;                /**< Optional source of string */
     float label;              /**< Optional label of string */
