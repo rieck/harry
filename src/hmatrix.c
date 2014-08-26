@@ -150,13 +150,35 @@ void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec)
     const range_t x = m->x;
     const range_t y = m->y;
 
-    spec->b_top = MAX(x.i -y.i, 0);
-    spec->b_bottom = MAX(y.n -x.n, 0);
-    spec->b_left = MAX(y.i -x.i, 0);
-    spec->b_right = MAX(x.n -y.n, 0);
-    spec->a = (y.i >= x.n && x.n <= y.i) || (y.n <= x.i && x.i >= y.n) ? 0 : (height -spec->b_top -spec->b_bottom);
+    // determine the overall location of the sub-matrix
+    const int is_fully_underneath = (y.i >= x.n && x.n <= y.i);
+    const int is_fully_above = (y.n <= x.i && x.i >= y.n);
+
+    // calculate the exact positions
+    if (is_fully_above) {
+        spec->b_top = height;
+        spec->b_bottom = 0;
+        spec->b_left = 0;
+        spec->b_right = width;
+        spec->a = 0;
+
+    } else if (is_fully_underneath) {
+        spec->b_top = 0;
+        spec->b_bottom = height;
+        spec->b_left = width;
+        spec->b_right = 0;
+        spec->a = 0;
+
+    } else {
+        spec->b_top = MAX(x.i -y.i, 0);
+        spec->b_bottom = MAX(y.n -x.n, 0);
+        spec->b_left = MAX(y.i -x.i, 0);
+        spec->b_right = MAX(x.n -y.n, 0);
+        spec->a = height -spec->b_top -spec->b_bottom;
+    }
 
     assert(spec->b_left + spec->a + spec->b_right == width);
+    assert(spec->b_top + spec->a + spec->b_bottom == height);
 
     spec->n_top = width *spec->b_top;
     spec->n_mid = spec->a*spec->b_left + (pow(spec->a, 2) +spec->a) /2 + spec->a*spec->b_right;
