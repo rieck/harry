@@ -22,6 +22,9 @@ AC_PROG_INSTALL
 AC_CONFIG_MACRO_DIR(m4)
 AC_PROG_LIBTOOL
 
+# By default remove assert statements
+CFLAGS="$CFLAGS -DNDEBUG"
+
 # Set GCC and C99 flags if present
 if test "$GCC" = "yes" ; then
    CFLAGS="$CFLAGS -std=c99 -Wall -fPIC"
