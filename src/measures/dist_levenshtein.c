@@ -1,7 +1,8 @@
 /*
  * Harry - A Tool for Measuring String Similarity
  * Copyright (C) 2006 Stephen Toub 
- *               2013-2014  Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2002-2003 David Necas (Yeti) <yeti@physics.muni.cz>.
+ * Copyright (C) 2013-2014  Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -55,6 +56,119 @@ void dist_levenshtein_config()
     n = lnorm_get(str);
 }
 
+
+
+
+/**
+ * Computes the Levenshtein distance. Code adapted from
+ * David Necas (Yeti) <yeti@physics.muni.cz>.
+ * @param x first string
+ * @param y second string
+ * @return Levenshtein distance
+ */
+static float dist_levenshtein_compare_yeti(hstring_t x, hstring_t y)
+{
+    int i, *end, half;
+    int *row; /* we only need to keep one row of costs */
+
+    /* Catch trivial cases */
+    if (x.len == 0)
+        return y.len ;
+    if (y.len  == 0)
+        return x.len;
+
+    /* Make the inner cycle (i.e. string2) the longer one */
+    if (x.len > y.len ) {
+        hstring_t z = x;
+        x = y;
+        y = z;
+    }
+
+    /* Check x.len == 1 separately */
+    if (x.len == 1) {
+	int c = 0;
+	for (int k = 0; !c && k < y.len; k++) {
+	    if (!hstring_compare(x, 0, y, k))
+		c = 1;
+	}
+	return y.len - c;
+    }
+
+    x.len++;
+    y.len++;
+    half = x.len >> 1;
+
+    /* Unitalize first row */
+    row = (int *) malloc((y.len ) * sizeof(int));
+    if (!row) {
+        error("Failed to allocate memory for Levenshtein distance");
+        return 0;
+    }
+
+    end = row + y.len  - 1;
+    for (i = 0; i < y.len  - half; i++)
+        row[i] = i;
+
+    /*
+     * We don't have to scan two corner triangles (of size x.len/2) in the
+     * matrix because no best path can go throught them.  Note this breaks
+     * when x.len == y.len == 2 so special case above is necessary
+     */
+    row[0] = x.len  - half - 1;
+    for (i = 1; i < x.len ; i++) {
+        int *p;
+        int char1p = i - 1;
+        int char2p;
+        int D, k;
+        /* skip the upper triangle */
+        if (i >= x.len  - half) {
+            int offset = i - (x.len  - half);
+            int c3;
+
+            char2p = offset;
+            p = row + offset;
+            c3 = *(p++) + (hstring_compare(x, char1p, y, char2p++) ? 1 : 0);
+            k = *p;
+            k++;
+            D = k;
+            if (k > c3)
+                k = c3;
+            *(p++) = k;
+        } else {
+            p = row + 1;
+            char2p = 0;
+            D = k = i;
+        }
+        /* skip the lower triangle */
+        if (i <= half + 1)
+            end = row + y.len  + i - half - 2;
+        /* main */
+        while (p <= end) {
+            int c3 = --D + (hstring_compare(x, char1p, y, char2p++) ? 1 : 0);
+            k++;
+            if (k > c3)
+                k = c3;
+            D = *p;
+            D++;
+            if (k > D)
+                k = D;
+            *(p++) = k;
+        }
+        /* lower triangle sentinel */
+        if (i <= half) {
+            int c3 = --D + (hstring_compare(x, char1p, y, char2p) ? 1 : 0);
+            k++;
+            if (k > c3)
+                k = c3;
+            *p = k;
+        }
+    }
+
+    i = *end;
+    free(row);
+    return i;
+}
+
 /* Ugly macros to access arrays */
 #define ROWS(i,j)	rows[(i) * (y.len + 1) + (j)]
 
@@ -62,11 +176,11 @@ void dist_levenshtein_config()
  * Computes the Levenshtein distance of two strings. 
  * Adapted from Stephen Toub's C# implementation. 
  * http://blogs.msdn.com/b/toub/archive/2006/05/05/590814.aspx
- * @param x first string 
+ * @param x first string
  * @param y second string
  * @return Levenshtein distance
  */
-float dist_levenshtein_compare(hstring_t x, hstring_t y)
+static float dist_levenshtein_compare_toub(hstring_t x, hstring_t y)
 {
     int i, j, a, b;
 
@@ -130,7 +244,31 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
     /* Free memory */
     free(rows);
 
-    return lnorm(n, d, x, y);
+    return d;
+}
+
+
+/**
+ * Computes the Levenshtein distance. Wrapper function.
+ * @param x first string
+ * @param y second string
+ * @return Levenshtein distance
+ */
+float dist_levenshtein_compare(hstring_t x, hstring_t y)
+{
+    float f;
+
+    /*
+     * If the costs of all edit operations are equal we use the fast
+     * implementation by David Necas, otherwise we switch to the 
+     * variant by Stephen Toub.
+     */
+    if (cost_ins == cost_del && cost_del == cost_sub)
+        f = cost_ins * dist_levenshtein_compare_yeti(x, y);
+    else
+        f = dist_levenshtein_compare_toub(x,y);
+
+    return lnorm(n, f, x, y);
 }
 
 /** @} */
