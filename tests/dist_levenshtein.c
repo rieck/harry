@@ -59,6 +59,16 @@ struct hstring_test tests[] = {
     {".x.y.", ".x.y.", ".", 0},
     {"x...y..", "...x..y", ".", 0},
     {".x.y", "x.y.", ".", 0},
+    /* Tests for new implementation */
+    {"a", "b", "", 1},
+    {"aa", "aa", "", 0},
+    {"ab", "aa", "", 1},
+    {"aba", "aaa", "", 1},
+    {"a", "bab", "", 2},
+    {"bbb", "a", "", 3},
+    {"yyybca", "yyycba", "", 2},
+    {"bcaxxx", "cbaxxx", "", 2},
+    {"yyybcaxxx", "yyycbaxxx", "", 2},
     {NULL}
 };
 
