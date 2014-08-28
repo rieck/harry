@@ -33,7 +33,7 @@
 
   Note that the option `-d ''` tells Harry to compare the individual
   characters of the domain names instead of words separated by some
-  delimiter characters.  The option `-m levenshtein` selects the Levensthein
+  delimiter characters.  The option `-m levenshtein` selects the Levenshtein
   distance.  You can see a list of all available similarity measures by
   running the command `harry -M`.
 
