@@ -39,6 +39,13 @@ struct hstring_test tests[] = {
     {"MARTHA", "MARHTA", 1 - 0.961},
     {"DWAYNE", "DUANE", 1 - 0.84},
     {"DIXON", "DICKSONX", 1 - 0.813},
+    /* New examples */
+    {"b", "b", 0},
+    {"b", "bac", 1 - 0.8},
+    {"b", "baba", 1 - 0.775},
+    {"bac", "baba", 1 - 0.777778},
+    {"baba", "baba", 1 - 1},
+    {"john", "baba", 1 - 0},
     {NULL}
 };
 
