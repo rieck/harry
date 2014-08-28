@@ -115,23 +115,23 @@ float dist_compression_compare(hstring_t x, hstring_t y)
     xk = hstring_hash1(x);
     if (!vcache_load(xk, &xl, ID_DIST_COMPRESS)) {
         xl = compress_str1(x);
-        vcache_store(xk, xl, 1);
+        vcache_store(xk, xl, ID_DIST_COMPRESS);
     }
 
     yk = hstring_hash1(y);
-    if (!vcache_load(yk, &yl, 1)) {
+    if (!vcache_load(yk, &yl, ID_DIST_COMPRESS)) {
         yl = compress_str1(y);
         vcache_store(yk, yl, ID_DIST_COMPRESS);
     }
 
     xyk = hstring_hash2(x, y);
-    if (!vcache_load(xyk, &xyl, 1)) {
+    if (!vcache_load(xyk, &xyl, ID_DIST_COMPRESS)) {
         xyl = compress_str2(x, y);
         vcache_store(xyk, xyl, ID_DIST_COMPRESS);
     }
 
     yxk = hstring_hash2(y, x);
-    if (!vcache_load(yxk, &yxl, 1)) {
+    if (!vcache_load(yxk, &yxl, ID_DIST_COMPRESS)) {
         yxl = compress_str2(y, x);
         vcache_store(yxk, yxl, ID_DIST_COMPRESS);
     }
