@@ -263,10 +263,11 @@ float dist_levenshtein_compare(hstring_t x, hstring_t y)
      * implementation by David Necas, otherwise we switch to the 
      * variant by Stephen Toub.
      */
-    if (cost_ins == cost_del && cost_del == cost_sub)
+    if (fabs(cost_ins - cost_del) < 1e-6 && fabs(cost_del - cost_sub) < 1e-6) {
         f = cost_ins * dist_levenshtein_compare_yeti(x, y);
-    else
+    } else {
         f = dist_levenshtein_compare_toub(x,y);
+    }
 
     return lnorm(n, f, x, y);
 }
