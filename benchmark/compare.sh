@@ -3,12 +3,16 @@
 DATASETS="webfp tweets sprot"
 DATADIR="/data/projects/harry/data"
 MEASURES="levenshtein jarowinkler"
-RUNTIME=5
 
 export OMP_NUM_THREADS=1
 
 for DATA in $DATASETS ; do
-    gunzip -c $DATADIR/$DATA.txt.gz | head -200 > data.txt
+    gunzip -c $DATADIR/$DATA.txt.gz | head -100 > data.txt
+
+    printf "shogun $DATA subsequence "
+    time -f "%e %U %S" python pyshogun.py data.txt
+    printf "harry $DATA subsequence "
+    time -f  "%e %U %S" ../src/harry -d '' -m subsequence -n 1 data.txt /dev/null
 
     printf "pylevenshtein $DATA jarowinkler "
     time -f "%e %U %S" python pylevenshtein.py data.txt jarowinkler
@@ -25,6 +29,5 @@ for DATA in $DATASETS ; do
     printf "harry $DATA levenshtein "
     time -f "%e %U %S" ../src/harry -d '' -m levenshtein -n 1 data.txt /dev/null
 
-    
     rm data.txt        
 done
