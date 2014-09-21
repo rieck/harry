@@ -68,7 +68,7 @@ void dist_jarowinkler_config()
 
 #ifdef JARO_COMPARE_SERRANO
 /**
- * Computes the Jaro distance of two strings. Code adapted 
+ * Computes the Jaro distance of two strings. Code adapted
  * from implementation by Miguel Serrano
  * @param x first string
  * @param y second string
@@ -227,14 +227,14 @@ float dist_jaro_compare(hstring_t x, hstring_t y)
 {
 #ifdef JARO_COMPARE_SERRANO
     return dist_jaro_compare_serrano(x, y);
-#else    
+#else
     return dist_jaro_compare_yeti(x, y);
 #endif
 }
 
 /**
- * Computes the Jaro-Winkler distance of two strings. 
- * @param x first string 
+ * Computes the Jaro-Winkler distance of two strings.
+ * @param x first string
  * @param y second string
  * @return Jaro-Winkler distance
  */
