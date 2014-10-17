@@ -27,6 +27,7 @@
 #include "output_libsvm.h"
 #include "output_stdout.h"
 #include "output_null.h"
+#include "output_json.h"
 
 /**
  * Structure for output interface
@@ -62,6 +63,10 @@ void output_config(const char *format)
         func.output_open = output_null_open;
         func.output_write = output_null_write;
         func.output_close = output_null_close;
+    } else if (!strcasecmp(format, "json")) {
+        func.output_open = output_json_open;
+        func.output_write = output_json_write;
+        func.output_close = output_json_close;
     } else {
         error("Unknown ouptut format '%s', using 'text' instead.", format);
         output_config("text");
