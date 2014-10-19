@@ -28,6 +28,7 @@
 #include "output_stdout.h"
 #include "output_null.h"
 #include "output_json.h"
+#include "output_matlab.h"
 
 /**
  * Structure for output interface
