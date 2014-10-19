@@ -770,7 +770,7 @@ The similarity values are stored in JSON object.
 This parameter defines the separator used in text mode for separating
 the similarity values.
 
-=item B<save_indices = true;>
+=item B<save_indices = false;>
 
 If this parameter is to I<true> and supported by the output format, the
 indices of the strings will be additionally stored.
