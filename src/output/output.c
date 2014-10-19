@@ -67,6 +67,10 @@ void output_config(const char *format)
         func.output_open = output_json_open;
         func.output_write = output_json_write;
         func.output_close = output_json_close;
+    } else if (!strcasecmp(format, "matlab")) {
+        func.output_open = output_matlab_open;
+        func.output_write = output_matlab_write;
+        func.output_close = output_matlab_close;
     } else {
         error("Unknown ouptut format '%s', using 'text' instead.", format);
         output_config("text");

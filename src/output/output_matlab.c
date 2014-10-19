@@ -23,6 +23,7 @@
 #include "util.h"
 #include "output.h"
 #include "harry.h"
+#include "output_matlab.h"
 
 /* External variables */
 extern config_t cfg;
