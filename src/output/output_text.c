@@ -48,7 +48,7 @@ static const char *separator = ",";
 /**
  * Opens a file for writing text format
  * @param fn File name
- * @return number of regular files
+ * @return true if successful, false otherwise
  */
 int output_text_open(char *fn)
 {
