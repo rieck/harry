@@ -213,6 +213,7 @@ int output_matlab_open(char *fn)
  */
 int output_matlab_write(hmatrix_t *m)
 {
+    warning("DUMMY DUMMY DUMMY");
     return 0;
 }
 
