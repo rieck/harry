@@ -84,13 +84,13 @@ int output_json_write(hmatrix_t *m)
     int i, j, k = 0;
 
     if (save_indices) {
-        output_printf(z, "  \"x_idx\": [");
+        output_printf(z, "  \"x_indices\": [");
         for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, "%d", j);
             if (j < m->x.n - 1)
                 output_printf(z, ", ");
         }
-        output_printf(z, "],\n  \"y_idx\": [");
+        output_printf(z, "],\n  \"y_indices\": [");
         for (j = m->y.i; j < m->y.n; j++) {
             output_printf(z, "%d", j);
             if (j < m->y.n - 1)
@@ -100,13 +100,13 @@ int output_json_write(hmatrix_t *m)
     }
 
     if (save_labels) {
-        output_printf(z, "  \"x_label\": [");
+        output_printf(z, "  \"x_labels\": [");
         for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, " %g", m->labels[j]);
             if (j < m->x.i - 1)
                 output_printf(z, ", ");
         }
-        output_printf(z, "],\n  \"y_label\": [");
+        output_printf(z, "],\n  \"y_labels\": [");
         for (j = m->y.i; j < m->y.n; j++) {
             output_printf(z, "%g", m->labels[j]);
             if (j < m->y.i - 1)
@@ -116,13 +116,13 @@ int output_json_write(hmatrix_t *m)
     }
 
     if (save_sources) {
-        output_printf(z, "  \"x_src\": ");
+        output_printf(z, "  \"x_sources\": ");
         for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
             if (j < m->y.i - 1)
                 output_printf(z, ", ");
         }
-        output_printf(z, "],\n  \"y_src\": [");
+        output_printf(z, "],\n  \"y_sources\": [");
         for (j = m->y.i; j < m->y.n; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
             if (j < m->y.i - 1)
@@ -131,7 +131,7 @@ int output_json_write(hmatrix_t *m)
         output_printf(z, "],\n");
     }
 
-    output_printf(z, "  \"measure\": [\n    ");
+    output_printf(z, "  \"matrix\": [\n    ");
     if (triangular) {
         for (i = m->y.i; i < m->y.n; i++) {
             for (j = m->x.i; j < m->x.n; j++) {
