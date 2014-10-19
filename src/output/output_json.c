@@ -103,29 +103,29 @@ int output_json_write(hmatrix_t *m)
         output_printf(z, "  \"x_labels\": [");
         for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, " %g", m->labels[j]);
-            if (j < m->x.i - 1)
+            if (j < m->x.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n  \"y_labels\": [");
         for (j = m->y.i; j < m->y.n; j++) {
             output_printf(z, "%g", m->labels[j]);
-            if (j < m->y.i - 1)
+            if (j < m->y.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n");
     }
 
     if (save_sources) {
-        output_printf(z, "  \"x_sources\": ");
+        output_printf(z, "  \"x_sources\": [");
         for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
-            if (j < m->y.i - 1)
+            if (j < m->y.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n  \"y_sources\": [");
         for (j = m->y.i; j < m->y.n; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
-            if (j < m->y.i - 1)
+            if (j < m->y.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n");
