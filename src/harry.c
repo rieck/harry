@@ -43,6 +43,9 @@ static struct option longopts[] = {
     {"stopword_file", 1, NULL, 1002},
     {"soundex", 0, NULL, 1003},
     {"benchmark", 1, NULL, 1004},
+    {"save_indices", 0, NULL, 1005},
+    {"save_labels", 0, NULL, 1006},
+    {"save_sources", 0, NULL, 1007},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"triangular", 0, NULL, 'u'},
@@ -116,6 +119,9 @@ static void print_usage(void)
            "  -o,  --output_format <format>   Set output format for matrix.\n"
            "  -z,  --compress                 Enable zlib compression of output.\n"
            "  -u,  --triangular               Save triangular matrix only.\n"
+           "       --save_indices             Save indices of strings.\n"
+           "       --save_labels              Save labels of strings.\n"
+           "       --save_sources             Save sources of strings.\n"
            "\nModule options:\n"
            "  -m,  --measure <name>           Set similarity measure.\n"
            "  -d,  --word_delim <delim>       Set delimiters for words.\n"
@@ -182,6 +188,15 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 1004:
             benchmark = atoi(optarg);
+            break;
+        case 1005:
+            config_set_bool(&cfg, "output.save_indices", CONFIG_TRUE);
+            break;
+        case 1006:
+            config_set_bool(&cfg, "output.save_labels", CONFIG_TRUE);
+            break;
+        case 1007:
+            config_set_bool(&cfg, "output.save_sources", CONFIG_TRUE);
             break;
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
