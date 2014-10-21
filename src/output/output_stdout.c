@@ -31,7 +31,6 @@ extern config_t cfg;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
-static int triangular = 0;
 
 static const char *separator = ",";
 
@@ -47,7 +46,6 @@ int output_stdout_open(char *fn)
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
-    config_lookup_bool(&cfg, "output.triangular", &triangular);
     config_lookup_string(&cfg, "output.separator", &separator);
 
     if (!stdout) {
@@ -63,7 +61,7 @@ int output_stdout_open(char *fn)
 
 /**
  * Write similarity matrux to output
- * @param m Matrix/triangle of similarity values 
+ * @param m Matrix of similarity values 
  * @return Number of written values
  */
 int output_stdout_write(hmatrix_t *m)
@@ -97,12 +95,6 @@ int output_stdout_write(hmatrix_t *m)
 
     for (i = m->y.i; i < m->y.n; i++) {
         for (j = m->x.i; j < m->x.n; j++) {
-            /* Cut off lower triangle */
-            if (triangular && j < i) {
-                fprintf(stdout, "%s", separator);
-                continue;
-            }
-
             r = fprintf(stdout, "%g", hmatrix_get(m, j, i));
             if (r < 0) {
                 error("Could not write to output file");

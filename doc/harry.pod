@@ -785,12 +785,6 @@ labels of the strings will be additionally stored.
 If this parameter is to I<true> and supported by the output format, the
 sources of the strings will be additionally stored.
 
-=item B<triangular = false;>
-
-If this parameter is set to I<true> and supported by the output format, a
-triangular matrix (upper triangle of the similarity matrix) will be stored.
-The required storage space is reduced by almost a half.
-
 =item B<compress = false;>
 
 If this parameter is set to I<true>, the output is stored using zlib
@@ -818,13 +812,12 @@ on the command line.  Following is the list of options:
        --reverse_str             Reverse (flip) all strings.
        --stopword_file <file>    Provide a file with stop words.
        --soundex                 Enable soundex encoding of words.
-       --benchmark <seconds>      Perform benchmark run.
+       --benchmark <seconds>     Perform benchmark run.
   -o,  --output_format <format>  Set output format for matrix.
   -z,  --compress                Enable zlib compression of output.
-  -u,  --triangular              Save triangular matrix only.
-       --save_indices             Save indices of strings.
-       --save_labels              Save labels of strings.
-       --save_sources             Save sources of strings.
+       --save_indices            Save indices of strings.
+       --save_labels             Save labels of strings.
+       --save_sources            Save sources of strings.
 
 =head2 Module options:
 

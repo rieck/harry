@@ -48,7 +48,6 @@ static struct option longopts[] = {
     {"save_sources", 0, NULL, 1007},
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
-    {"triangular", 0, NULL, 'u'},
     {"measure", 1, NULL, 'm'},
     {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
@@ -118,7 +117,6 @@ static void print_usage(void)
            "       --benchmark <seconds>      Perform benchmark run.\n"
            "  -o,  --output_format <format>   Set output format for matrix.\n"
            "  -z,  --compress                 Enable zlib compression of output.\n"
-           "  -u,  --triangular               Save triangular matrix only.\n"
            "       --save_indices             Save indices of strings.\n"
            "       --save_labels              Save labels of strings.\n"
            "       --save_sources             Save sources of strings.\n"
@@ -218,9 +216,6 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'z':
             config_set_bool(&cfg, "output.compress", CONFIG_TRUE);
-            break;
-        case 'u':
-            config_set_bool(&cfg, "output.triangular", CONFIG_TRUE);
             break;
         case 'x':
             config_set_string(&cfg, "measures.x_range", optarg);

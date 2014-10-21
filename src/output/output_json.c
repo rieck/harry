@@ -34,7 +34,6 @@ static int zlib = 0;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
-static int triangular = 0;
 
 #define output_printf(z, ...) (\
    zlib ? \
@@ -55,7 +54,6 @@ int output_json_open(char *fn)
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
-    config_lookup_bool(&cfg, "output.triangular", &triangular);
     config_lookup_bool(&cfg, "output.compress", &zlib);
 
     if (zlib)
@@ -75,7 +73,7 @@ int output_json_open(char *fn)
 
 /**
  * Write similarity matrux to output
- * @param m Matrix/triangle of similarity values 
+ * @param m Matrix of similarity values 
  * @return Number of written values
  */
 int output_json_write(hmatrix_t *m)
@@ -132,32 +130,18 @@ int output_json_write(hmatrix_t *m)
     }
 
     output_printf(z, "  \"matrix\": [\n    ");
-    if (triangular) {
-        for (i = m->y.i; i < m->y.n; i++) {
-            for (j = m->x.i; j < m->x.n; j++) {
-                if (j < i)
-                    continue;
-                output_printf(z, "%g", hmatrix_get(m, j, i));
-                k++;
-                if (i < m->y.n - 1 && j < m->x.n - 1)
-                    output_printf(z, ", ");
-            }
+    for (i = m->y.i; i < m->y.n; i++) {
+        output_printf(z, "    [");
+        for (j = m->x.i; j < m->x.n; j++) {
+            output_printf(z, "%g", hmatrix_get(m, j, i));
+            if (j < m->x.n - 1)
+                output_printf(z, ", ");
+            k++;
         }
+        output_printf(z, "]");
+        if (i < m->y.n - 1)
+            output_printf(z, ",");
         output_printf(z, "\n");
-    } else {
-        for (i = m->y.i; i < m->y.n; i++) {
-            output_printf(z, "    [");
-            for (j = m->x.i; j < m->x.n; j++) {
-                output_printf(z, "%g", hmatrix_get(m, j, i));
-                if (j < m->x.n - 1)
-                    output_printf(z, ", ");
-                k++;
-            }
-            output_printf(z, "]");
-            if (i < m->y.n - 1)
-                output_printf(z, ",");
-            output_printf(z, "\n");
-        }
     }
     output_printf(z, "  ]\n");
     return k;
