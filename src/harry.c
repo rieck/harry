@@ -6,7 +6,7 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
 #include "config.h"
@@ -364,7 +364,7 @@ static void harry_init()
 
 /**
  * Read a set of strings to memory from input
- * @param input Input filename 
+ * @param input Input filename
  * @param num Pointer to number of strings
  * @return array of string objects
  */
@@ -498,7 +498,7 @@ static void harry_write(char *output, hmatrix_t *mat)
 
 
 /**
- * Exit Harry tool. 
+ * Exit Harry tool.
  */
 static void harry_exit(hstring_t *strs, hmatrix_t *mat, int num)
 {
@@ -523,7 +523,7 @@ static void harry_exit(hstring_t *strs, hmatrix_t *mat, int num)
 }
 
 /**
- * Main function of Harry tool 
+ * Main function of Harry tool
  * @param argc Number of arguments
  * @param argv Argument values
  * @return exit code
