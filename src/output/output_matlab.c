@@ -6,14 +6,14 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
-/** 
- * @addtogroup output 
+/**
+ * @addtogroup output
  * <hr>
- * <em>matlab</em>: The similarity matrix is exported as a matlab file 
- * version 5. Depending on the configuration the indices, sources and 
+ * <em>matlab</em>: The similarity matrix is exported as a matlab file
+ * version 5. Depending on the configuration the indices, sources and
  * labels are also exported.
  * @{
  */
@@ -33,7 +33,6 @@ static FILE *f = NULL;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
-static int triangular = 0;
 
 /**
  * Pads the output stream
@@ -74,32 +73,14 @@ static int fwrite_uint32(uint32_t i, FILE *f)
 }
 
 /**
- * Writes a double to a file stream
- * @param i double value
+ * Writes a float to a file stream
+ * @param i float value
  * @param f File pointer
  * @return number of bytes
  */
-static int fwrite_double(double i, FILE *f)
+static int fwrite_float(float i, FILE *f)
 {
     return fwrite(&i, 1, sizeof(i), f);
-}
-
-/**
- * Writes the flags of an array to a mat file
- * @param n Flags
- * @param c Class
- * @param z Non-zero elements
- * @param f File pointer
- * @return bytes written
- */
-static int fwrite_array_flags(uint8_t n, uint8_t c, uint32_t z, FILE *f)
-{
-    fwrite_uint32(MAT_TYPE_UINT32, f);
-    fwrite_uint32(8, f);
-    fwrite_uint32(n << 16 | c, f);
-    fwrite_uint32(z, f);
-
-    return 16;
 }
 
 /**
@@ -146,6 +127,23 @@ static int fwrite_array_name(char *n, FILE *f)
     }
 }
 
+/**
+ * Writes the flags of an array to a mat file
+ * @param n Flags
+ * @param c Class
+ * @param z Non-zero elements
+ * @param f File pointer
+ * @return bytes written
+ */
+static int fwrite_array_flags(uint8_t n, uint8_t c, uint32_t z, FILE *f)
+{
+    fwrite_uint32(MAT_TYPE_UINT32, f);
+    fwrite_uint32(8, f);
+    fwrite_uint32(n << 16 | c, f);
+    fwrite_uint32(z, f);
+
+    return 16;
+}
 
 /**
  * Writes a string
@@ -192,10 +190,11 @@ static int fwrite_string(char *s, FILE *f)
  */
 int output_matlab_open(char *fn)
 {
+    int r = 0;
+
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
-    config_lookup_bool(&cfg, "output.triangular", &triangular);
 
     f = fopen(fn, "w");
     if (!f) {
@@ -203,8 +202,161 @@ int output_matlab_open(char *fn)
         return FALSE;
     }
 
+    /* Write matlab header */
+    r += harry_version(f, "", "Output module for Matlab format (v5)");
+    while (r < 124 && r > 0)
+        r += fprintf(f, " ");
+
+    /* Write version header */
+    r += fwrite_uint16(0x0100, f);
+    r += fwrite_uint16(0x4d49, f);
+    if (r != 128) {
+        error("Could not write header to output file '%s'.", fn);
+        return FALSE;
+    }
+
     return TRUE;
 }
+
+/**
+ * Write a similarity matrix in matlab format
+ * @param m Matrix of similarity values
+ * @return Number of written bytes
+ */
+static int fwrite_matrix(hmatrix_t *m)
+{
+    int r = 0, x, y, i, j;
+
+    x = m->x.n - m->x.i;
+    y = m->y.n - m->y.i;
+
+    /* Write tag */
+    fwrite_uint32(MAT_TYPE_ARRAY, f);
+    fwrite_uint32(0, f);
+
+    /* Write header */
+    r += fwrite_array_flags(0, MAT_CLASS_SINGLE, 0, f);
+    r += fwrite_array_dim(x, y, f);
+    r += fwrite_array_name("matrix", f);
+    r += fwrite_uint32(MAT_TYPE_SINGLE, f);
+    r += fwrite_uint32(x * y * sizeof(float), f);
+
+    /* Write data */
+    for (i = m->y.i; i < m->y.n; i++)
+        for (j = m->x.i; j < m->x.n; j++)
+            r += fwrite_float(hmatrix_get(m, j, i), f);
+    r += fpad(f);
+
+    /* Update size in tag */
+    fseek(f, -(r + 4), SEEK_CUR);
+    fwrite_uint32(r, f);
+    fseek(f, r, SEEK_CUR);
+
+    return r + 8;
+}
+
+/**
+ * Write range in matlab format
+ * @param ra Range structure
+ * @param name Name of range
+ * @return Number of written bytes
+ */
+static int fwrite_range(range_t ra, char *name)
+{
+    int r = 0, i;
+
+    /* Write tag */
+    fwrite_uint32(MAT_TYPE_ARRAY, f);
+    fwrite_uint32(0, f);
+
+    /* Write header */
+    r += fwrite_array_flags(0, MAT_CLASS_UINT32, 0, f);
+    r += fwrite_array_dim(ra.n - ra.i, 1, f);
+    r += fwrite_array_name(name, f);
+    r += fwrite_uint32(MAT_TYPE_UINT32, f);
+    r += fwrite_uint32((ra.n - ra.i) * sizeof(uint32_t), f);
+
+    /* Write data */
+    for (i = ra.i; i < ra.n; i++)
+        r += fwrite_uint32((uint32_t) i, f);
+    r += fpad(f);
+
+    /* Update size in tag */
+    fseek(f, -(r + 4), SEEK_CUR);
+    fwrite_uint32(r, f);
+    fseek(f, r, SEEK_CUR);
+
+    return r + 8;
+}
+
+/**
+ * Write labels in matlab format
+ * @param ra Range structure
+ * @param labels Array of all labels
+ * @param name Name of labels
+ * @return Number of written bytes
+ */
+static int fwrite_labels(range_t ra, float *labels, char *name)
+{
+    int r = 0, i;
+
+    /* Write tag */
+    fwrite_uint32(MAT_TYPE_ARRAY, f);
+    fwrite_uint32(0, f);
+
+    /* Write header */
+    r += fwrite_array_flags(0, MAT_CLASS_SINGLE, 0, f);
+    r += fwrite_array_dim(ra.n - ra.i, 1, f);
+    r += fwrite_array_name(name, f);
+    r += fwrite_uint32(MAT_TYPE_SINGLE, f);
+    r += fwrite_uint32((ra.n - ra.i) * sizeof(float), f);
+
+    /* Write data */
+    for (i = ra.i; i < ra.n; i++)
+        r += fwrite_float(labels[i], f);
+    r += fpad(f);
+
+    /* Update size in tag */
+    fseek(f, -(r + 4), SEEK_CUR);
+    fwrite_uint32(r, f);
+    fseek(f, r, SEEK_CUR);
+
+    return r + 8;
+}
+
+/**
+ * Write sources in matlab format
+ * @param ra Range structure
+ * @param sources Array of all sources
+ * @param name Name of sources
+ * @return Number of written bytes
+ */
+static int fwrite_sources(range_t ra, char **sources, char *name)
+{
+    int r = 0, i;
+
+    /* Write tag */
+    fwrite_uint32(MAT_TYPE_ARRAY, f);
+    fwrite_uint32(0, f);
+
+    /* Write header */
+    r += fwrite_array_flags(0, MAT_CLASS_CELL, 0, f);
+    r += fwrite_array_dim(ra.n - ra.i, 1, f);
+    r += fwrite_array_name(name, f);
+
+    /* Write data */
+    for (i = ra.i; i < ra.n; i++)
+        r += fwrite_string(sources[i], f);
+    r += fpad(f);
+
+    /* Update size in tag */
+    fseek(f, -(r + 4), SEEK_CUR);
+    fwrite_uint32(r, f);
+    fseek(f, r, SEEK_CUR);
+
+    return r + 8;
+}
+
 
 /**
  * Write similarity matrix to output
@@ -213,7 +365,29 @@ int output_matlab_open(char *fn)
  */
 int output_matlab_write(hmatrix_t *m)
 {
-    warning("DUMMY DUMMY DUMMY");
+    int r = 0;
+    
+    /* Write similarity matrix */
+    r += fwrite_matrix(m);
+
+    /* Save indices as vectors */
+    if (save_indices) {
+        r += fwrite_range(m->x, "x_indices");
+        r += fwrite_range(m->y, "y_indices");
+    }
+
+    /* Save labels as vectors */
+    if (save_labels) {
+        r += fwrite_labels(m->x, m->labels, "x_labels");
+        r += fwrite_labels(m->y, m->labels, "y_labels");
+    }
+
+    /* Save sources as cell array */
+    if (save_sources) {
+        r += fwrite_sources(m->x, m->srcs, "x_sources");
+        r += fwrite_sources(m->y, m->srcs, "y_sources");
+    }
+
     return 0;
 }
 
@@ -222,6 +396,9 @@ int output_matlab_write(hmatrix_t *m)
  */
 void output_matlab_close()
 {
+    if (!f)
+        return;
+
     fclose(f);
 }
 

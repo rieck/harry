@@ -30,7 +30,12 @@
 #define MAT_CLASS_CHAR      4
 #define MAT_CLASS_SPARSE    5
 #define MAT_CLASS_DOUBLE    6
+#define MAT_CLASS_SINGLE    7
 #define MAT_CLASS_INT8      8
+#define MAT_CLASS_UINT8     9
+#define MAT_CLASS_INT16     10
+#define MAT_CLASS_UINT16    11
+#define MAT_CLASS_INT32     12
 #define MAT_CLASS_UINT32    13
 
 /* matlab output module */
