@@ -388,7 +388,7 @@ int output_matlab_write(hmatrix_t *m)
         r += fwrite_sources(m->y, m->srcs, "y_sources");
     }
 
-    return 0;
+    return r;
 }
 
 /**

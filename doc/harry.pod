@@ -29,7 +29,7 @@ refined using command-line options.
     .---------.                        .----------.
     |  lines  |                        |   text   |
     |   dir   |   \   .---------.   /  |  libsvm  |
-    |  stdin  |   --  |  Harry  |  --  |  stdout  |
+    |  stdin  |   --  |  Harry  |  --  |  matlab  |
     |   ...   |   /   '---------'   \  |   ...    |
     '---------'                        '----------'
        Input      Similarity Measures     Output
@@ -762,6 +762,10 @@ The similarity values are stored as precomputed kernel for libsvm.
 =item I<"json">
 
 The similarity values are stored in JSON object.
+
+=item I<"matlab">
+
+The similarity values are stored in Matlab format (version 5).
 
 =back
 
