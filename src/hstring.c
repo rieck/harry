@@ -551,7 +551,7 @@ static void soundex(char *in, int len, char *out)
 
 /**
  * Perform a soundex transformation of each word.
- * @param s string
+ * @param x string
  */
 hstring_t hstring_soundex(hstring_t x)
 {
