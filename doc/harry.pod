@@ -829,7 +829,7 @@ on the command line.  Following is the list of options:
   -d,  --word_delim <delim>      Set delimiters for words.
   -n,  --num_threads <num>       Set number of threads.
   -a,  --cache_size <size>       Set size of cache in megabytes.
-  -g,  --global_cache            Enable global cache for similarity values.
+  -g,  --global_cache            Enable global cache.
   -x,  --x_range <start>:<end>   Set the index range (x) of strings.
   -y,  --y_range <start>:<end>   Set the index range (y) of stirngs.
 

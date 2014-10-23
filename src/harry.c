@@ -125,7 +125,7 @@ static void print_usage(void)
            "  -d,  --word_delim <delim>       Set delimiters for words.\n"
            "  -n,  --num_threads <num>        Set number of threads.\n"
            "  -a,  --cache_size <size>        Set size of cache in megabytes.\n"
-           "  -g,  --global_cache             Enable global cache for similarity values.\n"
+           "  -g,  --global_cache             Enable global cache.\n"
            "  -x,  --x_range <start>:<end>    Set the index range (x) of strings.\n"
            "  -y,  --y_range <start>:<end>    Set the index range (y) of strings.\n"
            "  -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.\n"
