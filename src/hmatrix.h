@@ -113,7 +113,8 @@ typedef struct
  *
  * </code>
  */
-typedef struct {
+typedef struct
+{
     unsigned int n;
 
     unsigned int n_top;
@@ -130,7 +131,7 @@ typedef struct {
 hmatrix_t *hmatrix_init(hstring_t *s, int n);
 void hmatrix_xrange(hmatrix_t *m, char *x);
 void hmatrix_yrange(hmatrix_t *m, char *y);
-void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec);
+void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t * spec);
 void hmatrix_split(hmatrix_t *m, char *s);
 void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index);
 float *hmatrix_alloc(hmatrix_t *m);
@@ -140,7 +141,6 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y));
 void hmatrix_destroy(hmatrix_t *m);
 float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
-                        double (*measure) (hstring_t x, hstring_t y),
-                        double);
+                        double (*measure) (hstring_t x, hstring_t y), double);
 
 #endif /* HMATRIX_H */
