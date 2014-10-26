@@ -6,7 +6,7 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
 /**
@@ -30,7 +30,7 @@ extern int log_line;
 /**
  * Initialize a matrix for similarity values
  * @param s Array of string objects
- * @param n Number of string objects 
+ * @param n Number of string objects
  * @return Matrix object
  */
 hmatrix_t *hmatrix_init(hstring_t *s, int n)
@@ -72,7 +72,7 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 }
 
 /**
- * Parse a range string 
+ * Parse a range string
  * @param r Range object
  * @param str Range string, e.g. 3:14 or 2:-1 or :
  * @param n Maximum size
@@ -87,8 +87,8 @@ static range_t parse_range(range_t r, char *str, int n)
     if (strlen(str) == 0)
         return r;
 
-    /* 
-     * Since "1:1", "1:", ":1"  and ":" are all valid indices, sscanf 
+    /*
+     * Since "1:1", "1:", ":1"  and ":" are all valid indices, sscanf
      * won't do it and we have to stick to manual parsing :(
      */
     ptr = strchr(str, ':');
@@ -300,7 +300,7 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
 /**
  * Set the x range for computation
  * @param m Matrix object
- * @param x String for x range 
+ * @param x String for x range
  */
 void hmatrix_xrange(hmatrix_t *m, char *x)
 {
@@ -311,7 +311,7 @@ void hmatrix_xrange(hmatrix_t *m, char *x)
 /**
  * Set the y range for computation
  * @param m Matrix object
- * @param y String for y range 
+ * @param y String for y range
  */
 void hmatrix_yrange(hmatrix_t *m, char *y)
 {
@@ -319,7 +319,7 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
     m->y = parse_range(m->y, y, m->num);
 }
 
-/** 
+/**
  * Allocate memory for matrix
  * @param m Matrix object
  * @return pointer to floats
@@ -426,7 +426,7 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
  * Compute similarity measure and fill matrix
  * @param m Matrix object
  * @param s Array of string objects
- * @param measure Similarity measure 
+ * @param measure Similarity measure
  */
 void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
@@ -437,7 +437,9 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
     double ts, ts1 = time_stamp(), ts2 = ts1;
     float f;
 
+#ifdef HAVE_OPENMP
 #pragma omp parallel for private(ts)
+#endif
     for (int k = 0; k < n; k++) {
         int xi = k / (m->y.n - m->y.i) + m->x.i;
         int yi = k % (m->y.n - m->y.i) + m->y.i;
@@ -452,7 +454,9 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         hmatrix_set(m, xi, yi, f);
 
         if (verbose || log_line)
+#ifdef HAVE_OPENMP
 #pragma omp critical
+#endif
         {
             ts = time_stamp();
 
@@ -504,14 +508,20 @@ float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
 {
     assert(m);
     uint64_t j = 0;
-    int mt = omp_get_max_threads();
+    int mt = 0;
     double ts = time_stamp();
+
+#ifdef HAVE_OPENMP
+    mt = omp_get_max_threads();
+#endif
 
     /*
      * Naive implementation of a while loop. The loop terminates
      * after roughly t seconds by setting k to the maximum value.
      */
+#ifdef HAVE_OPENMP
 #pragma omp parallel for
+#endif
     for (uint64_t k = 0; k < UINT64_MAX - mt; k++) {
 
         /* Select random pair of strings */
@@ -521,7 +531,9 @@ float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
         /* Calculate similarity value */
         measure(s[xi], s[yi]);
 
+#ifdef HAVE_OPENMP
 #pragma omp critical
+#endif
         {
             j++;
             if (time_stamp() - ts > t)

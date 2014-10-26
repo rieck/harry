@@ -6,10 +6,10 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
-/** 
+/**
  * @defgroup input Input interface
  *
  * Interface and functions for reading strings.
@@ -49,7 +49,7 @@ extern char delim[256];
 /** External variables */
 extern config_t cfg;
 
-/** 
+/**
  * Configure the input of Harry
  * @param format Name of input format
  */
@@ -71,11 +71,13 @@ void input_config(const char *format)
         func.input_open = input_stdin_open;
         func.input_read = input_stdin_read;
         func.input_close = input_stdin_close;
-#ifdef ENABLE_LIBARCHIVE
     } else if (!strcasecmp(format, "arc")) {
+#ifdef HAVE_LIBARCHIVE
         func.input_open = input_arc_open;
         func.input_read = input_arc_read;
         func.input_close = input_arc_close;
+#else
+        error("Harry has been compiled without support for libarchive.");
 #endif
     } else {
         error("Unknown input format '%s', using 'lines' instead.", format);
@@ -105,7 +107,7 @@ int input_read(hstring_t *strs, int len)
 }
 
 /**
- * Wrapper for closing the input source. 
+ * Wrapper for closing the input source.
  */
 void input_close(void)
 {

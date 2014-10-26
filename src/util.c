@@ -6,7 +6,7 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
 /**
@@ -42,7 +42,7 @@ static double log_start = -1;
 
 
 /**
- * Print a formated info message with timestamp. 
+ * Print a formated info message with timestamp.
  * @param v Verbosity level of message
  * @param m Format string
  */
@@ -63,7 +63,7 @@ void info_msg(int v, char *m, ...)
 }
 
 /**
- * Print a formated error/warning message. See the macros error and 
+ * Print a formated error/warning message. See the macros error and
  * warning in util.h
  * @param p Prefix string, e.g. "Error"
  * @param f Function name
@@ -98,7 +98,11 @@ void debug_msg(char *m, ...)
     vsnprintf(s, 256, m, ap);
     va_end(ap);
 
+#ifdef HAVE_OPENMP
     fprintf(stderr, "[%d] %s\n", omp_get_thread_num(), s);
+#else
+    fprintf(stderr, "%s\n", s);
+#endif
     fflush(stderr);
 }
 
@@ -108,19 +112,14 @@ void debug_msg(char *m, ...)
  */
 double time_stamp()
 {
-#if 0
-    return omp_get_wtime();
-
-#else
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + tv.tv_usec / 1e6;
-#endif
 }
 
 /**
  * Print a progress bar in a given range.
- * @param a Minimum value 
+ * @param a Minimum value
  * @param b Maximum value
  * @param c Current value
  */
@@ -176,9 +175,15 @@ void prog_bar(long a, long b, long c)
     int secs = (int) floor(ptime - mins * 60);
     pb_string[PROGBAR_LEN] = 0;
 
+#ifdef HAVE_OPENMP
     printf("\r[%.2d][%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
            omp_get_num_threads(), pb_string, perc * 100, descr,
            mins, secs, vcache_get_hitrate(), vcache_get_used());
+#else
+    printf("\r[%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
+           pb_string, perc * 100, descr, mins, secs,
+           vcache_get_hitrate(), vcache_get_used());
+#endif
 
     if (last)
         printf("\n");
@@ -191,9 +196,9 @@ void prog_bar(long a, long b, long c)
 
 /**
  * Dirty re-write of the GNU getline() function. I have been
- * searching the Web for a couple of minutes to find a suitable 
- * implementation. Unfortunately, I could not find anything 
- * appropriate. Some people confused fgets() with getline(), 
+ * searching the Web for a couple of minutes to find a suitable
+ * implementation. Unfortunately, I could not find anything
+ * appropriate. Some people confused fgets() with getline(),
  * others were arguing on licenses over and over.
  */
 size_t gzgetline(char **s, size_t * n, gzFile f)
@@ -223,8 +228,8 @@ size_t gzgetline(char **s, size_t * n, gzFile f)
     return *n;
 }
 
-/** 
- * Another dirty function to trim strings from leading and trailing 
+/**
+ * Another dirty function to trim strings from leading and trailing
  * blanks. The original string is modified in place.
  * @param x Input string
  */
@@ -253,7 +258,7 @@ void strtrim(char *x)
 }
 
 /**
- * Returns the number of a hexadecimal digit 
+ * Returns the number of a hexadecimal digit
  * @param c Byte containing digit
  * @private
  * @return number
@@ -272,7 +277,7 @@ static int get_hex(char c)
 }
 
 /**
- * Decodes a string with URI encoding. The function operates 
+ * Decodes a string with URI encoding. The function operates
  * in-place. A trailing NULL character is appended to the string.
  * @param str String to decode.
  * @return length of decoded sequence
@@ -351,8 +356,8 @@ uint64_t hash_str(char *s, int l)
 }
 
 /**
- * Print a log line 
- * @param a Minimum value 
+ * Print a log line
+ * @param a Minimum value
  * @param b Maximum value
  * @param c Current value
  */
@@ -379,10 +384,17 @@ void log_print(long a, long b, long c)
     time(&rawtime);
     strftime(buf, 255, "%F %T", localtime(&rawtime));
 
-    printf("[%s] state: %.0f%%, omp: %d, vcache: %.0f%%/%.0f%%, "
+#ifdef HAVE_OPENMP
+    printf("[%s] state: %.0f%%, threads: %d, vcache: %.0f%%/%.0f%%, "
            "eta: %dh%.2dm%.2ds\n", buf,
            perc * 100, omp_get_num_threads(), vcache_get_used() * 100,
            vcache_get_hitrate() * 100, hours, mins, secs);
+#else
+    printf("[%s] state: %.0f%%, vcache: %.0f%%/%.0f%%, "
+           "eta: %dh%.2dm%.2ds\n", buf,
+           perc * 100, vcache_get_used() * 100,
+           vcache_get_hitrate() * 100, hours, mins, secs);
+#endif
 
     fflush(stdout);
 }

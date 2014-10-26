@@ -352,9 +352,13 @@ static void harry_init()
     measure = measure_config(cfg_str);
 
     config_lookup_int(&cfg, "measures.num_threads", &nthreads);
+#ifdef HAVE_OPENMP
     if (nthreads <= 0)
         nthreads = omp_get_num_procs();
     omp_set_num_threads(nthreads);
+#else
+    warning("Harry has been compiled without OpenMP support.");
+#endif
 
     /* Load stop words */
     config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
@@ -414,8 +418,12 @@ static hstring_t *harry_read(char *input, int *num)
 void harry_compute(hmatrix_t *mat, hstring_t *strs, int num)
 {
     /* Compute matrix */
+#ifdef HAVE_OPENMP
     info_msg(1, "Computing similarity measure '%s' with %d threads.",
              measure, omp_get_max_threads());
+#else
+    info_msg(1, "Computing similarity measure '%s'", measure);
+#endif
     hmatrix_compute(mat, strs, measure_compare);
 }
 
@@ -429,11 +437,18 @@ void harry_compute(hmatrix_t *mat, hstring_t *strs, int num)
 void harry_benchmark(hmatrix_t *mat, hstring_t *strs, int num)
 {
     /* Compute matrix */
+#ifdef HAVE_OPENMP
     info_msg(1, "Benchmarking similarity measure '%s' (%d thrd; %d sec).",
              measure, omp_get_max_threads(), benchmark);
     float cmps = hmatrix_benchmark(mat, strs, measure_compare, benchmark);
     printf("%.0f comparisons; %d seconds; %d threads;\n", cmps, benchmark,
            omp_get_max_threads());
+#else
+    info_msg(1, "Benchmarking similarity measure '%s' (%d sec).",
+             measure, benchmark);
+    float cmps = hmatrix_benchmark(mat, strs, measure_compare, benchmark);
+    printf("%.0f comparisons; %d seconds;\n", cmps, benchmark);
+#endif
 }
 
 /**

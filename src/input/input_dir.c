@@ -108,14 +108,11 @@ static char *load_file(char *path, char *name, int *size)
     char *x = NULL, file[512];
     struct stat st;
 
-#pragma omp critical (snprintf)
-    {
-        /* snprintf is not necessary thread-safe. good to know. */
-        if (name)
-            snprintf(file, 512, "%s/%s", path, name);
-        else
-            snprintf(file, 512, "%s", path);
-    }
+    /* snprintf is not necessary thread-safe. good to know. */
+    if (name)
+        snprintf(file, 512, "%s/%s", path, name);
+    else
+        snprintf(file, 512, "%s", path);
 
     /* Open file */
     FILE *fptr = fopen(file, "r");
