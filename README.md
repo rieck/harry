@@ -124,14 +124,7 @@ Options for configure
 By default Harry is installed into /usr/local. If you prefer a different
 location, use this option to select an installation directory.
 
-    --enable-libarchive     Enable support for loading archives
-
-If this feature is enabled, Harry can also be applied to read the
-contents of archives, such as .tgz and .zip.  This allows for
-processing string data in compressed form and may drastically save
-storage space.
-
-    --enable-pthread        Enable support for POSIX thread rwlocks
+    --enable-prwlock        Enable support for POSIX read-write locks
 
 This feature enables read-write locks (rwlocks) from the POSIX thread
 library.  The locks can accelerate the run-time performance on multi-core
