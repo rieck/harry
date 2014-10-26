@@ -1,7 +1,7 @@
 # Harry - A Tool for Measuring String Similarity
 # Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
 
-AC_INIT([harry], [0.3.1], [konrad@mlsec.org])
+AC_INIT([harry], [0.3.2], [konrad@mlsec.org])
 AC_PREFIX_DEFAULT("/usr/local")
 
 echo
@@ -24,6 +24,9 @@ AC_PROG_LIBTOOL
 
 # By default remove assert statements
 CFLAGS="$CFLAGS -DNDEBUG"
+
+# By default we include the math library
+LIBS="$LIBS -lm"
 
 # Set GCC and C99 flags if present
 if test "$GCC" = "yes" ; then
