@@ -57,7 +57,9 @@ fi
 # Check for libarchive (optional)
 AC_CHECK_HEADERS([archive.h], HEADER_LIBARCHIVE="yes")
 AC_CHECK_LIB([archive], archive_read_new, LIBRARY_LIBARCHIVE="yes")
-if test "x$LIBRARY_LIBARCHIVE" != "x" && test "x$HEADER_LIBARCHIVE" != "x" ; then
+if test "x$LIBRARY_LIBARCHIVE" != "x" && \
+   test "x$HEADER_LIBARCHIVE" != "x" && \
+   test "x$with_libarchive" != "xno" ; then
     AC_DEFINE([HAVE_LIBARCHIVE], [1], [Define if you have libarchive])
     LIBS="-larchive $LIBS"
     HAVE_LIBARCHIVE=yes
@@ -85,7 +87,9 @@ fi
 # Check for OpenMP (optional)
 AC_CHECK_HEADERS([omp.h], HEADER_OPENMP="yes")
 AX_OPENMP(LIBRARY_OPENMP="yes")
-if test "x$LIBRARY_OPENMP" != "x" && test "x$HEADER_OPENMP" != "x" ; then
+if test "x$LIBRARY_OPENMP" != "x" && \
+   test "x$HEADER_OPENMP" != "x" && \
+   test "x$with_openmp" != "xno" ; then
     CFLAGS="$CFLAGS $OPENMP_CFLAGS"
     HAVE_OPENMP=yes
     AC_DEFINE([HAVE_OPENMP], [1], [Define if you have OpenMP])
@@ -99,7 +103,9 @@ fi
 # Check for libpthread (optional)
 AC_CHECK_HEADERS([pthread.h], HEADER_PTHREAD="yes")
 AC_CHECK_LIB([pthread], pthread_rwlock_init, LIBRARY_PTHREAD="yes")
-if test "x$LIBRARY_PTHREAD" != "x" && test "x$HEADER_PTHREAD" != "x" ; then
+if test "x$LIBRARY_PTHREAD" != "x" && \
+   test "x$HEADER_PTHREAD" != "x" && \
+   test "x$with_pthreads" != "xno" ; then
     HAVE_PTHREADS=yes
     CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
     LIBS="-lpthread $LIBS"
