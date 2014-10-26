@@ -124,7 +124,7 @@ fi
 AC_ARG_ENABLE([prwlock], [AS_HELP_STRING([--enable-prwlock],
     [enable POSIX read-write lock])],
     [
-        if test "x$HAVE_PTHREADS" != "yes" ; then
+        if test "x$HAVE_PTHREADS" != "xyes" ; then
             AC_MSG_FAILURE([libpthread not found. see README.md])
         fi
         AC_DEFINE([ENABLE_PRWLOCK], [1], [Define if POSIX read-write lock enabled])

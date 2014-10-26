@@ -12,7 +12,7 @@
 #ifndef RWLOCK_H
 #define RWLOCK_H
 
-#ifdef HAVE_PRWLOCK
+#ifdef ENABLE_PRWLOCK
 #include <pthread.h>
 #endif
 
@@ -22,7 +22,7 @@
 
 typedef struct
 {
-#ifdef HAVE_PRWLOCK
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_t lock;
 #else
 #ifdef HAVE_OPENMP
