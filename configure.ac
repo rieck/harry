@@ -156,7 +156,7 @@ AC_OUTPUT
 echo
 echo " .Oo Optional packages:"
 echo "     Support for reading archives (--with-libarchive):       $HAVE_LIBARCHIVE"
-echo "     Sopport for multi-processing (--with-openmp):           $HAVE_OPENMP"
+echo "     Support for multi-processing (--with-openmp):           $HAVE_OPENMP"
 echo "     Support for POSIX threads and locks (--with-pthreads):  $HAVE_PTHREADS"
 echo " .Oo Optional features:"
 echo "     POSIX read-write lock (--enable-prwlock):               $ENABLE_PRWLOCK"
