@@ -232,7 +232,7 @@ Bag distance. See configuration group B<dist_bag>.
 
 =item I<"dist_kernel">
 
-Kernel-based distance. See configuration group B<dist_kernel>.
+Kernel substitution distance. See configuration group B<dist_kernel>.
 
 =item I<"kern_subsequence">, I<"kern_ssk">
 
