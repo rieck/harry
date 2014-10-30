@@ -7,6 +7,8 @@ AM_CPPFLAGS     		= -I$(top_srcdir)/src \
 EXTRA_DIST			= dist_compression.py \
 				  check_measures.sh \
 				  check_measures.txt \
+				  check_options.sh \
+				  check_options.txt \
 				  data1.txt
 
 TESTS_ENVIRONMENT 		= BUILDDIR='$(top_builddir)' \
@@ -30,7 +32,8 @@ check_PROGRAMS			= check_vcache \
 				  
 noinst_PROGRAMS			= $(check_PROGRAMS)
 TESTS				= $(check_PROGRAMS) \
-				  check_measures.sh
+				  check_measures.sh \
+				  check_options.sh
 
 check_levenshtein_SOURCES	= dist_levenshtein.c tests.h
 check_levenshtein_LDADD		= $(top_builddir)/src/libharry.la
