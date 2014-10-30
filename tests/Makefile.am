@@ -4,8 +4,14 @@
 AM_CPPFLAGS     		= -I$(top_srcdir)/src \
 		          	  -I$(top_srcdir)/src/measures 
 
-EXTRA_DIST			= dist_compression.py
-#TESTS_ENVIRONMENT 		= export TEST_FILE='$(srcdir)/strings.txt';
+EXTRA_DIST			= dist_compression.py \
+				  check_measures.sh \
+				  check_measures.txt \
+				  data1.txt
+
+TESTS_ENVIRONMENT 		= BUILDDIR='$(top_builddir)' \
+                                  SRCDIR='$(top_srcdir)'
+
 check_PROGRAMS			= check_vcache \
 				  check_levenshtein \
 				  check_hamming \
@@ -23,7 +29,8 @@ check_PROGRAMS			= check_vcache \
 				  check_osa
 				  
 noinst_PROGRAMS			= $(check_PROGRAMS)
-TESTS				= $(check_PROGRAMS)
+TESTS				= $(check_PROGRAMS) \
+				  check_measures.sh
 
 check_levenshtein_SOURCES	= dist_levenshtein.c tests.h
 check_levenshtein_LDADD		= $(top_builddir)/src/libharry.la
