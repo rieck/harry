@@ -30,7 +30,7 @@ extern config_t cfg;
 /* Local variables */
 static void *z = NULL;
 static int zlib = 0;
-static int precision = 0;
+static cfg_int precision = 0;
 
 /* Dirty hack to support compression */
 #define output_printf(z, ...) (\

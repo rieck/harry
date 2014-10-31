@@ -26,8 +26,8 @@
  */
 
 /* Alphabet size */
-static int min_sym = 0;
-static int max_sym = 255;
+static cfg_int min_sym = 0;
+static cfg_int max_sym = 255;
 
 /* External variables */
 extern config_t cfg;

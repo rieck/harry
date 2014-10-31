@@ -27,7 +27,6 @@ config_t cfg;
 
 static int print_conf = 0;
 static char *measure = NULL;
-static int nthreads = 0;
 static int benchmark = 0;
 
 /* Option string */
@@ -345,6 +344,7 @@ static void harry_load_config(int argc, char **argv)
 static void harry_init()
 {
     const char *cfg_str;
+    cfg_int nthreads = 0;
 
     if (verbose > 1)
         config_print(&cfg);
@@ -380,7 +380,8 @@ static void harry_init()
 static hstring_t *harry_read(char *input, int *num)
 {
     const char *cfg_str;
-    int i, chunk, read;
+    int i, read;
+    cfg_int chunk;
     hstring_t *strs = NULL;
 
     /* Get chunk size */

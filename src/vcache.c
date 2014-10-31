@@ -43,7 +43,7 @@ static rwlock_t rwlock;
  */
 void vcache_init()
 {
-    int csize;
+    cfg_int csize;
     config_lookup_int(&cfg, "measures.cache_size", &csize);
 
     /* Initialize cache stats */

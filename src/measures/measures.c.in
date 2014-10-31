@@ -33,7 +33,7 @@
 extern config_t cfg;
 
 /* Global variables */
-static int global_cache;
+static cfg_int global_cache;
 static int idx = 0;
 
 /* Module interfaces */

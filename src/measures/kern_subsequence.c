@@ -34,7 +34,7 @@ extern config_t cfg;
 static knorm_t n = KN_NONE;
 
 /* Local variables */
-static int length = 3;         /**< Maximum length */
+static cfg_int length = 3;     /**< Maximum length */
 static double lambda = 0.1;    /**< Weight for gaps */
 
 /**

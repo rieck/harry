@@ -78,4 +78,11 @@
 #define FALSE 0
 #endif
 
+/* Patch for changed ABI in libconfig versions */
+#if LIBCONFIG_VER_MAJOR > 1 || LIBCONFIG_VER_MINOR > 3
+typedef int cfg_int;
+#else
+typedef long cfg_int;
+#endif
+
 #endif /* COMMON_H */

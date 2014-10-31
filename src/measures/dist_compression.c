@@ -28,7 +28,7 @@
 
 /* External variables */
 extern config_t cfg;
-static int level = 0;
+static cfg_int level = 0;
 
 /**
  * Initializes the similarity measure

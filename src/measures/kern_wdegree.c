@@ -34,8 +34,8 @@ extern config_t cfg;
 static knorm_t n = KN_NONE;
 
 /* Local variables */
-static int degree = 3;         /**< Degree of kernel */
-static int shift = 0;          /**< Shift of kernel */
+static cfg_int degree = 3;         /**< Degree of kernel */
+static cfg_int shift = 0;          /**< Shift of kernel */
 
 /**
  * Initializes the similarity measure

@@ -29,9 +29,9 @@ extern config_t cfg;
 
 /* Local variables */
 static void *z = NULL;
-static int zlib = 0;
 
-static int precision = 0;
+static cfg_int precision = 0;
+static int zlib = 0;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;

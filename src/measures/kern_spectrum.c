@@ -39,7 +39,7 @@ extern config_t cfg;
 static knorm_t n = KN_NONE;
 
 /* Local variables */
-static int len = 3;         /**< Length of k-mers */
+static cfg_int len = 3;         /**< Length of k-mers */
 
 /**
  * Initializes the similarity measure
