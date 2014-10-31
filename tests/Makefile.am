@@ -11,7 +11,7 @@ EXTRA_DIST			= dist_compression.py \
 				  check_options.txt \
 				  check_configs.sh \
 				  check_configs.txt \
-				  data1.txt \
+				  strings.txt \
 				  config1.cfg \
 				  config2.cfg \
 				  config3.cfg
