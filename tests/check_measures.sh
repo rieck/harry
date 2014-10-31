@@ -40,7 +40,7 @@ for I in 1 2 3 4 5 ; do
     done
 
     # Save output
-    cp $OUTPUT /tmp/check_measures.txt
+    #cp $OUTPUT /tmp/check_measures.txt
 
     # Diff output and precomputed data
     diff $CHECK $OUTPUT

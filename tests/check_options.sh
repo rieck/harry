@@ -34,7 +34,7 @@ for OPTION in "-m dist_hamming" "-m kern_spectrum" "-x 2:" "-y 1:-1" \
 done
 
 # Save output
-cp $OUTPUT /tmp/check_options.txt
+#cp $OUTPUT /tmp/check_options.txt
 
 # Diff output and precomputed data
 diff $CHECK $OUTPUT

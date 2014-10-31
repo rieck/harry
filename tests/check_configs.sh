@@ -30,7 +30,7 @@ for CONFIG in config1.cfg config2.cfg config3.cfg ; do
 done
 
 # Save output
-cp $OUTPUT /tmp/check_configs.txt
+#cp $OUTPUT /tmp/check_configs.txt
 
 # Diff output and precomputed data
 diff $CHECK $OUTPUT
