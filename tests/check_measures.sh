@@ -36,7 +36,7 @@ for I in 1 2 3 4 5 ; do
              sim_kulczynski sim_otsuka sim_simpson sim_sokal ; do
 
 	echo $MEASURE >> $OUTPUT
-        $HARRY -m $MEASURE $DATA - | grep -v '#' >> $OUTPUT
+        $HARRY -p 4 -m $MEASURE $DATA - | grep -v '#' >> $OUTPUT
     done
 
     # Save output

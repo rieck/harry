@@ -30,7 +30,7 @@ for OPTION in "-m dist_hamming" "-m kern_spectrum" "-x 2:" "-y 1:-1" \
               "--save_indices" "--save_labels" "--save_sources" ; do
 
     echo "$OPTION" >> $OUTPUT
-    $HARRY $OPTION $DATA - | grep -v -E '^#' >> $OUTPUT
+    $HARRY -p 4 $OPTION $DATA - | grep -v -E '^#' >> $OUTPUT
 done
 
 # Save output

@@ -26,7 +26,7 @@ rm -f $OUTPUT
 # Loop over config files
 for CONFIG in config1.cfg config2.cfg config3.cfg ; do
     echo $CONFIG >> $OUTPUT
-    $HARRY -c $SRCDIR/tests/$CONFIG $DATA - | grep -v -E '^#' >> $OUTPUT
+    $HARRY -p 4 -c $SRCDIR/tests/$CONFIG $DATA - | grep -v -E '^#' >> $OUTPUT
 done
 
 # Save output
