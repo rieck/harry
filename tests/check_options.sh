@@ -20,7 +20,7 @@ for O in "-m hamming" "-x 2:" "-y 1:-1" "-d%20%0a%0d" "-s 3:1" \
     $HARRY $O $DATA - | grep -v -E '^#' >> $OUTPUT
 done
 
-cp $OUTPUT /tmp/check_options.txt
+#cp $OUTPUT /tmp/check_options.txt
 diff $OUTPUT $CHECK
 RET=$?
 rm -f $OUTPUT

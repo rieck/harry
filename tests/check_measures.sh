@@ -23,7 +23,7 @@ for M in dist_bag dist_compression dist_damerau dist_hamming dist_jaro \
     $HARRY -m $M $DATA - | grep -v '#' >> $OUTPUT
 done
 
-cp $OUTPUT /tmp/check_measures.txt
+#cp $OUTPUT /tmp/check_measures.txt
 diff $OUTPUT $CHECK
 RET=$?
 rm -f $OUTPUT
