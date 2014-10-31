@@ -30,6 +30,7 @@ extern config_t cfg;
 
 /* Local variables */
 static FILE *f = NULL;
+static int precision = 0;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
@@ -192,6 +193,7 @@ int output_matlab_open(char *fn)
 {
     int r = 0;
 
+    config_lookup_int(&cfg, "output.precision", &precision);
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
@@ -242,9 +244,12 @@ static int fwrite_matrix(hmatrix_t *m)
     r += fwrite_uint32(x * y * sizeof(float), f);
 
     /* Write data */
-    for (i = m->y.i; i < m->y.n; i++)
-        for (j = m->x.i; j < m->x.n; j++)
-            r += fwrite_float(hmatrix_get(m, j, i), f);
+    for (i = m->y.i; i < m->y.n; i++) {
+        for (j = m->x.i; j < m->x.n; j++) {
+            float val = hround(hmatrix_get(m, j, i), precision);
+            r += fwrite_float(val, f);
+        }
+    }
     r += fpad(f);
 
     /* Update size in tag */

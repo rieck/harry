@@ -769,6 +769,11 @@ The similarity values are stored in Matlab format (version 5).
 
 =back
 
+=item B<precision = 0;>
+
+Precision of the output in terms of decimal places. A precision of I<0>
+selects the full single float range for output.
+
 =item B<separator = ",";>
 
 This parameter defines the separator used in text mode for separating
@@ -818,6 +823,7 @@ on the command line.  Following is the list of options:
        --soundex                 Enable soundex encoding of words.
        --benchmark <seconds>     Perform benchmark run.
   -o,  --output_format <format>  Set output format for matrix.
+  -p,  --precision <num>         Set precision of output.
   -z,  --compress                Enable zlib compression of output.
        --save_indices            Save indices of strings.
        --save_labels             Save labels of strings.

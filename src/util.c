@@ -399,5 +399,17 @@ void log_print(long a, long b, long c)
     fflush(stdout);
 }
 
+/**
+ * Rounding function for output
+ * @param f Floating point number
+ * @param p Precision as number of decimal places or 0
+ * @return rounded number
+ */
+float hround(float f, int p)
+{
+    if (p == 0)
+       return f;
+    return round(f * pow(10, p)) / pow(10,p);
+}
 
 /** @} */

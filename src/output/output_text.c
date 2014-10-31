@@ -30,10 +30,10 @@ extern config_t cfg;
 /* Local variables */
 static void *z = NULL;
 static int zlib = 0;
-
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
+static int precision = 0;
 
 static const char *separator = ",";
 
@@ -58,6 +58,7 @@ int output_text_open(char *fn)
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
     config_lookup_string(&cfg, "output.separator", &separator);
     config_lookup_bool(&cfg, "output.compress", &zlib);
+    config_lookup_int(&cfg, "output.precision", &precision);
 
     if (zlib)
         z = gzopen(fn, "w9");
@@ -114,7 +115,8 @@ int output_text_write(hmatrix_t *m)
 
     for (i = m->y.i; i < m->y.n; i++) {
         for (j = m->x.i; j < m->x.n; j++) {
-            r = output_printf(z, "%g", hmatrix_get(m, j, i));
+            float val = hround(hmatrix_get(m, j, i), precision);
+            r = output_printf(z, "%g", val);
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;

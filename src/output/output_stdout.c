@@ -31,6 +31,7 @@ extern config_t cfg;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
+static int precision = 0;
 
 static const char *separator = ",";
 
@@ -47,6 +48,7 @@ int output_stdout_open(char *fn)
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
     config_lookup_string(&cfg, "output.separator", &separator);
+    config_lookup_int(&cfg, "output.precision", &precision);
 
     if (!stdout) {
         error("Could not open <stdout>");
@@ -95,7 +97,8 @@ int output_stdout_write(hmatrix_t *m)
 
     for (i = m->y.i; i < m->y.n; i++) {
         for (j = m->x.i; j < m->x.n; j++) {
-            r = fprintf(stdout, "%g", hmatrix_get(m, j, i));
+            float val = hround(hmatrix_get(m, j, i), precision);
+            r = fprintf(stdout, "%g", val);
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;

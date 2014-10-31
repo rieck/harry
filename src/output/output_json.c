@@ -31,6 +31,7 @@ extern config_t cfg;
 static void *z = NULL;
 static int zlib = 0;
 
+static int precision = 0;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
@@ -51,6 +52,7 @@ int output_json_open(char *fn)
 {
     assert(fn);
 
+    config_lookup_int(&cfg, "output.precision", &precision);
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
@@ -133,7 +135,8 @@ int output_json_write(hmatrix_t *m)
     for (i = m->y.i; i < m->y.n; i++) {
         output_printf(z, "    [");
         for (j = m->x.i; j < m->x.n; j++) {
-            output_printf(z, "%g", hmatrix_get(m, j, i));
+            float val = hround(hmatrix_get(m, j, i), precision);
+            output_printf(z, "%g", val);
             if (j < m->x.n - 1)
                 output_printf(z, ", ");
             k++;

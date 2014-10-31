@@ -31,7 +31,7 @@ static int nthreads = 0;
 static int benchmark = 0;
 
 /* Option string */
-#define OPTSTRING       "n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
+#define OPTSTRING       "p:n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -56,6 +56,7 @@ static struct option longopts[] = {
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"log_line", 0, NULL, 'l'},
+    {"precision", 1, NULL, 'p'},
     {"print_measures", 0, NULL, 'M'},
     {"print_config", 0, NULL, 'C'},
     {"print_defaults", 0, NULL, 'D'},
@@ -116,6 +117,7 @@ static void print_usage(void)
            "       --soundex                  Enable soundex encoding of words.\n"
            "       --benchmark <seconds>      Perform benchmark run.\n"
            "  -o,  --output_format <format>   Set output format for matrix.\n"
+           "  -p,  --precision <num>          Set precision of output.\n"
            "  -z,  --compress                 Enable zlib compression of output.\n"
            "       --save_indices             Save indices of strings.\n"
            "       --save_labels              Save labels of strings.\n"
@@ -198,6 +200,9 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'o':
             config_set_string(&cfg, "output.output_format", optarg);
+            break;
+        case 'p':
+            config_set_int(&cfg, "output.precision", atoi(optarg));
             break;
         case 'm':
             config_set_string(&cfg, "measures.measure", optarg);

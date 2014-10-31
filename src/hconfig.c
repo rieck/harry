@@ -82,6 +82,7 @@ static default_t defaults[] = {
     {M ".kern_spectrum", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".sim_coefficient", "matching", CONFIG_TYPE_STRING, {.str = "bin"}},
     {O "", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
+    {O "", "precision", CONFIG_TYPE_INT, {.num = 0}},
     {O "", "separator", CONFIG_TYPE_STRING, {.str = ","}},
     {O "", "save_indices", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {O "", "save_labels", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
