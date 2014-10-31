@@ -30,7 +30,7 @@ LIBS="$LIBS -lm"
 
 # Set GCC and C99 flags if present
 if test "$GCC" = "yes" ; then
-   CFLAGS="$CFLAGS -std=c99 -Wall -fPIC"
+   CFLAGS="$CFLAGS -std=c99 -fgnu89-inline -Wall -fPIC"
 fi
 
 # Optional packages

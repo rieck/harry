@@ -72,7 +72,7 @@ void stopwords_destroy();
  * @param j position in string y
  * @return 0 if equal, < 0 if x smaller, > 0 if y smaller
  */
-inline int hstring_compare(hstring_t x, int i, hstring_t y, int j)
+static inline int hstring_compare(hstring_t x, int i, hstring_t y, int j)
 {
     assert(x.type == y.type);
     assert(i < x.len && j < y.len);

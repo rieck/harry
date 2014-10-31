@@ -27,6 +27,8 @@ typedef struct
 #else
 #ifdef HAVE_OPENMP
     omp_lock_t lock;            /* Workaround: Global mutex :( */
+#else
+    int empty;                  /* ;) */
 #endif
 #endif
 } rwlock_t;

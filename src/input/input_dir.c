@@ -64,7 +64,7 @@ int input_dir_open(char *p)
 int input_dir_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
-    int j = 0, l;
+    int j = 0, l = 0;
     struct dirent *dp;
 
     /* Load block of files */

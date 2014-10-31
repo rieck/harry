@@ -42,7 +42,6 @@ case $arg in
 
    kindl*)
        echo "Configuration: Kindl (OpenBSD)"
-       CC="egcc" \
        LDFLAGS="-L/usr/local/lib" \
        CPPFLAGS="-I/usr/local/include" \
        CFLAGS="-pedantic -pipe -O3 -g" \
