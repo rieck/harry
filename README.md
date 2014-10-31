@@ -63,7 +63,7 @@ Dependencies
 
 +   OpenMP >= 2.5 (need to be supported by the C compiler)
 +   zlib >= 1.2.1, <http://www.zlib.net/>
-+   libconfig >= 1.4, <http://www.hyperrealm.com/libconfig/>
++   libconfig >= 1.3.2, <http://www.hyperrealm.com/libconfig/>
 +   libarchive >= 2.70, <http://libarchive.github.com/>
 
 #### Debian & Ubuntu Linux
@@ -73,7 +73,7 @@ and Ubuntu Linux
 
     gcc
     libz-dev
-    libconfig9-dev
+    libconfig8-dev
     libarchive-dev
 
 For bootstrapping Harry from the GIT repository or manipulating the

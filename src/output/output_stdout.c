@@ -31,7 +31,7 @@ extern config_t cfg;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
-static int precision = 0;
+static cfg_int precision = 0;
 
 static const char *separator = ",";
 

@@ -128,7 +128,7 @@ static void config_setting_fprint(FILE *f, config_setting_t * cs, int d)
         fprintf(f, "%s\t= %7.5f;\n", n, config_setting_get_float(cs));
         break;
     case CONFIG_TYPE_INT:
-        fprintf(f, "%s\t= %d;\n", n, config_setting_get_int(cs));
+        fprintf(f, "%s\t= %ld;\n", n, (long) config_setting_get_int(cs));
         break;
     case CONFIG_TYPE_BOOL:
         fprintf(f, "%s\t= %s;\n", n, config_setting_get_bool(cs)
@@ -165,7 +165,8 @@ void config_fprint(FILE *f, config_t * cfg)
  */
 static void config_default(config_t * cfg)
 {
-    int i, j;
+    int i, b;
+    cfg_int j;
     const char *s;
     double f;
     config_setting_t *cs = NULL, *vs;
@@ -230,7 +231,7 @@ static void config_default(config_t * cfg)
             config_setting_set_int(vs, defaults[i].val.num);
             break;
         case CONFIG_TYPE_BOOL:
-            if (config_setting_lookup_bool(cs, defaults[i].name, &j))
+            if (config_setting_lookup_bool(cs, defaults[i].name, &b))
                 continue;
 
             /* Check for mis-interpreted integer */
