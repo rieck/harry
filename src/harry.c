@@ -30,7 +30,7 @@ static char *measure = NULL;
 static int benchmark = 0;
 
 /* Option string */
-#define OPTSTRING       "p:n:ga:m:c:i:o:d:x:y:zs:ulvqVhMCD"
+#define OPTSTRING       "p:n:g:a:m:c:i:o:d:x:y:zs:ulvqGVhMCD"
 
 /**
  * Array of options of getopt_long()
@@ -51,7 +51,8 @@ static struct option longopts[] = {
     {"word_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
     {"cache_size", 1, NULL, 'a'},
-    {"global_cache", 0, NULL, 'g'},
+    {"granularity", 1, NULL, 'g'},
+    {"global_cache", 0, NULL, 'G'},
     {"config_file", 1, NULL, 'c'},
     {"verbose", 0, NULL, 'v'},
     {"log_line", 0, NULL, 'l'},
@@ -123,10 +124,11 @@ static void print_usage(void)
            "       --save_sources             Save sources of strings.\n"
            "\nModule options:\n"
            "  -m,  --measure <name>           Set similarity measure.\n"
+           "  -g,  --granularity <type>       Set granularity: bytes, bits, words.\n"
            "  -d,  --word_delim <delim>       Set delimiters for words.\n"
            "  -n,  --num_threads <num>        Set number of threads.\n"
            "  -a,  --cache_size <size>        Set size of cache in megabytes.\n"
-           "  -g,  --global_cache             Enable global cache.\n"
+           "  -G,  --global_cache             Enable global cache.\n"
            "  -x,  --x_range <start>:<end>    Set the index range (x) of strings.\n"
            "  -y,  --y_range <start>:<end>    Set the index range (y) of strings.\n"
            "  -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.\n"
@@ -215,8 +217,11 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
         case 'a':
             config_set_int(&cfg, "measures.cache_size", atoi(optarg));
             break;
-        case 'g':
+        case 'G':
             config_set_bool(&cfg, "measures.global_cache", CONFIG_TRUE);
+            break;
+        case 'g':
+            config_set_string(&cfg, "measures.granularity", optarg);
             break;
         case 'z':
             config_set_bool(&cfg, "output.compress", CONFIG_TRUE);

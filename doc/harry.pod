@@ -21,7 +21,7 @@ compression distance.
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
 I<output>.  The similarity measure can be computed based on the granularity
-of characters as well as words contained in the strings.  The configuration
+of bits, bytes as well as words contained in the strings.  The configuration
 of this process, such as the input format, the similarity measure and the
 output format, are specified in the file I<config> and can be additionally
 refined using command-line options.
@@ -146,8 +146,8 @@ direction of the input strings is unspecified.
 
 Stop words (irrelevant words) can be filtered from the strings by providing
 a file containing these words; one per line.  Non-printable characters can
-be escaped using URI encoding (%XX).  Stop words can only be filtered, if a
-set of delimiters is defined using B<word_delim>.
+be escaped using URI encoding (%XX).  Stop words can only be filtered, if 
+the B<granularity> is set to I<words>.
 
 =item B<soundex = false;>
 
@@ -282,6 +282,10 @@ Otsuka coefficient (Ochiai coefficient).  See configuration group
 B<sim_coefficient>.
 
 =back
+
+=item B<granularity = "bytes";>
+
+TODO 
 
 =item B<word_delim = "";>
 
@@ -831,13 +835,15 @@ on the command line.  Following is the list of options:
 
 =head2 Module options:
 
-  -m,  --measure <name>          Set similarity measure.
-  -d,  --word_delim <delim>      Set delimiters for words.
-  -n,  --num_threads <num>       Set number of threads.
-  -a,  --cache_size <size>       Set size of cache in megabytes.
-  -g,  --global_cache            Enable global cache.
-  -x,  --x_range <start>:<end>   Set the index range (x) of strings.
-  -y,  --y_range <start>:<end>   Set the index range (y) of stirngs.
+  -m,  --measure <name>           Set similarity measure.
+  -g,  --granularity <type>       Set granularity: bytes, bits, words.
+  -d,  --word_delim <delim>       Set delimiters for words.
+  -n,  --num_threads <num>        Set number of threads.
+  -a,  --cache_size <size>        Set size of cache in megabytes.
+  -G,  --global_cache             Enable global cache.
+  -x,  --x_range <start>:<end>    Set the index range (x) of strings.
+  -y,  --y_range <start>:<end>    Set the index range (y) of strings.
+  -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.
 
 =head2 Generic options:
 
