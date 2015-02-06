@@ -37,6 +37,7 @@ static default_t defaults[] = {
     {I "", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
     {I "", "soundex", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
+    {M "", "granularity", CONFIG_TYPE_STRING, {.str = "bytes"}},
     {M "", "word_delim", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},
     {M "", "cache_size", CONFIG_TYPE_INT, {.num = 256}},

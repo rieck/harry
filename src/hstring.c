@@ -6,7 +6,7 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
 /**
@@ -59,7 +59,7 @@ void hstring_destroy(hstring_t *x)
     x->len = 0;
 }
 
-/** 
+/**
  * Check whether delimiters have been set
  * @return true if delimiters have been set
  */
@@ -68,7 +68,7 @@ int hstring_has_delim()
     return (delim[0] != DELIM_NOT_INIT);
 }
 
-/** 
+/**
  * Return symbol/character at given positions
  * @param x string x
  * @param i position in string x
@@ -88,7 +88,7 @@ sym_t hstring_get(hstring_t x, int i)
 }
 
 
-/** 
+/**
  * Print string object
  * @param x string object
  */
@@ -148,8 +148,8 @@ void hstring_delim_set(const char *s)
 }
 
 /**
- * Resets delimiters table. There is a global table of delimiter 
- * symbols which is only initialized once the first sequence is 
+ * Resets delimiters table. There is a global table of delimiter
+ * symbols which is only initialized once the first sequence is
  * processed. This functions is used to trigger a re-initialization.
  */
 void hstring_delim_reset()
@@ -160,7 +160,7 @@ void hstring_delim_reset()
 
 
 /**
- * Converts a string into a sequence of words using delimiter characters. 
+ * Converts a string into a sequence of words using delimiter characters.
  * The original character string is lost.
  * @param x character string
  * @return string of words
@@ -214,6 +214,21 @@ hstring_t hstring_wordify(hstring_t x)
 }
 
 /**
+ * Converts a string into a sequence of bits. Well, actually there is no
+ * conversion except for that the counting now happens on the level of bits
+ * instead of bytes.
+ * @param x character string
+ * @return string of bits
+ */
+hstring_t hstring_bitify(hstring_t x)
+{
+    x.len = x.len * 8;
+    x.type = TYPE_BIT;
+    return x;
+}
+
+
+/**
  * Convert a c-style string to a string object. New memory is allocated
  * and the string is copied.
  * @param x string object
@@ -232,7 +247,7 @@ hstring_t hstring_init(hstring_t x, char *s)
 /**
  * Create an empty string
  * @param x string object
- * @param t type of string
+ * @param t granularity of string
  */
 hstring_t hstring_empty(hstring_t x, int t)
 {
@@ -247,7 +262,7 @@ hstring_t hstring_empty(hstring_t x, int t)
 
 /**
  * Compute a 64-bit hash for a string. The hash is used at different locations.
- * Collisions are possible but not very likely (hopefully)  
+ * Collisions are possible but not very likely (hopefully)
  * @param x String to hash
  * @return hash value
  */
@@ -263,8 +278,8 @@ uint64_t hstring_hash1(hstring_t x)
 }
 
 /**
- * Compute a 64-bit hash for a substring. 
- * Collisions are possible but not very likely (hopefully)  
+ * Compute a 64-bit hash for a substring.
+ * Collisions are possible but not very likely (hopefully)
  * @param x String to hash
  * @param i Start of substring
  * @param l Length of substring
@@ -304,10 +319,10 @@ static uint64_t swap(uint64_t x)
 
 /**
  * Compute a 64-bit hash for two strings. The computation is symmetric, that is,
- * the same strings retrieve the same hash independent of their order. 
- * Collisions are possible but not very likely (hopefully)  
+ * the same strings retrieve the same hash independent of their order.
+ * Collisions are possible but not very likely (hopefully)
  * @param x String to hash
- * @param y String to hash 
+ * @param y String to hash
  * @return hash value
  */
 uint64_t hstring_hash2(hstring_t x, hstring_t y)
@@ -331,7 +346,7 @@ uint64_t hstring_hash2(hstring_t x, hstring_t y)
 
 
 /**
- * Read in and hash stop words 
+ * Read in and hash stop words
  * @param file stop word file
  */
 void stopwords_load(const char *file)
@@ -360,7 +375,7 @@ void stopwords_load(const char *file)
     fclose(f);
 }
 
-/** 
+/**
  * Filter stop words from symbols
  * @param x Symbolized string
  */
@@ -396,7 +411,9 @@ hstring_t hstring_preproc(hstring_t x)
 {
     assert(x.type == TYPE_BYTE);
     int decode, reverse, soundex, c, i, k;
+    const char *gran;
 
+    config_lookup_string(&cfg, "measure.granularity", &gran);
     config_lookup_bool(&cfg, "input.decode_str", &decode);
     config_lookup_bool(&cfg, "input.reverse_str", &reverse);
     config_lookup_bool(&cfg, "input.soundex", &soundex);
@@ -417,8 +434,16 @@ hstring_t hstring_preproc(hstring_t x)
     if (soundex)
         x = hstring_soundex(x);
 
-    if (hstring_has_delim())
+    if (!strcasecmp(gran, "byte")) {
+        /* nothing */
+    } else if (!strcasecmp(gran, "word")) {
+        assert(hstring_has_delim());
         x = hstring_wordify(x);
+    } else if (!strcasecmp(gran, "bit")) {
+        x = hstring_bitify(x);
+    } else {
+        error("Unknown granularity '%s'. Using 'bytes' instead.", gran);
+    }
 
     if (stopwords)
         x = stopwords_filter(x);
@@ -441,7 +466,7 @@ void stopwords_destroy()
 }
 
 /**
- * Soundex code as implemented by Kevin Setter, 8/27/97 with some 
+ * Soundex code as implemented by Kevin Setter, 8/27/97 with some
  * slight modifications. Known bugs: Consonants separated by a vowel
  * are treated as one character, if they have the same index. This
  * is wrong. :(
@@ -449,7 +474,7 @@ void stopwords_destroy()
  * @param in input string
  * @param len end of input string
  * @param out output buffer of 5 bytes
- * @return soundex 
+ * @return soundex
  */
 static void soundex(char *in, int len, char *out)
 {
