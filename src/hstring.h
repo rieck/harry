@@ -47,7 +47,7 @@ typedef struct
 void hstring_print(hstring_t);
 void hstring_delim_set(const char *);
 void hstring_delim_reset();
-hstring_t hstring_symbolize(hstring_t);
+hstring_t hstring_wordify(hstring_t);
 hstring_t hstring_preproc(hstring_t);
 hstring_t hstring_empty(hstring_t, int type);
 hstring_t hstring_init(hstring_t, char *);

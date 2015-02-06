@@ -160,12 +160,12 @@ void hstring_delim_reset()
 
 
 /**
- * Converts a string into a sequence of symbols  (words) using delimiter
- * characters.  The original character string is lost.
+ * Converts a string into a sequence of words using delimiter characters. 
+ * The original character string is lost.
  * @param x character string
- * @return symbolized string
+ * @return string of words
  */
-hstring_t hstring_symbolize(hstring_t x)
+hstring_t hstring_wordify(hstring_t x)
 {
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
@@ -418,7 +418,7 @@ hstring_t hstring_preproc(hstring_t x)
         x = hstring_soundex(x);
 
     if (hstring_has_delim())
-        x = hstring_symbolize(x);
+        x = hstring_wordify(x);
 
     if (stopwords)
         x = stopwords_filter(x);
