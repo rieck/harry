@@ -413,7 +413,7 @@ hstring_t hstring_preproc(hstring_t x)
     int decode, reverse, soundex, c, i, k;
     const char *gran;
 
-    config_lookup_string(&cfg, "measure.granularity", &gran);
+    config_lookup_string(&cfg, "measures.granularity", &gran);
     config_lookup_bool(&cfg, "input.decode_str", &decode);
     config_lookup_bool(&cfg, "input.reverse_str", &reverse);
     config_lookup_bool(&cfg, "input.soundex", &soundex);
@@ -434,12 +434,12 @@ hstring_t hstring_preproc(hstring_t x)
     if (soundex)
         x = hstring_soundex(x);
 
-    if (!strcasecmp(gran, "byte")) {
+    if (!strcasecmp(gran, "bytes")) {
         /* nothing */
-    } else if (!strcasecmp(gran, "word")) {
+    } else if (!strcasecmp(gran, "words")) {
         assert(hstring_has_delim());
         x = hstring_wordify(x);
-    } else if (!strcasecmp(gran, "bit")) {
+    } else if (!strcasecmp(gran, "bits")) {
         x = hstring_bitify(x);
     } else {
         error("Unknown granularity '%s'. Using 'bytes' instead.", gran);

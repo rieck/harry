@@ -6,10 +6,10 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
-/** 
+/**
  * @defgroup default Configuration
  * Functions for configuration of the Harry tool. Additionally default
  * values for each configuration parameter are specified in this module.
@@ -93,7 +93,7 @@ static default_t defaults[] = {
 };
 
 /**
- * Print a configuration setting. 
+ * Print a configuration setting.
  * @param f File stream to print to
  * @param cs Configuration setting
  * @param d Current depth.
@@ -151,7 +151,7 @@ void config_print(config_t * cfg)
 }
 
 /**
- * Print the configuration to a file. 
+ * Print the configuration to a file.
  * @param f pointer to file stream
  * @param cfg configuration
  */
@@ -256,15 +256,28 @@ static void config_default(config_t * cfg)
 }
 
 /**
- * Checks if the configuration is valid and sane. 
+ * Checks if the configuration is valid and sane.
  * @return 1 if config is valid, 0 otherwise
  */
 int config_check(config_t * cfg)
 {
+    const char *str1, *str2;
+
     /* Add default values where missing */
     config_default(cfg);
 
-    /* TODO add sanity checks here */
+    /* Sanity checks for words */
+    config_lookup_string(cfg, "measures.granularity", &str1);
+    config_lookup_string(cfg, "measures.word_delim", &str2);
+    
+    if (!strcasecmp(str1, "words") && strlen(str2) == 0) {
+        error("Delimiters are required if the granularity is words.");
+        return 0;
+    }
+    if (strcasecmp(str1, "words") && strlen(str2) != 0) {
+        error("Delimiters can only be set if the granularity is words");
+        return 0;
+    }
 
     return 1;
 }
