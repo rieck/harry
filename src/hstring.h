@@ -22,8 +22,9 @@
 typedef uint64_t sym_t;
 
 /* Support types for strings. See union str in struct */
-#define TYPE_CHAR		0x00
-#define TYPE_SYM		0x01
+#define TYPE_BYTE		0x00
+#define TYPE_WORD		0x01
+#define TYPE_BIT		0x02
 
 /**
  * Structure for a string
@@ -32,8 +33,8 @@ typedef struct
 {
     union
     {
-        char *c;              /**< String data (not necessary c-style) */
-        sym_t *s;             /**< Symbol representation */
+        char *c;              /**< Byte or bit representation */
+        sym_t *s;             /**< Word representation */
     } str;
 
     int len;                  /**< Length of string */
@@ -77,9 +78,9 @@ static inline int hstring_compare(hstring_t x, int i, hstring_t y, int j)
     assert(x.type == y.type);
     assert(i < x.len && j < y.len);
 
-    if (x.type == TYPE_SYM)
+    if (x.type == TYPE_WORD)
         return (x.str.s[i] - y.str.s[j]);
-    else if (x.type == TYPE_CHAR)
+    else if (x.type == TYPE_BYTE)
         return (x.str.c[i] - y.str.c[j]);
     else
         error("Unknown string type");

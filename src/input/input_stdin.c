@@ -119,7 +119,7 @@ int input_stdin_read(hstring_t *strs, int len)
         strs[j].label = get_label(line);
 
         strs[j].str.c = line;
-        strs[j].type = TYPE_CHAR;
+        strs[j].type = TYPE_BYTE;
         strs[j].len = strlen(line);
         snprintf(buf, 32, "line%d", line_num++);
         strs[j].src = strdup(buf);

@@ -76,7 +76,7 @@ int input_dir_read(hstring_t *strs, int len)
 
         strs[j].str.c = load_file(path, dp->d_name, &l);
         strs[j].src = strdup(dp->d_name);
-        strs[j].type = TYPE_CHAR;
+        strs[j].type = TYPE_BYTE;
         strs[j].len = l;
         strs[j].label = get_label(strs[j].src);
         j++;

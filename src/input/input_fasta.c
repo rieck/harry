@@ -120,7 +120,7 @@ int input_fasta_read(hstring_t *strs, int len)
         /* End of sequence */
         if (alloc > 1 && (read == -1 || line[0] == ';' || line[0] == '>')) {
             strs[i].str.c = seq;
-            strs[i].type = TYPE_CHAR;
+            strs[i].type = TYPE_BYTE;
             strs[i].len = alloc - 1;
             i++;
         }

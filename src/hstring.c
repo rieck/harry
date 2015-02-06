@@ -45,9 +45,9 @@ static stopword_t *stopwords = NULL;
  */
 void hstring_destroy(hstring_t *x)
 {
-    if (x->type == TYPE_CHAR && x->str.c)
+    if (x->type == TYPE_BYTE && x->str.c)
         free(x->str.c);
-    if (x->type == TYPE_SYM && x->str.s)
+    if (x->type == TYPE_WORD && x->str.s)
         free(x->str.s);
     if (x->src)
         free(x->src);
@@ -78,9 +78,9 @@ sym_t hstring_get(hstring_t x, int i)
 {
     assert(i < x.len);
 
-    if (x.type == TYPE_SYM)
+    if (x.type == TYPE_WORD)
         return x.str.s[i];
-    else if (x.type == TYPE_CHAR)
+    else if (x.type == TYPE_BYTE)
         return x.str.c[i];
     else
         error("Unknown string type");
@@ -96,7 +96,7 @@ void hstring_print(hstring_t x)
 {
     int i;
 
-    if (x.type == TYPE_CHAR && x.str.c) {
+    if (x.type == TYPE_BYTE && x.str.c) {
         for (i = 0; i < x.len; i++)
             if (isprint(x.str.c[i]))
                 printf("%c", x.str.c[i]);
@@ -105,7 +105,7 @@ void hstring_print(hstring_t x)
         printf(" (char)\n");
     }
 
-    if (x.type == TYPE_SYM && x.str.s) {
+    if (x.type == TYPE_WORD && x.str.s) {
         for (i = 0; i < x.len; i++)
             printf("%" PRIu64 " ", (uint64_t) x.str.s[i]);
         printf(" (sym)\n");
@@ -208,7 +208,7 @@ hstring_t hstring_symbolize(hstring_t x)
     /* Change representation */
     free(x.str.c);
     x.str.s = sym;
-    x.type = TYPE_SYM;
+    x.type = TYPE_WORD;
 
     return x;
 }
@@ -222,7 +222,7 @@ hstring_t hstring_symbolize(hstring_t x)
 hstring_t hstring_init(hstring_t x, char *s)
 {
     x.str.c = strdup(s);
-    x.type = TYPE_CHAR;
+    x.type = TYPE_BYTE;
     x.len = strlen(s);
     x.src = NULL;
 
@@ -253,9 +253,9 @@ hstring_t hstring_empty(hstring_t x, int t)
  */
 uint64_t hstring_hash1(hstring_t x)
 {
-    if (x.type == TYPE_CHAR && x.str.c)
+    if (x.type == TYPE_BYTE && x.str.c)
         return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
-    if (x.type == TYPE_SYM && x.str.s)
+    if (x.type == TYPE_WORD && x.str.s)
         return MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
 
     warning("Nothing to hash. String is missing");
@@ -278,9 +278,9 @@ uint64_t hstring_hash_sub(hstring_t x, int i, int l)
         return 0;
     }
 
-    if (x.type == TYPE_CHAR && x.str.c)
+    if (x.type == TYPE_BYTE && x.str.c)
         return MurmurHash64B(x.str.c + i, sizeof(char) * l, 0xc0ffee);
-    if (x.type == TYPE_SYM && x.str.s)
+    if (x.type == TYPE_WORD && x.str.s)
         return MurmurHash64B(x.str.s + i, sizeof(sym_t) * l, 0xc0ffee);
 
     warning("Nothing to hash. String is missing");
@@ -314,12 +314,12 @@ uint64_t hstring_hash2(hstring_t x, hstring_t y)
 {
     uint64_t a, b;
 
-    if (x.type == TYPE_CHAR && y.type == TYPE_CHAR && x.str.c && y.str.c) {
+    if (x.type == TYPE_BYTE && y.type == TYPE_BYTE && x.str.c && y.str.c) {
         a = MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);
         return swap(a) ^ b;
     }
-    if (x.type == TYPE_SYM && y.type == TYPE_SYM && x.str.s && y.str.s) {
+    if (x.type == TYPE_WORD && y.type == TYPE_WORD && x.str.s && y.str.s) {
         a = MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);
         return swap(a) ^ b;
@@ -366,7 +366,7 @@ void stopwords_load(const char *file)
  */
 hstring_t stopwords_filter(hstring_t x)
 {
-    assert(x.type == TYPE_SYM);
+    assert(x.type == TYPE_WORD);
     stopword_t *stopword;
     int i, j;
 
@@ -394,7 +394,7 @@ hstring_t stopwords_filter(hstring_t x)
  */
 hstring_t hstring_preproc(hstring_t x)
 {
-    assert(x.type == TYPE_CHAR);
+    assert(x.type == TYPE_BYTE);
     int decode, reverse, soundex, c, i, k;
 
     config_lookup_bool(&cfg, "input.decode_str", &decode);
@@ -558,7 +558,7 @@ hstring_t hstring_soundex(hstring_t x)
     int start = 0, i, alloc = 0, end = 0;
     char sdx[5], *out = NULL;
 
-    assert(x.type == TYPE_CHAR);
+    assert(x.type == TYPE_BYTE);
 
     for (i = 0; i < x.len; i++) {
         /* Compute soundex for each substring of letters */
