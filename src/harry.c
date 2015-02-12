@@ -165,6 +165,7 @@ static void print_version(void)
 static void harry_parse_options(int argc, char **argv, char **in, char **out)
 {
     int ch;
+    const char *str;
     optind = 0;
 
     while ((ch = getopt_long(argc, argv, OPTSTRING, longopts, NULL)) != -1) {
@@ -210,6 +211,10 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             break;
         case 'd':
             config_set_string(&cfg, "measures.token_delim", optarg);
+            /* Compatibility warning */
+            config_lookup_string(&cfg, "measures.granularity", &str);
+            if (strcasecmp(str, "tokens") && strlen(optarg) > 0)
+                warning("Granularity is %s. Delimiters are ignored.", str);
             break;
         case 'n':
             config_set_int(&cfg, "measures.num_threads", atoi(optarg));
