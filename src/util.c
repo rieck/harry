@@ -408,8 +408,8 @@ void log_print(long a, long b, long c)
 float hround(float f, int p)
 {
     if (p == 0)
-       return f;
-    return round(f * pow(10, p)) / pow(10,p);
+        return f;
+    return round(f * pow(10, p)) / pow(10, p);
 }
 
 /** @} */

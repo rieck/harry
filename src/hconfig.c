@@ -269,7 +269,7 @@ int config_check(config_t * cfg)
     /* Sanity checks for tokens */
     config_lookup_string(cfg, "measures.granularity", &str1);
     config_lookup_string(cfg, "measures.token_delim", &str2);
-    
+
     if (!strcasecmp(str1, "tokens") && strlen(str2) == 0) {
         error("Delimiters are required if the granularity is tokens.");
         return 0;

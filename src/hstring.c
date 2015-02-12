@@ -45,10 +45,18 @@ static stoptoken_t *stoptokens = NULL;
  */
 void hstring_destroy(hstring_t *x)
 {
-    if (x->type == TYPE_BYTE && x->str.c)
-        free(x->str.c);
-    if (x->type == TYPE_TOKEN && x->str.s)
-        free(x->str.s);
+    switch (x->type) {
+    case TYPE_BYTE:
+    case TYPE_BIT:
+        if (x->str.c)
+            free(x->str.c);
+        break;
+    case TYPE_TOKEN:
+        if (x->str.s)
+            free(x->str.s);
+        break;
+    }
+
     if (x->src)
         free(x->src);
 
@@ -77,14 +85,20 @@ int hstring_has_delim()
 sym_t hstring_get(hstring_t x, int i)
 {
     assert(i < x.len);
+    int b;
 
-    if (x.type == TYPE_TOKEN)
+    switch (x.type) {
+    case TYPE_TOKEN:
         return x.str.s[i];
-    else if (x.type == TYPE_BYTE)
+    case TYPE_BYTE:
         return x.str.c[i];
-    else
+    case TYPE_BIT:
+        b = x.str.c[i / 8];
+        return b >> (7 - i % 8) & 1;
+    default:
         error("Unknown string type");
-    return 0;
+        return 0;
+    }
 }
 
 
@@ -96,19 +110,25 @@ void hstring_print(hstring_t x)
 {
     int i;
 
+    if (x.type == TYPE_BIT && x.str.c) {
+        for (i = 0; i < x.len; i++)
+            printf("%d", (int) hstring_get(x, i));
+        printf(" (bits)\n");
+    }
+
     if (x.type == TYPE_BYTE && x.str.c) {
         for (i = 0; i < x.len; i++)
             if (isprint(x.str.c[i]))
                 printf("%c", x.str.c[i]);
             else
                 printf("%%%.2x", (char) x.str.c[i]);
-        printf(" (char)\n");
+        printf(" (bytes)\n");
     }
 
     if (x.type == TYPE_TOKEN && x.str.s) {
         for (i = 0; i < x.len; i++)
             printf("%" PRIu64 " ", (uint64_t) x.str.s[i]);
-        printf(" (sym)\n");
+        printf(" (tokens)\n");
     }
 
     printf("  [type: %d, len: %d; src: %s, label: %f]\n",
@@ -268,6 +288,8 @@ hstring_t hstring_empty(hstring_t x, int t)
  */
 uint64_t hstring_hash1(hstring_t x)
 {
+    if (x.type == TYPE_BIT && x.str.c)
+        return MurmurHash64B(x.str.c, sizeof(char) * x.len / 8, 0xc0ffee);
     if (x.type == TYPE_BYTE && x.str.c)
         return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
     if (x.type == TYPE_TOKEN && x.str.s)
@@ -290,6 +312,11 @@ uint64_t hstring_hash_sub(hstring_t x, int i, int l)
 
     if (i > x.len - 1 || i + l > x.len) {
         warning("Invalid range for substring (i:%d;l:%d;x:%d)", i, l, x.len);
+        return 0;
+    }
+
+    if (x.type == TYPE_BIT && x.str.c) {
+        error("Substrings are currently not supported for bits");
         return 0;
     }
 
@@ -329,6 +356,11 @@ uint64_t hstring_hash2(hstring_t x, hstring_t y)
 {
     uint64_t a, b;
 
+    if (x.type == TYPE_BIT && y.type == TYPE_BIT && x.str.c && y.str.c) {
+        a = MurmurHash64B(x.str.c, sizeof(char) * x.len / 8, 0xc0ffee);
+        b = MurmurHash64B(y.str.c, sizeof(char) * y.len / 8, 0xc0ffee);
+        return swap(a) ^ b;
+    }
     if (x.type == TYPE_BYTE && y.type == TYPE_BYTE && x.str.c && y.str.c) {
         a = MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);

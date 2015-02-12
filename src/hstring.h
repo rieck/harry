@@ -78,13 +78,20 @@ static inline int hstring_compare(hstring_t x, int i, hstring_t y, int j)
 {
     assert(x.type == y.type);
     assert(i < x.len && j < y.len);
+    int a, b;
 
-    if (x.type == TYPE_TOKEN)
+    switch (x.type) {
+    case TYPE_BIT:
+        a = x.str.c[i / 8] >> (7 - i % 8) & 1;
+        b = y.str.c[j / 8] >> (7 - j % 8) & 1;
+        return (a - b);
+    case TYPE_TOKEN:
         return (x.str.s[i] - y.str.s[j]);
-    else if (x.type == TYPE_BYTE)
+    case TYPE_BYTE:
         return (x.str.c[i] - y.str.c[j]);
-    else
+    default:
         error("Unknown string type");
+    }
     return 0;
 }
 
