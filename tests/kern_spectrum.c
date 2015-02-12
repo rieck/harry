@@ -76,8 +76,13 @@ int test_compare()
 
         x = hstring_init(x, tests[i].x);
         y = hstring_init(y, tests[i].y);
-
+        
+        if (strlen(tests[i].d) == 0)
+            config_set_string(&cfg, "measures.granularity", "bytes");
+        else
+            config_set_string(&cfg, "measures.granularity", "tokens"); 
         hstring_delim_set(tests[i].d);
+
         x = hstring_preproc(x);
         y = hstring_preproc(y);
 

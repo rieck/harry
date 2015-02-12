@@ -39,7 +39,7 @@ static struct option longopts[] = {
     {"input_format", 1, NULL, 'i'},
     {"decode_str", 0, NULL, 1000},
     {"reverse_str", 0, NULL, 1001},
-    {"stopword_file", 1, NULL, 1002},
+    {"stoptoken_file", 1, NULL, 1002},
     {"soundex", 0, NULL, 1003},
     {"benchmark", 1, NULL, 1004},
     {"save_indices", 0, NULL, 1005},
@@ -48,7 +48,7 @@ static struct option longopts[] = {
     {"output_format", 1, NULL, 'o'},
     {"compress", 0, NULL, 'z'},
     {"measure", 1, NULL, 'm'},
-    {"word_delim", 1, NULL, 'd'},
+    {"token_delim", 1, NULL, 'd'},
     {"num_threads", 1, NULL, 'n'},
     {"cache_size", 1, NULL, 'a'},
     {"granularity", 1, NULL, 'g'},
@@ -113,8 +113,8 @@ static void print_usage(void)
            "  -i,  --input_format <format>    Set input format for strings.\n"
            "       --decode_str               Enable URI-decoding of strings.\n"
            "       --reverse_str              Reverse (flip) all strings.\n"
-           "       --stopword_file <file>     Provide a file with stop words.\n"
-           "       --soundex                  Enable soundex encoding of words.\n"
+           "       --stoptoken_file <file>    Provide a file with stop tokens.\n"
+           "       --soundex                  Enable soundex encoding of tokens.\n"
            "       --benchmark <seconds>      Perform benchmark run.\n"
            "  -o,  --output_format <format>   Set output format for matrix.\n"
            "  -p,  --precision <num>          Set precision of output.\n"
@@ -124,8 +124,8 @@ static void print_usage(void)
            "       --save_sources             Save sources of strings.\n"
            "\nModule options:\n"
            "  -m,  --measure <name>           Set similarity measure.\n"
-           "  -g,  --granularity <type>       Set granularity: bytes, bits, words.\n"
-           "  -d,  --word_delim <delim>       Set delimiters for words.\n"
+           "  -g,  --granularity <type>       Set granularity: bytes, bits, tokens.\n"
+           "  -d,  --token_delim <delim>      Set delimiters for tokens.\n"
            "  -n,  --num_threads <num>        Set number of threads.\n"
            "  -a,  --cache_size <size>        Set size of cache in megabytes.\n"
            "  -G,  --global_cache             Enable global cache.\n"
@@ -182,7 +182,7 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_bool(&cfg, "input.reverse_str", CONFIG_TRUE);
             break;
         case 1002:
-            config_set_string(&cfg, "input.stopword_file", optarg);
+            config_set_string(&cfg, "input.stoptoken_file", optarg);
             break;
         case 1003:
             config_set_bool(&cfg, "input.soundex", CONFIG_TRUE);
@@ -209,7 +209,7 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             config_set_string(&cfg, "measures.measure", optarg);
             break;
         case 'd':
-            config_set_string(&cfg, "measures.word_delim", optarg);
+            config_set_string(&cfg, "measures.token_delim", optarg);
             break;
         case 'n':
             config_set_int(&cfg, "measures.num_threads", atoi(optarg));
@@ -370,10 +370,10 @@ static void harry_init()
     warning("Harry has been compiled without OpenMP support.");
 #endif
 
-    /* Load stop words */
-    config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
+    /* Load stop tokens */
+    config_lookup_string(&cfg, "input.stoptoken_file", &cfg_str);
     if (strlen(cfg_str) > 0)
-        stopwords_load(cfg_str);
+        stoptokens_load(cfg_str);
 }
 
 /**
@@ -537,9 +537,9 @@ static void harry_exit(hstring_t *strs, hmatrix_t *mat, int num)
     /* Destroy matrix */
     hmatrix_destroy(mat);
 
-    config_lookup_string(&cfg, "input.stopword_file", &cfg_str);
+    config_lookup_string(&cfg, "input.stoptoken_file", &cfg_str);
     if (strlen(cfg_str) > 0)
-        stopwords_destroy();
+        stoptokens_destroy();
 
     /* Destroy value cache */
     vcache_destroy();

@@ -30,14 +30,14 @@ extern config_t cfg;
 char delim[256] = { DELIM_NOT_INIT };
 
 /**
- * Structure for stop words
+ * Structure for stop tokens (irrelevant tokens)
  */
 typedef struct
 {
-    sym_t sym;                  /* Hash of stop word */
+    sym_t sym;                  /* Hash of stop token */
     UT_hash_handle hh;          /* uthash handle */
-} stopword_t;
-static stopword_t *stopwords = NULL;
+} stoptoken_t;
+static stoptoken_t *stoptokens = NULL;
 
 /**
  * Free memory of the string object
@@ -47,7 +47,7 @@ void hstring_destroy(hstring_t *x)
 {
     if (x->type == TYPE_BYTE && x->str.c)
         free(x->str.c);
-    if (x->type == TYPE_WORD && x->str.s)
+    if (x->type == TYPE_TOKEN && x->str.s)
         free(x->str.s);
     if (x->src)
         free(x->src);
@@ -78,7 +78,7 @@ sym_t hstring_get(hstring_t x, int i)
 {
     assert(i < x.len);
 
-    if (x.type == TYPE_WORD)
+    if (x.type == TYPE_TOKEN)
         return x.str.s[i];
     else if (x.type == TYPE_BYTE)
         return x.str.c[i];
@@ -105,7 +105,7 @@ void hstring_print(hstring_t x)
         printf(" (char)\n");
     }
 
-    if (x.type == TYPE_WORD && x.str.s) {
+    if (x.type == TYPE_TOKEN && x.str.s) {
         for (i = 0; i < x.len; i++)
             printf("%" PRIu64 " ", (uint64_t) x.str.s[i]);
         printf(" (sym)\n");
@@ -160,18 +160,18 @@ void hstring_delim_reset()
 
 
 /**
- * Converts a string into a sequence of words using delimiter characters.
+ * Converts a string into a sequence of tokens using delimiter characters.
  * The original character string is lost.
  * @param x character string
- * @return string of words
+ * @return string of tokens
  */
-hstring_t hstring_wordify(hstring_t x)
+hstring_t hstring_tokenify(hstring_t x)
 {
     int i = 0, j = 0, k = 0, dlm = 0;
     int wstart = 0;
 
 
-    /* A string of n chars can have at most n/2 + 1 words */
+    /* A string of n chars can have at most n/2 + 1 tokens */
     sym_t *sym = malloc((x.len / 2 + 1) * sizeof(sym_t));
     if (!sym) {
         error("Failed to allocate memory for symbols");
@@ -192,11 +192,11 @@ hstring_t hstring_wordify(hstring_t x)
         }
     }
 
-    /* Extract words */
+    /* Extract tokens */
     for (wstart = i = 0; i < j + 1; i++) {
         /* Check for delimiters and remember start position */
         if ((i == j || x.str.c[i] == dlm) && i - wstart > 0) {
-            /* Hash word */
+            /* Hash token */
             uint64_t hash = hash_str(x.str.c + wstart, i - wstart);
             sym[k++] = (sym_t) hash;
             wstart = i + 1;
@@ -208,7 +208,7 @@ hstring_t hstring_wordify(hstring_t x)
     /* Change representation */
     free(x.str.c);
     x.str.s = sym;
-    x.type = TYPE_WORD;
+    x.type = TYPE_TOKEN;
 
     return x;
 }
@@ -270,7 +270,7 @@ uint64_t hstring_hash1(hstring_t x)
 {
     if (x.type == TYPE_BYTE && x.str.c)
         return MurmurHash64B(x.str.c, sizeof(char) * x.len, 0xc0ffee);
-    if (x.type == TYPE_WORD && x.str.s)
+    if (x.type == TYPE_TOKEN && x.str.s)
         return MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
 
     warning("Nothing to hash. String is missing");
@@ -295,7 +295,7 @@ uint64_t hstring_hash_sub(hstring_t x, int i, int l)
 
     if (x.type == TYPE_BYTE && x.str.c)
         return MurmurHash64B(x.str.c + i, sizeof(char) * l, 0xc0ffee);
-    if (x.type == TYPE_WORD && x.str.s)
+    if (x.type == TYPE_TOKEN && x.str.s)
         return MurmurHash64B(x.str.s + i, sizeof(sym_t) * l, 0xc0ffee);
 
     warning("Nothing to hash. String is missing");
@@ -334,7 +334,7 @@ uint64_t hstring_hash2(hstring_t x, hstring_t y)
         b = MurmurHash64B(y.str.c, sizeof(char) * y.len, 0xc0ffee);
         return swap(a) ^ b;
     }
-    if (x.type == TYPE_WORD && y.type == TYPE_WORD && x.str.s && y.str.s) {
+    if (x.type == TYPE_TOKEN && y.type == TYPE_TOKEN && x.str.s && y.str.s) {
         a = MurmurHash64B(x.str.s, sizeof(sym_t) * x.len, 0xc0ffee);
         b = MurmurHash64B(y.str.s, sizeof(sym_t) * y.len, 0xc0ffee);
         return swap(a) ^ b;
@@ -346,19 +346,19 @@ uint64_t hstring_hash2(hstring_t x, hstring_t y)
 
 
 /**
- * Read in and hash stop words
- * @param file stop word file
+ * Read in and hash stop tokens
+ * @param file stop token file
  */
-void stopwords_load(const char *file)
+void stoptokens_load(const char *file)
 {
     char buf[1024];
     FILE *f;
 
-    info_msg(1, "Loading stop words from '%s'.", file);
+    info_msg(1, "Loading stop tokens from '%s'.", file);
     if (!(f = fopen(file, "r")))
-        fatal("Could not read stop word file %s", file);
+        fatal("Could not read stop token file %s", file);
 
-    /* Read stop words */
+    /* Read stop tokens */
     while (fgets(buf, 1024, f)) {
         int len = strip_newline(buf, strlen(buf));
         if (len <= 0)
@@ -367,31 +367,31 @@ void stopwords_load(const char *file)
         /* Decode URI-encoding */
         decode_str(buf);
 
-        /* Add stop word to hash table */
-        stopword_t *word = malloc(sizeof(stopword_t));
-        word->sym = (sym_t) hash_str(buf, len);
-        HASH_ADD(hh, stopwords, sym, sizeof(sym_t), word);
+        /* Add stop token to hash table */
+        stoptoken_t *token = malloc(sizeof(stoptoken_t));
+        token->sym = (sym_t) hash_str(buf, len);
+        HASH_ADD(hh, stoptokens, sym, sizeof(sym_t), token);
     }
     fclose(f);
 }
 
 /**
- * Filter stop words from symbols
+ * Filter stop tokens from symbols
  * @param x Symbolized string
  */
-hstring_t stopwords_filter(hstring_t x)
+hstring_t stoptokens_filter(hstring_t x)
 {
-    assert(x.type == TYPE_WORD);
-    stopword_t *stopword;
+    assert(x.type == TYPE_TOKEN);
+    stoptoken_t *stoptoken;
     int i, j;
 
     for (i = j = 0; i < x.len; i++) {
-        /* Check for stop word */
+        /* Check for stop token */
         sym_t sym = x.str.s[i];
-        HASH_FIND(hh, stopwords, &sym, sizeof(sym_t), stopword);
+        HASH_FIND(hh, stoptokens, &sym, sizeof(sym_t), stoptoken);
 
-        /* Remove stopword */
-        if (stopword)
+        /* Remove stoptoken */
+        if (stoptoken)
             continue;
 
         if (i != j)
@@ -436,31 +436,31 @@ hstring_t hstring_preproc(hstring_t x)
 
     if (!strcasecmp(gran, "bytes")) {
         /* nothing */
-    } else if (!strcasecmp(gran, "words")) {
+    } else if (!strcasecmp(gran, "tokens")) {
         assert(hstring_has_delim());
-        x = hstring_wordify(x);
+        x = hstring_tokenify(x);
     } else if (!strcasecmp(gran, "bits")) {
         x = hstring_bitify(x);
     } else {
         error("Unknown granularity '%s'. Using 'bytes' instead.", gran);
     }
 
-    if (stopwords)
-        x = stopwords_filter(x);
+    if (stoptokens)
+        x = stoptokens_filter(x);
 
     return x;
 }
 
 /**
- * Destroy stop words table
+ * Destroy stop tokens table
  */
-void stopwords_destroy()
+void stoptokens_destroy()
 {
-    stopword_t *s;
+    stoptoken_t *s;
 
-    while (stopwords) {
-        s = stopwords;
-        HASH_DEL(stopwords, s);
+    while (stoptokens) {
+        s = stoptokens;
+        HASH_DEL(stoptokens, s);
         free(s);
     }
 }
@@ -575,7 +575,7 @@ static void soundex(char *in, int len, char *out)
 
 
 /**
- * Perform a soundex transformation of each word.
+ * Perform a soundex transformation of each token.
  * @param x string
  */
 hstring_t hstring_soundex(hstring_t x)

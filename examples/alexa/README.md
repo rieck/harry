@@ -6,7 +6,7 @@
 
 ## Requirements and Files
 
- To run this example, you need a working installation of `python` and the
+  To run this example, you need a working installation of `python` and the
   python package `numpy`, which both are available with many operating
   system distributions.  Alternatively, you can download the free scientific
   python distribution [Anaconda](http://continuum.io/downloads) that is
@@ -29,13 +29,11 @@
   necessary to convert one domain name into another.  This task can be
   easily carried out using Harry as follows:
 
-      harry -v -d '' -m levenshtein alexa1000.txt distances.txt
+      harry -v -m levenshtein alexa1000.txt distances.txt
 
-  Note that the option `-d ''` tells Harry to compare the individual
-  characters of the domain names instead of words separated by some
-  delimiter characters.  The option `-m levenshtein` selects the Levenshtein
-  distance.  You can see a list of all available similarity measures by
-  running the command `harry -M`.
+  The option `-m levenshtein` selects the Levenshtein distance.  You can 
+  see a list of all available similarity measures by running the command 
+  `harry -M`.
 
 ## Analyzing the Distances
 
@@ -99,10 +97,10 @@
   distance](http://en.wikipedia.org/wiki/Jaro-Winkler_distance) that
   emphasizes similarities at the beginning of strings.
 
-      harry -v -d '' -m jarowinkler alexa1000.txt distances.txt
+      harry -v -m jarowinkler alexa1000.txt distances.txt
 
    Alternatively, you can also experiment with the [normalized compression
   distance](http://en.wikipedia.org/wiki/Normalized_compression_distance)
   that takes a different route to assessing the similarity of strings.
 
-      harry -v -d '' -m compression alexa1000.txt distances.txt
+      harry -v -m compression alexa1000.txt distances.txt

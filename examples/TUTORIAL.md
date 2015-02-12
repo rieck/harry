@@ -46,33 +46,33 @@
 
 ## Characters and Words
 
-  By default Harry considers a string as a sequence of characters. The
+  By default Harry considers a string as a sequence of bytes. The
   similarity of two strings is thus determined by comparing the order and
-  distribution of characters in the strings.  However, in many settings it
-  is not the actual characters of a string that are relevant but the words
-  (or tokens) contained in the string.
+  distribution of bytes in the strings.  However, in many settings it
+  is not the actual bytes of a string that are relevant but the tokens
+  (or words) contained in the string.
 
-  Harry supports computing the similarity measures based on words by
-  partitioning strings using a set of delimiter characters.  In this setting
+  Harry supports computing the similarity measures based on tokens by
+  partitioning strings using a set of delimiter bytes.  In this setting
   the different distances, kernel functions and similarity coefficients
-  simply operate on words instead of characters.  Try this command:
+  simply operate on tokens instead of bytes.  Try this command:
 
-      harry -d ' ' data.txt -
+      harry -g tokens data.txt -
 
   Note how the distances differ from the first example, where you compute
-  the Levenshtein distance for the characters and not the words.  You can
+  the Levenshtein distance for the bytes and not the tokens.  You can
   adapt the partitioning of strings to different data by defining a good
   delimiter set.  For example, you can use `-d ' %09%0a%0d'` to split
-  strings using whitespace characters.  The analysis of words comes also
+  strings using whitespace bytes.  The analysis of tokens comes also
   handy if you have structured strings, such as log entries, that can be
   easily partitioned into different tokens.
 
   Here is another example: the Jaccard coefficient has been originally
   developed for measuring the similarity of sets.  If it is used with the
-  delimiter option of Harry, it computes the similarity of the sets of words
+  delimiter option of Harry, it computes the similarity of the sets of tokens
   contained in the strings.
 
-      harry -m sim_jaccard -d ' ' data.txt -
+      harry -m sim_jaccard -g tokens data.txt -
 
 ## Endless Options
 
@@ -98,7 +98,7 @@
   this example, the given delimiter set and the selected similarity measure
   are output to the configuration file.
 
-      harry -d ' .,:;' -m dist_jaro -D > harry.cfg
+      harry -g tokens -d ' .,:;' -m dist_jaro -D > harry.cfg
 
   There are many parameters and options. Check out the manual page of Harry
   to get an overview of what can be set and how.  There is also a list of

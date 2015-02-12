@@ -25,9 +25,10 @@ rm -f $OUTPUT
 
 # Loop over some random options
 for OPTION in "-m dist_hamming" "-m kern_spectrum" "-x 2:" "-y 1:-1" \
-              "-y :" "-x -1:" "-s 3:1" "-d%20%0a%0d" "-d%20abcd" \
-              "-d%20 --soundex" "--reverse_str" "--decode_str" \
-              "--save_indices" "--save_labels" "--save_sources" ; do
+              "-y :" "-x -1:" "-s 3:1" "-g tokens -d%20%0a%0d" \
+              "-g tokens -d%20abcd" "-g tokens -d%20 --soundex" \
+              "--reverse_str" "--decode_str" "--save_indices" \
+              "--save_labels" "--save_sources" ; do
 
     echo "$OPTION" >> $OUTPUT
     $HARRY -p 4 $OPTION $DATA - | grep -v -E '^#' >> $OUTPUT

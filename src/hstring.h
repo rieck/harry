@@ -16,14 +16,14 @@
 #define DELIM_NOT_INIT  42
 
 /* 
- * Symbols for words. Note: Some measures enumerate all possible symbols.
+ * Symbols for tokens. Note: Some measures enumerate all possible symbols.
  * These need to be patched first to support larger symbol sizes.
  */
 typedef uint64_t sym_t;
 
 /* Support types for strings. See union str in struct */
 #define TYPE_BYTE		0x00
-#define TYPE_WORD		0x01
+#define TYPE_TOKEN		0x01
 #define TYPE_BIT		0x02
 
 /**
@@ -47,7 +47,7 @@ typedef struct
 void hstring_print(hstring_t);
 void hstring_delim_set(const char *);
 void hstring_delim_reset();
-hstring_t hstring_wordify(hstring_t);
+hstring_t hstring_tokenify(hstring_t);
 hstring_t hstring_bitify(hstring_t);
 hstring_t hstring_preproc(hstring_t);
 hstring_t hstring_empty(hstring_t, int type);
@@ -61,8 +61,8 @@ sym_t hstring_get(hstring_t x, int i);
 hstring_t hstring_soundex(hstring_t);
 
 /* Additional functions */
-void stopwords_load(const char *f);
-void stopwords_destroy();
+void stoptokens_load(const char *f);
+void stoptokens_destroy();
 
 /* Inline functions */
 
@@ -79,7 +79,7 @@ static inline int hstring_compare(hstring_t x, int i, hstring_t y, int j)
     assert(x.type == y.type);
     assert(i < x.len && j < y.len);
 
-    if (x.type == TYPE_WORD)
+    if (x.type == TYPE_TOKEN)
         return (x.str.s[i] - y.str.s[j]);
     else if (x.type == TYPE_BYTE)
         return (x.str.c[i] - y.str.c[j]);

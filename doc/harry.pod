@@ -21,7 +21,7 @@ compression distance.
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
 I<output>.  The similarity measure can be computed based on the granularity
-of bits, bytes as well as words contained in the strings.  The configuration
+of bits, bytes as well as tokens contained in the strings.  The configuration
 of this process, such as the input format, the similarity measure and the
 output format, are specified in the file I<config> and can be additionally
 refined using command-line options.
@@ -142,19 +142,19 @@ If this parameter is set to I<true>, the characters of all input strings
 will be reversed.  Such reversing might help in situations where the reading
 direction of the input strings is unspecified.
 
-=item B<stopword_file = "";>
+=item B<stoptoken_file = "";>
 
-Stop words (irrelevant words) can be filtered from the strings by providing
-a file containing these words; one per line.  Non-printable characters can
-be escaped using URI encoding (%XX).  Stop words can only be filtered, if 
-the B<granularity> is set to I<words>.
+Stop tokens (irrelevant tokens) can be filtered from the strings by providing
+a file containing these tokens; one per line.  Non-printable characters can
+be escaped using URI encoding (%XX).  Stop tokens can only be filtered, if 
+the B<granularity> is set to I<tokens>.
 
 =item B<soundex = false;>
 
-All words in the strings are mapped to the soundex index. For example,
+All tokens in the strings are mapped to the soundex index. For example,
 "Pfister" is mapped to "P236" and "Jackson" to "J250".  The soundex index
 has been originally designed for comparing names, however, in B<harry> it
-can be applied to all sorts of words, if they are composed of alphabetic
+can be applied to all sorts of tokens, if they are composed of alphabetic
 letters.  Punctation characters are ignored and thus the string "Hey, I am
 here with Harry!", gets mapped to "H000 I000 A500 H600 W300 H600".
 
@@ -287,12 +287,12 @@ B<sim_coefficient>.
 
 TODO 
 
-=item B<word_delim = "";>
+=item B<token_delim = " %0a%0d";>
 
-The parameter B<word_delim> defines characters for delimiting words in
+The parameter B<token_delim> defines characters for delimiting tokens in
 strings.  If this parameter is set, the comparison of strings is performed
-on words, that is, each word is considered as a symbol.  If the parameter
-B<word_delim> is an empty strings, B<harry> considers each individual
+on tokens, that is, each token is considered as a symbol.  If the parameter
+B<token_delim> is an empty strings, B<harry> considers each individual
 character as a symbol.
 
 =item B<num_threads = 0;>
@@ -495,9 +495,9 @@ string are added to the distance. The following parameters are supported:
 These parameters specify the range of symbols, that is, the minimum and
 maximum value of a symbol in all strings.  If the strings consist of bytes,
 B<min_sym> is typically set to I<0> and B<max_sym> to I<255>.  For printable
-characters the range can be further narrowed to I<32> and I<126>.  If words
-are analyzed using the parameter B<word_delim>, B<min_sym> must be set to 0
-and B<max_sym> to I<65535>, as the words are mapped to integers in this
+characters the range can be further narrowed to I<32> and I<126>.  If tokens
+are analyzed using the parameter B<token_delim>, B<min_sym> must be set to 0
+and B<max_sym> to I<65535>, as the tokens are mapped to integers in this
 range.
 
 =back
@@ -823,8 +823,8 @@ on the command line.  Following is the list of options:
   -i,  --input_format <format>   Set input format for strings.
        --decode_str              Enable URI-decoding of strings.
        --reverse_str             Reverse (flip) all strings.
-       --stopword_file <file>    Provide a file with stop words.
-       --soundex                 Enable soundex encoding of words.
+       --stoptoken_file <file>   Provide a file with stop tokens.
+       --soundex                 Enable soundex encoding of tokens.
        --benchmark <seconds>     Perform benchmark run.
   -o,  --output_format <format>  Set output format for matrix.
   -p,  --precision <num>         Set precision of output.
@@ -836,8 +836,8 @@ on the command line.  Following is the list of options:
 =head2 Module options:
 
   -m,  --measure <name>           Set similarity measure.
-  -g,  --granularity <type>       Set granularity: bytes, bits, words.
-  -d,  --word_delim <delim>       Set delimiters for words.
+  -g,  --granularity <type>       Set granularity: bytes, bits, tokens.
+  -d,  --token_delim <delim>      Set delimiters for tokens.
   -n,  --num_threads <num>        Set number of threads.
   -a,  --cache_size <size>        Set size of cache in megabytes.
   -G,  --global_cache             Enable global cache.

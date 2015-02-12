@@ -82,7 +82,7 @@ char *measure_config(const char *name)
     const char *cfg_str;
 
     /* Set delimiters */
-    config_lookup_string(&cfg, "measures.word_delim", &cfg_str);
+    config_lookup_string(&cfg, "measures.token_delim", &cfg_str);
     if (strlen(cfg_str) > 0)
         hstring_delim_set(cfg_str);
     else

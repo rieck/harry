@@ -34,11 +34,11 @@ static default_t defaults[] = {
     {I "", "fasta_regex", CONFIG_TYPE_STRING, {.str = " (\\+|-)?[0-9]+"}},
     {I "", "lines_regex", CONFIG_TYPE_STRING, {.str = "^(\\+|-)?[0-9]+"}},
     {I "", "reverse_str", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
-    {I "", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
+    {I "", "stoptoken_file", CONFIG_TYPE_STRING, {.str = ""}},
     {I "", "soundex", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     {M "", "granularity", CONFIG_TYPE_STRING, {.str = "bytes"}},
-    {M "", "word_delim", CONFIG_TYPE_STRING, {.str = ""}},
+    {M "", "token_delim", CONFIG_TYPE_STRING, {.str = " %0a%0d"}},
     {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},
     {M "", "cache_size", CONFIG_TYPE_INT, {.num = 256}},
     {M "", "global_cache", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
@@ -266,16 +266,12 @@ int config_check(config_t * cfg)
     /* Add default values where missing */
     config_default(cfg);
 
-    /* Sanity checks for words */
+    /* Sanity checks for tokens */
     config_lookup_string(cfg, "measures.granularity", &str1);
-    config_lookup_string(cfg, "measures.word_delim", &str2);
+    config_lookup_string(cfg, "measures.token_delim", &str2);
     
-    if (!strcasecmp(str1, "words") && strlen(str2) == 0) {
-        error("Delimiters are required if the granularity is words.");
-        return 0;
-    }
-    if (strcasecmp(str1, "words") && strlen(str2) != 0) {
-        error("Delimiters can only be set if the granularity is words");
+    if (!strcasecmp(str1, "tokens") && strlen(str2) == 0) {
+        error("Delimiters are required if the granularity is tokens.");
         return 0;
     }
 
