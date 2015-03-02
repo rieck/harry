@@ -299,8 +299,13 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
     /* Check for stdin and stdout "filenames" */
     if (!strcmp(*in, "-"))
         config_set_string(&cfg, "input.input_format", "stdin");
+    if (!strcmp(*in, "="))
+        config_set_string(&cfg, "input.input_format", "raw");
     if (!strcmp(*out, "-"))
         config_set_string(&cfg, "output.output_format", "stdout");
+    if (!strcmp(*out, "="))
+        config_set_string(&cfg, "output.output_format", "raw");
+
 }
 
 

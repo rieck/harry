@@ -84,10 +84,11 @@ each line using a regular expression (see B<lines_regex>).
 
 =item I<"stdin">
 
-The input strings are provided on standard input (stdin) as text lines.
-The parameter I<input> is ignored. The lines need to be separated by
-newline and may not contain the NUL character.  Labels can be extracted from
-each line using a regular expression (see B<lines_regex>).
+The input strings are provided on standard input (stdin) as text lines.  The
+lines need to be separated by newline and may not contain the NUL character. 
+Labels can be extracted from each line using a regular expression (see
+B<lines_regex>).  This input format is also enabled when I<input> is set to
+I<->, otherwise I<input> is ignored.
 
 =item I<"dir">
 
@@ -119,9 +120,9 @@ environments.  The binary format for strings has the form
   | ...
 
 where I<len> is a 32-bit unsigned integer in host byte order indicating the
-length of the following I<array> containing the string data in bytes.
-Labels cannot be extracted from this representation.  The parameter I<input>
-is ignored.
+length of the following I<array> containing the string data in bytes. 
+Labels cannot be extracted from this representation.  This input format is
+also enabled when I<input> is set to I<=>, otherwise I<input> is ignored.
 
 =back
 
@@ -773,6 +774,8 @@ The similarity values are stored as plain text.
 =item I<"stdout">
 
 The similarity values are written to standard output (stdout) as plain text.
+This output format is also enabled when I<output> is set to I<->, otherwise
+I<output> is ignored.
 
 =item I<"libsvm">
 
@@ -801,7 +804,8 @@ integer indicating the length of the following I<array> of similarity values
 in single floats (32 bit).  Note that if I<len> != I<xlen> * I<ylen> the
 matrix is stored in triangular form, that is, only the upper triangle is
 written to standard output. Indices, labels and sources are not
-output.
+output. This output format is also enables when I<output> is set to 
+I<=>, otherwise I<output> is ignored.
 
 =back
 
