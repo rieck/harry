@@ -41,11 +41,11 @@
 extern config_t cfg;
 
 /**
- * Opens a file for writing stdout format
+ * Opens a file for writing raw format
  * @param fn File name (bogus)
  * @return true on sucess, false otherwise
  */
-int output_stdout_open(char *fn)
+int output_raw_open(char *fn)
 {
     if (!stdout) {
         error("Could not open <stdout>");
@@ -60,7 +60,7 @@ int output_stdout_open(char *fn)
  * @param m Matrix of similarity values
  * @return Number of written values
  */
-int output_stdout_write(hmatrix_t *m)
+int output_raw_write(hmatrix_t *m)
 {
     assert(m);
     uint32_t ret, xdim, ydim, len;
@@ -89,7 +89,7 @@ int output_stdout_write(hmatrix_t *m)
 /**
  * Closes an open output file.
  */
-void output_stdout_close()
+void output_raw_close()
 {
     /* Do nothing */
 }
