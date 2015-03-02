@@ -29,6 +29,7 @@
 #include "output_null.h"
 #include "output_json.h"
 #include "output_matlab.h"
+#include "output_raw.h"
 
 /**
  * Structure for output interface
@@ -72,6 +73,10 @@ void output_config(const char *format)
         func.output_open = output_matlab_open;
         func.output_write = output_matlab_write;
         func.output_close = output_matlab_close;
+    } else if (!strcasecmp(format, "raw")) {
+        func.output_open = output_raw_open;
+        func.output_write = output_raw_write;
+        func.output_close = output_raw_close;
     } else {
         error("Unknown ouptut format '%s', using 'text' instead.", format);
         output_config("text");

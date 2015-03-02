@@ -12,7 +12,7 @@
 /**
  * @addtogroup input
  * <hr>
- * <em>stdin</em>: The strings are provided on standard input in raw format.
+ * <em>raw</em>: The strings are provided on standard input in raw format.
  *
  * This input module is designed for efficiently interfacing with other
  * analysis environments.  The raw format of a string is [len][array], where

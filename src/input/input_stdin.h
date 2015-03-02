@@ -14,7 +14,7 @@
 
 #include "hstring.h"
 
-/* Lines module */
+/* Stdin input module */
 int input_stdin_open(char *);
 int input_stdin_read(hstring_t *, int);
 void input_stdin_close(void);

@@ -14,7 +14,7 @@
 
 #include "hstring.h"
 
-/* Lines module */
+/* Raw input module */
 int input_raw_open(char *);
 int input_raw_read(hstring_t *, int);
 void input_raw_close(void);
