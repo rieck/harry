@@ -112,8 +112,13 @@ are allowed if they are preceded by either ';' or '>'.
 
 The input strings are provided on standard input (stdin) in "raw" format.
 This input module is designed to efficiently interface with other
-environments.  The binary format of a string has the form I<len>I<array>,
-where I<len> is a 32-bit unsigned integer in host-byte order indicating the
+environments.  The binary format for strings has the form
+
+  | len (uint32) | array (uint8) ... |
+  | len (uint32) | array (uint8) ... |
+  | ...
+
+where I<len> is a 32-bit unsigned integer in host byte order indicating the
 length of the following I<array> containing the string data in bytes.
 Labels cannot be extracted from this representation.  The parameter I<input>
 is ignored.
@@ -780,6 +785,23 @@ The similarity values are stored in JSON object.
 =item I<"matlab">
 
 The similarity values are stored in Matlab format (version 5).
+
+=item I<"raw">
+
+The similarity values are written to standard output (stdout) in raw format.
+This output module is designed for interfacing with other analysis
+environments.  The format of the similarity matrix has the following form
+
+  | xdim (uint32) | ydim (uint32) |
+  | len (uint32)  | array (float) ... |
+
+where I<xdim> and I<ydim> are unsigned 32-bit integers in host byte order
+specifing the dimensions of the matrix, and I<len> is an unsigned 32-bit
+integer indicating the length of the following I<array> of similarity values
+in single floats (32 bit).  Note that if I<len> != I<xlen> * I<ylen> the
+matrix is stored in triangular form, that is, only the upper triangle is
+written to standard output. Indices, labels and sources are not
+output.
 
 =back
 

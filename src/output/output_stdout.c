@@ -37,13 +37,11 @@ static const char *separator = ",";
 
 /**
  * Opens a file for writing stdout format
- * @param fn File name
- * @return number of regular files
+ * @param fn File name (bogus)
+ * @return true on success, false otherwise
  */
 int output_stdout_open(char *fn)
 {
-    assert(fn);
-
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
