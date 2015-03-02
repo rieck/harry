@@ -301,15 +301,16 @@ B<sim_coefficient>.
 
 =item B<granularity = "bytes";>
 
-TODO
+This parameter controls the granularity of strings. It can be set to either
+I<bits>, I<bytes> or I<tokens>. Depending in the granularity a string is 
+considered as a sequence of bits, bytes or tokens, which results in different
+similarity values during comparison. 
 
 =item B<token_delim = " %0a%0d";>
 
 The parameter B<token_delim> defines characters for delimiting tokens in
-strings.  If this parameter is set, the comparison of strings is performed
-on tokens, that is, each token is considered as a symbol.  If the parameter
-B<token_delim> is an empty strings, B<harry> considers each individual
-character as a symbol.
+strings. It is only considered, if the granularity is set to I<tokens>, 
+otherwise it is ignored.
 
 =item B<num_threads = 0;>
 
