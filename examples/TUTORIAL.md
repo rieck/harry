@@ -173,7 +173,7 @@
   The matrices are split row-wise. That is, the resulting output can be
   simply concatenated to yield the original similarity matrix
 
-       cat split?.txt > matrix.txt</pre>
+       cat split?.txt > matrix.txt
 
 ## Output Formats
 
@@ -207,7 +207,7 @@
        import json
        data = json.load(open('matrix.json'))
        for row in data['matrix']:
-             print row</pre>
+             print row
 
 ## Conclusions
 
