@@ -84,7 +84,7 @@ each line using a regular expression (see B<lines_regex>).
 
 =item I<"stdin">
 
-The input strings are available as text lines on standard input (stdin).
+The input strings are provided on standard input (stdin) as text lines.
 The parameter I<input> is ignored. The lines need to be separated by
 newline and may not contain the NUL character.  Labels can be extracted from
 each line using a regular expression (see B<lines_regex>).
@@ -107,6 +107,16 @@ The input strings are available in FASTA format. The name of the file is
 given as I<input> to B<harry>.  Labels can be extracted from the description
 of each sequence using a regular expression (see B<fasta_regex>).  Comments
 are allowed if they are preceded by either ';' or '>'.
+
+=item I<"raw">
+
+The input strings are provided on standard input (stdin) in "raw" format.
+This input module is designed to efficiently interface with other
+environments.  The binary format of a string has the form I<len>I<array>,
+where I<len> is a 32-bit unsigned integer in host-byte order indicating the
+length of the following I<array> containing the string data in bytes.
+Labels cannot be extracted from this representation.  The parameter I<input>
+is ignored.
 
 =back
 
@@ -146,7 +156,7 @@ direction of the input strings is unspecified.
 
 Stop tokens (irrelevant tokens) can be filtered from the strings by providing
 a file containing these tokens; one per line.  Non-printable characters can
-be escaped using URI encoding (%XX).  Stop tokens can only be filtered, if 
+be escaped using URI encoding (%XX).  Stop tokens can only be filtered, if
 the B<granularity> is set to I<tokens>.
 
 =item B<soundex = false;>
@@ -285,7 +295,7 @@ B<sim_coefficient>.
 
 =item B<granularity = "bytes";>
 
-TODO 
+TODO
 
 =item B<token_delim = " %0a%0d";>
 

@@ -29,6 +29,7 @@
 #include "input_lines.h"
 #include "input_fasta.h"
 #include "input_stdin.h"
+#include "input_raw.h"
 
 /* Other stuff */
 #include "uthash.h"
@@ -71,6 +72,10 @@ void input_config(const char *format)
         func.input_open = input_stdin_open;
         func.input_read = input_stdin_read;
         func.input_close = input_stdin_close;
+    } else if (!strcasecmp(format, "raw")) {
+        func.input_open = input_raw_open;
+        func.input_read = input_raw_read;
+        func.input_close = input_raw_close;
     } else if (!strcasecmp(format, "arc")) {
 #ifdef HAVE_LIBARCHIVE
         func.input_open = input_arc_open;

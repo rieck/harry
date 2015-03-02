@@ -72,7 +72,6 @@ static float get_label(char *line)
  */
 int input_stdin_open(char *name)
 {
-    assert(name);
     const char *pattern;
 
     if (stdin == NULL) {
