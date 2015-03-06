@@ -454,32 +454,37 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         hmatrix_set(m, xi, yi, f);
 
         if (verbose || log_line)
-#ifdef HAVE_OPENMP
-#pragma omp critical
-#endif
         {
-            ts = time_stamp();
-
             /*
              * Update internal counter. Note that we have slightly more
-             * calculations as expected, since we don't lock the matrix and
-             * two threads might compute the same value in parallel.  As
-             * long as writing to the matrix is atomic this should not be a
-             * problem.
+             * calculations as expected, since we don't lock the matrix.
+             * Moreover, this update is not thread-safe and the progress
+             * bar might not be correct.
              */
             if (j < m->calcs)
                 j++;
 
-            /* Update progress bar every 100ms */
-            if (verbose && ts - ts1 > 0.1) {
-                prog_bar(0, m->calcs, j);
-                ts1 = ts;
-            }
+            /* Continue if less than 100ms have passed */
+            ts = time_stamp();
+            if (ts - ts1 < 0.1)
+                continue;
 
-            /* Print log line every minute if enabled */
-            if (log_line && ts - ts2 > 60) {
-                log_print(0, m->calcs, j);
-                ts2 = ts;
+            /* Lock only if something is displayed */
+#ifdef HAVE_OPENMP
+#pragma omp critical
+#endif
+            {
+                /* Update progress bar every 100ms */
+                if (verbose) {
+                    prog_bar(0, m->calcs, j);
+                    ts1 = ts;
+                }
+
+                /* Print log line every minute if enabled */
+                if (log_line && ts - ts2 > 60) {
+                    log_print(0, m->calcs, j);
+                    ts2 = ts;
+                }
             }
         }
     }
