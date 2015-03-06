@@ -67,7 +67,7 @@ int output_raw_write(hmatrix_t *m)
 
     xdim = m->x.n - m->x.i;
     ydim = m->y.n - m->y.i;
-    len = m->size / sizeof(float);
+    len = m->size;
 
     ret = fwrite(&xdim, sizeof(xdim), 1, stdout);
     ret += fwrite(&ydim, sizeof(ydim), 1, stdout);
