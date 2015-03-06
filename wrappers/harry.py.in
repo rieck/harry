@@ -36,7 +36,10 @@ def __run_harry(strs, opts):
     cmd = "%s %s --decode_str - =" % (tool, opts)
     args = shlex.split(cmd)
     p = sp.Popen(args, stdout=sp.PIPE, stdin=sp.PIPE, stderr=None)
-    stdout, _ = p.communicate(input=stdin)
+    stdout, stderr = p.communicate(input=stdin)
+
+    if p.returncode != 0:
+       raise Exception("Error while executing %s. See above." % tool)
 
     # Unpack dimensions of matrix
     xdim, ydim = struct.unpack("II", stdout[0:8])
@@ -45,12 +48,21 @@ def __run_harry(strs, opts):
     return mat.reshape(xdim, ydim)
 
 
-def compare(x, y=None, opts=""):
+def compare(x, y=None, opts="", **kwargs):
     """
     Compare strings and compute a similarity matrix.
     :param x: List of strings
     :return: Similarity matrix
     """
+
+    # Process options
+    for (k,v) in kwargs.items():
+        if type(v) is bool:
+	    opts += " --%s" % k
+        elif type(v) is float or type(v) is int:
+	    opts += " --%s=%g" % (k, v)
+	else:
+	    opts += " --%s=%s" % (k, v)
 
     # Fix incorrect usage
     x = x if type(x) is list else [x]
@@ -65,7 +77,7 @@ def compare(x, y=None, opts=""):
 
     if len(x) < 50:
 	warnings.warn("You are using the python module of Harry with a "
-		      "small number of strings. The module is only efficient"
-		      "on large sets (> 50)", RuntimeWarning)
+		      "small number of strings. The module is only efficient "
+		      "on larger sets (> 50)", RuntimeWarning)
 
     return __run_harry(x, opts)

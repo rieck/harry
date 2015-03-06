@@ -266,9 +266,12 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
             exit(EXIT_SUCCESS);
             break;
         case 'h':
-        case '?':
             print_usage();
             exit(EXIT_SUCCESS);
+            break;
+        case '?':
+            print_usage();
+            exit(EXIT_FAILURE);
             break;
         }
     }
@@ -325,9 +328,13 @@ static void harry_load_config(int argc, char **argv)
         case 'c':
             cfg_file = optarg;
             break;
-        case '?':
+        case 'h':
             print_usage();
             exit(EXIT_SUCCESS);
+            break;
+        case '?':
+            print_usage();
+            exit(EXIT_FAILURE);
             break;
         default:
             /* empty */
