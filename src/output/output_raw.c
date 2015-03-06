@@ -18,15 +18,11 @@
  * This module is designed for efficiently interfacing with other
  * environments.  The raw format of a similarity matrix has the form
  * <pre>
- * | xdim (uint32) | ydim (uint32) | len (uint32) | array (float) ... |
+ * | xdim (uint32) | ydim (uint32) | array (float) ... |
  * </pre>
  * where xdim and ydim are unsigned 32-bit integers in host byte order
- * specifing the dimensions of the matrix, and len is an unsigned 32-bit
- * integer indicating the length of the following array in single
- * floats (32 bit).
- *
- * Note that if len != xlen * ylen the matrix is stored in triangular form,
- * that is, only the upper triangle is given.
+ * specifing the dimensions of the matrix and array holds the matrix
+ * as single floats (32 bit).
  *
  * @{
  */
@@ -40,6 +36,9 @@
 /* External variables */
 extern config_t cfg;
 
+/* Local variables */
+static cfg_int precision = 0;
+
 /**
  * Opens a file for writing raw format
  * @param fn File name (bogus)
@@ -47,6 +46,8 @@ extern config_t cfg;
  */
 int output_raw_open(char *fn)
 {
+    config_lookup_int(&cfg, "output.precision", &precision);
+
     if (!stdout) {
         error("Could not open <stdout>");
         return FALSE;
@@ -63,25 +64,30 @@ int output_raw_open(char *fn)
 int output_raw_write(hmatrix_t *m)
 {
     assert(m);
-    uint32_t ret, xdim, ydim, len;
+    uint32_t ret, xdim, ydim, i, j;
 
     xdim = m->x.n - m->x.i;
     ydim = m->y.n - m->y.i;
-    len = m->size;
 
     ret = fwrite(&xdim, sizeof(xdim), 1, stdout);
     ret += fwrite(&ydim, sizeof(ydim), 1, stdout);
-    ret += fwrite(&len, sizeof(len), 1, stdout);
-    if (ret != 3) {
+    if (ret != 2) {
         error("Failed to write raw matrix header to stdout");
         return 0;
     }
 
-    ret = fwrite(m->values, sizeof(float), len, stdout);
-    if (ret != len) {
-        error("Failed to write raw matrix data to stdout");
-        return ret;
+    for (i = m->y.i; i < m->y.n; i++) {
+        for (j = m->x.i; j < m->x.n; j++) {
+            float val = hround(hmatrix_get(m, j, i), precision);
+            ret = fwrite(&val, sizeof(float), 1, stdout);
+            if (ret != 1) {
+                error("Failed to write raw matrix data to stdout");
+                return ret;
+            }
+        }
     }
+
+
 
     return ret;
 }

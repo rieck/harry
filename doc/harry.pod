@@ -797,7 +797,7 @@ This output module is designed for interfacing with other analysis
 environments.  The format of the similarity matrix has the following form
 
   | xdim (uint32) | ydim (uint32) |
-  | len (uint32)  | array (float) ... |
+  | array (float) ... |
 
 where I<xdim> and I<ydim> are unsigned 32-bit integers in host byte order
 specifing the dimensions of the matrix, and I<len> is an unsigned 32-bit

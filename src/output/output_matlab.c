@@ -371,7 +371,7 @@ static int fwrite_sources(range_t ra, char **sources, char *name)
 int output_matlab_write(hmatrix_t *m)
 {
     int r = 0;
-    
+
     /* Write similarity matrix */
     r += fwrite_matrix(m);
 
