@@ -12,6 +12,7 @@ import subprocess as sp
 import shlex
 import urllib
 import struct
+import warnings
 
 import numpy as np
 
@@ -61,5 +62,10 @@ def compare(x, y=None, opts=""):
         # We merge the lists and use index ranges
         opts += " -x :%d -y %d:" % (len(x), len(x))
         x += y
+
+    if len(x) < 50:
+	warnings.warn("You are using the python module of Harry with a "
+		      "small number of strings. The module is only efficient"
+		      "on large sets (> 50)", RuntimeWarning)
 
     return __run_harry(x, opts)

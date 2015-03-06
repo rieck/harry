@@ -3,6 +3,7 @@
 
 EXTRA_DIST = harry.py.in
 python_PYTHON = harry.py
+noinst_PYTHON = benchmark1.py
 
 harry.py: harry.py.in
 	$(SED) "s|__BINDIR__|@bindir@|" $< >$@

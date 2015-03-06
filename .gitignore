@@ -46,3 +46,5 @@ src/measures/measures.c
 stamp-h1
 test-driver
 tests/*.log
+wrappers/harry.py
+wrappers/*.pdf
