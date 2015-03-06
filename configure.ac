@@ -33,6 +33,9 @@ if test "$GCC" = "yes" ; then
    CFLAGS="$CFLAGS -std=c99 -fgnu89-inline -Wall -fPIC"
 fi
 
+# Check for Python
+AM_PATH_PYTHON
+
 # Optional packages
 AC_ARG_WITH([libarchive], [AS_HELP_STRING([--with-libarchive],
             [support for reading archives @<:@default=check@:>@])],
@@ -155,6 +158,7 @@ AC_CONFIG_FILES([
    src/input/Makefile \
    src/output/Makefile \
    tests/Makefile \
+   wrappers/Makefile \
    doc/Makefile \
    examples/Makefile \
    examples/alexa/Makefile \

@@ -11,46 +11,51 @@ import subprocess as sp
 import shlex
 import urllib
 import struct
+
 import numpy as np
 
 
-def harry(strs, opts=""):
+def __run_harry(strs, opts):
     """
-    Wrapper function for the tool Harry
+    Internal function to call the tool Harry
     :param strs: List of strings
     :return: Similarity matrix
     """
 
-    # Escape special chars in strings
+    # Decode special characters and prepare input
     strs = map(urllib.quote, strs)
-    # Assemble input data
     stdin = '\n'.join(strs)
 
-    #  Input: "-"  Read strings from standard input
-    # Output: "="  Write raw floats to standard output
+    # Input: "-"  Read strings from standard input
+    # Output: "="  Write raw matrix to standard output
     cmd = "harry %s --decode_str - =" % opts
     args = shlex.split(cmd)
     p = sp.Popen(args, stdout=sp.PIPE, stdin=sp.PIPE, stderr=None)
-    (stdout, stderr) = p.communicate(input=stdin)
+    stdout, _ = p.communicate(input=stdin)
 
     # Unpack dimensions of matrix
     xdim, ydim = struct.unpack("II", stdout[0:8])
-
     # Generate matrix form buffer and reshape it
     mat = np.frombuffer(stdout[8:], dtype=np.float32)
-    return mat.reshape(ydim, xdim)
+    return mat.reshape(xdim, ydim)
 
 
-import os
-import time
-test_file = "../config.sub"
+def compare(x, y=None, opts=""):
+    """
+    Compare strings and compute a similarity matrix.
+    :param x: List of strings
+    :return: Similarity matrix
+    """
 
-# Command-line version
-t = time.time()
-os.system("harry %s /dev/null" % test_file)
-print "Writing to a file: %fs" % (time.time() - t)
+    # Fix incorrect usage
+    x = x if type(x) is list else [x]
 
-t = time.time()
-data = open(test_file).read().splitlines()
-mat = harry(data, opts="")
-print "Writing to Python: %fs" % (time.time() - t)
+    if y:
+        # Fix incorrect usage again
+        y = y if type(y) is list else [y]
+
+        # We merge the lists and use index ranges
+        opts += " -x :%d -y %d:" % (len(x), len(x))
+        x += y
+
+    return __run_harry(x, opts)
