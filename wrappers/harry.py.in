@@ -7,6 +7,7 @@
 # option) any later version.  This program is distributed without any
 # warranty. See the GNU General Public License for more details.
 
+import os
 import subprocess as sp
 import shlex
 import urllib
@@ -26,9 +27,12 @@ def __run_harry(strs, opts):
     strs = map(urllib.quote, strs)
     stdin = '\n'.join(strs)
 
+    # Construct path
+    tool = os.path.join("__BINDIR__", "harry")
+
     # Input: "-"  Read strings from standard input
     # Output: "="  Write raw matrix to standard output
-    cmd = "harry %s --decode_str - =" % opts
+    cmd = "%s %s --decode_str - =" % (tool, opts)
     args = shlex.split(cmd)
     p = sp.Popen(args, stdout=sp.PIPE, stdin=sp.PIPE, stderr=None)
     stdout, _ = p.communicate(input=stdin)

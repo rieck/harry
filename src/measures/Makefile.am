@@ -23,7 +23,7 @@ libmeasures_la_SOURCES     = measures.h measures.c \
 			     dist_osa.c dist_osa.h
 
 measures.c: measures.c.in gen_measures.py measures.txt
-	python gen_measures.py measures.txt measures.c
+	$(PYTHON) gen_measures.py measures.txt measures.c
 
 distclean-local:
 	rm -f measures.c
