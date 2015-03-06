@@ -176,17 +176,17 @@ void prog_bar(long a, long b, long c)
     pb_string[PROGBAR_LEN] = 0;
 
 #ifdef HAVE_OPENMP
-    printf("\r[%.2d][%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
-           omp_get_num_threads(), pb_string, perc * 100, descr,
-           mins, secs, vcache_get_hitrate(), vcache_get_used());
+    fprintf(stderr, "\r[%.2d][%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
+            omp_get_num_threads(), pb_string, perc * 100, descr,
+            mins, secs, vcache_get_hitrate(), vcache_get_used());
 #else
-    printf("\r[%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
-           pb_string, perc * 100, descr, mins, secs,
-           vcache_get_hitrate(), vcache_get_used());
+    fprintf(stderr, "\r[%s %3.0f%% %s %.2dm %.2ds][%3.0f%% %5.1fMb]",
+            pb_string, perc * 100, descr, mins, secs,
+            vcache_get_hitrate(), vcache_get_used());
 #endif
 
     if (last)
-        printf("\n");
+        fprintf(stderr, "\n");
 
     fflush(stdout);
     fflush(stderr);
@@ -385,15 +385,15 @@ void log_print(long a, long b, long c)
     strftime(buf, 255, "%F %T", localtime(&rawtime));
 
 #ifdef HAVE_OPENMP
-    printf("[%s] state: %.0f%%, threads: %d, vcache: %.0f%%/%.0f%%, "
-           "eta: %dh%.2dm%.2ds\n", buf,
-           perc * 100, omp_get_num_threads(), vcache_get_used() * 100,
-           vcache_get_hitrate() * 100, hours, mins, secs);
+    fprintf(stderr, "[%s] state: %.0f%%, threads: %d, vcache: %.0f%%/%.0f%%, "
+            "eta: %dh%.2dm%.2ds\n", buf,
+            perc * 100, omp_get_num_threads(), vcache_get_used() * 100,
+            vcache_get_hitrate() * 100, hours, mins, secs);
 #else
-    printf("[%s] state: %.0f%%, vcache: %.0f%%/%.0f%%, "
-           "eta: %dh%.2dm%.2ds\n", buf,
-           perc * 100, vcache_get_used() * 100,
-           vcache_get_hitrate() * 100, hours, mins, secs);
+    fprintf(stderr, "[%s] state: %.0f%%, vcache: %.0f%%/%.0f%%, "
+            "eta: %dh%.2dm%.2ds\n", buf,
+            perc * 100, vcache_get_used() * 100,
+            vcache_get_hitrate() * 100, hours, mins, secs);
 #endif
 
     fflush(stdout);

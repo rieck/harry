@@ -453,8 +453,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         f = measure(s[xi], s[yi]);
         hmatrix_set(m, xi, yi, f);
 
-        if (verbose || log_line)
-        {
+        if (verbose || log_line) {
             /*
              * Update internal counter. Note that we have slightly more
              * calculations as expected, since we don't lock the matrix.
