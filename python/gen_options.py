@@ -15,10 +15,7 @@ keyargs = []
 line = '        '
 for opt in options:
     # No I/O options
-    if opt[3] == 'io':
-        continue
-
-    if len(opt[0]) == 0:
+    if opt[3] == 'io' or len(opt[0]) == 0:
         continue
 
     if len(line) + len(opt[0]) + 3 > 77:
@@ -34,10 +31,11 @@ keyargs = "keyargs = set([\n" + '\n'.join(keyargs) + "    ])"
 conversion = {
     "file": "str", "chars": "str", "num": "int", "bool": "bool",
     "start:end": "str", "blocks:id": "str", "name": "str",
-    "type": "str"
+    "type": "str", "": "bool"
 }
 
 # Prepare usage
+param = "\n    Parameters (%s)\n    ----------\n"
 usage = ""
 for opt in options:
     # No I/O options
@@ -45,14 +43,15 @@ for opt in options:
         continue
 
     if len(opt[0]) == 0:
-        usage += "\n    %s (optional)\n" % opt[4].replace("options", "args")
+        usage += param % opt[4]
         continue
 
+    conv = conversion[opt[2]]
     type = "bool" if len(opt[2]) == 0 else opt[2]
-    type = conversion[type]
-    line = "      %s (%s):" % (opt[0], type)
+
+    line = "    %s (%s)" % (opt[0], conv)
     usage += line + (30 - len(line)) * " " + "%s\n" % opt[4]
-usage = usage[5:-1]
+
 
 # Replace
 f = open(sys.argv[2], 'w')
