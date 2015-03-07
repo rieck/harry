@@ -108,7 +108,7 @@ static void print_config(char *msg)
  */
 static void print_usage(void)
 {
-    printf("Usage: harry [options] <input> <output>\n"
+    printf("Usage: harry [options] <input> [<input>] <output>\n"
            "\nI/O options\n"
            "  -i,  --input_format <format>    Set input format for strings.\n"
            "       --decode_str               Enable URI-decoding of strings.\n"
@@ -160,9 +160,11 @@ static void print_version(void)
  * @param argc Number of arguments
  * @param argv Argument values
  * @param in Return pointer to input filename
+ * @param in Return pointer to optional input filename
  * @param out Return pointer to output filename
  */
-static void harry_parse_options(int argc, char **argv, char **in, char **out)
+static void harry_parse_options(int argc, char **argv, char **in,
+                                char **in2, char **out)
 {
     int ch;
     const char *str;
@@ -288,12 +290,16 @@ static void harry_parse_options(int argc, char **argv, char **in, char **out)
     argv += optind;
 
     /* Check for input and output arguments */
-    if (argc != 2) {
-        print_usage();
-        exit(EXIT_FAILURE);
-    } else {
+    if (argc == 2) {
         *in = argv[0];
         *out = argv[1];
+    } else if (argc == 3) {
+        *in = argv[0];
+        *in2 = argv[1];
+        *out = argv[2];
+    } else {
+        print_usage();
+        exit(EXIT_FAILURE);
     }
 
     /* Check for stdin and stdout "filenames" */
@@ -389,15 +395,17 @@ static void harry_init()
 /**
  * Read a set of strings to memory from input
  * @param input Input filename
+ * @param input2 Optional input filename
  * @param num Pointer to number of strings
  * @return array of string objects
  */
-static hstring_t *harry_read(char *input, int *num)
+static hstring_t *harry_read(char *input, char *input2, int *num)
 {
     const char *cfg_str;
     int i, read;
     cfg_int chunk;
     hstring_t *strs = NULL;
+    char buf[128];
 
     /* Get chunk size */
     config_lookup_int(&cfg, "input.chunk_size", &chunk);
@@ -409,7 +417,7 @@ static hstring_t *harry_read(char *input, int *num)
     if (!input_open(input))
         fatal("Could not open input source");
 
-    info_msg(1, "Reading strings in chunks of %d", chunk);
+    info_msg(1, "Reading strings from %s", input);
     for (*num = 0, read = chunk; read == chunk; *num += read) {
         /* Allocate memory for strings */
         strs = realloc(strs, (*num + chunk) * sizeof(hstring_t));
@@ -422,6 +430,34 @@ static hstring_t *harry_read(char *input, int *num)
 
     /* Close input */
     input_close();
+
+    /* Second input available */
+    if (input2) {
+        /* Store length of first input */
+        int len1 = *num;
+        if (!input_open(input2))
+            fatal("Could not open second input source");
+
+        info_msg(1, "Reading strings from %s", input2);
+        for (read = chunk; read == chunk; *num += read) {
+            /* Allocate memory for strings */
+            strs = realloc(strs, (*num + chunk) * sizeof(hstring_t));
+            if (!strs)
+                fatal("Could not allocate memory for strings");
+
+            /* Read chunk */
+            read = input_read(strs + *num, chunk);
+        }
+
+        /* Close input */
+        input_close();
+
+        /* Overwrite x-range and y-range */
+        snprintf(buf, 128, "%d:%d", 0, len1);
+        config_set_string(&cfg, "measures.x_range", buf);
+        snprintf(buf, 128, "%d:%d", len1, *num);
+        config_set_string(&cfg, "measures.y_range", buf);
+    }
 
     /* Symbolize strings if requested */
     for (i = 0; i < *num; i++)
@@ -569,14 +605,14 @@ int main(int argc, char **argv)
     hmatrix_t *mat = NULL;
     hstring_t *strs = NULL;
     int num = 0;
-    char *input = NULL;
+    char *input = NULL, *input2 = NULL;
     char *output = NULL;
 
     harry_load_config(argc, argv);
-    harry_parse_options(argc, argv, &input, &output);
+    harry_parse_options(argc, argv, &input, &input2, &output);
 
     harry_init();
-    strs = harry_read(input, &num);
+    strs = harry_read(input, input2, &num);
     mat = harry_alloc(strs, num);
 
     if (benchmark) {

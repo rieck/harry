@@ -6,7 +6,7 @@ B<harry> - A tool for measuring string similarity
 
 =head1 SYNOPSIS
 
-B<harry> [B<options>] [B<-c> I<config>] I<input> I<output>
+B<harry> [B<options>] [B<-c> I<config>] I<input> [<input>] I<output>
 
 =head1 DESCRIPTION
 
@@ -20,11 +20,14 @@ compression distance.
 
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
-I<output>.  The similarity measure can be computed based on the granularity
-of bits, bytes as well as tokens contained in the strings.  The configuration
-of this process, such as the input format, the similarity measure and the
-output format, are specified in the file I<config> and can be additionally
-refined using command-line options.
+I<output>.  If one I<input> is given, B<harry> computes the similarities
+between all strings in I<input>.  If two I<input> sources are provided,
+B<harry> computes only the similarities between the two sources.  The
+similarity measure can be computed based on the granularity of bits, bytes
+as well as tokens contained in the strings.  The configuration of this
+process, such as the input format, the similarity measure and the output
+format, are specified in the file I<config> and can be additionally refined
+using command-line options.
 
     .---------.                        .----------.
     |  lines  |                        |   text   |
@@ -347,6 +350,9 @@ chooses all strings.  If the end index is negative, it is substracted from
 the maximum index, that is, I<":-1"> selects all strings except for the last
 one.
 
+The parameters B<x_range> and B<y_range> are ignore if two input sources are
+given on the command line.
+
 =item B<split = "";>
 
 To ease the computation of large similarity matrices, B<harry> supports
@@ -355,6 +361,9 @@ a string of the form "I<blocks>:I<idx>", where I<blocks> defines the number
 of blocks and I<idx> the index of the block to compute.  The matrix is
 splitted across the y-axis.  For many output formats the blocks can be
 simply concatenated to get the original matrix.
+
+The parameters B<split> is ignore if two input sources are given on the
+command line.
 
 =item B<dist_hamming = {>
 
