@@ -43,7 +43,7 @@ usage = 'printf("Usage: harry [options] <input> <output>\\n"\n'
 for opt in options:
     # Headings
     if len(opt[0]) == 0:
-        usage += '%s"\\n%s:\\n"\n' % (space, opt[3])
+        usage += '%s"\\n%s:\\n"\n' % (space, opt[4])
         continue
 
     # Short option
@@ -58,7 +58,7 @@ for opt in options:
 
     # Align descriptions
     line += (45 - len(line)) * ' '
-    usage += line + '%s\\n"\n' % opt[3]
+    usage += line + '%s\\n"\n' % opt[4]
 usage += '%s"\\n");\n' % space
 
 # Replace

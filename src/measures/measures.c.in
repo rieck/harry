@@ -99,8 +99,9 @@ char *measure_config(const char *name)
 
 /** 
  * Print list of supported similarity measures
+ * @param f File stream 
  */
-void measure_print()
+void measure_fprint(FILE *f)
 {
     %LIST%
 }

@@ -32,7 +32,7 @@ for m in sorted(measures):
 interfaces += '    {NULL}\n};'
 
 # Prepare list
-list = '    printf(\n'
+list = '    fprintf(f,\n'
 for m in sorted(measures):
     s = m
     #for a in aliases[m]:

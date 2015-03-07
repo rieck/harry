@@ -1,11 +1,15 @@
-# Harry - A Tool for Measuring String Similarity
-# Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
-# --
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the
-# Free Software Foundation; either version 3 of the License, or (at your
-# option) any later version.  This program is distributed without any
-# warranty. See the GNU General Public License for more details.
+""" 
+    Harry - A Tool for Measuring String Similarity
+    Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
+ 
+    Harry is a small module and tool for measuring the similarity of
+    strings.  The module supports common distance and kernel functions for
+    strings as well as some exotic similarity measures.  The focus of
+    Harry lies on implicit similarity measures, that is, comparison
+    functions that do not give rise to an explicit vector space.  Examples
+    of such similarity measures are the Levenshtein distance, the
+    Jaro-Winkler distance or the normalized compression distance.
+"""
 
 import os
 import subprocess as sp
@@ -17,10 +21,15 @@ import array
 
 
 def __run_harry(strs, opts):
-    """
+    """ 
     Internal function to call the tool Harry
-    :param strs: List of strings
-    :return: Similarity matrix
+
+    Main args:
+      strs (list):              List of strings to compare.
+      opts (str):               Command-line options for Harry
+
+    Returns:
+      matrix:                   Matrix of similarity values
     """
 
     # Decode special characters and prepare input
@@ -28,7 +37,7 @@ def __run_harry(strs, opts):
     stdin = '\n'.join(strs)
 
     # Construct path
-    tool = os.path.join("__BINDIR__", "harry")
+    tool = os.path.join("%BINDIR%", "harry")
 
     # Input: "-"  Read strings from standard input
     # Output: "="  Write raw matrix to standard output
@@ -61,15 +70,28 @@ def __run_harry(strs, opts):
     return mat
 
 
-def compare(x, y=None, opts="", **kwargs):
-    """
-    Compare strings and compute a similarity matrix.
-    :param x: List of strings
-    :return: Similarity matrix
+
+def compare(x, y=None, **kwargs):
+    """ 
+    Compare strings using a similarity measure
+
+    Main args:
+      x (list):               List of strings to compare.
+      y (list):               Second list of strings (optional).
+
+    %USAGE%
+
+    Returns:
+      matrix:                 Matrix of similarity values
     """
 
+    %KEYARGS%
+
     # Process options
+    opts = ""
     for (k, v) in kwargs.items():
+	if k not in keyargs:
+	    raise Exception("Unknown argument '%s'" % k)
         if type(v) is bool:
             opts += " --%s" % k
         elif type(v) is float or type(v) is int:

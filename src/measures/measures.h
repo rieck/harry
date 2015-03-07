@@ -31,6 +31,6 @@ typedef struct
 int measure_match(const char *);
 char *measure_config(const char *);
 double measure_compare(hstring_t, hstring_t);
-void measure_print();
+void measure_fprint(FILE *);
 
 #endif /* MEASURES_H */

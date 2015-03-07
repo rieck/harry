@@ -1,34 +1,34 @@
-# <long>;<short>;[<param>];<description>
-;;;I/O options
-input_format;i;format;Set input format for strings.
-decode_str;1000;;Enable URI-decoding of strings.
-reverse_str;1001;;Reverse (flip) all strings.
-stoptoken_file;1002;file;Provide a file with stop tokens.
-soundex;1003;;Enable soundex encoding of tokens.
-benchmark;1004;seconds;Perform a benchmark run.
-output_format;o;format;Set output format for matrix.
-precision;p;num;Set precision of output.
-compress;z;;Enable zlib compression of output.
-save_indices;1005;;Save indices of strings.
-save_labels;1006;;Save labels of strings.
-save_sources;1007;;Save sources of strings.
-;;;Module options
-measure;m;name;Set similarity measure.
-granularity;g;type;Set granularity; bytes, bits, tokens.
-token_delim;d;chars;Set delimiters for tokens.
-num_threads;n;num;Set number of threads.
-cache_size;a;size;Set size of cache in megabytes.
-global_cache;G;;Enable global cache.
-x_range;x;start:end;Set the index range (x) of strings.
-y_range;y;start:end;Set the index range (y) of strings.
-split;s;blocks:id;Split matrix into blocks and compute one.
-;;;Generic options
-config_file;c;file;Set configuration file.
-verbose;v;;Increase verbosity.
-log_line;l;;Print a log line every minutes.
-quiet;q;;Be quiet during processing.
-print_measures;M;;Print list of similarity measures.
-print_config;C;;Print the current configuration.
-print_defaults;D;;Print the default configuration.
-version;V;;Print version and copyright.
-help;h;;Print help screen.
+# <long>;<short>;[<param>];<group>;<description>
+;;;io;I/O options
+input_format;i;format;io;Set input format for strings.
+decode_str;1000;;io;Enable URI-decoding of strings.
+reverse_str;1001;;io;Reverse (flip) all strings.
+stoptoken_file;1002;file;io;Provide a file with stop tokens.
+soundex;1003;;io;Enable soundex encoding of tokens.
+benchmark;1004;num;io;Perform benchmark for given seconds.
+output_format;o;format;io;Set output format for matrix.
+precision;p;num;io;Set precision of output.
+compress;z;;io;Enable zlib compression of output.
+save_indices;1005;;io;Save indices of strings.
+save_labels;1006;;io;Save labels of strings.
+save_sources;1007;;io;Save sources of strings.
+;;;meas;Measure options
+measure;m;name;meas;Set similarity measure.
+granularity;g;type;meas;Set granularity: bytes, bits, tokens.
+token_delim;d;chars;meas;Set delimiters for tokens.
+num_threads;n;num;meas;Set number of threads.
+cache_size;a;num;meas;Set size of cache in megabytes.
+global_cache;G;;meas;Enable global cache.
+x_range;x;start:end;meas;Set the index range (x) of strings.
+y_range;y;start:end;meas;Set the index range (y) of strings.
+split;s;blocks:id;meas;Split matrix into blocks and compute one.
+;;;gen;Generic options
+config_file;c;file;gen;Set configuration file.
+verbose;v;;gen;Increase verbosity.
+log_line;l;;gen;Print a log line every minutes.
+quiet;q;;gen;Be quiet during processing.
+print_measures;M;;gen;Print list of similarity measures.
+print_config;C;;gen;Print the current configuration.
+print_defaults;D;;gen;Print the default configuration.
+version;V;;gen;Print version and copyright.
+help;h;;gen;Print help screen.
