@@ -13,8 +13,7 @@ import shlex
 import urllib
 import struct
 import warnings
-
-import numpy as np
+import array
 
 
 def __run_harry(strs, opts):
@@ -39,13 +38,27 @@ def __run_harry(strs, opts):
     stdout, stderr = p.communicate(input=stdin)
 
     if p.returncode != 0:
-       raise Exception("Error while executing %s. See above." % tool)
+        raise Exception("Error while executing %s. See above." % tool)
 
     # Unpack dimensions of matrix
     xdim, ydim = struct.unpack("II", stdout[0:8])
-    # Generate matrix form buffer and reshape it
-    mat = np.frombuffer(stdout[8:], dtype=np.float32)
-    return mat.reshape(xdim, ydim)
+
+    # Check whether numpy is available
+    try:
+        import numpy as np
+        # Generate matrix form buffer and reshape it
+        mat = np.frombuffer(stdout[8:], dtype=np.float32)
+        mat = mat.reshape(xdim, ydim)
+    except ImportError:
+        # Generate array of floats
+        a = array.array("f")
+        a.fromstring(stdout[8:])
+        # Generate list of lists
+        mat = []
+        for i in range(0, xdim * ydim, xdim):
+            mat.append(a[i:i+xdim].tolist())
+
+    return mat
 
 
 def compare(x, y=None, opts="", **kwargs):
@@ -56,13 +69,13 @@ def compare(x, y=None, opts="", **kwargs):
     """
 
     # Process options
-    for (k,v) in kwargs.items():
+    for (k, v) in kwargs.items():
         if type(v) is bool:
-	    opts += " --%s" % k
+            opts += " --%s" % k
         elif type(v) is float or type(v) is int:
-	    opts += " --%s=%g" % (k, v)
-	else:
-	    opts += " --%s=%s" % (k, v)
+            opts += " --%s=%g" % (k, v)
+        else:
+            opts += " --%s=%s" % (k, v)
 
     # Fix incorrect usage
     x = x if type(x) is list else [x]
@@ -75,9 +88,7 @@ def compare(x, y=None, opts="", **kwargs):
         opts += " -x :%d -y %d:" % (len(x), len(x))
         x += y
 
-    if len(x) < 50:
-	warnings.warn("You are using the python module of Harry with a "
-		      "small number of strings. The module is only efficient "
-		      "on larger sets (> 50)", RuntimeWarning)
+    if len(x) < 10:
+        warnings.warn("Harry is not efficient on small sets of strings.")
 
     return __run_harry(x, opts)
