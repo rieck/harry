@@ -30,44 +30,12 @@ static char *measure = NULL;
 static int benchmark = 0;
 
 /* Option string */
-#define OPTSTRING       "p:n:g:a:m:c:i:o:d:x:y:zs:ulvqGVhMCD"
+%SHORTOPTS%
 
 /**
  * Array of options of getopt_long()
  */
-static struct option longopts[] = {
-    {"input_format", 1, NULL, 'i'},
-    {"decode_str", 0, NULL, 1000},
-    {"reverse_str", 0, NULL, 1001},
-    {"stoptoken_file", 1, NULL, 1002},
-    {"soundex", 0, NULL, 1003},
-    {"benchmark", 1, NULL, 1004},
-    {"save_indices", 0, NULL, 1005},
-    {"save_labels", 0, NULL, 1006},
-    {"save_sources", 0, NULL, 1007},
-    {"output_format", 1, NULL, 'o'},
-    {"compress", 0, NULL, 'z'},
-    {"measure", 1, NULL, 'm'},
-    {"token_delim", 1, NULL, 'd'},
-    {"num_threads", 1, NULL, 'n'},
-    {"cache_size", 1, NULL, 'a'},
-    {"granularity", 1, NULL, 'g'},
-    {"global_cache", 0, NULL, 'G'},
-    {"config_file", 1, NULL, 'c'},
-    {"verbose", 0, NULL, 'v'},
-    {"log_line", 0, NULL, 'l'},
-    {"precision", 1, NULL, 'p'},
-    {"print_measures", 0, NULL, 'M'},
-    {"print_config", 0, NULL, 'C'},
-    {"print_defaults", 0, NULL, 'D'},
-    {"quiet", 0, NULL, 'q'},
-    {"version", 0, NULL, 'V'},
-    {"help", 0, NULL, 'h'},
-    {"x_range", 1, NULL, 'x'},
-    {"y_range", 1, NULL, 'y'},
-    {"split", 1, NULL, 's'},
-    {NULL, 0, NULL, 0}
-};
+%LONGOPTS%
 
 /**
  * Prints version and copyright information to a file stream
@@ -108,42 +76,8 @@ static void print_config(char *msg)
  */
 static void print_usage(void)
 {
-    printf("Usage: harry [options] <input> <output>\n"
-           "\nI/O options\n"
-           "  -i,  --input_format <format>    Set input format for strings.\n"
-           "       --decode_str               Enable URI-decoding of strings.\n"
-           "       --reverse_str              Reverse (flip) all strings.\n"
-           "       --stoptoken_file <file>    Provide a file with stop tokens.\n"
-           "       --soundex                  Enable soundex encoding of tokens.\n"
-           "       --benchmark <seconds>      Perform benchmark run.\n"
-           "  -o,  --output_format <format>   Set output format for matrix.\n"
-           "  -p,  --precision <num>          Set precision of output.\n"
-           "  -z,  --compress                 Enable zlib compression of output.\n"
-           "       --save_indices             Save indices of strings.\n"
-           "       --save_labels              Save labels of strings.\n"
-           "       --save_sources             Save sources of strings.\n"
-           "\nModule options:\n"
-           "  -m,  --measure <name>           Set similarity measure.\n"
-           "  -g,  --granularity <type>       Set granularity: bytes, bits, tokens.\n"
-           "  -d,  --token_delim <delim>      Set delimiters for tokens.\n"
-           "  -n,  --num_threads <num>        Set number of threads.\n"
-           "  -a,  --cache_size <size>        Set size of cache in megabytes.\n"
-           "  -G,  --global_cache             Enable global cache.\n"
-           "  -x,  --x_range <start>:<end>    Set the index range (x) of strings.\n"
-           "  -y,  --y_range <start>:<end>    Set the index range (y) of strings.\n"
-           "  -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.\n"
-           "\nGeneric options:\n"
-           "  -c,  --config_file <file>       Set configuration file.\n"
-           "  -v,  --verbose                  Increase verbosity.\n"
-           "  -l,  --log_line                 Print a log line every minute\n"
-           "  -q,  --quiet                    Be quiet during processing.\n"
-           "  -M,  --print_measures           Print list of similarity measures\n"
-           "  -C,  --print_config             Print the current configuration.\n"
-           "  -D,  --print_defaults           Print the default configuration.\n"
-           "  -V,  --version                  Print version and copyright.\n"
-           "  -h,  --help                     Print this help screen.\n"
-           "\n");
-}
+    %USAGE%
+}    
 
 /**
  * Print version of Harry tool

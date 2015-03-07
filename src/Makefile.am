@@ -4,6 +4,7 @@
 SUBDIRS		     = 	measures input output
 AM_CPPFLAGS          = 	-I$(srcdir)/measures -I$(srcdir)/input \
 		       	-I$(srcdir)/output
+EXTRA_DIST           =  options.txt harry.c.in gen_options.py
 
 bin_PROGRAMS         = 	harry
 harry_SOURCES        = 	harry.c harry.h
@@ -17,6 +18,9 @@ libharry_la_SOURCES  = 	common.h util.c util.h hconfig.c hconfig.h \
                         hmatrix.c hmatrix.h
 libharry_la_LIBADD   =  input/libinput.la measures/libmeasures.la \
 		       	output/liboutput.la
+
+harry.c: harry.c.in gen_options.py options.txt
+	$(PYTHON) gen_options.py options.txt harry.c
 
 beautify:
 	gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \

@@ -43,6 +43,8 @@ missing
 py-compile
 src/harry
 src/measures/measures.c
+src/harry.c
+python/harry.py
 stamp-h1
 test-driver
 tests/*.log
