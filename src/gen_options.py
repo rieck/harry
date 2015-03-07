@@ -39,7 +39,7 @@ shortopts += '"\n'
 
 # Prepare usage
 space = 11 * ' '
-usage = 'printf("Usage: harry [options] <input> <output>\\n"\n'
+usage = 'printf("Usage: harry [options] <input> [<input>] <output>\\n"\n'
 for opt in options:
     # Headings
     if len(opt[0]) == 0:
