@@ -12,20 +12,24 @@
 #ifndef RWLOCK_H
 #define RWLOCK_H
 
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
 #include <pthread.h>
 #endif
 
-#ifdef HAVE_OMP_H
+#ifdef HAVE_OPENMP
 #include <omp.h>
 #endif
 
 typedef struct
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_t lock;
 #else
+#ifdef HAVE_OPENMP
     omp_lock_t lock;            /* Workaround: Global mutex :( */
+#else
+    int empty;                  /* ;) */
+#endif
 #endif
 } rwlock_t;
 

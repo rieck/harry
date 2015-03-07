@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# OpenBSD setup
+export AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.13
+
 # Remove auto-generated m4 files
 rm -f aclocal.m4
 rm -f m4/lib* m4/lt*

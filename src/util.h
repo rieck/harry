@@ -41,9 +41,8 @@ int decode_str(char *str);
 uint64_t hash_str(char *s, int l);
 int strip_newline(char *s, int l);
 void debug_msg(char *m, ...);
-
 void log_print(long, long, long);
-
+float hround(float, int);
 
 #define MIN(a, b) (a < b ? a : b)
 #define MAX(a, b) (a > b ? a : b)

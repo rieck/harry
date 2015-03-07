@@ -64,7 +64,7 @@ int input_dir_open(char *p)
 int input_dir_read(hstring_t *strs, int len)
 {
     assert(strs && len > 0);
-    int j = 0, l;
+    int j = 0, l = 0;
     struct dirent *dp;
 
     /* Load block of files */
@@ -76,7 +76,7 @@ int input_dir_read(hstring_t *strs, int len)
 
         strs[j].str.c = load_file(path, dp->d_name, &l);
         strs[j].src = strdup(dp->d_name);
-        strs[j].type = TYPE_CHAR;
+        strs[j].type = TYPE_BYTE;
         strs[j].len = l;
         strs[j].label = get_label(strs[j].src);
         j++;
@@ -108,14 +108,11 @@ static char *load_file(char *path, char *name, int *size)
     char *x = NULL, file[512];
     struct stat st;
 
-#pragma omp critical (snprintf)
-    {
-        /* snprintf is not necessary thread-safe. good to know. */
-        if (name)
-            snprintf(file, 512, "%s/%s", path, name);
-        else
-            snprintf(file, 512, "%s", path);
-    }
+    /* snprintf is not necessary thread-safe. good to know. */
+    if (name)
+        snprintf(file, 512, "%s/%s", path, name);
+    else
+        snprintf(file, 512, "%s", path);
 
     /* Open file */
     FILE *fptr = fopen(file, "r");

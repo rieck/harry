@@ -28,7 +28,7 @@
 
 /* External variables */
 extern config_t cfg;
-static int level = 0;
+static cfg_int level = 0;
 
 /**
  * Initializes the similarity measure
@@ -50,7 +50,7 @@ static float compress_str1(hstring_t x)
     unsigned long tmp, width;
     unsigned char *dst;
 
-    width = x.type == TYPE_SYM ? sizeof(sym_t) : sizeof(char);
+    width = x.type == TYPE_TOKEN ? sizeof(sym_t) : sizeof(char);
     tmp = compressBound(x.len * width);
 
     dst = malloc(tmp);
@@ -78,7 +78,7 @@ static float compress_str2(hstring_t x, hstring_t y)
 
     assert(x.type == y.type);
 
-    width = x.type == TYPE_SYM ? sizeof(sym_t) : sizeof(char);
+    width = x.type == TYPE_TOKEN ? sizeof(sym_t) : sizeof(char);
     tmp = compressBound((x.len + y.len) * width);
 
     dst = malloc(tmp);

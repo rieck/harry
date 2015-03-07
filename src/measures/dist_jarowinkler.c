@@ -65,6 +65,74 @@ void dist_jarowinkler_config()
     config_lookup_float(&cfg, "measures.dist_jarowinkler.scaling", &scaling);
 }
 
+
+#ifdef JARO_COMPARE_SERRANO
+/**
+ * Computes the Jaro distance of two strings. Code adapted
+ * from implementation by Miguel Serrano
+ * @param x first string
+ * @param y second string
+ * @return Jaro distance
+ */
+static float dist_jaro_compare_serrano(hstring_t x, hstring_t y)
+{
+    int i, j, l;
+    int m = 0, t = 0;
+    int range = max(0, max(x.len, y.len) / 2 - 1);
+
+    if (x.len == 0 && y.len == 0)
+        return 0.0;
+
+    char *xflags = calloc(sizeof(char), x.len);
+    if (!xflags) {
+        error("Could not allocate memory for Jaro distance");
+        return 0;
+    }
+
+    char *yflags = calloc(sizeof(char), y.len);
+    if (!yflags) {
+        error("Could not allocate memory for Jaro distance");
+        return 0;
+    }
+
+    /* Calculate matching characters */
+    for (i = 0; i < y.len; i++) {
+        for (j = max(i - range, 0), l = min(i + range + 1, x.len); j < l; j++) {
+            if (!hstring_compare(y, i, x, j) && !xflags[j]) {
+                xflags[j] = 1;
+                yflags[i] = 1;
+                m++;
+                break;
+            }
+        }
+    }
+
+    if (m == 0)
+        return 1.0;
+
+    /* Calculate character transpositions */
+    l = 0;
+    for (i = 0; i < y.len; i++) {
+        if (yflags[i] == 1) {
+            for (j = l; j < x.len; j++) {
+                if (xflags[j] == 1) {
+                    l = j + 1;
+                    break;
+                }
+            }
+            if (hstring_compare(y, i, x, j))
+                t++;
+        }
+    }
+    t /= 2;
+
+    free(xflags);
+    free(yflags);
+
+    return 1 - ((((float) m / x.len) + ((float) m / y.len) +
+                 ((float) (m - t) / m)) / 3.0);
+}
+#else
 /**
  * Computes the Jaro distance of two strings. Code adapted from
  * from implementation by David Necas (Yeti).
@@ -147,73 +215,7 @@ static float dist_jaro_compare_yeti(hstring_t x, hstring_t y)
     md = (float) match;
     return 1.0 - (md / x.len + md / y.len + 1.0 - trans / md / 2.0) / 3.0;
 }
-
-
-/**
- * Computes the Jaro distance of two strings. Code adapted 
- * from implementation by Miguel Serrano
- * @param x first string
- * @param y second string
- * @return Jaro distance
- */
-static float dist_jaro_compare_serrano(hstring_t x, hstring_t y)
-{
-    int i, j, l;
-    int m = 0, t = 0;
-    int range = max(0, max(x.len, y.len) / 2 - 1);
-
-    if (x.len == 0 && y.len == 0)
-        return 0.0;
-
-    char *xflags = calloc(sizeof(char), x.len);
-    if (!xflags) {
-        error("Could not allocate memory for Jaro distance");
-        return 0;
-    }
-
-    char *yflags = calloc(sizeof(char), y.len);
-    if (!yflags) {
-        error("Could not allocate memory for Jaro distance");
-        return 0;
-    }
-
-    /* Calculate matching characters */
-    for (i = 0; i < y.len; i++) {
-        for (j = max(i - range, 0), l = min(i + range + 1, x.len); j < l; j++) {
-            if (!hstring_compare(y, i, x, j) && !xflags[j]) {
-                xflags[j] = 1;
-                yflags[i] = 1;
-                m++;
-                break;
-            }
-        }
-    }
-
-    if (m == 0)
-        return 1.0;
-
-    /* Calculate character transpositions */
-    l = 0;
-    for (i = 0; i < y.len; i++) {
-        if (yflags[i] == 1) {
-            for (j = l; j < x.len; j++) {
-                if (xflags[j] == 1) {
-                    l = j + 1;
-                    break;
-                }
-            }
-            if (hstring_compare(y, i, x, j))
-                t++;
-        }
-    }
-    t /= 2;
-
-    free(xflags);
-    free(yflags);
-
-    return 1 - ((((float) m / x.len) + ((float) m / y.len) +
-                 ((float) (m - t) / m)) / 3.0);
-}
+#endif
 
 /**
  * Computes the Jaro-Winkler distance of two strings.
@@ -223,13 +225,16 @@ static float dist_jaro_compare_serrano(hstring_t x, hstring_t y)
  */
 float dist_jaro_compare(hstring_t x, hstring_t y)
 {
+#ifdef JARO_COMPARE_SERRANO
+    return dist_jaro_compare_serrano(x, y);
+#else
     return dist_jaro_compare_yeti(x, y);
-    // return dist_jaro_compare_serrano(x, y);
+#endif
 }
 
 /**
- * Computes the Jaro-Winkler distance of two strings. 
- * @param x first string 
+ * Computes the Jaro-Winkler distance of two strings.
+ * @param x first string
  * @param y second string
  * @return Jaro-Winkler distance
  */

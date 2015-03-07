@@ -20,9 +20,9 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-pedantic -pipe -O3 -g" \
-       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ./configure --prefix=/opt/rieck
        ;;
-       
+
    gwd*)
        echo "Configuration: GWDG Cluster (Goettingen)"
        CC="gcc" \
@@ -30,24 +30,22 @@ case $arg in
        CPPFLAGS="-I$HOME/usr/include" \
        PKG_CONFIG_PATH="$HOME/usr/lib/pkgconfig" \
        CFLAGS="-pedantic -pipe -O3 -g" \
-       ./configure --prefix=$HOME/usr --enable-libarchive 
+       ./configure --prefix=$HOME/usr
        ;;
 
    schulle*)
        echo "Configuration: Schulle (ESX Cluster)"
-
        CC="gcc" \
        CFLAGS="-pedantic -pipe -O3 -g" \
-       ./configure --enable-libarchive 
+       ./configure
        ;;
-       
+
    kindl*)
        echo "Configuration: Kindl (OpenBSD)"
-       CC="egcc" \
        LDFLAGS="-L/usr/local/lib" \
        CPPFLAGS="-I/usr/local/include" \
        CFLAGS="-pedantic -pipe -O3 -g" \
-       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ./configure --prefix=/opt/rieck
        ;;
    profile|debug)
        echo "Configuration: Profiling & Debugging"
@@ -55,9 +53,9 @@ case $arg in
        LDFLAGS="-L/usr/local/opt/libarchive/lib -g -lprofiler" \
        CPPFLAGS="-I/usr/local/opt/libarchive/include" \
        CFLAGS="-g -lprofiler  -Wl,-no_pie" \
-       ./configure --prefix=/opt/rieck --enable-libarchive 
+       ./configure --prefix=/opt/rieck
        ;;
-   *)    
+   *)
        echo "Unknown system or configuration"
        exit
        ;;
@@ -73,5 +71,5 @@ echo "Done. Press <enter> to compile"
 read x
 
 # Compile
-make clean 
-make -j 4 
+make clean
+make -j 4

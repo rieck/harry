@@ -6,10 +6,10 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
-/** 
+/**
  * @defgroup default Configuration
  * Functions for configuration of the Harry tool. Additionally default
  * values for each configuration parameter are specified in this module.
@@ -34,10 +34,11 @@ static default_t defaults[] = {
     {I "", "fasta_regex", CONFIG_TYPE_STRING, {.str = " (\\+|-)?[0-9]+"}},
     {I "", "lines_regex", CONFIG_TYPE_STRING, {.str = "^(\\+|-)?[0-9]+"}},
     {I "", "reverse_str", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
-    {I "", "stopword_file", CONFIG_TYPE_STRING, {.str = ""}},
+    {I "", "stoptoken_file", CONFIG_TYPE_STRING, {.str = ""}},
     {I "", "soundex", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
-    {M "", "word_delim", CONFIG_TYPE_STRING, {.str = ""}},
+    {M "", "granularity", CONFIG_TYPE_STRING, {.str = "bytes"}},
+    {M "", "token_delim", CONFIG_TYPE_STRING, {.str = " %0a%0d"}},
     {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},
     {M "", "cache_size", CONFIG_TYPE_INT, {.num = 256}},
     {M "", "global_cache", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
@@ -82,17 +83,17 @@ static default_t defaults[] = {
     {M ".kern_spectrum", "norm", CONFIG_TYPE_STRING, {.str = "none"}},
     {M ".sim_coefficient", "matching", CONFIG_TYPE_STRING, {.str = "bin"}},
     {O "", "output_format", CONFIG_TYPE_STRING, {.str = "text"}},
+    {O "", "precision", CONFIG_TYPE_INT, {.num = 0}},
     {O "", "separator", CONFIG_TYPE_STRING, {.str = ","}},
-    {O "", "save_indices", CONFIG_TYPE_BOOL, {.num = CONFIG_TRUE}},
+    {O "", "save_indices", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {O "", "save_labels", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {O "", "save_sources", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
-    {O "", "triangular", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {O "", "compress", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {NULL}
 };
 
 /**
- * Print a configuration setting. 
+ * Print a configuration setting.
  * @param f File stream to print to
  * @param cs Configuration setting
  * @param d Current depth.
@@ -128,7 +129,7 @@ static void config_setting_fprint(FILE *f, config_setting_t * cs, int d)
         fprintf(f, "%s\t= %7.5f;\n", n, config_setting_get_float(cs));
         break;
     case CONFIG_TYPE_INT:
-        fprintf(f, "%s\t= %d;\n", n, config_setting_get_int(cs));
+        fprintf(f, "%s\t= %ld;\n", n, (long) config_setting_get_int(cs));
         break;
     case CONFIG_TYPE_BOOL:
         fprintf(f, "%s\t= %s;\n", n, config_setting_get_bool(cs)
@@ -150,7 +151,7 @@ void config_print(config_t * cfg)
 }
 
 /**
- * Print the configuration to a file. 
+ * Print the configuration to a file.
  * @param f pointer to file stream
  * @param cfg configuration
  */
@@ -165,7 +166,8 @@ void config_fprint(FILE *f, config_t * cfg)
  */
 static void config_default(config_t * cfg)
 {
-    int i, j;
+    int i, b;
+    cfg_int j;
     const char *s;
     double f;
     config_setting_t *cs = NULL, *vs;
@@ -230,7 +232,7 @@ static void config_default(config_t * cfg)
             config_setting_set_int(vs, defaults[i].val.num);
             break;
         case CONFIG_TYPE_BOOL:
-            if (config_setting_lookup_bool(cs, defaults[i].name, &j))
+            if (config_setting_lookup_bool(cs, defaults[i].name, &b))
                 continue;
 
             /* Check for mis-interpreted integer */
@@ -254,15 +256,24 @@ static void config_default(config_t * cfg)
 }
 
 /**
- * Checks if the configuration is valid and sane. 
+ * Checks if the configuration is valid and sane.
  * @return 1 if config is valid, 0 otherwise
  */
 int config_check(config_t * cfg)
 {
+    const char *str1, *str2;
+
     /* Add default values where missing */
     config_default(cfg);
 
-    /* TODO add sanity checks here */
+    /* Sanity checks for tokens */
+    config_lookup_string(cfg, "measures.granularity", &str1);
+    config_lookup_string(cfg, "measures.token_delim", &str2);
+
+    if (!strcasecmp(str1, "tokens") && strlen(str2) == 0) {
+        error("Delimiters are required if the granularity is tokens.");
+        return 0;
+    }
 
     return 1;
 }

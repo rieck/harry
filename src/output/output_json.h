@@ -9,14 +9,12 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef INPUT_STDIN_H
-#define INPUT_STDIN_H
+#ifndef OUTPUT_JSON_H
+#define OUTPUT_JSON_H
 
-#include "hstring.h"
+/* json output module */
+int output_json_open(char *);
+int output_json_write(hmatrix_t *);
+void output_json_close(void);
 
-/* Stdin input module */
-int input_stdin_open(char *);
-int input_stdin_read(hstring_t *, int);
-void input_stdin_close(void);
-
-#endif /* INPUT_STDIN_H */
+#endif /* OUTPUT_JSON_H */

@@ -14,7 +14,7 @@
 
 #include "hstring.h"
 
-#ifdef ENABLE_LIBARCHIVE
+#ifdef HAVE_LIBARCHIVE
 /* Archive module */
 int input_arc_open(char *);
 int input_arc_read(hstring_t *, int);

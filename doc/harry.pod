@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-B<harry> - a tool for measuring string similarity 
+B<harry> - A tool for measuring string similarity
 
 =head1 SYNOPSIS
 
-B<harry> [B<options>] [B<-c> I<config>] I<input> I<output>
+B<harry> [B<options>] [B<-c> I<config>] I<input> [<input>] I<output>
 
 =head1 DESCRIPTION
 
@@ -20,23 +20,26 @@ compression distance.
 
 During operation B<harry> loads a set of strings from I<input>, computes the
 specified similarity measure and writes a matrix of similarity values to
-I<output>.  The similarity measure can be computed based on the granularity
-of characters as well as words contained in the strings.  The configuration
-of this process, such as the input format, the similarity measure and the
-output format, are specified in the file I<config> and can be additionally
-refined using command-line options.
+I<output>.  If one I<input> is given, B<harry> computes the similarities
+between all strings in I<input>.  If two I<input> sources are provided,
+B<harry> computes only the similarities between the two sources.  The
+similarity measure can be computed based on the granularity of bits, bytes
+as well as tokens contained in the strings.  The configuration of this
+process, such as the input format, the similarity measure and the output
+format, are specified in the file I<config> and can be additionally refined
+using command-line options.
 
     .---------.                        .----------.
     |  lines  |                        |   text   |
     |   dir   |   \   .---------.   /  |  libsvm  |
-    |  stdin  |   --  |  Harry  |  --  |  stdout  |
+    |  stdin  |   --  |  Harry  |  --  |  matlab  |
     |   ...   |   /   '---------'   \  |   ...    |
     '---------'                        '----------'
        Input      Similarity Measures     Output
 
 
 B<harry> is implemented using OpenMP, such that the computation time for a
-set of strings scales linear with the number of available CPU cores. 
+set of strings scales linear with the number of available CPU cores.
 Moreover, efficient implementations of several similarity measures,
 effective caching of similarity values and low-overhead locking further
 speedup the computation.
@@ -61,7 +64,7 @@ B<harry> supports different formats for reading sets of strings, which may
 range from plain files to directories and other structured resources.  The
 input format is specified in the configuration file of B<harry>, but can
 also be defined on the command line using the option B<-i> (see B<OPTIONS>).
-Following is a list of supported input formats:  
+Following is a list of supported input formats:
 
 =over 4
 
@@ -84,18 +87,19 @@ each line using a regular expression (see B<lines_regex>).
 
 =item I<"stdin">
 
-The input strings are available as text lines on standard input (stdin). 
-The parameter I<input> is ignored. The lines need to be separated by
-newline and may not contain the NUL character.  Labels can be extracted from
-each line using a regular expression (see B<lines_regex>).
+The input strings are provided on standard input (stdin) as text lines.  The
+lines need to be separated by newline and may not contain the NUL character. 
+Labels can be extracted from each line using a regular expression (see
+B<lines_regex>).  This input format is also enabled when I<input> is set to
+I<->, otherwise I<input> is ignored.
 
-=item I<"dir"> 
+=item I<"dir">
 
 The input strings are available as binary files in a directory and the
 name of the directory is given as I<input> to B<harry>. The suffixes
 of the files are used as labels for the strings.
 
-=item I<"arc"> 
+=item I<"arc">
 
 The input strings are available as binary files in a compressed archive,
 such as a zip or tgz archive.  The name of the archive is given as I<input>
@@ -108,7 +112,22 @@ given as I<input> to B<harry>.  Labels can be extracted from the description
 of each sequence using a regular expression (see B<fasta_regex>).  Comments
 are allowed if they are preceded by either ';' or '>'.
 
-=back 
+=item I<"raw">
+
+The input strings are provided on standard input (stdin) in "raw" format.
+This input module is designed to efficiently interface with other
+environments.  The binary format for strings has the form
+
+  | len (uint32) | array (uint8) ... |
+  | len (uint32) | array (uint8) ... |
+  | ...
+
+where I<len> is a 32-bit unsigned integer in host byte order indicating the
+length of the following I<array> containing the string data in bytes. 
+Labels cannot be extracted from this representation.  This input format is
+also enabled when I<input> is set to I<=>, otherwise I<input> is ignored.
+
+=back
 
 =item B<chunk_size = 256;>
 
@@ -142,19 +161,19 @@ If this parameter is set to I<true>, the characters of all input strings
 will be reversed.  Such reversing might help in situations where the reading
 direction of the input strings is unspecified.
 
-=item B<stopword_file = "";>
+=item B<stoptoken_file = "";>
 
-Stop words (irrelevant words) can be filtered from the strings by providing
-a file containing these words; one per line.  Non-printable characters can
-be escaped using URI encoding (%XX).  Stop words can only be filtered, if a
-set of delimiters is defined using B<word_delim>.
+Stop tokens (irrelevant tokens) can be filtered from the strings by providing
+a file containing these tokens; one per line.  Non-printable characters can
+be escaped using URI encoding (%XX).  Stop tokens can only be filtered, if
+the B<granularity> is set to I<tokens>.
 
 =item B<soundex = false;>
 
-All words in the strings are mapped to the soundex index. For example,
+All tokens in the strings are mapped to the soundex index. For example,
 "Pfister" is mapped to "P236" and "Jackson" to "J250".  The soundex index
 has been originally designed for comparing names, however, in B<harry> it
-can be applied to all sorts of words, if they are composed of alphabetic
+can be applied to all sorts of tokens, if they are composed of alphabetic
 letters.  Punctation characters are ignored and thus the string "Hey, I am
 here with Harry!", gets mapped to "H000 I000 A500 H600 W300 H600".
 
@@ -232,7 +251,7 @@ Bag distance. See configuration group B<dist_bag>.
 
 =item I<"dist_kernel">
 
-Kernel-based distance. See configuration group B<dist_kernel>.
+Kernel substitution distance. See configuration group B<dist_kernel>.
 
 =item I<"kern_subsequence">, I<"kern_ssk">
 
@@ -283,13 +302,18 @@ B<sim_coefficient>.
 
 =back
 
-=item B<word_delim = "";>
+=item B<granularity = "bytes";>
 
-The parameter B<word_delim> defines characters for delimiting words in
-strings.  If this parameter is set, the comparison of strings is performed
-on words, that is, each word is considered as a symbol.  If the parameter
-B<word_delim> is an empty strings, B<harry> considers each individual
-character as a symbol.
+This parameter controls the granularity of strings. It can be set to either
+I<bits>, I<bytes> or I<tokens>. Depending in the granularity a string is 
+considered as a sequence of bits, bytes or tokens, which results in different
+similarity values during comparison. 
+
+=item B<token_delim = " %0a%0d";>
+
+The parameter B<token_delim> defines characters for delimiting tokens in
+strings. It is only considered, if the granularity is set to I<tokens>, 
+otherwise it is ignored.
 
 =item B<num_threads = 0;>
 
@@ -326,6 +350,9 @@ chooses all strings.  If the end index is negative, it is substracted from
 the maximum index, that is, I<":-1"> selects all strings except for the last
 one.
 
+The parameters B<x_range> and B<y_range> are ignore if two input sources are
+given on the command line.
+
 =item B<split = "";>
 
 To ease the computation of large similarity matrices, B<harry> supports
@@ -335,7 +362,10 @@ of blocks and I<idx> the index of the block to compute.  The matrix is
 splitted across the y-axis.  For many output formats the blocks can be
 simply concatenated to get the original matrix.
 
-=item B<dist_hamming = {> 
+The parameters B<split> is ignore if two input sources are given on the
+command line.
+
+=item B<dist_hamming = {>
 
 This module implements the Hamming distance (see Hamming, 1950).  The
 runtime complexity of a comparison is linear in the length of the strings.
@@ -355,7 +385,7 @@ for normalization on the average length of the compared strings.
 
 =item B<};>
 
-=item B<dist_levenshtein = {> 
+=item B<dist_levenshtein = {>
 
 This module implements the Levenshtein distance (see Levenshtein, 1966). The
 runtime complexity of a comparison is quadratic in the length of the
@@ -368,7 +398,7 @@ strings.  The following parameters are supported:
 This parameter specifies the normalization of the distance. Supported values
 are I<"none"> for no normalization, I<"min"> for normalization on the
 minimum length, I<"max"> for normalization on the maximum length, I<"avg">
-for normalization on the average length of the compared 
+for normalization on the average length of the compared
 
 =item B<cost_ins = 1.0;>
 
@@ -384,9 +414,9 @@ respectively.  The default costs are I<1.0> for each operation.
 
 =item B<};>
 
-=item B<dist_damerau = {> 
+=item B<dist_damerau = {>
 
-This module implements the Damerau-Levenshtein distance (see Damerau, 1964). 
+This module implements the Damerau-Levenshtein distance (see Damerau, 1964).
 The runtime and space complexity of a comparison is quadratic in the length
 of the strings.  The following parameters are supported:
 
@@ -417,7 +447,7 @@ operation.
 =item B<};>
 
 
-=item B<dist_osa = {> 
+=item B<dist_osa = {>
 
 This module implements the optimal string alignment (OSA) distance, which is
 often confused with the Damerau-Levenshtein distance.  The difference
@@ -454,7 +484,7 @@ operation.
 
 =item B<};>
 
-=item B<dist_jarowinkler = {> 
+=item B<dist_jarowinkler = {>
 
 This module implements the Jaro distance (Jaro, 1989) and the Jaro-Winkler
 distance (Winkler, 1990).  In contrast to the original formulation, a valid
@@ -476,7 +506,7 @@ the beginning up to 4 symbols. The default value is I<0.1>.
 
 =item B<};>
 
-=item B<dist_lee = {> 
+=item B<dist_lee = {>
 
 This module implements the Lee distance (Lee, 1958) for strings. The runtime
 complexity of a comparison is linear in the length of the strings. If the
@@ -491,16 +521,16 @@ string are added to the distance. The following parameters are supported:
 These parameters specify the range of symbols, that is, the minimum and
 maximum value of a symbol in all strings.  If the strings consist of bytes,
 B<min_sym> is typically set to I<0> and B<max_sym> to I<255>.  For printable
-characters the range can be further narrowed to I<32> and I<126>.  If words
-are analyzed using the parameter B<word_delim>, B<min_sym> must be set to 0
-and B<max_sym> to I<65535>, as the words are mapped to integers in this
+characters the range can be further narrowed to I<32> and I<126>.  If tokens
+are analyzed using the parameter B<token_delim>, B<min_sym> must be set to 0
+and B<max_sym> to I<65535>, as the tokens are mapped to integers in this
 range.
 
 =back
 
 =item B<};>
 
-=item B<dist_compression = {> 
+=item B<dist_compression = {>
 
 This module implements the normalized compression distance for strings
 (Cilibrasi and Vitanyi, 2005).  The distance is "symmetrized".  The
@@ -513,7 +543,7 @@ constant factor.  The following parameters are supported:
 
 =over 4
 
-=item B<level = 9;> 
+=item B<level = 9;>
 
 This parameter defines the compression level used by B<zlib> and must be
 between I<1> and I<9>, where I<1> gives the best speed and I<9> the best
@@ -523,11 +553,11 @@ compression.  See B<zlib(3)>
 
 =item B<};>
 
-=item B<dist_bag = {> 
+=item B<dist_bag = {>
 
 This module implements the bag distance (see Bartolini et al., 2002). The
 distance approximates and lower bounds the Levenshtein distance.  The
-runtime complexity of a comparison is linear in the length of the strings. 
+runtime complexity of a comparison is linear in the length of the strings.
 The following parameters are supported:
 
 =over 4
@@ -543,7 +573,7 @@ for normalization on the average length of the compared strings.
 
 =item B<};>
 
-=item B<dist_kernel = {> 
+=item B<dist_kernel = {>
 
 This module implements a kernel-based distance, that is, a distance  is
 computed given a kernel function for strings.  The specified kernel function
@@ -577,7 +607,7 @@ is slightly faster due to the omitted root computation.
 =item B<kern_wdegree = {>
 
 This module implements the weighted-degree kernel with shifts (Sonnenburg et
-al., 2007).  The runtime complexity is linear in the length of the strings. 
+al., 2007).  The runtime complexity is linear in the length of the strings.
 If the strings have unequal length, the remaining symbols of the longer
 string are ignored, in accordance with the kernel definition.  The following
 parameters are supported:
@@ -587,7 +617,7 @@ parameters are supported:
 =item B<norm = "none";>
 
 This parameter specifies the normalization of the kernel. Supported values
-are I<"none"> for no normalization and I<"l2"> for the standard l2 
+are I<"none"> for no normalization and I<"l2"> for the standard l2
 normalization of kernels.
 
 =item B<degree = 3;>
@@ -598,7 +628,7 @@ k-mers are not extracted but implicitly counted by blocks of matching symbols.
 
 =item B<shift = 0;>
 
-To compensate noise in the strings, the kernel can be computed with "shifts". 
+To compensate noise in the strings, the kernel can be computed with "shifts".
 The strings are compared multiple times with different positive and negative
 offsets up to B<shift> symbols.  The different kernel values are added.  The
 runtime complexity is increased by twice the value of B<shift>.
@@ -618,7 +648,7 @@ parameters are supported:
 =item B<norm = "none";>
 
 This parameter specifies the normalization of the kernel. Supported values
-are I<"none"> for no normalization and I<"l2"> for the standard l2 
+are I<"none"> for no normalization and I<"l2"> for the standard l2
 normalization of kernels.
 
 =item B<length = 3;>
@@ -648,12 +678,12 @@ implementation:
 =item B<norm = "none";>
 
 This parameter specifies the normalization of the kernel. Supported values
-are I<"none"> for no normalization and I<"l2"> for the standard l2 
+are I<"none"> for no normalization and I<"l2"> for the standard l2
 normalization of kernels.
 
 =item B<length = 3;>
 
-This parameter specifies the length of k-mers/k-grams to consider. 
+This parameter specifies the length of k-mers/k-grams to consider.
 
 =back
 
@@ -674,7 +704,7 @@ This parameter selects the distance function to use for the kernel.
 Depending on the type of the substitution and the selected distance, the
 kernel might not be positive semi-definite.
 
-=item B<type = "linear";> 
+=item B<type = "linear";>
 
 Four types of substitutions can be selected for creating a kernel from a
 distance function: I<"linear">, I<"poly">, I<"neg"> and I<"rbf">.  For a
@@ -684,8 +714,8 @@ Bahlmann (2004).
 =item B<norm = "none";>
 
 This parameter specifies the normalization of the kernel. Supported values
-are I<"none"> for no normalization and I<"l2"> for the standard l2 
-normalization of kernels. 
+are I<"none"> for no normalization and I<"l2"> for the standard l2
+normalization of kernels.
 
 =item B<gamma = 1.0;>
 
@@ -694,7 +724,7 @@ I<"poly"> and I<"rbf">.
 
 =item B<degree = 1.0;>
 
-This parameter defines a polynomial degree for the substitution types 
+This parameter defines a polynomial degree for the substitution types
 I<"poly"> and I<"neg">.
 
 =back
@@ -747,51 +777,78 @@ Following is a list of output formats supported by B<harry>:
 
 =over 14
 
-=item I<"text"> 
+=item I<"text">
 
-The similarity values are stored as plain text. 
+The similarity values are stored as plain text.
 
 =item I<"stdout">
 
 The similarity values are written to standard output (stdout) as plain text.
+This output format is also enabled when I<output> is set to I<->, otherwise
+I<output> is ignored.
 
 =item I<"libsvm">
 
-The similarity values are stored as precomputed kernel for libsvm. 
+The similarity values are stored as precomputed kernel for libsvm.
+
+=item I<"json">
+
+The similarity values are stored in JSON object.
+
+=item I<"matlab">
+
+The similarity values are stored in Matlab format (version 5).
+
+=item I<"raw">
+
+The similarity values are written to standard output (stdout) in raw format.
+This output module is designed for interfacing with other analysis
+environments.  The format of the similarity matrix has the following form
+
+  | xdim (uint32) | ydim (uint32) |
+  | array (float) ... |
+
+where I<xdim> and I<ydim> are unsigned 32-bit integers in host byte order
+specifing the dimensions of the matrix, and I<len> is an unsigned 32-bit
+integer indicating the length of the following I<array> of similarity values
+in single floats (32 bit).  Note that if I<len> != I<xlen> * I<ylen> the
+matrix is stored in triangular form, that is, only the upper triangle is
+written to standard output. Indices, labels and sources are not
+output. This output format is also enables when I<output> is set to 
+I<=>, otherwise I<output> is ignored.
 
 =back
+
+=item B<precision = 0;>
+
+Precision of the output in terms of decimal places. A precision of I<0>
+selects the full single float range for output.
 
 =item B<separator = ",";>
 
 This parameter defines the separator used in text mode for separating
 the similarity values.
 
-=item B<save_indices = true;>
+=item B<save_indices = false;>
 
 If this parameter is to I<true> and supported by the output format, the
-indices of the strings will be stored in an extra column and row.
+indices of the strings will be additionally stored.
 
 =item B<save_labels = false;>
 
 If this parameter is to I<true> and supported by the output format, the
-labels of the strings will be stored in an extra column and row.
+labels of the strings will be additionally stored.
 
 =item B<save_sources = false;>
 
 If this parameter is to I<true> and supported by the output format, the
-sources of the strings will be stored in an extra column and row.
-
-=item B<triangular = false;>
-
-If this parameter is set to I<true> and supported by the output format, a
-triangular matrix (upper triangle of the similarity matrix) will be stored. 
-The required storage space is reduced by almost a half.
+sources of the strings will be additionally stored.
 
 =item B<compress = false;>
 
 If this parameter is set to I<true>, the output is stored using zlib
-compression, which can significantly reduce the required disk space. 
-Several programs support reading files compressed using zlib. 
+compression, which can significantly reduce the required disk space.
+Several programs support reading files compressed using zlib.
 Alternatively, the tools gzcat(1) and gunzip(1) can be used to access the
 data.
 
@@ -812,22 +869,27 @@ on the command line.  Following is the list of options:
   -i,  --input_format <format>   Set input format for strings.
        --decode_str              Enable URI-decoding of strings.
        --reverse_str             Reverse (flip) all strings.
-       --stopword_file <file>    Provide a file with stop words.
-       --soundex                 Enable soundex encoding of words.
-       --benchmark <seconds>      Perform benchmark run.
+       --stoptoken_file <file>   Provide a file with stop tokens.
+       --soundex                 Enable soundex encoding of tokens.
+       --benchmark <seconds>     Perform benchmark run.
   -o,  --output_format <format>  Set output format for matrix.
+  -p,  --precision <num>         Set precision of output.
   -z,  --compress                Enable zlib compression of output.
-  -u,  --triangular              Save triangular matrix only.
+       --save_indices            Save indices of strings.
+       --save_labels             Save labels of strings.
+       --save_sources            Save sources of strings.
 
 =head2 Module options:
 
-  -m,  --measure <name>          Set similarity measure.
-  -d,  --word_delim <delim>      Set delimiters for words.
-  -n,  --num_threads <num>       Set number of threads.
-  -a,  --cache_size <size>       Set size of cache in megabytes.
-  -g,  --global_cache            Enable global cache for similarity values.
-  -x,  --x_range <start>:<end>   Set the index range (x) of strings.
-  -y,  --y_range <start>:<end>   Set the index range (y) of stirngs.
+  -m,  --measure <name>           Set similarity measure.
+  -g,  --granularity <type>       Set granularity: bytes, bits, tokens.
+  -d,  --token_delim <delim>      Set delimiters for tokens.
+  -n,  --num_threads <num>        Set number of threads.
+  -a,  --cache_size <size>        Set size of cache in megabytes.
+  -G,  --global_cache             Enable global cache.
+  -x,  --x_range <start>:<end>    Set the index range (x) of strings.
+  -y,  --y_range <start>:<end>    Set the index range (y) of strings.
+  -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.
 
 =head2 Generic options:
 
@@ -859,7 +921,7 @@ m(y,x) for all x and y.  This restriction saves considerable run-time and
 memory in most cases.  However, some similarity measures need to be
 artificially "symmetrized", such as the normalized compression distance,
 thereby requiring additional computations.
- 
+
 =head1 REFERENCES
 
 Bartolini, Ciaccia, Patella. String Matching with Metric Trees Using an

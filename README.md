@@ -63,7 +63,7 @@ Dependencies
 
 +   OpenMP >= 2.5 (need to be supported by the C compiler)
 +   zlib >= 1.2.1, <http://www.zlib.net/>
-+   libconfig >= 1.4, <http://www.hyperrealm.com/libconfig/>
++   libconfig >= 1.3.2, <http://www.hyperrealm.com/libconfig/>
 +   libarchive >= 2.70, <http://libarchive.github.com/>
 
 #### Debian & Ubuntu Linux
@@ -73,7 +73,7 @@ and Ubuntu Linux
 
     gcc
     libz-dev
-    libconfig9-dev
+    libconfig8-dev
     libarchive-dev
 
 For bootstrapping Harry from the GIT repository or manipulating the
@@ -124,14 +124,7 @@ Options for configure
 By default Harry is installed into /usr/local. If you prefer a different
 location, use this option to select an installation directory.
 
-    --enable-libarchive     Enable support for loading archives
-
-If this feature is enabled, Harry can also be applied to read the
-contents of archives, such as .tgz and .zip.  This allows for
-processing string data in compressed form and may drastically save
-storage space.
-
-    --enable-pthread        Enable support for POSIX thread rwlocks
+    --enable-prwlock        Enable support for POSIX read-write locks
 
 This feature enables read-write locks (rwlocks) from the POSIX thread
 library.  The locks can accelerate the run-time performance on multi-core

@@ -9,14 +9,12 @@
  * warranty. See the GNU General Public License for more details. 
  */
 
-#ifndef INPUT_STDIN_H
-#define INPUT_STDIN_H
+#ifndef OUTPUT_RAW_H
+#define OUTPUT_RAW_H
 
-#include "hstring.h"
+/* Raw output module */
+int output_raw_open(char *);
+int output_raw_write(hmatrix_t *);
+void output_raw_close(void);
 
-/* Stdin input module */
-int input_stdin_open(char *);
-int input_stdin_read(hstring_t *, int);
-void input_stdin_close(void);
-
-#endif /* INPUT_STDIN_H */
+#endif /* OUTPUT_RAW_H */

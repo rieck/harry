@@ -37,12 +37,13 @@
 
       input_format = "arc";
 
-  Second, we tell Harry to consider words instead of characters for
-  comparing the strings.  We do this by setting the parameter `word_delim`
-  in the `measures` section.  In particular, we choose a set of delimiter
-  characters that are used to partition a string into words.
+  Second, we tell Harry to consider tokens instead of bytes for comparing
+  the strings.  We do this by setting the parameter `granularity` and
+  `token_delim` in the `measures` section.  In particular, we choose a set
+  of delimiter bytes that are used to partition a string into tokens.
 
-      word_delim = "%09%0a%0d%20,.;:?!";
+      granularity = "tokens";
+      token_delim = "%09%0a%0d%20,.;:?!";
 
   Finally, we configure three kernel functions for strings. Simply put, a
   kernel function is a special form of a similarity measure that does not
@@ -50,7 +51,7 @@
   mathematical properties.
 
   1. We configure the _spectrum kernel_ (or _n_-gram kernel)
-     first.  This kernel extracts groups of _n_ consecutive words from
+     first.  This kernel extracts groups of _n_ consecutive tokens from
      the strings and uses these for comparison.  We set _n = 2_ and
      enable a normalization of the kernel.
 
@@ -60,9 +61,9 @@
           }
 
   2. We then configure the _subsequence kernel_ that also considers
-     groups of _n_ words but allows gaps between them.  We again set _n
-     = 2_, choose a penalty weight for gaps (default is 0.1) and enable
-     a normalization of the kernel.
+     groups of _n_ tokens but allows gaps between them.  We again set _n =
+     2_, choose a penalty weight for gaps (default is 0.1) and enable a
+     normalization of the kernel.
 
           kern_subsequence = {
                   length = 2;
@@ -70,11 +71,10 @@
                   norm = "l2";
           }
 
-  3. We finally configure a distance substitution kernel &ndash; a kernel function
-     that is computed from a distance and thus allows plugging in all
-     sorts of string distances.  In our example, we choose the
-     Levenshtein distance and use a linear mapping to a kernel as
-     follows.
+  3. We finally configure a distance substitution kernel &ndash; a kernel
+     function that is computed from a distance and thus allows plugging in
+     all sorts of string distances.  In our example, we choose the
+     Levenshtein distance and use a linear mapping to a kernel as follows.
 
           kern_distance = {
                   dist = "dist_levenshtein";
@@ -82,8 +82,8 @@
                   norm = "l2";
           }
 
-  4. Last but not least, we set the output format to `libsvm` in the `output`
-     section.  This ensures that LibSVM can directly read the files
+  4. Last but not least, we set the output format to `libsvm` in the
+     `output` section.  This ensures that LibSVM can directly read the files
      created by Harry.
 
           output_format = "libsvm";
@@ -136,6 +136,6 @@
 
   To get a feeling for the different kernels and their parameters, simply
   run the example again and change the configuration.  For example, you can
-  change the number of words considered by the spectrum and subsequence
+  change the number of tokens considered by the spectrum and subsequence
   kernel.  Similarly, you can plug other distances into the distance
   substitution kernel and check the results.

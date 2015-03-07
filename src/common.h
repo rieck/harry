@@ -38,8 +38,11 @@
 #include <time.h>
 #include <assert.h>
 #include <dirent.h>
-#include <omp.h>
 #include <regex.h>
+
+#ifdef HAVE_OPENMP
+#include <omp.h>
+#endif
 
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
@@ -53,8 +56,15 @@
 #ifdef HAVE_ZLIB_H
 #include <zlib.h>
 #endif
+
 #ifdef HAVE_LIBCONFIG_H
 #include <libconfig.h>
+/* Patch for changed ABI in libconfig versions */
+#if LIBCONFIG_VER_MAJOR > 1 || LIBCONFIG_VER_MINOR > 3
+typedef int cfg_int;
+#else
+typedef long cfg_int;
+#endif
 #endif
 
 #ifdef HAVE_UTHASH_UTHASH_H
@@ -74,5 +84,6 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
+
 
 #endif /* COMMON_H */

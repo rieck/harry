@@ -6,7 +6,7 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
 /**
@@ -30,7 +30,7 @@ extern int log_line;
 /**
  * Initialize a matrix for similarity values
  * @param s Array of string objects
- * @param n Number of string objects 
+ * @param n Number of string objects
  * @return Matrix object
  */
 hmatrix_t *hmatrix_init(hstring_t *s, int n)
@@ -72,7 +72,7 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 }
 
 /**
- * Parse a range string 
+ * Parse a range string
  * @param r Range object
  * @param str Range string, e.g. 3:14 or 2:-1 or :
  * @param n Maximum size
@@ -87,8 +87,8 @@ static range_t parse_range(range_t r, char *str, int n)
     if (strlen(str) == 0)
         return r;
 
-    /* 
-     * Since "1:1", "1:", ":1"  and ":" are all valid indices, sscanf 
+    /*
+     * Since "1:1", "1:", ":1"  and ":" are all valid indices, sscanf
      * won't do it and we have to stick to manual parsing :(
      */
     ptr = strchr(str, ':');
@@ -140,9 +140,9 @@ static range_t parse_range(range_t r, char *str, int n)
  * @param[in] m Matrix object.
  * @param[out] spec The struct holding the specification.
  */
-void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec)
+void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t * spec)
 {
-	assert(m != NULL && spec != NULL);
+    assert(m != NULL && spec != NULL);
 
     const int width = RANGE_LENGTH(m->x);
     const int height = RANGE_LENGTH(m->y);
@@ -170,19 +170,20 @@ void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t *spec)
         spec->a = 0;
 
     } else {
-        spec->b_top = MAX(x.i -y.i, 0);
-        spec->b_bottom = MAX(y.n -x.n, 0);
-        spec->b_left = MAX(y.i -x.i, 0);
-        spec->b_right = MAX(x.n -y.n, 0);
-        spec->a = height -spec->b_top -spec->b_bottom;
+        spec->b_top = MAX(x.i - y.i, 0);
+        spec->b_bottom = MAX(y.n - x.n, 0);
+        spec->b_left = MAX(y.i - x.i, 0);
+        spec->b_right = MAX(x.n - y.n, 0);
+        spec->a = height - spec->b_top - spec->b_bottom;
     }
 
     assert(spec->b_left + spec->a + spec->b_right == width);
     assert(spec->b_top + spec->a + spec->b_bottom == height);
 
-    spec->n_top = width *spec->b_top;
-    spec->n_mid = spec->a*spec->b_left + (pow(spec->a, 2) +spec->a) /2 + spec->a*spec->b_right;
-    spec->n_bottom = width *spec->b_bottom;
+    spec->n_top = width * spec->b_top;
+    spec->n_mid = spec->a * spec->b_left +
+        (pow(spec->a, 2) + spec->a) / 2 + spec->a * spec->b_right;
+    spec->n_bottom = width * spec->b_bottom;
     spec->n = spec->n_top + spec->n_mid + spec->n_bottom;
 }
 
@@ -224,33 +225,34 @@ void hmatrix_split(hmatrix_t *m, char *str)
  * @param[in] spec The detailed matrix specification.
  * @param[in] rows The range determining the contained number of rows.
  */
-int hmatrix_split_ridx(const unsigned int N, const hmatrixspec_t *spec, const range_t *rows)
+int hmatrix_split_ridx(const unsigned int N, const hmatrixspec_t * spec,
+                       const range_t * rows)
 {
-	assert(spec != NULL);
+    assert(spec != NULL);
 
-	unsigned int n = N;
-	unsigned long width = (spec->b_left + spec->a + spec->b_right);
+    unsigned int n = N;
+    unsigned long width = (spec->b_left + spec->a + spec->b_right);
 
-	if (n <= 0) {
-		return rows->i;
+    if (n <= 0) {
+        return rows->i;
 
-	} else if (n <= spec->n_top) {
-		return rows->i +rint(((double) n) /width);
+    } else if (n <= spec->n_top) {
+        return rows->i + rint(((double) n) / width);
 
-	} else if ((n -= spec->n_top) <= spec->n_mid) {
-		const long p = 1 + 2l*width;
-		const long q = 2*n;
+    } else if ((n -= spec->n_top) <= spec->n_mid) {
+        const long p = 1 + 2l * width;
+        const long q = 2 * n;
 
-		const double y = sqrt(pow(p, 2) /4.0 - q);
-		//const double x1 = p/2.0 +y;
-		const double x2 = p/2.0 -y;
-		return rows->i +spec->b_top +rint(x2);
+        const double y = sqrt(pow(p, 2) / 4.0 - q);
+        //const double x1 = p/2.0 +y;
+        const double x2 = p / 2.0 - y;
+        return rows->i + spec->b_top + rint(x2);
 
-	} else if ((n -= spec->n_mid) <= spec->n_bottom) {
-		return rows->i +spec->b_top + spec->a +rint(((double) n) /width);
+    } else if ((n -= spec->n_mid) <= spec->n_bottom) {
+        return rows->i + spec->b_top + spec->a + rint(((double) n) / width);
 
-	}
-	return rows->i +spec->b_top + spec->a + spec->b_bottom;
+    }
+    return rows->i + spec->b_top + spec->a + spec->b_bottom;
 }
 #endif
 
@@ -263,22 +265,21 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
         fatal("Invalid number of blocks (%d).", blocks);
         return;
     }
-
 #ifdef USE_UNIFORM_SPLITTING
-    hmatrixspec_t spec = {0};
+    hmatrixspec_t spec = { 0 };
     hmatrix_inferspec(m, &spec);
 
-    const unsigned long blocksize = ceil(((double) spec.n) /blocks);
+    const unsigned long blocksize = ceil(((double) spec.n) / blocks);
 
     if (blocksize < width) {
-    	const unsigned int max = floor(((double) spec.n) /width);
-        fatal("Block size too small. Choose %d blocks at a max for optimal performance.", max);
+        const unsigned int max = floor(((double) spec.n) / width);
+        fatal("Block size too small. The maximum block size is %d.", max);
         return;
     }
 
     /* Update range */
     m->y.i = hmatrix_split_ridx(blocksize * index, &spec, &m->y);
-    m->y.n = hmatrix_split_ridx(blocksize *(index +1), &spec, &m->y);
+    m->y.n = hmatrix_split_ridx(blocksize * (index + 1), &spec, &m->y);
 
 #else
     UNUSED(width);
@@ -299,7 +300,7 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
 /**
  * Set the x range for computation
  * @param m Matrix object
- * @param x String for x range 
+ * @param x String for x range
  */
 void hmatrix_xrange(hmatrix_t *m, char *x)
 {
@@ -310,7 +311,7 @@ void hmatrix_xrange(hmatrix_t *m, char *x)
 /**
  * Set the y range for computation
  * @param m Matrix object
- * @param y String for y range 
+ * @param y String for y range
  */
 void hmatrix_yrange(hmatrix_t *m, char *y)
 {
@@ -318,7 +319,7 @@ void hmatrix_yrange(hmatrix_t *m, char *y)
     m->y = parse_range(m->y, y, m->num);
 }
 
-/** 
+/**
  * Allocate memory for matrix
  * @param m Matrix object
  * @return pointer to floats
@@ -353,7 +354,8 @@ float *hmatrix_alloc(hmatrix_t *m)
     m->calcs = spec.n;
 
     /* Initialize to NaN values and count calculations */
-    for (k = 0; k < m->size; k++) m->values[k] = NAN;
+    for (k = 0; k < m->size; k++)
+        m->values[k] = NAN;
 
     return m->values;
 }
@@ -424,7 +426,7 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
  * Compute similarity measure and fill matrix
  * @param m Matrix object
  * @param s Array of string objects
- * @param measure Similarity measure 
+ * @param measure Similarity measure
  */
 void hmatrix_compute(hmatrix_t *m, hstring_t *s,
                      double (*measure) (hstring_t x, hstring_t y))
@@ -435,7 +437,9 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
     double ts, ts1 = time_stamp(), ts2 = ts1;
     float f;
 
+#ifdef HAVE_OPENMP
 #pragma omp parallel for private(ts)
+#endif
     for (int k = 0; k < n; k++) {
         int xi = k / (m->y.n - m->y.i) + m->x.i;
         int yi = k % (m->y.n - m->y.i) + m->y.i;
@@ -449,31 +453,37 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
         f = measure(s[xi], s[yi]);
         hmatrix_set(m, xi, yi, f);
 
-        if (verbose || log_line)
-#pragma omp critical
-        {
-            ts = time_stamp();
-
+        if (verbose || log_line) {
             /*
              * Update internal counter. Note that we have slightly more
-             * calculations as expected, since we don't lock the matrix and
-             * two threads might compute the same value in parallel.  As
-             * long as writing to the matrix is atomic this should not be a
-             * problem.
+             * calculations as expected, since we don't lock the matrix.
+             * Moreover, this update is not thread-safe and the progress
+             * bar might not be correct.
              */
             if (j < m->calcs)
                 j++;
 
-            /* Update progress bar every 100ms */
-            if (verbose && ts - ts1 > 0.1) {
-                prog_bar(0, m->calcs, j);
-                ts1 = ts;
-            }
+            /* Continue if less than 100ms have passed */
+            ts = time_stamp();
+            if (ts - ts1 < 0.1)
+                continue;
 
-            /* Print log line every minute if enabled */
-            if (log_line && ts - ts2 > 60) {
-                log_print(0, m->calcs, j);
-                ts2 = ts;
+            /* Lock only if something is displayed */
+#ifdef HAVE_OPENMP
+#pragma omp critical
+#endif
+            {
+                /* Update progress bar every 100ms */
+                if (verbose) {
+                    prog_bar(0, m->calcs, j);
+                    ts1 = ts;
+                }
+
+                /* Print log line every minute if enabled */
+                if (log_line && ts - ts2 > 60) {
+                    log_print(0, m->calcs, j);
+                    ts2 = ts;
+                }
             }
         }
     }
@@ -502,14 +512,20 @@ float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
 {
     assert(m);
     uint64_t j = 0;
-    int mt = omp_get_max_threads();
+    int mt = 0;
     double ts = time_stamp();
+
+#ifdef HAVE_OPENMP
+    mt = omp_get_max_threads();
+#endif
 
     /*
      * Naive implementation of a while loop. The loop terminates
      * after roughly t seconds by setting k to the maximum value.
      */
+#ifdef HAVE_OPENMP
 #pragma omp parallel for
+#endif
     for (uint64_t k = 0; k < UINT64_MAX - mt; k++) {
 
         /* Select random pair of strings */
@@ -519,7 +535,9 @@ float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
         /* Calculate similarity value */
         measure(s[xi], s[yi]);
 
+#ifdef HAVE_OPENMP
 #pragma omp critical
+#endif
         {
             j++;
             if (time_stamp() - ts > t)

@@ -5,7 +5,7 @@ dist_damerau:dist_damerau:Damerau-Levenshtein distance
 dist_hamming:dist_hamming:Hamming distance
 dist_jaro:dist_jarowinkler:Jaro distance 
 dist_jarowinkler:dist_jarowinkler:Jaro-Winkler distance 
-dist_kernel:dist_kernel:Kernel-based distance
+dist_kernel:dist_kernel:Kernel substitution distance
 dist_lee:dist_lee:Lee distance
 dist_levenshtein,dist_edit:dist_levenshtein:Levenshtein distance
 dist_osa:dist_osa:Optimal string alignment (OSA) distance

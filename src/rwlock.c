@@ -6,7 +6,7 @@
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.  This program is distributed without any
- * warranty. See the GNU General Public License for more details. 
+ * warranty. See the GNU General Public License for more details.
  */
 
 #include "config.h"
@@ -31,10 +31,12 @@
  */
 void rwlock_init(rwlock_t *rw)
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_init(&rw->lock, NULL);
 #else
+#ifdef HAVE_OPENMP
     omp_init_lock(&rw->lock);
+#endif
 #endif
 }
 
@@ -44,49 +46,57 @@ void rwlock_init(rwlock_t *rw)
  */
 void rwlock_destroy(rwlock_t *rw)
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_destroy(&rw->lock);
 #else
+#ifdef HAVE_OPENMP
     omp_destroy_lock(&rw->lock);
+#endif
 #endif
 }
 
 /**
- * Set lock for reading. 
+ * Set lock for reading.
  * @param rw pointer to lock object
  */
 void rwlock_set_rlock(rwlock_t *rw)
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_rdlock(&rw->lock);
 #else
+#ifdef HAVE_OPENMP
     omp_set_lock(&rw->lock);
+#endif
 #endif
 }
 
 /**
- * Unset lock for reading. 
+ * Unset lock for reading.
  * @param rw pointer to lock object
  */
 void rwlock_unset_rlock(rwlock_t *rw)
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_unlock(&rw->lock);
 #else
+#ifdef HAVE_OPENMP
     omp_unset_lock(&rw->lock);
+#endif
 #endif
 }
 
 /**
- * Set lock for writing. 
+ * Set lock for writing.
  * @param rw pointer to lock object
  */
 void rwlock_set_wlock(rwlock_t *rw)
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_wrlock(&rw->lock);
 #else
+#ifdef HAVE_OPENMP
     omp_set_lock(&rw->lock);
+#endif
 #endif
 }
 
@@ -96,10 +106,12 @@ void rwlock_set_wlock(rwlock_t *rw)
  */
 void rwlock_unset_wlock(rwlock_t *rw)
 {
-#ifdef HAVE_PTHREAD_H
+#ifdef ENABLE_PRWLOCK
     pthread_rwlock_unlock(&rw->lock);
 #else
+#ifdef HAVE_OPENMP
     omp_unset_lock(&rw->lock);
+#endif
 #endif
 }
 

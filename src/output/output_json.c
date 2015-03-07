@@ -12,8 +12,8 @@
 /** 
  * @addtogroup output
  * <hr>
- * <em>text</em>: The matrix of similarity/dissimilarity measures is stored
- * as a regular text file. No black magic.
+ * <em>json</em>: The matrix of similarity/dissimilarity measures is stored
+ * as a JSON object.
  * @{
  */
 
@@ -29,13 +29,12 @@ extern config_t cfg;
 
 /* Local variables */
 static void *z = NULL;
+
+static cfg_int precision = 0;
 static int zlib = 0;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
-static cfg_int precision = 0;
-
-static const char *separator = ",";
 
 #define output_printf(z, ...) (\
    zlib ? \
@@ -45,20 +44,19 @@ static const char *separator = ",";
 )
 
 /**
- * Opens a file for writing text format
+ * Opens a file for writing json format
  * @param fn File name
- * @return true if successful, false otherwise
+ * @return number of regular files
  */
-int output_text_open(char *fn)
+int output_json_open(char *fn)
 {
     assert(fn);
 
+    config_lookup_int(&cfg, "output.precision", &precision);
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
-    config_lookup_string(&cfg, "output.separator", &separator);
     config_lookup_bool(&cfg, "output.compress", &zlib);
-    config_lookup_int(&cfg, "output.precision", &precision);
 
     if (zlib)
         z = gzopen(fn, "w9");
@@ -70,11 +68,7 @@ int output_text_open(char *fn)
         return FALSE;
     }
 
-    /* Write harry header */
-    if (zlib)
-        harry_zversion(z, "# ", "Output module for text format");
-    else
-        harry_version(z, "# ", "Output module for text format");
+    output_printf(z, "{\n");
 
     return TRUE;
 }
@@ -84,79 +78,89 @@ int output_text_open(char *fn)
  * @param m Matrix of similarity values 
  * @return Number of written values
  */
-int output_text_write(hmatrix_t *m)
+int output_json_write(hmatrix_t *m)
 {
     assert(m);
-    int i, j, r, k = 0;
+    int i, j, k = 0;
 
     if (save_indices) {
-        output_printf(z, "#");
+        output_printf(z, "  \"x_indices\": [");
         for (j = m->x.i; j < m->x.n; j++) {
-            output_printf(z, " %d", j);
+            output_printf(z, "%d", j);
+            if (j < m->x.n - 1)
+                output_printf(z, ", ");
         }
-        output_printf(z, "\n");
+        output_printf(z, "],\n  \"y_indices\": [");
+        for (j = m->y.i; j < m->y.n; j++) {
+            output_printf(z, "%d", j);
+            if (j < m->y.n - 1)
+                output_printf(z, ", ");
+        }
+        output_printf(z, "],\n");
     }
 
     if (save_labels) {
-        output_printf(z, "#");
+        output_printf(z, "  \"x_labels\": [");
         for (j = m->x.i; j < m->x.n; j++) {
             output_printf(z, " %g", m->labels[j]);
+            if (j < m->x.n - 1)
+                output_printf(z, ", ");
         }
-        output_printf(z, "\n");
+        output_printf(z, "],\n  \"y_labels\": [");
+        for (j = m->y.i; j < m->y.n; j++) {
+            output_printf(z, "%g", m->labels[j]);
+            if (j < m->y.n - 1)
+                output_printf(z, ", ");
+        }
+        output_printf(z, "],\n");
     }
 
     if (save_sources) {
-        output_printf(z, "#");
+        output_printf(z, "  \"x_sources\": [");
         for (j = m->x.i; j < m->x.n; j++) {
-            output_printf(z, " %s", m->srcs[j]);
+            output_printf(z, "\"%s\"", m->srcs[j]);
+            if (j < m->y.n - 1)
+                output_printf(z, ", ");
         }
-        output_printf(z, "\n");
+        output_printf(z, "],\n  \"y_sources\": [");
+        for (j = m->y.i; j < m->y.n; j++) {
+            output_printf(z, "\"%s\"", m->srcs[j]);
+            if (j < m->y.n - 1)
+                output_printf(z, ", ");
+        }
+        output_printf(z, "],\n");
     }
 
+    output_printf(z, "  \"matrix\": [\n    ");
     for (i = m->y.i; i < m->y.n; i++) {
+        output_printf(z, "    [");
         for (j = m->x.i; j < m->x.n; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
-            r = output_printf(z, "%g", val);
-            if (r < 0) {
-                error("Could not write to output file");
-                return -k;
-            }
-
+            output_printf(z, "%g", val);
             if (j < m->x.n - 1)
-                output_printf(z, "%s", separator);
-
+                output_printf(z, ", ");
             k++;
         }
-
-        if (save_indices || save_labels || save_sources)
-            output_printf(z, " #");
-
-        if (save_indices)
-            output_printf(z, " %d", i);
-
-        if (save_labels)
-            output_printf(z, " %g", m->labels[i]);
-
-        if (save_sources)
-            output_printf(z, " %s", m->srcs[i]);
-
+        output_printf(z, "]");
+        if (i < m->y.n - 1)
+            output_printf(z, ",");
         output_printf(z, "\n");
     }
-
+    output_printf(z, "  ]\n");
     return k;
 }
 
 /**
  * Closes an open output file.
  */
-void output_text_close()
+void output_json_close()
 {
-    if (z) {
-        if (zlib)
-            gzclose(z);
-        else
-            fclose(z);
-    }
+    output_printf(z, "}\n");
+
+    if (zlib)
+        gzclose(z);
+    else
+        fclose(z);
 }
 
 /** @} */

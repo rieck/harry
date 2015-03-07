@@ -6,7 +6,7 @@ if ! which harry > /dev/null ; then
 fi
 
 # Compute Levenshtein distance
-harry -v -d '' -m levenshtein alexa1000.txt distances.txt
+harry -v -m levenshtein alexa1000.txt distances.txt
 
 # Print most similar sites
 python most_similar.py distances.txt

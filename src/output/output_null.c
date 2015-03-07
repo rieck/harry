@@ -40,7 +40,7 @@ int output_null_open(char *fn)
 
 /**
  * Write similarity matrix to output
- * @param m Matrix/triangle of similarity values 
+ * @param m Matrix of similarity values 
  * @return Number of written values
  */
 int output_null_write(hmatrix_t *m)
