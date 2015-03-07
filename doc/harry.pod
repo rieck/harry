@@ -6,7 +6,7 @@ B<harry> - A tool for measuring string similarity
 
 =head1 SYNOPSIS
 
-B<harry> [B<options>] [B<-c> I<config>] I<input> [<input>] I<output>
+B<harry> [B<options>] [B<-c> I<config>] I<input> [I<input>] I<output>
 
 =head1 DESCRIPTION
 
@@ -362,7 +362,7 @@ of blocks and I<idx> the index of the block to compute.  The matrix is
 splitted across the y-axis.  For many output formats the blocks can be
 simply concatenated to get the original matrix.
 
-The parameters B<split> is ignore if two input sources are given on the
+The parameter B<split> is ignore if two input sources are given on the
 command line.
 
 =item B<dist_hamming = {>
@@ -809,13 +809,10 @@ environments.  The format of the similarity matrix has the following form
   | array (float) ... |
 
 where I<xdim> and I<ydim> are unsigned 32-bit integers in host byte order
-specifing the dimensions of the matrix, and I<len> is an unsigned 32-bit
-integer indicating the length of the following I<array> of similarity values
-in single floats (32 bit).  Note that if I<len> != I<xlen> * I<ylen> the
-matrix is stored in triangular form, that is, only the upper triangle is
-written to standard output. Indices, labels and sources are not
-output. This output format is also enables when I<output> is set to 
-I<=>, otherwise I<output> is ignored.
+specifing the dimensions of the matrix and I<array> holds the cells of the
+matrix as single floats (32 bit).  Indices, labels and sources are not
+output.  This output format is also enables when I<output> is set to I<=>,
+otherwise I<output> is ignored.
 
 =back
 
