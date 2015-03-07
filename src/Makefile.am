@@ -17,7 +17,7 @@ libharry_la_SOURCES  = 	common.h util.c util.h hconfig.c hconfig.h \
                         hmatrix.c hmatrix.h
 libharry_la_LIBADD   =  input/libinput.la measures/libmeasures.la \
 		       	output/liboutput.la
+
 beautify:
-			gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce \
-			        -nfc1 -nut -T FILE -T hstring_t -T rwlock_t \
-			        -T hmatrix_t *.c *.h
+	gindent -i4 -npsl -di0 -br -d0 -cli0 -npcs -ce -nfc1 -nut \
+		-T FILE -T hstring_t -T rwlock_t -T hmatrix_t *.c *.h

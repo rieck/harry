@@ -157,8 +157,8 @@ AC_CONFIG_FILES([
    src/measures/Makefile \
    src/input/Makefile \
    src/output/Makefile \
+   python/Makefile \
    tests/Makefile \
-   wrappers/Makefile \
    doc/Makefile \
    examples/Makefile \
    examples/alexa/Makefile \
