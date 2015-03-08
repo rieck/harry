@@ -111,7 +111,7 @@ def compare(x, y=None, **kwargs):
         opts += " -x :%d -y %d:" % (len(x), len(x))
         x += y
 
-    if len(x) < 10:
+    if len(x) < 50:
         warnings.warn("Harry is not efficient on small sets of strings.")
 
     return __run_harry(x, opts)
