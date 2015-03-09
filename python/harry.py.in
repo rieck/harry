@@ -17,8 +17,7 @@ import shlex
 import urllib
 import struct
 import warnings
-import array
-
+import numpy as np
 
 def __run_harry(strs, opts):
     """ 
@@ -54,20 +53,9 @@ def __run_harry(strs, opts):
     # Unpack dimensions of matrix
     xdim, ydim = struct.unpack("II", stdout[0:8])
 
-    # Check whether numpy is available
-    try:
-        import numpy as np
-        # Generate matrix form buffer and reshape it
-        mat = np.frombuffer(stdout[8:], dtype=np.float32)
-        mat = mat.reshape(xdim, ydim)
-    except ImportError:
-        # Generate array of floats
-        a = array.array("f")
-        a.fromstring(stdout[8:])
-        # Generate list of lists
-        mat = []
-        for i in range(0, xdim * ydim, xdim):
-            mat.append(a[i:i + xdim].tolist())
+    # Generate matrix form buffer and reshape it
+    mat = np.frombuffer(stdout[8:], dtype=np.float32)
+    mat = mat.reshape(xdim, ydim)
 
     return mat
 
