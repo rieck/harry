@@ -309,11 +309,11 @@ I<bits>, I<bytes> or I<tokens>. Depending in the granularity a string is
 considered as a sequence of bits, bytes or tokens, which results in different
 similarity values during comparison. 
 
-=item B<token_delim = " %0a%0d";>
+=item B<token_delim = "";>
 
 The parameter B<token_delim> defines characters for delimiting tokens in
-strings. It is only considered, if the granularity is set to I<tokens>, 
-otherwise it is ignored.
+strings, for example " %0a%0d".  It is only considered, if the granularity
+is set to I<tokens>, otherwise it is ignored.
 
 =item B<num_threads = 0;>
 

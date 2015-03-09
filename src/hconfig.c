@@ -38,7 +38,7 @@ static default_t defaults[] = {
     {I "", "soundex", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
     {M "", "measure", CONFIG_TYPE_STRING, {.str = "dist_levenshtein"}},
     {M "", "granularity", CONFIG_TYPE_STRING, {.str = "bytes"}},
-    {M "", "token_delim", CONFIG_TYPE_STRING, {.str = " %0a%0d"}},
+    {M "", "token_delim", CONFIG_TYPE_STRING, {.str = ""}},
     {M "", "num_threads", CONFIG_TYPE_INT, {.num = 0}},
     {M "", "cache_size", CONFIG_TYPE_INT, {.num = 256}},
     {M "", "global_cache", CONFIG_TYPE_BOOL, {.num = CONFIG_FALSE}},
@@ -273,6 +273,11 @@ int config_check(config_t * cfg)
     if (!strcasecmp(str1, "tokens") && strlen(str2) == 0) {
         error("Delimiters are required if the granularity is tokens.");
         return 0;
+    }
+
+    /* Warning due to change of command-line options */
+    if (strcasecmp(str1, "tokens") && strlen(str2) > 0) {
+        warning("Granularity is %s. Delimiters are ignored.", str1);
     }
 
     return 1;
