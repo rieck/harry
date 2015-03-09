@@ -44,7 +44,7 @@
   strings. Just have a look at Wikipedia to learn a little bit about how
   these are computed.
 
-## Characters and Words
+## Bytes, Bits and Words
 
   By default Harry considers a string as a sequence of bytes. The
   similarity of two strings is thus determined by comparing the order and
@@ -73,6 +73,16 @@
   contained in the strings.
 
       harry -m sim_jaccard -g tokens data.txt -
+
+  We didn't stop there. Harry can also consider the bits contained in a
+  string as symbols.  Simply change the granularity to `bits` and re-run the
+  above examples.
+
+      harry -g bits data.txt -
+
+  Note that for certain similarity measures the granularity of bits does
+  not differ from bytes, simply because the similarity computation already
+  considers bits, e.g.  in the case of the compression distance.
 
 ## Endless Options
 
