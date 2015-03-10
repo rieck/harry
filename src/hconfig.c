@@ -275,11 +275,6 @@ int config_check(config_t * cfg)
         return 0;
     }
 
-    /* Warning due to change of command-line options */
-    if (strcasecmp(str1, "tokens") && strlen(str2) > 0) {
-        warning("Granularity is %s. Delimiters are ignored.", str1);
-    }
-
     return 1;
 }
 
