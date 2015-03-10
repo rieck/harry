@@ -214,6 +214,7 @@ static void harry_parse_options(int argc, char **argv, char **in,
     /* Check for input and output arguments */
     if (argc == 2) {
         *in = argv[0];
+        *in2 = NULL;
         *out = argv[1];
     } else if (argc == 3) {
         *in = argv[0];
@@ -241,7 +242,7 @@ static void harry_parse_options(int argc, char **argv, char **in,
 
     /* Check for two input sources */
     config_lookup_string(&cfg, "input.input_format", &str);
-    if (in2 && (!strcasecmp(str, "stdin") || !strcasecmp(str, "raw")))
+    if (*in2 && (!strcasecmp(str, "stdin") || !strcasecmp(str, "raw")))
 	fatal("Input mode '%s' does not support two inputs.", str);
 
     /* We are through with parsing. Print the config if requested */

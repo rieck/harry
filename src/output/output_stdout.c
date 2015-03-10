@@ -31,9 +31,20 @@ extern config_t cfg;
 static int save_indices = 0;
 static int save_labels = 0;
 static int save_sources = 0;
+static int zlib = 0;
 static cfg_int precision = 0;
 
+static void *z = NULL;
 static const char *separator = ",";
+
+/* Dirty hack to support compression */
+#define output_printf(z, ...) (\
+   zlib ? \
+       gzprintf((gzFile) z, __VA_ARGS__) \
+   : \
+       fprintf((FILE *) z, __VA_ARGS__) \
+)
+
 
 /**
  * Opens a file for writing stdout format
@@ -45,16 +56,28 @@ int output_stdout_open(char *fn)
     config_lookup_bool(&cfg, "output.save_indices", &save_indices);
     config_lookup_bool(&cfg, "output.save_labels", &save_labels);
     config_lookup_bool(&cfg, "output.save_sources", &save_sources);
+    config_lookup_bool(&cfg, "output.compress", &zlib);    
     config_lookup_string(&cfg, "output.separator", &separator);
     config_lookup_int(&cfg, "output.precision", &precision);
 
-    if (!stdout) {
-        error("Could not open <stdout>");
+    /* Init source */
+    if (zlib) {
+        z = gzdopen(2, "w9");
+    } else {
+        z = stdout;
+    }
+    
+    if (!z) {
+        error("Could not open output file '%s'.", fn);
         return FALSE;
     }
 
     /* Write harry header */
-    harry_version(stdout, "# ", "Output module for stdout format");
+    if (zlib) {
+        harry_zversion(z, "# ", "Output module for stdout format");
+    } else {
+        harry_version(z, "# ", "Output module for stdout format");
+    }
 
     return TRUE;
 }
@@ -70,57 +93,57 @@ int output_stdout_write(hmatrix_t *m)
     int i, j, r, k = 0;
 
     if (save_indices) {
-        fprintf(stdout, "#");
+        output_printf(z, "#");
         for (j = m->x.i; j < m->x.n; j++) {
-            fprintf(stdout, " %d", j);
+            output_printf(z, " %d", j);
         }
-        fprintf(stdout, "\n");
+        output_printf(z, "\n");
     }
 
     if (save_labels) {
-        fprintf(stdout, "#");
+        output_printf(z, "#");
         for (j = m->x.i; j < m->x.n; j++) {
-            fprintf(stdout, " %g", m->labels[j]);
+            output_printf(z, " %g", m->labels[j]);
         }
-        fprintf(stdout, "\n");
+        output_printf(z, "\n");
     }
 
     if (save_sources) {
-        fprintf(stdout, "#");
+        output_printf(z, "#");
         for (j = m->x.i; j < m->x.n; j++) {
-            fprintf(stdout, " %s", m->srcs[j]);
+            output_printf(z, " %s", m->srcs[j]);
         }
-        fprintf(stdout, "\n");
+        output_printf(z, "\n");
     }
 
     for (i = m->y.i; i < m->y.n; i++) {
         for (j = m->x.i; j < m->x.n; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
-            r = fprintf(stdout, "%g", val);
+            r = output_printf(z, "%g", val);
             if (r < 0) {
                 error("Could not write to output file");
                 return -k;
             }
 
             if (j < m->x.n - 1)
-                fprintf(stdout, "%s", separator);
+                output_printf(z, "%s", separator);
 
             k++;
         }
 
         if (save_indices || save_labels || save_sources)
-            fprintf(stdout, " #");
+            output_printf(z, " #");
 
         if (save_indices)
-            fprintf(stdout, " %d", i);
+            output_printf(z, " %d", i);
 
         if (save_labels)
-            fprintf(stdout, " %g", m->labels[i]);
+            output_printf(z, " %g", m->labels[i]);
 
         if (save_sources)
-            fprintf(stdout, " %s", m->srcs[i]);
+            output_printf(z, " %s", m->srcs[i]);
 
-        fprintf(stdout, "\n");
+        output_printf(z, "\n");
     }
 
     return k;
@@ -131,7 +154,10 @@ int output_stdout_write(hmatrix_t *m)
  */
 void output_stdout_close()
 {
-    /* Do nothing */
+    if (zlib)
+        gzclose(z);
+    else
+        fclose(z);
 }
 
 /** @} */
