@@ -4,20 +4,47 @@
 # Just a collection of test cases which mainly check the interfacing
 # with the command-line tool
 
+import numpy as np
+import sys
 import harry
+import random
 
-x = ["this is test", "this is not a test", "is this a test", "test it"]
+a = " abcdefghijklmnopqrstuvwxyz.,"
+x = [''.join(random.choice(a) for _ in range(100)) for _ in range(100)]
 
-# Default options
-m = harry.compare(x)
-m = harry.compare(x, x)
+print "Testing options:",
+m1 = harry.compare(x)
+m2 = harry.compare(x, x)
+if np.linalg.norm(m1 - m2) < 1e-9:
+    print "Ok"
+else:
+    print "Failed"
+    sys.exit(1)
 
-# Other measures
-m = harry.compare(x, measure="dist_damerau")
-m = harry.compare(x, measure="dist_compression")
-m = harry.compare(x, measure="kern_wdegree")
+print "Testing kernels:",
+# Check kernel matrices for negative eigenvalues
+for name in ["wdegree", "subsequence", "spectrum"]:
+    k = harry.compare(x, measure="kern_" + name)
+    e = np.min(np.real(np.linalg.eig(k)[0]))
+    print ".",
+    if np.abs(e) > 1e-9:
+        print "Failed"
+        sys.exit(1)
+print "Ok"
 
-# Granularity changes
-print harry.compare(x, granularity="bytes")
-print harry.compare(x, granularity="bits")
-print harry.compare(x, granularity="tokens")
+print "Testing distances:", 
+# Check distances matrices for metric property
+for name in ["hamming", "levenshtein", "bag", "lee"]:
+    d = harry.compare(x, measure="dist_" + name)
+    
+    # This might not be super efficient ;)
+    perm = np.random.permutation(len(x))[:30]
+    for i in perm:
+        for j in perm:
+            for k in perm:
+                m = d[i,j] + d[j,k] - d[i,k]
+                if m < 0:
+                    print "Failed"
+                    sys.exit(1)
+    print ".", 
+print "Ok"
