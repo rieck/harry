@@ -12,6 +12,7 @@ EXTRA_DIST			= dist_compression.py \
 				  check_configs.sh \
 				  check_configs.txt \
 				  check_inputs.sh \
+				  check_python.py \
 				  strings.txt \
 				  config1.cfg \
 				  config2.cfg \
@@ -41,7 +42,8 @@ TESTS				= $(check_PROGRAMS) \
 				  check_measures.sh \
 				  check_options.sh \
 				  check_configs.sh \
-				  check_inputs.sh
+				  check_inputs.sh \
+				  check_python.py
 
 check_levenshtein_SOURCES	= dist_levenshtein.c tests.h
 check_levenshtein_LDADD		= $(top_builddir)/src/libharry.la

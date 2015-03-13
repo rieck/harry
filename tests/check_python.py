@@ -1,16 +1,32 @@
+#!/usr/bin/env python
 # Harry - A Tool for Measuring String Similarity
 # Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
 # --
 # Just a collection of test cases which mainly check the interfacing
 # with the command-line tool
 
-import numpy as np
-import sys
+# Loading standard modules
+try:
+    import sys
+    import os
+    import random
+    import numpy as np
+except:
+    print "Something is wrong. Skipping test"
+    sys.exit(0)    
+
+# Add path for Harry module
+builddir = os.environ["BUILDDIR"]
+sys.path.append(os.path.join(builddir, "python"))
+
+# Load harry module
 import harry
-import random
+
+# Adapt path of tool (as it is not installed yet)
+harry.__tool = os.path.join(builddir, "src", "harry")
 
 a = " abcdefghijklmnopqrstuvwxyz.,"
-x = [''.join(random.choice(a) for _ in range(100)) for _ in range(100)]
+x = [''.join(random.choice(a) for _ in range(50)) for _ in range(10)]
 
 print "Testing options:",
 m1 = harry.compare(x)
@@ -38,10 +54,9 @@ for name in ["hamming", "levenshtein", "bag", "lee"]:
     d = harry.compare(x, measure="dist_" + name)
     
     # This might not be super efficient ;)
-    perm = np.random.permutation(len(x))[:30]
-    for i in perm:
-        for j in perm:
-            for k in perm:
+    for i in range(len(x)):
+        for j in range(i, len(x)):
+            for k in range(len(x)):
                 m = d[i,j] + d[j,k] - d[i,k]
                 if m < 0:
                     print "Failed"

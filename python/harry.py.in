@@ -19,6 +19,10 @@ import struct
 import warnings
 import numpy as np
 
+
+# Construct path for Harry tool
+__tool = os.path.join("%BINDIR%", "harry")
+
 def __run_harry(strs, opts):
     """ 
     Internal function to call the tool Harry
@@ -37,18 +41,14 @@ def __run_harry(strs, opts):
     strs = map(urllib.quote, strs)
     stdin = '\n'.join(strs)
 
-    # Construct path
-    tool = os.path.join("%BINDIR%", "harry")
-
     # Input: "-"  Read strings from standard input
     # Output: "="  Write raw matrix to standard output
-    cmd = "%s %s --decode_str - =" % (tool, opts)
+    cmd = "%s %s --decode_str - =" % (__tool, opts)
     args = shlex.split(cmd)
     p = sp.Popen(args, stdout=sp.PIPE, stdin=sp.PIPE, stderr=None)
     stdout, stderr = p.communicate(input=stdin)
-
     if p.returncode != 0:
-        raise Exception("Error while executing %s. See above." % tool)
+        raise Exception("Error while executing %s. See above." % __tool)
 
     # Unpack dimensions of matrix
     xdim, ydim = struct.unpack("II", stdout[0:8])

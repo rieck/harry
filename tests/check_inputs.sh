@@ -27,19 +27,19 @@ for i in 1 2 ; do
    case $i in
    1) 
       # Check one and two inputs 
-      harry $DATA $OUTPUT1      
-      harry $DATA $DATA $OUTPUT2
+      $HARRY $DATA $OUTPUT1      
+      $HARRY $DATA $DATA $OUTPUT2
       ;;
    2) 
       # Check one input and ranges
-      harry $DATA $OUTPUT1        
+      $HARRY $DATA $OUTPUT1        
       cat $DATA $DATA $TMPFILE
-      harry -x :8 -y 8: $TMPFILE $OUTPUT2
+      $HARRY -x :8 -y 8: $TMPFILE $OUTPUT2
       ;;
    3)
       # Check "invalid ranges"
-      harry $DATA $OUTPUT1      
-      harry -x 3:5 -y 2:4 $DATA $DATA $OUTPUT2
+      $HARRY $DATA $OUTPUT1      
+      $HARRY -x 3:5 -y 2:4 $DATA $DATA $OUTPUT2
       ;;
    esac
 
