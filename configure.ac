@@ -34,7 +34,8 @@ if test "$GCC" = "yes" ; then
 fi
 
 # Check for Python
-AM_PATH_PYTHON
+AM_PATH_PYTHON(,, [:])
+AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
 
 # Optional packages
 AC_ARG_WITH([libarchive], [AS_HELP_STRING([--with-libarchive],
