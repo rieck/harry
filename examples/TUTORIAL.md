@@ -44,7 +44,7 @@
   strings. Just have a look at Wikipedia to learn a little bit about how
   these are computed.
 
-## Bytes, Bits and Words
+## Bytes, Bits and Tokens
 
   By default Harry considers a string as a sequence of bytes. The
   similarity of two strings is thus determined by comparing the order and
