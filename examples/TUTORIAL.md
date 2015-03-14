@@ -224,15 +224,13 @@
   Starting with version 0.4.0 Harry includes a small Python module that can
   be used to directly access the functionality of the tool.  The module is
   called `harry.py` and needs to be in a directory listed in your Python
-  path (see `PYTHONPATH`). Moreover, the module depends on the popular Python
-  package `numpy` to be installed.  Let's start by importing the module. 
+  path (see `PYTHONPATH`).  Moreover, the module depends on the popular
+  Python package `numpy` to be installed.
+
+  Let's start by importing the module and displaying its documentation.
       
        import harry
-
-  The most important function of the module is `harry.compare`. You can 
-  see its documentation from within Python by simply running: 
- 
-       help(harry.compare)
+       help(harry)
  
   Before we can run some tests with this version of Harry, we first create a
   set of random strings to play around.

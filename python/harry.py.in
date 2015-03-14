@@ -1,14 +1,11 @@
 """ 
-    Harry - A Tool for Measuring String Similarity
-    Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
- 
     Harry is a small tool for measuring the similarity of strings.  The
     module supports common distance and kernel functions for strings as 
     well as some exotic similarity measures.
 
     The Python module of Harry uses largely the same parameters as the
     command-line tool. See manual page harry(1) for more information.
-
+    Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
 """
 
 import os
@@ -43,12 +40,16 @@ def __run_harry(strs, opts):
 
     # Input: "-"  Read strings from standard input
     # Output: "="  Write raw matrix to standard output
-    cmd = "%s %s --decode_str - =" % (__tool, opts)
+    cmd = "%s %s - =" % (__tool, opts)
     args = shlex.split(cmd)
     p = sp.Popen(args, stdout=sp.PIPE, stdin=sp.PIPE, stderr=None)
     stdout, stderr = p.communicate(input=stdin)
     if p.returncode != 0:
         raise Exception("Error while executing %s. See above." % __tool)
+
+    # No output available
+    if len(stdout) == 0:
+        return None
 
     # Unpack dimensions of matrix
     xdim, ydim = struct.unpack("II", stdout[0:8])
@@ -77,7 +78,7 @@ def compare(x, y=None, **kwargs):
     %KEYARGS%
 
     # Process options
-    opts = ""
+    opts = "--decode_str"
     for (k, v) in kwargs.items():
         if k not in keyargs:
             raise Exception("Unknown argument '%s'" % k)
@@ -103,3 +104,17 @@ def compare(x, y=None, **kwargs):
         warnings.warn("Harry is not efficient on small sets of strings.")
 
     return __run_harry(x, opts)
+
+
+def print_measures():
+    """
+    Print list of similarity measures supported by Harry
+    """
+    __run_harry([], "--print_measures")
+
+
+def print_defaults():
+    """
+    Print default configuration of Harry
+    """
+    __run_harry([], "--print_defaults")
