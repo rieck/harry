@@ -219,6 +219,48 @@
        for row in data['matrix']:
              print row
 
+## Python module
+
+  Starting with version 0.4.0 Harry includes a small Python module that can
+  be used to directly access the functionality of the tool.  The module is
+  called `harry.py` and needs to be in a directory listed in your Python
+  path (see `PYTHONPATH`).  Moreover, the module depends on the popular
+  Python package `numpy` to be installed.  Let's start by importing the
+  module and another module we need later
+      
+       import harry
+       import random
+
+  The most important function of the module is `harry.compare`. You can 
+  see its documentation by simply running 
+ 
+       help(harry.compare)
+ 
+  Okay, it is time to run some tests and see how Harry can be used from
+  within the Python environment.  First, we create a set of random strings
+  to play around.
+
+       a = " abdefghijklmnopqrstivwxyz"
+       x = [''.join(random.choice(a) for _ in range(50)) for _ in range(10)]
+
+  We can easily compute a square matrix of distance values by running
+
+       d = harry.compare(x)
+  
+  Several options from the command-line tool can be used as parameters to
+  this function as follows
+
+       d = harry.compare(x, measure="dist_jaro")
+       d = harry.compare(x, granularity="tokens")
+       d = harry.compare(x, x_range="3:9")
+
+  The first call computes a distance matrix using the Jaro distance as
+  similarity measure.  The second call sticks to the default similarity
+  measure (Levenshtein distance), but uses tokens as granularity instead of
+  bytes.  The third call finally makes use of the range feature and computes
+  only a submatrix for the strings between index 3 and 9.
+  
+
 ## Conclusions
 
    Have fun with Harry!
