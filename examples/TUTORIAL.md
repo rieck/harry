@@ -224,41 +224,47 @@
   Starting with version 0.4.0 Harry includes a small Python module that can
   be used to directly access the functionality of the tool.  The module is
   called `harry.py` and needs to be in a directory listed in your Python
-  path (see `PYTHONPATH`).  Moreover, the module depends on the popular
-  Python package `numpy` to be installed.  Let's start by importing the
-  module and another module we need later
+  path (see `PYTHONPATH`). Moreover, the module depends on the popular Python
+  package `numpy` to be installed.  Let's start by importing the module. 
       
        import harry
-       import random
 
   The most important function of the module is `harry.compare`. You can 
-  see its documentation by simply running 
+  see its documentation from within Python by simply running: 
  
        help(harry.compare)
  
-  Okay, it is time to run some tests and see how Harry can be used from
-  within the Python environment.  First, we create a set of random strings
-  to play around.
+  Before we can run some tests with this version of Harry, we first create a
+  set of random strings to play around.
 
+       import random
        a = " abdefghijklmnopqrstivwxyz"
-       x = [''.join(random.choice(a) for _ in range(50)) for _ in range(10)]
+       x = [''.join(random.choice(a) for _ in range(10)) for _ in range(5)]
 
-  We can easily compute a square matrix of distance values by running
+  We can now easily compute a square matrix of distance values for this set
+  of strings by running:
 
        d = harry.compare(x)
-  
-  Several options from the command-line tool can be used as parameters to
-  this function as follows
+
+       display(d)
+       array([[  0.  10.  10.   8.  10.]
+              [ 10.   0.  10.   8.   8.]
+              [ 10.  10.   0.   9.  10.]
+              [  8.   8.   9.   0.  10.]
+              [ 10.   8.  10.  10.   0.]], type=float32)
+
+  Note that the strings have been generated randomly and the output is
+  different when you run this examples.  Several options of the command-line
+  tool can be directly used as parameters to `harry.compare`:
 
        d = harry.compare(x, measure="dist_jaro")
        d = harry.compare(x, granularity="tokens")
        d = harry.compare(x, x_range="3:9")
 
-  The first call computes a distance matrix using the Jaro distance as
-  similarity measure.  The second call sticks to the default similarity
-  measure (Levenshtein distance), but uses tokens as granularity instead of
-  bytes.  The third call finally makes use of the range feature and computes
-  only a submatrix for the strings between index 3 and 9.
+  The first call of `harry.compare` computes a distance matrix using the
+  Jaro distance as similarity measure, the second call uses tokens as
+  granularity instead of bytes and the third call makes use of the range
+  feature for computing only a submatrix.
   
 
 ## Conclusions
