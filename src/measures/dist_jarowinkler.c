@@ -46,13 +46,15 @@ extern config_t cfg;
 /* Global variables */
 static double scaling = 0.1;
 
+#ifdef JARO_COMPARE_SERRANO
 /* Some help functions */
-inline int max(int x, int y)
+static inline int max(int x, int y)
 {
     return x > y ? x : y;
 }
+#endif
 
-inline int min(int x, int y)
+static inline int min(int x, int y)
 {
     return x < y ? x : y;
 }
