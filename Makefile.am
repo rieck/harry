@@ -17,6 +17,3 @@ clean-local:
 CHANGES:
 	$(srcdir)/git2changes.py
 
-dist-hook: 
-
-	

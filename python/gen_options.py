@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 import sys
 
+# Script for configuring the Python module at compile-time.
+if len(sys.argv) != 5:
+    print "usage: %s <options.file> <binpath> <module.in> <module.out>" % sys.argv[0]
+    sys.exit(0)
+
 options = []
 
 # Read data
@@ -54,10 +59,10 @@ for opt in options:
 
 
 # Replace
-f = open(sys.argv[2], 'w')
-for line in open(sys.argv[2] + '.in'):
+f = open(sys.argv[4], 'w')
+for line in open(sys.argv[3]):
     line = line.replace('%KEYARGS%', keyargs)
     line = line.replace('%USAGE%', usage)
-    line = line.replace('%BINDIR%', sys.argv[3])
+    line = line.replace('%BINDIR%', sys.argv[2])
     f.write(line)
 f.close()

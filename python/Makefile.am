@@ -5,9 +5,16 @@ EXTRA_DIST            = harry.py.in gen_options.py
 
 python_PYTHON 	      = harry.py
 noinst_PYTHON 	      = benchmark.py
-
-all-local: harry.py
+CLEANFILES            = harry.py
 
 harry.py: harry.py.in gen_options.py $(top_srcdir)/src/options.txt
-	$(PYTHON) gen_options.py $(top_srcdir)/src/options.txt \
-	          harry.py $(bindir)
+	$(PYTHON) $(srcdir)/gen_options.py $(top_srcdir)/src/options.txt \
+	          $(bindir) $(srcdir)/harry.py.in $(builddir)/harry.py
+
+# Make sure harry.py is available during test runs
+check-local: harry.py
+
+# Make sure harry.py is removed from the distribution
+dist-hook:
+	rm -f $(distdir)/harry.py
+	
