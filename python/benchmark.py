@@ -6,12 +6,8 @@
 
 import time
 import random
-
-import Levenshtein
 import numpy as np
 import matplotlib.pyplot as plt
-
-import harry
 
 
 def rand_str(length):
@@ -39,6 +35,13 @@ def test_pylev(strings):
             Levenshtein.distance(strings[i], strings[j])
     return time.time() - t
 
+def test_jelly(strings):
+    """ Compute Levenshtein distance; return time (jellyfish) """
+    t = time.time()
+    for i in range(len(strings)):
+        for j in range(i + 1, len(strings)):
+            jellyfish.levenshtein_distance(strings[i], strings[j])
+    return time.time() - t
 
 def test_harry(strings):
     """ Compute Levenshtein distance; return time (Harry) """
@@ -46,32 +49,60 @@ def test_harry(strings):
     harry.compare(strings, num_threads=1)
     return time.time() - t
 
-
 # Prepare experiment
+runs = 20
 scale = np.logspace(0, np.log10(150), 20)
 t_harry = np.zeros(len(scale))
 t_pylev = np.zeros(len(scale))
-runs = 20
+t_jelly = np.zeros(len(scale))
 
-# Compute ratio between python-Levenshtein and Harry
 for r in range(runs):
     strs = gen_strs(np.max(scale))
-    for (i, s) in enumerate(scale):
-        t_pylev[i] += test_pylev(strs[0:int(s)])
-        t_harry[i] += test_harry(strs[0:int(s)])
+
+    try:
+        import harry
+        for (i, s) in enumerate(scale):
+            t_harry[i] += test_harry(strs[0:int(s)])
+    except:
+        pass
+
+    try:
+        import Levenshtein
+        for (i, s) in enumerate(scale):
+            t_pylev[i] += test_pylev(strs[0:int(s)])
+    except:
+        pass
+
+    try:                
+        import jellyfish
+        for (i, s) in enumerate(scale):
+            t_jelly[i] += test_jelly(strs[0:int(s)])
+    except:
+        pass
+
+# Compute ratio between python-Levenshtein and Harry
 
 # Normalize run-time by runs
 t_pylev /= runs
 t_harry /= runs
+t_jelly /= runs
 
 # Matplot stuff
 plt.figure(figsize=(6, 3))
 
 plt.plot(scale, t_pylev, label="python-Levenshtein")
-plt.plot(scale, t_harry, label="python module of Harry")
+plt.plot(scale, t_harry, label="Python module of Harry")
+plt.plot(scale, t_jelly, label="jellyfish")
 
-plt.xlabel('Number of strings')
+plt.xlabel('Number of strings to compare')
 plt.ylabel('Run-time (s)')
 plt.xlim(np.min(scale), np.max(scale))
+plt.ylim([1e-4, 0.5])
 plt.legend(loc=2)
-plt.savefig('benchmark.pdf')
+plt.tight_layout()
+plt.savefig('benchmark1.pdf')
+
+plt.yscale("log")
+plt.legend(loc=0)
+plt.savefig('benchmark2.pdf')
+
