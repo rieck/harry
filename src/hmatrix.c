@@ -47,7 +47,6 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
     m->num = n;
     m->x.i = 0, m->x.n = n;
     m->y.i = 0, m->y.n = n;
-    m->triangular = TRUE;
 
     /* Initialized later */
     m->values = NULL;
@@ -332,15 +331,8 @@ float *hmatrix_alloc(hmatrix_t *m)
     xl = m->x.n - m->x.i;
     yl = m->y.n - m->y.i;
 
-    if (m->x.n == m->y.n && m->x.i == m->y.i) {
-        /* Symmetric matrix -> allocate triangle */
-        m->triangular = TRUE;
-        m->size = xl * (xl - 1) / 2 + xl;
-    } else {
-        /* Patrial matrix -> allocate rectangle */
-        m->triangular = FALSE;
-        m->size = xl * yl;
-    }
+    /* Always allocate full matrix */
+    m->size = xl * yl;
 
     /* Allocate memory */
     m->values = calloc(sizeof(float), m->size);
@@ -369,29 +361,20 @@ float *hmatrix_alloc(hmatrix_t *m)
  */
 void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 {
-    int idx, i, j;
+    int i, j;
+    float (*mat)[m->x.n - m->x.i];
 
-    if (m->triangular) {
-        if (x - m->x.i > y - m->y.i) {
-            i = y - m->y.i, j = x - m->x.i;
-        } else {
-            i = x - m->x.i, j = y - m->y.i;
-        }
-        idx = ((j - i) + i * (m->x.n - m->x.i) - i * (i - 1) / 2);
-    } else {
-        idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
-    }
+    i = x - m->x.i;
+    j = y - m->y.i;
 
-    assert(idx < m->size);
-    m->values[idx] = f;
+    // idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
 
-    /* Set symmetric value on squared matrix */
-    if (!m->triangular &&
-        y >= m->x.i && y < m->x.n && x >= m->y.i && x < m->y.n) {
-        idx = (y - m->x.i) + (x - m->y.i) * (m->x.n - m->x.i);
+    mat = (float (*)[m->x.n - m->x.i]) m->values;
+    mat[i][j] = f;
 
-        assert(idx < m->size);
-        m->values[idx] = f;
+    /* Set symmetric value */
+    if (y >= m->x.i && y < m->x.n && x >= m->y.i && x < m->y.n) {
+        mat[j][i] = f;
     }
 }
 
@@ -405,21 +388,16 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
  */
 float hmatrix_get(hmatrix_t *m, int x, int y)
 {
-    int idx, i, j;
+    int i, j;
+    float (*mat)[m->x.n - m->x.i];
 
-    if (m->triangular) {
-        if (x - m->x.i > y - m->y.i) {
-            i = y - m->y.i, j = x - m->x.i;
-        } else {
-            i = x - m->x.i, j = y - m->y.i;
-        }
-        idx = ((j - i) + i * (m->x.n - m->y.i) - i * (i - 1) / 2);
-    } else {
-        idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
-    }
+    i = x - m->x.i;
+    j = y - m->y.i;
 
-    assert(idx < m->size);
-    return m->values[idx];
+    // idx = (x - m->x.i) + (y - m->y.i) * (m->x.n - m->x.i);
+
+    mat = (float (*)[m->x.n - m->x.i]) m->values;
+    return mat[i][j];
 }
 
 /**

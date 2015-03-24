@@ -39,7 +39,6 @@ typedef struct
     int calcs;          /**< Required calculations */
     range_t x;          /**< Range x */
     range_t y;          /**< Range y */
-    int triangular;     /**< Flag for triangular storage */
 } hmatrix_t;
 
 
