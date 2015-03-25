@@ -483,9 +483,9 @@ static hmatrix_t *harry_alloc(hstring_t *strs, int num)
 
     /* Free unused memory */
     for (i = 0; i < num; i++) {
-        if (i < mat->x.i && i < mat->y.i)
+        if (i < mat->col.i && i < mat->row.i)
             hstring_destroy(&strs[i]);
-        if (i >= mat->x.n && i >= mat->y.n)
+        if (i >= mat->col.n && i >= mat->row.n)
             hstring_destroy(&strs[i]);
     }
 
