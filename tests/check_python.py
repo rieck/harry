@@ -26,7 +26,7 @@ import harry
 harry.__tool = os.path.join(builddir, "src", "harry")
 
 a = " abcdefghijklmnopqrstuvwxyz.,"
-x = [''.join(random.choice(a) for _ in range(50)) for _ in range(10)]
+x = [''.join(random.choice(a) for _ in range(10)) for _ in range(50)]
 
 print "Testing options:",
 m1 = harry.compare(x)
@@ -43,16 +43,18 @@ for name in ["wdegree", "subsequence", "spectrum"]:
     k = harry.compare(x, measure="kern_" + name)
     e = np.min(np.real(np.linalg.eig(k)[0]))
     print ".",
-    if np.abs(e) > 1e-9:
+
+    # Test fails if Eigenvalues are negative
+    if e < -1e-6:
         print "Failed"
         sys.exit(1)
 print "Ok"
 
-print "Testing distances:", 
+print "Testing distances:",
 # Check distances matrices for metric property
 for name in ["hamming", "levenshtein", "bag", "lee"]:
     d = harry.compare(x, measure="dist_" + name)
-    
+
     # This might not be super efficient ;)
     for i in range(len(x)):
         for j in range(i, len(x)):
@@ -61,5 +63,5 @@ for name in ["hamming", "levenshtein", "bag", "lee"]:
                 if m < 0:
                     print "Failed"
                     sys.exit(1)
-    print ".", 
+    print ".",
 print "Ok"
