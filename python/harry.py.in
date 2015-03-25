@@ -56,7 +56,7 @@ def __run_harry(strs, opts):
 
     # Generate matrix form buffer and reshape it
     mat = np.frombuffer(stdout[8:], dtype=np.float32)
-    mat = mat.reshape(xdim, ydim)
+    mat = mat.reshape(ydim, xdim)
 
     return mat
 
@@ -98,7 +98,7 @@ def compare(x, y=None, **kwargs):
 
         # We merge the lists and use index ranges
         opts += " -x :%d -y %d:" % (len(x), len(x))
-        x += y
+        x = x + y
 
     if len(x) < 50:
         warnings.warn("Harry is not efficient on small sets of strings.")
