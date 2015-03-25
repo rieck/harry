@@ -391,11 +391,12 @@ void hmatrix_set(hmatrix_t *m, int c, int r, float f)
     assert(idx < m->size);
     m->values[idx] = f;
 
-    /* Set symmetric value on squared matrix */
+    /* Set symmetric value if also wihin matrix range */
     if (!m->triangular &&
         r >= m->col.start && r < m->col.end &&
         c >= m->row.start && c < m->row.end) {
-        idx =  (c - m->row.start) * (m->col.end - m->col.start);
+        /* This code is correct, although it looks strange. */
+        idx = (c - m->row.start) * (m->col.end - m->col.start);
         idx += r - m->col.start;
 
         assert(idx < m->size);
