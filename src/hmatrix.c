@@ -384,8 +384,8 @@ void hmatrix_set(hmatrix_t *m, int c, int r, float f)
         }
         idx = ((j - i) + i * (m->col.end - m->col.start) - i * (i - 1) / 2);
     } else {
-        idx = (c - m->col.start) + (r - m->row.start)
-            * (m->col.end - m->col.start);
+        idx = (r - m->row.start) * (m->col.end - m->col.start);
+        idx += c - m->col.start;
     }
 
     assert(idx < m->size);
@@ -393,10 +393,10 @@ void hmatrix_set(hmatrix_t *m, int c, int r, float f)
 
     /* Set symmetric value on squared matrix */
     if (!m->triangular &&
-        r >= m->col.start && r < m->col.end && c >= m->row.start
-        && c < m->row.end) {
-        idx = (r - m->col.start) + (c - m->row.start)
-            * (m->col.end - m->col.start);
+        r >= m->col.start && r < m->col.end &&
+        c >= m->row.start && c < m->row.end) {
+        idx =  (c - m->row.start) * (m->col.end - m->col.start);
+        idx += r - m->col.start;
 
         assert(idx < m->size);
         m->values[idx] = f;
@@ -425,8 +425,8 @@ float hmatrix_get(hmatrix_t *m, int c, int r)
         }
         idx = ((j - i) + i * (m->col.end - m->row.start) - i * (i - 1) / 2);
     } else {
-        idx = (c - m->col.start) + (r - m->row.start)
-            * (m->col.end - m->col.start);
+        idx = (r - m->row.start) * (m->col.end - m->col.start);
+        idx += c - m->col.start;
     }
 
     assert(idx < m->size);
