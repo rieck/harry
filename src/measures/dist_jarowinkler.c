@@ -2,7 +2,7 @@
  * Implementation of Jaro-Winkler Distance
  * Copyright (C) 2011 Miguel Serrano
  * Copyright (C) 2002-2003 David Necas (Yeti) <yeti@physics.muni.cz>.
- * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
