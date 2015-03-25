@@ -334,15 +334,16 @@ set to I<true>, all similarity values are stored in the cache.  This feature
 should only be enabled if many of the compared strings are identical and
 thus caching similarity values can provide benefits.
 
-=item B<x_range = "";>
+=item B<col_range = "";>
 
-=item B<y_range = "";>
+=item B<row_range = "";>
 
 These two parameters control which strings are used for computing the matrix
-of similarity values.  The format of the ranges is similar to indexing of
-Python arrays.  Each parameter specifies an index range of the form
-"I<start>:I<end>", where I<start> defines the index of the first string
-and I<end> defines the index after the last string.  For example, I<"0:4">
+of similarity values.  B<col_range> defines a range of indices on the
+columns and B<row_range> on the rows of the matrix.  The format of the
+ranges is similar to indexing of Python arrays:  A range is given by
+"I<start>:I<end>", where I<start> defines the index of the first string and
+I<end> defines the index after the last string.  For example, I<"0:4">
 selects the strings at index 0, 1, 2, and 3.  If the start or end index is
 omitted, the minimum or maximum value is substituted, respectively.  For
 example, I<":4"> selects strings starting from the index I<0> and I<":">
@@ -350,8 +351,8 @@ chooses all strings.  If the end index is negative, it is substracted from
 the maximum index, that is, I<":-1"> selects all strings except for the last
 one.
 
-The parameters B<x_range> and B<y_range> are ignore if two input sources are
-given on the command line.
+The parameters B<col_range> and B<row_range> are ignore if two input sources
+are given on the command line.
 
 =item B<split = "";>
 
@@ -884,8 +885,8 @@ on the command line.  Following is the list of options:
   -n,  --num_threads <num>        Set number of threads.
   -a,  --cache_size <size>        Set size of cache in megabytes.
   -G,  --global_cache             Enable global cache.
-  -x,  --x_range <start>:<end>    Set the index range (x) of strings.
-  -y,  --y_range <start>:<end>    Set the index range (y) of strings.
+  -x,  --col_range <start>:<end>  Set the column range (x) of strings.
+  -y,  --row_range <start>:<end>  Set the row range (y) of strings.
   -s,  --split <blocks>:<idx>     Split matrix into blocks and compute one.
 
 =head2 Generic options:

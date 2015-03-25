@@ -19,8 +19,8 @@ token_delim;d;chars;meas;Set delimiters for tokens.
 num_threads;n;num;meas;Set number of threads.
 cache_size;a;num;meas;Set size of cache in megabytes.
 global_cache;G;;meas;Enable global cache.
-x_range;x;start:end;meas;Set the index range (x) of strings.
-y_range;y;start:end;meas;Set the index range (y) of strings.
+col_range;x;start:end;meas;Set the column range (x) of strings.
+row_range;y;start:end;meas;Set the row range (y) of strings.
 split;s;blocks:id;meas;Split matrix into blocks and compute one.
 ;;;gen;Generic options
 config_file;c;file;gen;Set configuration file.
