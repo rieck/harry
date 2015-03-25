@@ -13,6 +13,7 @@ EXTRA_DIST			= dist_compression.py \
 				  check_configs.txt \
 				  check_inputs.sh \
 				  check_python.py \
+				  check_pylev.py \
 				  strings.txt \
 				  config1.cfg \
 				  config2.cfg \
@@ -45,7 +46,7 @@ TESTS				= $(check_PROGRAMS) \
 				  check_inputs.sh
 				
 if HAVE_PYTHON
-TESTS				+= check_python.py
+TESTS				+= check_python.py check_pylev.py
 endif
 
 check_levenshtein_SOURCES	= dist_levenshtein.c tests.h
