@@ -52,11 +52,11 @@ def __run_harry(strs, opts):
         return None
 
     # Unpack dimensions of matrix
-    xdim, ydim = struct.unpack("II", stdout[0:8])
+    rows, cols = struct.unpack("II", stdout[0:8])
 
     # Generate matrix form buffer and reshape it
     mat = np.frombuffer(stdout[8:], dtype=np.float32)
-    mat = mat.reshape(ydim, xdim)
+    mat = np.reshape(mat, (rows, cols))
 
     return mat
 
@@ -97,7 +97,7 @@ def compare(x, y=None, **kwargs):
         y = y if type(y) is list else [y]
 
         # We merge the lists and use index ranges
-        opts += " -x :%d -y %d:" % (len(x), len(x))
+        opts += " --row_range :%d --col_range %d:" % (len(x), len(x))
         x = x + y
 
     if len(x) < 50:

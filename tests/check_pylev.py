@@ -40,7 +40,6 @@ x2 = ['guess', 'what', 'this', 'is', 'not', 'a', 'test']
 print "Testing Levenshtein implementation:",
 m1 = harry.compare(x1, x2)
 m2 = pylev_compare(x1, x2)
-m2 = m2.T # This needs to be fixed in the Python module of harry ;(
 
 print
 print m1

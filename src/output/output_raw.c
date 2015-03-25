@@ -1,6 +1,6 @@
 /*
  * Harry - A Tool for Measuring String Similarity
- * Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
+ * Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
  * --
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,9 +18,9 @@
  * This module is designed for efficiently interfacing with other
  * environments.  The raw format of a similarity matrix has the form
  * <pre>
- * | xdim (uint32) | ydim (uint32) | array (float) ... |
+ * | rows (uint32) | cols (uint32) | array (float) ... |
  * </pre>
- * where xdim and ydim are unsigned 32-bit integers in host byte order
+ * where rows and cols are unsigned 32-bit integers in host byte order
  * specifing the dimensions of the matrix and array holds the matrix
  * as single floats (32 bit).
  *
@@ -64,13 +64,13 @@ int output_raw_open(char *fn)
 int output_raw_write(hmatrix_t *m)
 {
     assert(m);
-    uint32_t ret, xdim, ydim, i, j;
+    uint32_t ret, rows, cols, i, j;
 
-    xdim = m->col.end - m->col.start;
-    ydim = m->row.end - m->row.start;
+    rows = m->row.end - m->row.start;
+    cols = m->col.end - m->col.start;
 
-    ret = fwrite(&xdim, sizeof(xdim), 1, stdout);
-    ret += fwrite(&ydim, sizeof(ydim), 1, stdout);
+    ret = fwrite(&rows, sizeof(rows), 1, stdout);
+    ret += fwrite(&cols, sizeof(cols), 1, stdout);
     if (ret != 2) {
         error("Failed to write raw matrix header to stdout");
         return 0;
