@@ -2,7 +2,7 @@
 
 # Make sure autotools are setup
 if ! test -f ./configure ; then
-   autoreconf -install --force --symlink
+   autoreconf --install --force --symlink
 fi
 
 # Get requested configuration
