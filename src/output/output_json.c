@@ -84,13 +84,13 @@ int output_json_write(hmatrix_t *m)
     int i, j, k = 0;
 
     if (save_indices) {
-        output_printf(z, "  \"x_indices\": [");
+        output_printf(z, "  \"col_indices\": [");
         for (j = m->col.start; j < m->col.end; j++) {
             output_printf(z, "%d", j);
             if (j < m->col.end - 1)
                 output_printf(z, ", ");
         }
-        output_printf(z, "],\n  \"y_indices\": [");
+        output_printf(z, "],\n  \"row_indices\": [");
         for (j = m->row.start; j < m->row.end; j++) {
             output_printf(z, "%d", j);
             if (j < m->row.end - 1)
@@ -100,13 +100,13 @@ int output_json_write(hmatrix_t *m)
     }
 
     if (save_labels) {
-        output_printf(z, "  \"x_labels\": [");
+        output_printf(z, "  \"col_labels\": [");
         for (j = m->col.start; j < m->col.end; j++) {
             output_printf(z, " %g", m->labels[j]);
             if (j < m->col.end - 1)
                 output_printf(z, ", ");
         }
-        output_printf(z, "],\n  \"y_labels\": [");
+        output_printf(z, "],\n  \"row_labels\": [");
         for (j = m->row.start; j < m->row.end; j++) {
             output_printf(z, "%g", m->labels[j]);
             if (j < m->row.end - 1)
@@ -116,13 +116,13 @@ int output_json_write(hmatrix_t *m)
     }
 
     if (save_sources) {
-        output_printf(z, "  \"x_sources\": [");
+        output_printf(z, "  \"col_sources\": [");
         for (j = m->col.start; j < m->col.end; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
             if (j < m->row.end - 1)
                 output_printf(z, ", ");
         }
-        output_printf(z, "],\n  \"y_sources\": [");
+        output_printf(z, "],\n  \"row_sources\": [");
         for (j = m->row.start; j < m->row.end; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
             if (j < m->row.end - 1)
@@ -131,7 +131,7 @@ int output_json_write(hmatrix_t *m)
         output_printf(z, "],\n");
     }
 
-    output_printf(z, "  \"matrix\": [\n    ");
+    output_printf(z, "  \"matrix\": [\n");
     for (i = m->row.start; i < m->row.end; i++) {
         output_printf(z, "    [");
         for (j = m->col.start; j < m->col.end; j++) {
