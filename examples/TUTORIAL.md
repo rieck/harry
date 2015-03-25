@@ -150,9 +150,9 @@
 
   So far we have only computed full square matrices. Often however, one is
   only interested in comparing one set of strings with another set of
-  strings.  Harry supports this setting using ranges that can be defined on
-  the x-axis and y-axis of the matrix.  For example, we can compare the
-  first two strings in our example file, with the last two by running:
+  strings.  Harry supports this setting using ranges that can be defined for
+  the columns (x) and rows (y) of the matrix.  For example, we can compare
+  the first two strings in our example file, with the last two by running:
 
       harry -x 0:2 -y 2:4 data.txt -
 
@@ -257,7 +257,7 @@
 
        d = harry.compare(x, measure="dist_jaro")
        d = harry.compare(x, granularity="tokens")
-       d = harry.compare(x, x_range="3:9")
+       d = harry.compare(x, col_range="3:9")
 
   The first call of `harry.compare` computes a distance matrix using the
   Jaro distance as similarity measure, the second call uses tokens as
