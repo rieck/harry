@@ -12,7 +12,11 @@ harry.py: harry.py.in gen_options.py $(top_srcdir)/src/options.txt
 	          $(bindir) $(srcdir)/harry.py.in $(builddir)/harry.py
 
 # Make sure harry.py is available during test runs
-check-local: harry.py
+all-local: harry.py
+
+# Clean compiled code
+distclean-local:
+	rm -f $(builddir)/harry.pyc
 
 # Make sure harry.py is removed from the distribution
 dist-hook:
