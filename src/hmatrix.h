@@ -37,8 +37,8 @@ typedef struct
     float *values;      /**< Similarity values */
     int size;           /**< Size of memory */
     int calcs;          /**< Required calculations */
-    range_t x;          /**< Range x */
-    range_t y;          /**< Range y */
+    range_t col;        /**< Column range */
+    range_t row;        /**< Row range */
     int triangular;     /**< Flag for triangular storage */
 } hmatrix_t;
 

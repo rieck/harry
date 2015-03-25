@@ -229,8 +229,8 @@ static int fwrite_matrix(hmatrix_t *m)
 {
     int r = 0, x, y, i, j;
 
-    x = m->x.n - m->x.i;
-    y = m->y.n - m->y.i;
+    x = m->col.n - m->col.i;
+    y = m->row.n - m->row.i;
 
     /* Write tag */
     fwrite_uint32(MAT_TYPE_ARRAY, f);
@@ -244,8 +244,8 @@ static int fwrite_matrix(hmatrix_t *m)
     r += fwrite_uint32(x * y * sizeof(float), f);
 
     /* Write data */
-    for (i = m->y.i; i < m->y.n; i++) {
-        for (j = m->x.i; j < m->x.n; j++) {
+    for (i = m->row.i; i < m->row.n; i++) {
+        for (j = m->col.i; j < m->col.n; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
             r += fwrite_float(val, f);
         }
@@ -377,20 +377,20 @@ int output_matlab_write(hmatrix_t *m)
 
     /* Save indices as vectors */
     if (save_indices) {
-        r += fwrite_range(m->x, "x_indices");
-        r += fwrite_range(m->y, "y_indices");
+        r += fwrite_range(m->col, "x_indices");
+        r += fwrite_range(m->row, "y_indices");
     }
 
     /* Save labels as vectors */
     if (save_labels) {
-        r += fwrite_labels(m->x, m->labels, "x_labels");
-        r += fwrite_labels(m->y, m->labels, "y_labels");
+        r += fwrite_labels(m->col, m->labels, "x_labels");
+        r += fwrite_labels(m->row, m->labels, "y_labels");
     }
 
     /* Save sources as cell array */
     if (save_sources) {
-        r += fwrite_sources(m->x, m->srcs, "x_sources");
-        r += fwrite_sources(m->y, m->srcs, "y_sources");
+        r += fwrite_sources(m->col, m->srcs, "x_sources");
+        r += fwrite_sources(m->row, m->srcs, "y_sources");
     }
 
     return r;

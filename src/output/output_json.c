@@ -85,15 +85,15 @@ int output_json_write(hmatrix_t *m)
 
     if (save_indices) {
         output_printf(z, "  \"x_indices\": [");
-        for (j = m->x.i; j < m->x.n; j++) {
+        for (j = m->col.i; j < m->col.n; j++) {
             output_printf(z, "%d", j);
-            if (j < m->x.n - 1)
+            if (j < m->col.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n  \"y_indices\": [");
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->row.i; j < m->row.n; j++) {
             output_printf(z, "%d", j);
-            if (j < m->y.n - 1)
+            if (j < m->row.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n");
@@ -101,15 +101,15 @@ int output_json_write(hmatrix_t *m)
 
     if (save_labels) {
         output_printf(z, "  \"x_labels\": [");
-        for (j = m->x.i; j < m->x.n; j++) {
+        for (j = m->col.i; j < m->col.n; j++) {
             output_printf(z, " %g", m->labels[j]);
-            if (j < m->x.n - 1)
+            if (j < m->col.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n  \"y_labels\": [");
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->row.i; j < m->row.n; j++) {
             output_printf(z, "%g", m->labels[j]);
-            if (j < m->y.n - 1)
+            if (j < m->row.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n");
@@ -117,32 +117,32 @@ int output_json_write(hmatrix_t *m)
 
     if (save_sources) {
         output_printf(z, "  \"x_sources\": [");
-        for (j = m->x.i; j < m->x.n; j++) {
+        for (j = m->col.i; j < m->col.n; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
-            if (j < m->y.n - 1)
+            if (j < m->row.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n  \"y_sources\": [");
-        for (j = m->y.i; j < m->y.n; j++) {
+        for (j = m->row.i; j < m->row.n; j++) {
             output_printf(z, "\"%s\"", m->srcs[j]);
-            if (j < m->y.n - 1)
+            if (j < m->row.n - 1)
                 output_printf(z, ", ");
         }
         output_printf(z, "],\n");
     }
 
     output_printf(z, "  \"matrix\": [\n    ");
-    for (i = m->y.i; i < m->y.n; i++) {
+    for (i = m->row.i; i < m->row.n; i++) {
         output_printf(z, "    [");
-        for (j = m->x.i; j < m->x.n; j++) {
+        for (j = m->col.i; j < m->col.n; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
             output_printf(z, "%g", val);
-            if (j < m->x.n - 1)
+            if (j < m->col.n - 1)
                 output_printf(z, ", ");
             k++;
         }
         output_printf(z, "]");
-        if (i < m->y.n - 1)
+        if (i < m->row.n - 1)
             output_printf(z, ",");
         output_printf(z, "\n");
     }
