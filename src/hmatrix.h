@@ -55,7 +55,7 @@ typedef struct
  * diagonal and therefore, contains "duplicate" values, i.e. values
  * from above the diagonal equal those from below it.
  *
- * <code>$ harry -x 2:6 -y 1:8
+ * <code>$ harry --col_range 2:6 --row_range 1:8
  *
  *
  *      0   1 | 2   3   4   5 | 6   7   8
@@ -87,7 +87,7 @@ typedef struct
  * In the following example these parts are defined by \a b_left
  * and \a b_right respectively.
  *
- * <code>$ harry -x 1:8 -y 2:6
+ * <code>$ harry --col_range 1:8 --row_range 2:6
  *
  *      0 | 1   2   3   4   5   6   7 | 8
  *        |                           |
@@ -128,19 +128,19 @@ typedef struct
     int b_right;
 } hmatrixspec_t;
 
-hmatrix_t *hmatrix_init(hstring_t *s, int n);
-void hmatrix_xrange(hmatrix_t *m, char *x);
-void hmatrix_yrange(hmatrix_t *m, char *y);
-void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t * spec);
-void hmatrix_split(hmatrix_t *m, char *s);
-void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index);
-float *hmatrix_alloc(hmatrix_t *m);
-float hmatrix_get(hmatrix_t *m, int x, int y);
-void hmatrix_set(hmatrix_t *m, int x, int y, float f);
-void hmatrix_compute(hmatrix_t *m, hstring_t *s,
-                     double (*measure) (hstring_t x, hstring_t y));
-void hmatrix_destroy(hmatrix_t *m);
-float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
-                        double (*measure) (hstring_t x, hstring_t y), double);
+hmatrix_t *hmatrix_init(hstring_t *, int);
+void hmatrix_col_range(hmatrix_t *, char *);
+void hmatrix_row_range(hmatrix_t *, char *);
+void hmatrix_inferspec(const hmatrix_t *, hmatrixspec_t *);
+void hmatrix_split(hmatrix_t *, char *);
+void hmatrix_split_ex(hmatrix_t *, const int, const int);
+float *hmatrix_alloc(hmatrix_t *);
+float hmatrix_get(hmatrix_t *, int, int);
+void hmatrix_set(hmatrix_t *, int, int, float);
+void hmatrix_compute(hmatrix_t *, hstring_t *,
+                     double (*measure) (hstring_t, hstring_t));
+void hmatrix_destroy(hmatrix_t *);
+float hmatrix_benchmark(hmatrix_t *, hstring_t *,
+                        double (*measure) (hstring_t, hstring_t), double);
 
 #endif /* HMATRIX_H */

@@ -473,9 +473,9 @@ static hmatrix_t *harry_alloc(hstring_t *strs, int num)
 
     /* Set ranges */
     config_lookup_string(&cfg, "measures.col_range", (const char **) &cfg_str);
-    hmatrix_xrange(mat, cfg_str);
+    hmatrix_col_range(mat, cfg_str);
     config_lookup_string(&cfg, "measures.row_range", (const char **) &cfg_str);
-    hmatrix_yrange(mat, cfg_str);
+    hmatrix_row_range(mat, cfg_str);
 
     /* Set matrix split */
     config_lookup_string(&cfg, "measures.split", (const char **) &cfg_str);
