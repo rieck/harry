@@ -75,9 +75,9 @@ int output_libsvm_write(hmatrix_t *m)
     assert(m);
     int i, j, r, k = 0;
 
-    for (i = m->row.i; i < m->row.n; i++) {
+    for (i = m->row.start; i < m->row.end; i++) {
         output_printf(z, "%d 0:%d", (int) m->labels[i], i + 1);
-        for (j = m->col.i; j < m->col.n; j++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
             r = output_printf(z, " %d:%g", j + 1, val);
             if (r < 0) {

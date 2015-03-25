@@ -45,8 +45,10 @@ hmatrix_t *hmatrix_init(hstring_t *s, int n)
 
     /* Set default ranges */
     m->num = n;
-    m->col.i = 0, m->col.n = n;
-    m->row.i = 0, m->row.n = n;
+    m->col.start = 0;
+    m->col.end = n;
+    m->row.start = 0;
+    m->row.end = n;
     m->triangular = TRUE;
 
     /* Initialized later */
@@ -103,31 +105,32 @@ static range_t parse_range(range_t r, char *str, int n)
     /* Start parsing */
     l = strtol(str, &end, 10);
     if (strlen(str) == 0)
-        r.i = 0;
+        r.start = 0;
     else if (*end == '\0')
-        r.i = (int) l;
+        r.start = (int) l;
     else
         error("Could not parse range '%s:...'.", str);
 
     l = strtol(ptr + 1, &end, 10);
     if (strlen(ptr + 1) == 0)
-        r.n = n;
+        r.end = n;
     else if (*end == '\0')
-        r.n = (int) l;
+        r.end = (int) l;
     else
         error("Could not parse range '...:%s'.", ptr + 1);
 
     /* Support negative start and end indices */
-    if (r.i < 0)
-        r.i = n + r.i;
-    if (r.n < 0)
-        r.n = n + r.n;
+    if (r.start < 0)
+        r.start = n + r.start;
+    if (r.end < 0)
+        r.end = n + r.end;
 
     /* Sanity checks */
-    if (r.n < 0 || r.i < 0 || r.n > n || r.i > n - 1 || r.i >= r.n) {
+    if (r.end < 0 || r.start < 0 || r.end > n || r.start > n - 1
+        || r.start >= r.end) {
         error("Invalid range '%s:%s'. Using default '0:%d'.", str, ptr + 1,
               n);
-        r.i = 0, r.n = n;
+        r.start = 0, r.end = n;
     }
 
     return r;
@@ -151,8 +154,8 @@ void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t * spec)
     const range_t y = m->row;
 
     // determine the overall location of the sub-matrix
-    const int is_fully_underneath = (y.i >= x.n && x.n <= y.i);
-    const int is_fully_above = (y.n <= x.i && x.i >= y.n);
+    const int is_fully_underneath = (y.start >= x.end && x.end <= y.start);
+    const int is_fully_above = (y.end <= x.start && x.start >= y.end);
 
     // calculate the exact positions
     if (is_fully_above) {
@@ -170,10 +173,10 @@ void hmatrix_inferspec(const hmatrix_t *m, hmatrixspec_t * spec)
         spec->a = 0;
 
     } else {
-        spec->b_top = MAX(x.i - y.i, 0);
-        spec->b_bottom = MAX(y.n - x.n, 0);
-        spec->b_left = MAX(y.i - x.i, 0);
-        spec->b_right = MAX(x.n - y.n, 0);
+        spec->b_top = MAX(x.start - y.start, 0);
+        spec->b_bottom = MAX(y.end - x.end, 0);
+        spec->b_left = MAX(y.start - x.start, 0);
+        spec->b_right = MAX(x.end - y.end, 0);
         spec->a = height - spec->b_top - spec->b_bottom;
     }
 
@@ -278,8 +281,8 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
     }
 
     /* Update range */
-    m->row.i = hmatrix_split_ridx(blocksize * index, &spec, &m->row);
-    m->row.n = hmatrix_split_ridx(blocksize * (index + 1), &spec, &m->row);
+    m->row.start = hmatrix_split_ridx(blocksize * index, &spec, &m->row);
+    m->row.end = hmatrix_split_ridx(blocksize * (index + 1), &spec, &m->row);
 
 #else
     UNUSED(width);
@@ -291,9 +294,9 @@ void hmatrix_split_ex(hmatrix_t *m, const int blocks, const int index)
     }
 
     /* Update range */
-    m->row.i = m->row.i + index * block_height;
-    if (m->row.n > m->row.i + block_height)
-        m->row.n = m->row.i + block_height;
+    m->row.start = m->row.start + index * block_height;
+    if (m->row.end > m->row.start + block_height)
+        m->row.end = m->row.start + block_height;
 #endif
 }
 
@@ -329,10 +332,10 @@ float *hmatrix_alloc(hmatrix_t *m)
     int xl, yl, k;
 
     /* Compute dimensions of matrix */
-    xl = m->col.n - m->col.i;
-    yl = m->row.n - m->row.i;
+    xl = m->col.end - m->col.start;
+    yl = m->row.end - m->row.start;
 
-    if (m->col.n == m->row.n && m->col.i == m->row.i) {
+    if (m->col.end == m->row.end && m->col.start == m->row.start) {
         /* Symmetric matrix -> allocate triangle */
         m->triangular = TRUE;
         m->size = xl * (xl - 1) / 2 + xl;
@@ -372,14 +375,16 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
     int idx, i, j;
 
     if (m->triangular) {
-        if (x - m->col.i > y - m->row.i) {
-            i = y - m->row.i, j = x - m->col.i;
+        if (x - m->col.start > y - m->row.start) {
+            i = y - m->row.start, j = x - m->col.start;
         } else {
-            i = x - m->col.i, j = y - m->row.i;
+            i = x - m->col.start, j = y - m->row.start;
         }
-        idx = ((j - i) + i * (m->col.n - m->col.i) - i * (i - 1) / 2);
+        idx = ((j - i) + i * (m->col.end - m->col.start) - i * (i - 1) / 2);
     } else {
-        idx = (x - m->col.i) + (y - m->row.i) * (m->col.n - m->col.i);
+        idx =
+            (x - m->col.start) + (y - m->row.start) * (m->col.end -
+                                                       m->col.start);
     }
 
     assert(idx < m->size);
@@ -387,8 +392,11 @@ void hmatrix_set(hmatrix_t *m, int x, int y, float f)
 
     /* Set symmetric value on squared matrix */
     if (!m->triangular &&
-        y >= m->col.i && y < m->col.n && x >= m->row.i && x < m->row.n) {
-        idx = (y - m->col.i) + (x - m->row.i) * (m->col.n - m->col.i);
+        y >= m->col.start && y < m->col.end && x >= m->row.start
+        && x < m->row.end) {
+        idx =
+            (y - m->col.start) + (x - m->row.start) * (m->col.end -
+                                                       m->col.start);
 
         assert(idx < m->size);
         m->values[idx] = f;
@@ -408,14 +416,16 @@ float hmatrix_get(hmatrix_t *m, int x, int y)
     int idx, i, j;
 
     if (m->triangular) {
-        if (x - m->col.i > y - m->row.i) {
-            i = y - m->row.i, j = x - m->col.i;
+        if (x - m->col.start > y - m->row.start) {
+            i = y - m->row.start, j = x - m->col.start;
         } else {
-            i = x - m->col.i, j = y - m->row.i;
+            i = x - m->col.start, j = y - m->row.start;
         }
-        idx = ((j - i) + i * (m->col.n - m->row.i) - i * (i - 1) / 2);
+        idx = ((j - i) + i * (m->col.end - m->row.start) - i * (i - 1) / 2);
     } else {
-        idx = (x - m->col.i) + (y - m->row.i) * (m->col.n - m->col.i);
+        idx =
+            (x - m->col.start) + (y - m->row.start) * (m->col.end -
+                                                       m->col.start);
     }
 
     assert(idx < m->size);
@@ -433,7 +443,7 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 {
     assert(m);
 
-    int j = 0, n = (m->col.n - m->col.i) * (m->row.n - m->row.i);
+    int j = 0, n = (m->col.end - m->col.start) * (m->row.end - m->row.start);
     double ts, ts1 = time_stamp(), ts2 = ts1;
     float f;
 
@@ -441,8 +451,8 @@ void hmatrix_compute(hmatrix_t *m, hstring_t *s,
 #pragma omp parallel for private(ts)
 #endif
     for (int k = 0; k < n; k++) {
-        int xi = k / (m->row.n - m->row.i) + m->col.i;
-        int yi = k % (m->row.n - m->row.i) + m->row.i;
+        int xi = k / (m->row.end - m->row.start) + m->col.start;
+        int yi = k % (m->row.end - m->row.start) + m->row.start;
 
         /* Skip values that have been computed earlier */
         f = hmatrix_get(m, xi, yi);
@@ -529,8 +539,8 @@ float hmatrix_benchmark(hmatrix_t *m, hstring_t *s,
     for (uint64_t k = 0; k < UINT64_MAX - mt; k++) {
 
         /* Select random pair of strings */
-        int xi = lrand48() % (m->col.n - m->col.i) + m->col.i;
-        int yi = lrand48() % (m->row.n - m->row.i) + m->row.i;
+        int xi = lrand48() % (m->col.end - m->col.start) + m->col.start;
+        int yi = lrand48() % (m->row.end - m->row.start) + m->row.start;
 
         /* Calculate similarity value */
         measure(s[xi], s[yi]);

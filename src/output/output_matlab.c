@@ -13,7 +13,7 @@
  * @addtogroup output
  * <hr>
  * <em>matlab</em>: The similarity matrix is exported as a matlab file
- * version 5. Depending on the configuration the indices, sources and
+ * version 5. Depending on the configura.starton the indices, sources and
  * labels are also exported.
  * @{
  */
@@ -229,8 +229,8 @@ static int fwrite_matrix(hmatrix_t *m)
 {
     int r = 0, x, y, i, j;
 
-    x = m->col.n - m->col.i;
-    y = m->row.n - m->row.i;
+    x = m->col.end - m->col.start;
+    y = m->row.end - m->row.start;
 
     /* Write tag */
     fwrite_uint32(MAT_TYPE_ARRAY, f);
@@ -244,8 +244,8 @@ static int fwrite_matrix(hmatrix_t *m)
     r += fwrite_uint32(x * y * sizeof(float), f);
 
     /* Write data */
-    for (i = m->row.i; i < m->row.n; i++) {
-        for (j = m->col.i; j < m->col.n; j++) {
+    for (i = m->row.start; i < m->row.end; i++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
             r += fwrite_float(val, f);
         }
@@ -276,13 +276,13 @@ static int fwrite_range(range_t ra, char *name)
 
     /* Write header */
     r += fwrite_array_flags(0, MAT_CLASS_UINT32, 0, f);
-    r += fwrite_array_dim(ra.n - ra.i, 1, f);
+    r += fwrite_array_dim(ra.end - ra.start, 1, f);
     r += fwrite_array_name(name, f);
     r += fwrite_uint32(MAT_TYPE_UINT32, f);
-    r += fwrite_uint32((ra.n - ra.i) * sizeof(uint32_t), f);
+    r += fwrite_uint32((ra.end - ra.start) * sizeof(uint32_t), f);
 
     /* Write data */
-    for (i = ra.i; i < ra.n; i++)
+    for (i = ra.start; i < ra.end; i++)
         r += fwrite_uint32((uint32_t) i, f);
     r += fpad(f);
 
@@ -311,13 +311,13 @@ static int fwrite_labels(range_t ra, float *labels, char *name)
 
     /* Write header */
     r += fwrite_array_flags(0, MAT_CLASS_SINGLE, 0, f);
-    r += fwrite_array_dim(ra.n - ra.i, 1, f);
+    r += fwrite_array_dim(ra.end - ra.start, 1, f);
     r += fwrite_array_name(name, f);
     r += fwrite_uint32(MAT_TYPE_SINGLE, f);
-    r += fwrite_uint32((ra.n - ra.i) * sizeof(float), f);
+    r += fwrite_uint32((ra.end - ra.start) * sizeof(float), f);
 
     /* Write data */
-    for (i = ra.i; i < ra.n; i++)
+    for (i = ra.start; i < ra.end; i++)
         r += fwrite_float(labels[i], f);
     r += fpad(f);
 
@@ -346,11 +346,11 @@ static int fwrite_sources(range_t ra, char **sources, char *name)
 
     /* Write header */
     r += fwrite_array_flags(0, MAT_CLASS_CELL, 0, f);
-    r += fwrite_array_dim(ra.n - ra.i, 1, f);
+    r += fwrite_array_dim(ra.end - ra.start, 1, f);
     r += fwrite_array_name(name, f);
 
     /* Write data */
-    for (i = ra.i; i < ra.n; i++)
+    for (i = ra.start; i < ra.end; i++)
         r += fwrite_string(sources[i], f);
     r += fpad(f);
 

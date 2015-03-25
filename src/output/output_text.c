@@ -91,7 +91,7 @@ int output_text_write(hmatrix_t *m)
 
     if (save_indices) {
         output_printf(z, "#");
-        for (j = m->col.i; j < m->col.n; j++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             output_printf(z, " %d", j);
         }
         output_printf(z, "\n");
@@ -99,7 +99,7 @@ int output_text_write(hmatrix_t *m)
 
     if (save_labels) {
         output_printf(z, "#");
-        for (j = m->col.i; j < m->col.n; j++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             output_printf(z, " %g", m->labels[j]);
         }
         output_printf(z, "\n");
@@ -107,14 +107,14 @@ int output_text_write(hmatrix_t *m)
 
     if (save_sources) {
         output_printf(z, "#");
-        for (j = m->col.i; j < m->col.n; j++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             output_printf(z, " %s", m->srcs[j]);
         }
         output_printf(z, "\n");
     }
 
-    for (i = m->row.i; i < m->row.n; i++) {
-        for (j = m->col.i; j < m->col.n; j++) {
+    for (i = m->row.start; i < m->row.end; i++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
             r = output_printf(z, "%g", val);
             if (r < 0) {
@@ -122,7 +122,7 @@ int output_text_write(hmatrix_t *m)
                 return -k;
             }
 
-            if (j < m->col.n - 1)
+            if (j < m->col.end - 1)
                 output_printf(z, "%s", separator);
 
             k++;

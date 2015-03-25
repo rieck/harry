@@ -19,11 +19,11 @@
  */
 typedef struct
 {
-    int i;    /**< Start of range */
-    int n;    /**< End of range */
+    int start;    /**< Start of range (inclusive) */
+    int end;      /**< End of range (exclusive) */
 } range_t;
 
-#define RANGE_LENGTH(r) (r.n -r.i)
+#define RANGE_LENGTH(r) (r.end -r.start)
 
 /**
  * Structure for a matrix

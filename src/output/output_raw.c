@@ -66,8 +66,8 @@ int output_raw_write(hmatrix_t *m)
     assert(m);
     uint32_t ret, xdim, ydim, i, j;
 
-    xdim = m->col.n - m->col.i;
-    ydim = m->row.n - m->row.i;
+    xdim = m->col.end - m->col.start;
+    ydim = m->row.end - m->row.start;
 
     ret = fwrite(&xdim, sizeof(xdim), 1, stdout);
     ret += fwrite(&ydim, sizeof(ydim), 1, stdout);
@@ -76,8 +76,8 @@ int output_raw_write(hmatrix_t *m)
         return 0;
     }
 
-    for (i = m->row.i; i < m->row.n; i++) {
-        for (j = m->col.i; j < m->col.n; j++) {
+    for (i = m->row.start; i < m->row.end; i++) {
+        for (j = m->col.start; j < m->col.end; j++) {
             float val = hround(hmatrix_get(m, j, i), precision);
             ret = fwrite(&val, sizeof(float), 1, stdout);
             if (ret != 1) {
