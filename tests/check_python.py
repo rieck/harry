@@ -13,7 +13,7 @@ try:
     import numpy as np
 except:
     print "Something is wrong. Skipping test"
-    sys.exit(0)    
+    sys.exit(77)
 
 # Add path for Harry module
 builddir = os.environ["BUILDDIR"]
