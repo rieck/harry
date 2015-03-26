@@ -14,11 +14,17 @@ import shlex
 import urllib
 import struct
 import warnings
-import numpy as np
 
+try:
+    import numpy as np
+except ImportError:
+    raise Exception("The package numpy is required")
 
 # Construct path for Harry tool
 __tool = os.path.join("%BINDIR%", "harry")
+if not os.path.exists(__tool):
+    raise Exception("Cannot find tool at %s" % __tool)
+
 
 def __run_harry(strs, opts):
     """ 
