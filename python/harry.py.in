@@ -15,11 +15,6 @@ import urllib
 import struct
 import warnings
 
-try:
-    import numpy as np
-except ImportError:
-    raise Exception("The package numpy is required")
-
 # Construct path for Harry tool
 __tool = os.path.join("%BINDIR%", "harry")
 
@@ -38,8 +33,9 @@ def __run_harry(strs, opts):
     out (ndarray)             Matrix of similarity values
     """
 
+    # Check for presence of command-line tool
     if not os.path.exists(__tool):
-        raise Exception("Cannot find tool at %s" % __tool)
+        raise Exception("Could not find tool at %s" % __tool)
 
     # Decode special characters and prepare input
     strs = map(urllib.quote, strs)
@@ -61,9 +57,25 @@ def __run_harry(strs, opts):
     # Unpack dimensions of matrix
     rows, cols = struct.unpack("II", stdout[0:8])
 
-    # Generate matrix form buffer and reshape it
-    mat = np.frombuffer(stdout[8:], dtype=np.float32)
-    mat = np.reshape(mat, (rows, cols))
+    try:
+        import numpy
+
+        # Generate matrix form buffer and reshape it
+        mat = numpy.frombuffer(stdout[8:], dtype=numpy.float32)
+        mat = numpy.reshape(mat, (rows, cols))
+    except ImportError:
+        # Numpy is not available
+        warnings.warn("The package numpy is recommended for using Harry")
+
+        # Generate matrix using list of lists :(
+        mat = []
+        k = 8
+        for i in range(rows):
+            row = []
+            for j in range(cols):
+                row.append(struct.unpack('f', stdout[k:k+4])[0])
+                k += 4
+            mat.append(row)
 
     return mat
 
