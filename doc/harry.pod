@@ -968,7 +968,8 @@ Survey Research Methods.  354-359, 1990.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2013-2014 Konrad Rieck (konrad@mlsec.org)
+Copyright (c) 2013-2015 Konrad Rieck (konrad@mlsec.org)
+                        Christian Wressnegger (christian@mlsec.org)
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free
