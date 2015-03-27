@@ -8,7 +8,7 @@ import time
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-
+import warnings
 
 def rand_str(length):
     """ Generate random string """
@@ -35,6 +35,7 @@ def test_pylev(strings):
             Levenshtein.distance(strings[i], strings[j])
     return time.time() - t
 
+
 def test_jelly(strings):
     """ Compute Levenshtein distance; return time (jellyfish) """
     t = time.time()
@@ -42,6 +43,7 @@ def test_jelly(strings):
         for j in range(i + 1, len(strings)):
             jellyfish.levenshtein_distance(strings[i], strings[j])
     return time.time() - t
+
 
 def test_harry(strings):
     """ Compute Levenshtein distance; return time (Harry) """
@@ -61,26 +63,27 @@ for r in range(runs):
 
     try:
         import harry
+
         for (i, s) in enumerate(scale):
             t_harry[i] += test_harry(strs[0:int(s)])
-    except:
-        pass
+    except ImportError:
+        warnings.warn("harry is not available")
 
     try:
         import Levenshtein
+
         for (i, s) in enumerate(scale):
             t_pylev[i] += test_pylev(strs[0:int(s)])
-    except:
-        pass
+    except ImportError:
+        warnings.warn("python-Levenshtein is not available")
 
-    try:                
+    try:
         import jellyfish
+
         for (i, s) in enumerate(scale):
             t_jelly[i] += test_jelly(strs[0:int(s)])
-    except:
-        pass
-
-# Compute ratio between python-Levenshtein and Harry
+    except ImportError:
+        warnings.warn("jellyfish is not available")
 
 # Normalize run-time by runs
 t_pylev /= runs
