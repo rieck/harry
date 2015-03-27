@@ -22,8 +22,6 @@ except ImportError:
 
 # Construct path for Harry tool
 __tool = os.path.join("%BINDIR%", "harry")
-if not os.path.exists(__tool):
-    raise Exception("Cannot find tool at %s" % __tool)
 
 
 def __run_harry(strs, opts):
@@ -39,6 +37,9 @@ def __run_harry(strs, opts):
     -------
     out (ndarray)             Matrix of similarity values
     """
+
+    if not os.path.exists(__tool):
+        raise Exception("Cannot find tool at %s" % __tool)
 
     # Decode special characters and prepare input
     strs = map(urllib.quote, strs)
