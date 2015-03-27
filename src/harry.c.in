@@ -93,11 +93,11 @@ static void print_version(void)
  * Parse command line options
  * @param argc Number of arguments
  * @param argv Argument values
- * @param in Return pointer to input filename
- * @param in Return pointer to optional input filename
+ * @param in1 Return pointer to input filename
+ * @param in2 Return pointer to optional input filename
  * @param out Return pointer to output filename
  */
-static void harry_parse_options(int argc, char **argv, char **in,
+static void harry_parse_options(int argc, char **argv, char **in1,
                                 char **in2, char **out)
 {
     int ch;
@@ -213,11 +213,11 @@ static void harry_parse_options(int argc, char **argv, char **in,
 
     /* Check for input and output arguments */
     if (argc == 2) {
-        *in = argv[0];
+        *in1 = argv[0];
         *in2 = NULL;
         *out = argv[1];
     } else if (argc == 3) {
-        *in = argv[0];
+        *in1 = argv[0];
         *in2 = argv[1];
         *out = argv[2];
     } else {
@@ -226,9 +226,9 @@ static void harry_parse_options(int argc, char **argv, char **in,
     }
 
     /* Check for stdin and stdout "filenames" */
-    if (!strcmp(*in, "-"))
+    if (!strcmp(*in1, "-"))
         config_set_string(&cfg, "input.input_format", "stdin");
-    if (!strcmp(*in, "="))
+    if (!strcmp(*in1, "="))
         config_set_string(&cfg, "input.input_format", "raw");
     if (!strcmp(*out, "-"))
         config_set_string(&cfg, "output.output_format", "stdout");
@@ -555,14 +555,14 @@ int main(int argc, char **argv)
     hmatrix_t *mat = NULL;
     hstring_t *strs = NULL;
     int num = 0;
-    char *input = NULL, *input2 = NULL;
+    char *input1 = NULL, *input2 = NULL;
     char *output = NULL;
 
     harry_load_config(argc, argv);
-    harry_parse_options(argc, argv, &input, &input2, &output);
+    harry_parse_options(argc, argv, &input1, &input2, &output);
 
     harry_init();
-    strs = harry_read(input, input2, &num);
+    strs = harry_read(input1, input2, &num);
     mat = harry_alloc(strs, num);
 
     if (benchmark) {
