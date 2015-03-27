@@ -18,11 +18,11 @@
  * This module is designed for efficiently interfacing with other
  * environments.  The raw format of a similarity matrix has the form
  * <pre>
- * | rows (uint32) | cols (uint32) | array (float) ... |
+ * | rows (uint32) | cols (uint32) | fsize (uint32) | array (float) ... |
  * </pre>
- * where rows and cols are unsigned 32-bit integers in host byte order
- * specifing the dimensions of the matrix and array holds the matrix
- * as single floats (32 bit).
+ * where rows and cols are unsigned 32-bit integers specifing the dimensions
+ * of the matrix, fsizes is the size of a float in bytes and array holds the
+ * matrix of similarity values as floats.
  *
  * @{
  */
@@ -64,14 +64,16 @@ int output_raw_open(char *fn)
 int output_raw_write(hmatrix_t *m)
 {
     assert(m);
-    uint32_t ret, rows, cols, i, j;
+    uint32_t ret, rows, cols, fsize, i, j;
 
     rows = m->row.end - m->row.start;
     cols = m->col.end - m->col.start;
+    fsize = sizeof(float);
 
     ret = fwrite(&rows, sizeof(rows), 1, stdout);
     ret += fwrite(&cols, sizeof(cols), 1, stdout);
-    if (ret != 2) {
+    ret += fwrite(&fsize, sizeof(fsize), 1, stdout);
+    if (ret != 3) {
         error("Failed to write raw matrix header to stdout");
         return 0;
     }

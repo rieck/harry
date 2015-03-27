@@ -806,12 +806,12 @@ The similarity values are written to standard output (stdout) in raw format.
 This output module is designed for interfacing with other analysis
 environments.  The format of the similarity matrix has the following form
 
-  | rows (uint32) | cols (uint32) |
-  | array (float) ... |
+  | rows (uint32)  | cols (uint32)     |
+  | fsize (uint32) | array (float) ... |
 
-where I<rows> and I<cols> are unsigned 32-bit integers in host byte order
-specifing the dimensions of the matrix and I<array> holds the cells of the
-matrix as single floats (32 bit).  Indices, labels and sources are not
+where I<rows> and I<cols> are unsigned 32-bit integers specifing the
+dimensions of the matrix, I<fsize> is the size of a float in bytes and
+I<array> holds the matrix as floats.  Indices, labels and sources are not
 output.  This output format is also enables when I<output> is set to I<=>,
 otherwise I<output> is ignored.
 

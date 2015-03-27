@@ -54,27 +54,42 @@ def __run_harry(strs, opts):
     if len(stdout) == 0:
         return None
 
-    # Unpack dimensions of matrix
-    rows, cols = struct.unpack("II", stdout[0:8])
+    # Unpack dimensions of matrix and size of float
+    rows, cols, fsize = struct.unpack("III", stdout[0:12])
 
     try:
+        # Check for Numpy
         import numpy
 
         # Generate matrix form buffer and reshape it
-        mat = numpy.frombuffer(stdout[8:], dtype=numpy.float32)
+        if fsize == 4:
+            mat = numpy.frombuffer(stdout[12:], dtype=numpy.float32)
+        elif fsize == 8:
+            mat = numpy.frombuffer(stdout[12:], dtype=numpy.float64)
+        else:
+            raise Exception("Unsupported float type")
+
         mat = numpy.reshape(mat, (rows, cols))
+
     except ImportError:
         # Numpy is not available
         warnings.warn("The package numpy is recommended for using Harry")
 
+        if fsize == 4:
+            fmt = 'f'
+        elif fsize == 8:
+            fmt = 'd'
+        else:
+            raise Exception("Unsupported float type");
+
         # Generate matrix using list of lists :(
         mat = []
-        k = 8
+        k = 12
         for i in range(rows):
             row = []
             for j in range(cols):
-                row.append(struct.unpack('f', stdout[k:k+4])[0])
-                k += 4
+                row.append(struct.unpack(fmt, stdout[k:k + fsize])[0])
+                k += fsize
             mat.append(row)
 
     return mat
