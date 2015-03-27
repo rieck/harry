@@ -3,17 +3,21 @@
 
 EXTRA_DIST            = harry.py.in gen_options.py
 
-python_PYTHON 	      = harry.py
-noinst_PYTHON 	      = benchmark.py
-CLEANFILES            = harry.py
-
-harry.py: harry.py.in gen_options.py $(top_srcdir)/src/options.txt
-	$(PYTHON) $(srcdir)/gen_options.py $(top_srcdir)/src/options.txt \
-	          $(bindir) $(srcdir)/harry.py.in $(builddir)/harry.py
+if HAVE_PYTHON
+    HARRY = harry.py
+endif
 
 # Make sure harry.py is available during test runs
-all-local: harry.py
-check-local: harry.py
+all-local: $(HARRY)
+check-local: $(HARRY)
+
+python_PYTHON 	      = $(HARRY)
+CLEANFILES            = $(HARRY)
+noinst_PYTHON 	      = benchmark.py
+
+harry.py: harry.py.in gen_options.py $(top_srcdir)/src/options.txt
+	  $(PYTHON) $(srcdir)/gen_options.py $(top_srcdir)/src/options.txt \
+	            $(bindir) $(srcdir)/harry.py.in $(builddir)/harry.py
 
 # Clean compiled code
 distclean-local:

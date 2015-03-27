@@ -2,12 +2,7 @@
 # Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
 
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src doc examples .
-if HAVE_PYTHON
-	SUBDIRS += python tests
-else
-	SUBDIRS += tests
-endif
+SUBDIRS = src doc examples python . tests
 
 ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = README.md COPYING CHANGES harry.png
