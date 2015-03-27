@@ -16,8 +16,8 @@ distance, the Jaro-Winkler distance or the spectrum kernel.
 During operation Harry loads a set of strings from input, computes the
 specified similarity measure and writes a matrix of similarity values to
 output.  The similarity measure can be computed based on the granulartiy of
-characters as well as words contained in the strings.  The configuration of
-this process, such as the input format, the similarity measure and the
+bytes, bits and tokens (words) contained in the strings.  The configuration
+of this process, such as the input format, the similarity measure and the
 output format, are specified in a configuration file and can be additionally
 refined using command-line options.
 
@@ -133,8 +133,6 @@ OpenMP and thus may not work on all platforms.
 
     --enable-md5hash        Enable MD5 as alternative hash
 
-Harry uses a hash function for mapping words to symbols. By default the very
-efficient Murmur hash is used for this task.  In certain critical cases it
-may be useful to use a cryptographic hash as MD5.
-
-Copyright (C) 2013 Konrad Rieck (konrad@mlsec.org)
+Harry uses a hash function for mapping tokens to symbols. By default the
+very efficient Murmur hash is used for this task.  In certain critical cases
+it may be useful to use a cryptographic hash as MD5.

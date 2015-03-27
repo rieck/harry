@@ -31,7 +31,7 @@ struct hstring_test
 };
 
 struct hstring_test tests[] = {
-    /* comparison using characters */
+    /* comparison using bytes */
     {"", "", 0},
     {"a", "", 97},
     {"", "a", 97},
