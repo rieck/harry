@@ -13,6 +13,7 @@ harry.py: harry.py.in gen_options.py $(top_srcdir)/src/options.txt
 
 # Make sure harry.py is available during test runs
 all-local: harry.py
+check-local: harry.py
 
 # Clean compiled code
 distclean-local:
