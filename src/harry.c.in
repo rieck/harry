@@ -402,11 +402,11 @@ static hstring_t *harry_read(char *input, char *input2, int *num)
         /* Close input */
         input_close();
 
-        /* Overwrite x-range and y-range */
+        /* Overwrite row range and col range */
         snprintf(buf, 128, "%d:%d", 0, len1);
-        config_set_string(&cfg, "measures.col_range", buf);
-        snprintf(buf, 128, "%d:%d", len1, *num);
         config_set_string(&cfg, "measures.row_range", buf);
+        snprintf(buf, 128, "%d:%d", len1, *num);
+        config_set_string(&cfg, "measures.col_range", buf);
     }
 
     /* Symbolize strings if requested */
