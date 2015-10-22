@@ -68,7 +68,7 @@ int input_dir_read(hstring_t *strs, int len)
     struct dirent *dp;
 
     /* Load block of files */
-    while (dir && (dp = readdir(dir)) != NULL && j < len) {
+    while (dir && j < len && (dp = readdir(dir)) != NULL) {
         /* Skip all entries except for regular files and symlinks */
         fix_dtype(path, dp);
         if (dp->d_type != DT_REG && dp->d_type != DT_LNK)
