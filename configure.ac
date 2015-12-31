@@ -1,7 +1,7 @@
 # Harry - A Tool for Measuring String Similarity
 # Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
 
-AC_INIT([harry], [0.4.0], [konrad@mlsec.org])
+AC_INIT([harry], [0.4.1], [konrad@mlsec.org])
 AC_PREFIX_DEFAULT("/usr/local")
 
 echo
