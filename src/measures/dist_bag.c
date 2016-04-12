@@ -103,7 +103,7 @@ static void bag_destroy(bag_t * xh)
  */
 float dist_bag_compare(hstring_t x, hstring_t y)
 {
-    float d = 0;
+    float xd = 0, yd = 0;
     bag_t *xh, *yh, *xb, *yb;
 
     xh = bag_create(x);
@@ -113,18 +113,20 @@ float dist_bag_compare(hstring_t x, hstring_t y)
     for (xb = xh; xb != NULL; xb = xb->hh.next) {
         HASH_FIND(hh, yh, &(xb->sym), sizeof(sym_t), yb);
         if (!yb) {
-            d += xb->cnt;
+            xd += xb->cnt;
         } else {
-            d += fabs(xb->cnt - yb->cnt);
+            float diff = xb->cnt - yb->cnt;
+            xd += fmax(+diff, 0);
+            yd += fmax(-diff, 0);
             missing -= yb->cnt;
         }
     }
-    d += missing;
+    yd += missing;
 
     bag_destroy(xh);
     bag_destroy(yh);
 
-    return lnorm(n, d, x, y);
+    return lnorm(n, fmax(xd, yd), x, y);
 }
 
 /** @} */
