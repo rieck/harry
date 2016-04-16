@@ -1,12 +1,12 @@
 # Harry - A Tool for Measuring String Similarity
-# Copyright (C) 2013-2015 Konrad Rieck (konrad@mlsec.org)
+# Copyright (C) 2013-2016 Konrad Rieck (konrad@mlsec.org)
 
-AC_INIT([harry], [0.4.1], [konrad@mlsec.org])
+AC_INIT([harry], [0.4.2], [konrad@mlsec.org])
 AC_PREFIX_DEFAULT("/usr/local")
 
 echo
 echo "  Harry - A Tool for Measuring String Similarity"
-echo "  Copyright (c) 2013-2015 Konrad Rieck (konrad@mlsec.org)"
+echo "  Copyright (c) 2013-2016 Konrad Rieck (konrad@mlsec.org)"
 echo
 
 # Init automake & config.h
