@@ -67,7 +67,7 @@ void kern_distance_config()
     }
 
     /* Parameters */
-    config_lookup_float(&cfg, "measures.kern_distance.fgamma", &fgamma);
+    config_lookup_float(&cfg, "measures.kern_distance.gamma", &fgamma);
     config_lookup_float(&cfg, "measures.kern_distance.degree", &degree);
 
     /* Normalization */
