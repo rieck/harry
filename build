@@ -22,7 +22,14 @@ case $arg in
        CFLAGS="-pedantic -pipe -O3 -g" \
        ./configure --prefix=/opt/rieck
        ;;
-
+   compute*)
+       echo "Configuration: Compute (TUBS)"
+       CC="gcc" \
+       LDFLAGS="" \
+       CPPFLAGS="" \
+       CFLAGS="-pedantic -pipe -O3 -g" \
+       ./configure --prefix=$HOME/usr
+       ;;
    profile|debug)
        echo "Configuration: Profiling & Debugging"
        CC="gcc" \
