@@ -11,7 +11,7 @@
 import os
 import subprocess as sp
 import shlex
-import urllib.parse
+from six.moves.urllib.parse import quote
 import struct
 import warnings
 
@@ -38,7 +38,7 @@ def __run_harry(strs, opts):
         raise Exception("Could not find tool at %s" % __tool)
 
     # Decode special characters and prepare input
-    strs = map(urllib.parse.quote, strs)
+    strs = map(quote, strs)
     stdin = '\n'.join(strs).encode()
 
     # Input: "-"  Read strings from standard input
