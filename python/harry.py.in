@@ -11,7 +11,10 @@
 import os
 import subprocess as sp
 import shlex
-from six.moves.urllib.parse import quote
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 import struct
 import warnings
 
