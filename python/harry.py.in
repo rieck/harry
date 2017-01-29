@@ -1,6 +1,6 @@
-""" 
+"""
     Harry is a small tool for measuring the similarity of strings.  The
-    module supports common distance and kernel functions for strings as 
+    module supports common distance and kernel functions for strings as
     well as some exotic similarity measures.
 
     The Python module of Harry uses largely the same parameters as the
@@ -11,7 +11,7 @@
 import os
 import subprocess as sp
 import shlex
-import urllib
+from six.moves.urllib.parse import quote
 import struct
 import warnings
 
@@ -20,7 +20,7 @@ __tool = os.path.join("%BINDIR%", "harry")
 
 
 def __run_harry(strs, opts):
-    """ 
+    """
     Internal function to call the tool Harry
 
     Parameters
@@ -38,8 +38,8 @@ def __run_harry(strs, opts):
         raise Exception("Could not find tool at %s" % __tool)
 
     # Decode special characters and prepare input
-    strs = map(urllib.quote, strs)
-    stdin = '\n'.join(strs)
+    strs = map(quote, strs)
+    stdin = '\n'.join(strs).encode()
 
     # Input: "-"  Read strings from standard input
     # Output: "="  Write raw matrix to standard output
@@ -101,7 +101,7 @@ def compare(x, y=None, **kwargs):
 
     Parameters
     ----------
-    x (list)                  List of strings to compare   
+    x (list)                  List of strings to compare
     y (list)                  List of strings to compare [optional]
     %USAGE%
     Returns

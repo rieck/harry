@@ -3,7 +3,7 @@ import sys
 
 # Script for configuring the Python module at compile-time.
 if len(sys.argv) != 5:
-    print "usage: %s <options.file> <binpath> <module.in> <module.out>" % sys.argv[0]
+    print("usage: %s <options.file> <binpath> <module.in> <module.out>" % sys.argv[0])
     sys.exit(0)
 
 options = []
