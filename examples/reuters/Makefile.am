@@ -3,5 +3,5 @@
 
 EXTRA_DIST = README.md harry.cfg reuters.zip run_example.sh
 
-examplesdir = $(DESTDIR)$(docdir)/reuters
+examplesdir = $(docdir)/reuters
 examples_DATA = $(EXTRA_DIST)

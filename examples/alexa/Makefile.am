@@ -4,5 +4,5 @@
 EXTRA_DIST = alexa1000.txt figure_1.png figure_2.png run_example.sh \
              README.md most_similar.py
              
-examplesdir = $(DESTDIR)$(docdir)/alexa
+examplesdir = $(docdir)/alexa
 examples_DATA = $(EXTRA_DIST)
