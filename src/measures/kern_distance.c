@@ -88,7 +88,7 @@ void kern_distance_config()
  */
 static float dot(hstring_t x, hstring_t y)
 {
-    hstring_t o;
+    hstring_t o = {};
     uint64_t xk, yk;
     float d1, d2, d3;
 
