@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # Harry - A Tool for Measuring String Similarity
 # Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
 # --
