@@ -3,6 +3,13 @@
 Harry - A Tool for Measuring String Similarity
 ==
 
+This software belongs to the publication
+
+> Konrad Rieck and Christian Wressnegger.
+> Harry: A Tool for Measuring String Similarity. 
+> Journal of Machine Learning Research (JMLR), 17(9): 1-5, 2016
+> http://jmlr.org/papers/volume17/rieck16a/rieck16a.pdf
+
 Description
 --
 
