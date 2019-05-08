@@ -25,8 +25,6 @@ config.status
 config.sub
 configure
 depcomp
-doc/harry.man
-doc/harry.pdf
 doc/harry.txt
 doc/html
 doc/latex-pre.inc
