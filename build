@@ -14,11 +14,11 @@ fi
 
 # Apply configuration
 case $arg in
-   freeze*)
+   freeze*|hush*)
        echo "Configuration: Laptop (TUBS)"
        CC="gcc" \
-       LDFLAGS="-L/usr/local/opt/libarchive/lib" \
-       CPPFLAGS="-I/usr/local/opt/libarchive/include" \
+       LDFLAGS="-L/usr/local/lib -L/usr/local/opt/libarchive/lib" \
+       CPPFLAGS="-I/usr/local/include -I/usr/local/opt/libarchive/include" \
        CFLAGS="-pedantic -pipe -O3 -g" \
        ./configure --prefix=/opt/rieck
        ;;
