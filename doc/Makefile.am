@@ -2,7 +2,7 @@
 # Copyright (C) 2013-2014 Konrad Rieck (konrad@mlsec.org)
 
 EXTRA_DIST = harry.pod doxygen.cfg example.cfg harry.txt harry.pdf \
-	     latex-pre.inc.in latex-post.inc
+	     latex-pre.inc.in latex-post.inc README.md
 	
 man1_MANS = harry.man
 doc_DATA = example.cfg
